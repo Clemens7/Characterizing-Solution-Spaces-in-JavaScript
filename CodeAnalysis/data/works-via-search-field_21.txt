@@ -1,0 +1,212 @@
+import * as FrameHelper from './frame.js';
+import * as METAPI from './metAPI.js';
+
+frameWidth and matWidth are given in mm
+export class FrameConfiguration {
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+
+export class FramedPicture {
+  
+
+  
+
+  
+
+  static 
+
+  static 
+
+  
+
+  static 
+
+  static async loadFromLocalStorage(key="cart") {
+    const array = JSON.parse(localStorage.getItem(key));
+    if(!Array.isArray(array)) {
+      return [];
+    }}
+}
+
+export 
+
+export 
+
+export 
+export 
+import * as DOM from './dom-helpers.js';
+import { FramedPicture, calculateTotalCartPrice, cartIsEmpty } from './config.js';
+import { FrameConfiguration } from './config.js';
+import { render } from './frame.js';
+
+export 
+
+export class CartDocumentContainer {
+    
+
+    
+    
+
+    
+
+    
+}
+
+export class SearchResultDocumentContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    
+
+    addSearchResultToDocument(searchResult) {
+        this.container.appendChild(createSearchResultElement(searchResult));
+
+        function createSearchResultElement(searchResult) {
+            const thumb = document.createElement('div');
+            const configLink = './config.html?objectID=' + searchResult.objectID;
+            thumb.setAttribute('class', 'thumb');
+            thumb.innerHTML =   `<a href="${configLink}" id="object-${searchResult.objectID}">
+                                    <img src="${searchResult.primaryImageSmall}" alt="${searchResult.title}" id="${searchResult.objectID}">
+                                    <div class="museum-label">
+                                        <span class="artist">${searchResult.artistDisplayName}</span>
+                                        <span class="title">${searchResult.title}</span>,
+                                        <span class="date">${searchResult.objectDate}</span>
+                                    </div>
+                                </a>`;
+            return thumb;
+        }
+    }
+}
+export 
+
+export 
+
+export 
+
+export 
+
+import {Picture} from './Picture.js';
+import * as PictureCache from './PictureCache.js'
+export async function api_search(q) {
+
+    const url = api_url_search(q);
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const objectIDs = rawData.objectIDs;
+        return objectIDs;
+    }}
+
+export async function api_getObject(objectID) {
+    let picture = PictureCache.retrieve(objectID);
+    if(picture) 
+
+
+    const url = api_url_getObject(objectID);
+
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        if(rawData.message)
+        picture = new Picture(
+                rawData.objectID,
+                rawData.objectDate,
+                rawData.primaryImageSmall,
+                rawData.title,
+                rawData.artistDisplayName
+                );
+        PictureCache.store(objectID, picture);
+        return picture;
+    }}
+
+function api_url_search(q) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${escape(q)}&hasImages=true`;
+    return API_URL;
+}
+
+function api_url_getObject(objectID){
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    return API_URL;
+}
+import { Picture} from './Picture.js';
+
+export function retrieve(objectID) {
+    const key = objectID;
+    if(key in localStorage) 
+}
+
+export function store(objectID, picture) {
+    const key = objectID;
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(picture);
+}export class Picture {
+    constructor(objectID, objectDate, primaryImageSmall, title, artistDisplayName, classification) {
+        this.objectID = objectID;
+        this.objectDate=objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+        this.title = title;
+        this.artistDisplayName= artistDisplayName;
+    }
+}
+       import * as metAPI from './metAPI.js';
+       import {Picture} from './Picture.js';
+       import { SearchResultDocumentContainer } from './dom-helpers.js';
+       import { FramedPicture } from './config.js';
+       let Pictures = new Array();
+
+       
+
+
+       async function PictureSearch(q){
+          let Pictures = await metAPI.api_search(q);
+          if(Pictures!=null){
+            if(Pictures.length==1)else{
+            document.getElementById('search-info').innerText='Found '+Pictures.length+' artworks for “'+q+'”';
+            }
+            loadPictures(Pictures);
+          }
+       }
+
+       async function getNumberOfCartItems() {
+          let items = await FramedPicture.loadFromLocalStorage();
+          if (items.length>0)
+          return ;
+       }
+
+       document.addEventListener('DOMContentLoaded', event => {
+                const params = (new URL(document.location)).searchParams;
+                getNumberOfCartItems();
+                let q = params.get('q');
+                if(!q) 
+                q = q.replace(/\+/g," ");
+
+                document.getElementById('search').value = q;
+                document.getElementById('search-info').innerText='Searching for “'+q+'”...';
+                PictureSearch(q);
+       });
+
+        async function loadPictures(ObjectIds){
+          const searchResultContainer = new SearchResultDocumentContainer();
+          Promise.all(
+            ObjectIds.slice(0,100).map(async objectId => {
+              const picture = await metAPI.api_getObject(objectId);
+              searchResultContainer.addSearchResultToDocument(picture);
+            })
+          )
+        }
+
+       const form = document.querySelector('#search-form');
+       form.addEventListener('submit', );
+    

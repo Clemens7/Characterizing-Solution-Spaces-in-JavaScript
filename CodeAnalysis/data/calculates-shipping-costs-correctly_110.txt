@@ -1,0 +1,194 @@
+import { Artwork } from '../metmuseum/artwork-model.js';
+
+export 
+
+export export class Artwork {
+    
+}import * as DOM from "../helpers/dom.js";
+import * as Storage from "../cart/storage.js";
+import { getShippingAsync } from "../metmuseum/museum-api.js";
+import { calculateConfigPrice } from "../../frame.js";
+
+let destinations = [];
+const costs = {
+  subTotal: 0,
+  shipping: 0
+}
+
+function init() {
+  if (Storage.getConfigurationList().length == 0) 
+
+  initShipping();
+  refreshSubTotal();
+}
+
+function initShipping() {
+  const priceShippingElement = document.getElementById("price-shipping");
+  const priceTotalElement = document.getElementById("price-total");
+  const payButton = document.getElementById("pay-button");
+  const selectElement = document.getElementById("country");
+
+  function buildDOM(destinations) {
+    for (let destination of destinations) {
+      const option = DOM.textElement("option", destination.displayName);
+      option.value = destination.country;
+
+      selectElement.appendChild(option);
+    }
+  }
+
+  function disableElements() {
+    priceShippingElement.innerText = "\u2014";
+    priceTotalElement.innerText = "\u2014";
+    payButton.disabled = true;
+  }
+
+  selectElement.onchange = () => {
+    refreshShipping();
+  }
+
+  disableElements();
+  getShippingAsync()
+    .then(result => {
+      destinations = result.destinations;
+
+      buildDOM(destinations);
+      refreshShipping();
+
+      payButton.disabled = false;
+    })
+    .catch();
+}
+
+function refreshSubTotal() {
+  function calcSubTotal() {
+    const items = Storage.getConfigurationList();
+
+    return items.reduce((acc, current) => acc + calculateConfigPrice(current), 0);
+  }
+
+  const priceSubTotalElement = document.getElementById("price-subtotal");
+  costs.subTotal = calcSubTotal();
+  priceSubTotalElement.innerText = costs.subTotal;
+}
+
+function refreshShipping() {
+  const selectElement = document.getElementById("country");
+  const priceShippingElement = document.getElementById("price-shipping");
+
+  const destination = destinations.find(destination => destination.country === selectElement.value);
+  if (destination) {
+    costs.shipping = destination.cost / 100;
+    priceShippingElement.innerText = costs.shipping.toFixed(2);
+
+    refreshTotal();
+  }
+}
+
+function refreshTotal() {
+  const priceTotalElement = document.getElementById("price-total");
+  priceTotalElement.innerText = costs.subTotal + costs.shipping;
+}
+
+DOM.onReady(init);
+export 
+
+export 
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export 
+
+export function onReady(callback) {
+    if (typeof callback === "function") {
+        document.addEventListener('DOMContentLoaded', callback)
+    }
+}
+
+export 
+
+export export 
+
+export 
+
+export 
+
+export function calculateConfigPrice(config) {
+    if (!config) 
+    return calculatePrice(config.printSize, config.frameStyle,
+        config.frameWidth, config.matWidth);
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const cmFrameWidth = frameWidth / 10.0;
+    const cmMathWidth = matWidth / 10.0;
+    const baseCost = 30.0;
+    const woodCostFactors = {
+        "classic": 1.0,
+        "natural": 0.8,
+        "shabby":  0.9,
+        "elegant": 0.85
+    };
+    const sizeCostFactors = {
+        "S": 1.0,
+        "M": 2.0,
+        "L": 3.5
+    };
+    const woodCost = cmFrameWidth * woodCostFactors[frameStyle];
+    const matCost = 0.05 * cmMathWidth;
+    const price = (baseCost + woodCost + matCost) * sizeCostFactors[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { updateCartCounter } from "./cart/storage.js";
+import { onReady } from "./helpers/dom.js"
+
+onReady(updateCartCounter);
+import { Artwork } from './artwork-model.js';
+import * as CACHE from '../search/artwork-cache.js';
+
+export 
+
+export 
+
+export 
+
+
+export async function getShippingAsync() {
+    const url = "https://web-engineering.big.tuwien.ac.at/s20/a2/shipping";
+    const response = await fetch(url);
+
+    if (!response.ok) 
+
+    const rawData = await response.json();
+
+    return rawData;
+}
+
+export 
+
+
+
+
+
+export function updateCartCounter() {
+  const element = document.getElementById("cart-link");
+  if (element) 
+}
+
+export 
+
+export 
+
+export function getConfigurationList() {
+  return getItems();
+}
+
+
+
+
+function getItems() {
+  return JSON.parse(localStorage.getItem("cart")) 

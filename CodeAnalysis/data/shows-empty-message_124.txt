@@ -1,0 +1,123 @@
+import * as ElementCreator from './element-creator.js';
+import * as Frame from './frame.js';
+
+export class CartContainer {
+    
+
+    
+
+    
+}export class CartItem {
+    
+}
+
+    import * as Frame from './frame.js';
+    import * as Cart from './cart.js';
+    import * as ElementCreator from './element-creator.js';
+    var priceTotal = 0;
+    const cart = document.getElementById("cart");
+
+    document.addEventListener('DOMContentLoaded', event => {
+
+      var cartObj = localStorage.getItem('cart');
+ 
+      /*retrieve items from localstorage*/
+      var items = localStorage.getItem('cart');
+      if (!items) {
+        Cart.createCheckout(priceTotal, true);
+        const emptyMsg = ElementCreator.create_TextElement('div', 'There are no items in your shopping cart.');
+        cart.appendChild(emptyMsg);
+      }
+    });
+
+
+
+
+  import { CartItem } from "./cart-item.js";
+import { ResultItem } from "./result-item.js";
+import { CartContainer } from "./cart-container.js";
+import * as Frame from "./frame.js";
+import * as ElementCreator from './element-creator.js';
+
+
+
+export 
+
+export 
+
+export 
+
+export function createCheckout(priceTotal, buttonDisabled = false) {
+  const spanElem = ElementCreator.create_TextElement('span', '', { id: 'price-total' }, []);
+
+  spanElem.innerText = parseFloat(priceTotal).toFixed(2);
+  const priceElem = document.createElement('div');
+  priceElem.className = 'price';
+  priceElem.innerText = 'Total: € ';
+
+  priceElem.appendChild(spanElem);
+
+  const totalButton = ElementCreator.create_TextElement('button', 'Checkout', { type: 'button', id: 'checkout-button', onclick: "window.location.href='checkout.html';" }, []);
+  totalButton.disabled = buttonDisabled;
+
+  const cartTotalElem = ElementCreator.create_Container([priceElem, totalButton], 'div', ['cart-total'], {});
+
+  document.getElementById('cart').appendChild(cartTotalElem);
+
+}
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+export function create_Container(els, tag, classes = [], attrs = {}) {
+    const container = document.createElement(tag);
+    addAttrs(container, attrs);
+    addClasses(container, classes);
+    for (let el of els) {
+        container.appendChild(el);
+    }
+
+    return container;
+
+}
+
+export 
+
+export function create_TextElement(tag, text, attrs = {}, classes = []) {
+    const el = document.createElement(tag);
+    el.innerText = text;
+    addAttrs(el, attrs);
+    addClasses(el, classes);
+    return el;
+}
+
+function addAttrs(element, attrs = {}) {
+    if (Object.keys(attrs).length > 0) {
+        for (var key in attrs) {
+            element.setAttribute(key, attrs[key]);
+        }
+    }
+}
+
+function addClasses(element, classes = []) {
+    if (classes.length > 0) {
+        element.classList.add(classes);
+    }
+}
+export 
+
+export 
+
+
+export 
+export 
+
+export class ResultItem {
+    
+}

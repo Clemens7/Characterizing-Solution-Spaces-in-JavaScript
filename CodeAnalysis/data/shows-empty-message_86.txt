@@ -1,0 +1,90 @@
+import * as Frame from './frame.js';
+import {cartCache} from "./search-cache.js"; //Shows the amount of the Cart
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+      await createCart(JSON.parse(localStorage['cart']));catch (e) {
+      const div = document.getElementById('cart');
+          div.appendChild(emptyCartHTML());
+          div.appendChild(createTotalPrice());
+          document.getElementById("checkout-button").disabled = true;
+  }
+  await cartCache();
+
+   let removeButton = document.getElementsByClassName("cart-remove");
+   for(let buttons = 0; buttons < removeButton.length; buttons++) })
+
+import {retrieveData} from "./search-api.js";
+
+
+
+
+
+
+
+
+
+
+function createTotalPrice(data){
+    const div = document.createElement("div");
+    div.className = "cart-total";
+    div.innerHTML =
+    `<div class="price">Total: € <span id="price-total">${calcTotalPrice(data)}</span></div>
+    <button type="button" id="checkout-button">Checkout</button>`;
+    return div;
+}
+
+
+
+function calcTotalPrice(data){
+    let sum = 0;
+    if (data !== undefined) 
+    else {
+        return 0;
+    }
+}
+
+function emptyCartHTML(){
+    const div = document.createElement("div");
+    div.className = "empty-cart";
+    div.innerHTML =
+        `<p><b>There are no items in your shopping cart.</b></p><br>`;
+    return div;
+}export 
+
+export 
+
+export 
+
+export 
+import * as SearchCache from './search-cache.js';
+
+
+
+
+
+;
+
+
+
+
+
+
+export { searchIdFromApi, retrieveData, retrieveHighlights };
+
+
+function retrieveFromLocal(key){
+  if(key in localStorage)
+}
+
+
+
+
+
+
+function cartCache(){
+  const cartCached = retrieveFromLocal("cart");
+  if(cartCached 
+}
+
+export { retrieveFromLocal, storeInLocal, cartCache };

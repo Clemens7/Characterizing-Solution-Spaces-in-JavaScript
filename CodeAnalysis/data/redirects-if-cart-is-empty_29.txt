@@ -1,0 +1,93 @@
+import * as DOM from './dom-helpers.js';
+import * as FRAME from '../frame.js';
+import * as COMMONS from "./commons.js";
+
+let cartItems = [];
+
+window.onload = function WindowLoad() {
+    cartItems = COMMONS.retrieveCartFromCache();
+    if (cartItems.length > 0) 
+    attachTotalPrice();
+    showHeaderNoItems();
+    attachButtonCheckoutNavigation();
+}
+
+
+
+
+
+
+
+
+
+function attachTotalPrice() {
+    let priceTotal = 0;
+    for (const item of cartItems) 
+    document.getElementById('price-total').innerText = (priceTotal / 100).toFixed(2);
+}
+
+function showHeaderNoItems() {
+    if (COMMONS.showCartItemsNumber() === 0) {
+        createEmptyCart();
+    }
+}
+
+function createEmptyCart() {
+    document.getElementById('checkout-button').disabled = true;
+    const cart = document.getElementById('cart');
+    let itemToInsert = document.createElement('h2');
+    itemToInsert.innerText = 'There are no items in your shopping cart.';
+    cart.insertBefore(itemToInsert, cart.firstChild);
+}
+
+function attachButtonCheckoutNavigation() {
+    document.getElementById('checkout-button').onclick = 
+}import * as DOM from "./dom-helpers.js";
+
+const CACHE_KEY = 'cart';
+const ENDPOINT = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export class CartItem {
+    
+}
+
+export 
+
+export function retrieveCartFromCache() {
+    const key = CACHE_KEY;
+    if (key in localStorage) 
+    else {
+        return [];
+    }
+}
+
+export 
+
+export function showCartItemsNumber() {
+    let cartLink = document.getElementById('cart-link');
+    let cart = retrieveCartFromCache()
+    if (cart.length === 0) {
+        DOM.setAttributes(cartLink, {innerText: `Cart`})
+    }
+    return cart.length;
+}
+
+export export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export 
+
+export 
+export 
+
+export 
+
+export 

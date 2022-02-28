@@ -1,0 +1,355 @@
+let storage = window.localStorage;
+const artworkKey = 'cache';
+const cartKey = 'cart';
+
+export function cacheObject(artwork) {
+    let artworks = JSON.parse(storage.getItem(artworkKey));
+    if (artworks == null) {
+        storage.setItem(artworkKey, '[]');
+        artworks = JSON.parse(storage.getItem(artworkKey));
+    }
+    artworks.push(artwork);
+    storage.setItem(artworkKey, JSON.stringify(artworks));
+}
+
+export function getStoredObject(id) {
+    if (typeof id === 'string') 
+    let artworks = JSON.parse(storage.getItem(artworkKey));
+    if (artworks === null) {
+        return null;
+    }
+}
+export 
+
+export function getCartLength() {
+    let cart = JSON.parse(storage.getItem(cartKey));
+    if (cart === null) {
+        return 0;
+    }
+}
+
+export 
+
+const ONCE = { once: true };
+
+export function round(number) {
+  return Math.round((number + Number.EPSILON) * 100) / 100;
+}
+
+export function clamp(number, min, max, step = 1) {
+  let value = number;
+  value = round(Math.round(value / step) * step);
+  if (value > max) 
+  if (value < min) 
+  return value;
+}
+
+export function whenImageLoaded(img) {
+  return new Promise((resolve, reject) => {
+    if (img.complete)  else {
+      img.addEventListener('load', () => resolve(), ONCE);
+      img.addEventListener('error', , ONCE);
+    }
+  });
+}
+
+export function arrayQuerySelector(container, ...queries) {
+  return queries.map(q => container.querySelector(q));
+}
+
+export 
+
+export 
+import { whenImageLoaded, arrayQuerySelector, navigate, redirect } from './configutils.js';
+import { BoundForm } from './forms.js';
+import { getPrintSizes, render, calculatePrice } from '../frame.js';
+import {getStoredObject} from "./cache.js";
+import {retrieveObject} from "./met.js";
+import {cacheObject} from "./cache.js";
+import {storeInCart} from "./cache.js";
+import {getCartLength} from "./cache.js";
+
+document.querySelector('#cart-link').innerHTML = ((getCartLength() === 0) ? "Cart" );
+const search = new URLSearchParams(window.location.search);
+const objectID = search.get('objectID');
+if (!objectID) 
+const keys = ['printSize', 'frameStyle', 'frameWidth', 'matColor', 'matWidth'];
+const form = setupForm(document.querySelector('#config-form'), search);
+updatePrice();
+const object$ = getObject(+objectID);
+object$.then(object => setupPreview(object), );
+form.element.addEventListener('change', updatePreview);
+form.element.addEventListener('change', updatePrice);
+form.element.addEventListener('submit', addToCart);
+
+function getObject(objectID) {
+  let artwork = getStoredObject(objectID);
+  if (artwork !== null)  else {
+    return retrieveObject(objectID).then(object => {
+      if (object.primaryImageSmall) {
+        cacheObject(object);
+        return object;
+      }
+    });
+  }
+}
+
+
+
+function setupForm(element, initialValues) {
+  const form = new BoundForm(element);
+  for (const key of keys) {
+    let value = initialValues.get(key);
+    if (value !== null) 
+  }
+  return form;
+}
+
+function setupPreview(object) {
+  const preview = document.querySelector('#preview-container');
+  const [image, artist, title, date] = arrayQuerySelector(preview, 'img', '.artist', '.title', '.date');
+  image.setAttribute('src', object.primaryImageSmall);
+  image.setAttribute('alt', object.title);
+  artist.innerText = object.artistDisplayName;
+  title.innerText = object.title;
+  date.innerText = object.objectDate;
+  whenImageLoaded(image).then(() => updatePreview());
+}
+
+function updatePreview() {
+  const container = document.querySelector('#preview-container');
+  const img = document.querySelector('#preview-image');
+  const sizes = getPrintSizes(img);
+  updatePrintSizes(img, sizes);
+  const value = form.getValue();
+  value.frameWidth *= 10;
+  value.matWidth *= 10;
+  updateTotalSize(value, sizes);
+  const params = keys.map(key => value[key]);
+  render(img, container, ...params);
+}
+
+function updatePrintSizes(img, sizes) {
+  for (const [size, [width, height]] of Object.entries(sizes)) {
+    outputDimensions(`#print-size-${size.toLowerCase()}-label output`, width, height);
+  }
+}
+
+function updateTotalSize(value, sizes) {
+  let [width, height] = sizes[value.printSize];
+  const added = 2 * (value.frameWidth + value.matWidth);
+  width += added;
+  height += added;
+  outputDimensions('#total-size output', width, height);
+}
+
+function outputDimensions(selector, width, height) {
+  document.querySelector(selector).innerText = `${width / 10} × ${height / 10}`;
+}
+
+function updatePrice() {
+  const output = document.querySelector('#price');
+  const { printSize, frameStyle, frameWidth, matWidth } = form.getValue();
+  const price = calculatePrice(printSize, frameStyle, frameWidth * 10, matWidth * 10).toFixed(2);
+  output.innerText = `€ ${price}`;
+}
+import { clamp } from './configutils.js';
+
+export class BoundForm {
+  
+  constructor(element) {
+    this.element = element;
+    this.fieldsets = new Map();
+    const fieldsets = element.querySelectorAll('fieldset[data-type]');
+    for (const fieldset of fieldsets) {
+      const key = fieldset.getAttribute('data-key') ;
+      const type = fieldset.getAttribute('data-type');
+      let wrapper;
+      switch (type) {
+        case 'radio':
+          wrapper = new RadioFieldset(this, fieldset);
+          break;
+        case 'number+range':
+          wrapper = new NumberRangeFieldset(this, fieldset);
+          break;
+        
+      }
+      this.fieldsets.set(key, wrapper);
+    }
+  }
+  
+  
+  
+  getValue() {
+    const result = {};
+    for (const [key, fieldset] of this.fieldsets) {
+      result[key] = fieldset.getValue();
+    }
+    return result;
+  }
+}
+
+class Fieldset {
+  
+  constructor(form, element) {
+    this.form = form;
+    this.element = element;
+  }
+  
+}
+
+class RadioFieldset extends Fieldset {
+  
+  constructor(form, element) {
+    super(form, element);
+    this.options = new Map();
+    for (const radioInput of element.querySelectorAll('input[type="radio"]')) {
+      const value = radioInput.value;
+      this.options.set(value, radioInput);
+    }
+  }
+  
+  
+  
+  getValue() {
+    for (const [value, input] of this.options) {
+      if (input.checked) {
+        return value;
+      }
+    }}
+  
+}
+
+class NumberRangeFieldset extends Fieldset {
+  
+  constructor(form, element) {
+    super(form, element);
+    this.numberInput = element.querySelector('input[type="number"]');
+    this.rangeInput = element.querySelector('input[type="range"]');
+    this.constraints = Object.fromEntries(['min', 'max', 'step'].map(c => [c, +this.numberInput.getAttribute(c)]));
+    element.addEventListener('input', (event) => {
+      let inputToAdjust;
+      switch (event.target) {
+        case this.numberInput:
+          inputToAdjust = this.rangeInput;
+          break;
+        
+        
+      }
+      inputToAdjust.value = event.target.value;
+    });
+    element.addEventListener('change', () => {
+      const value = this._clamp(this.getValue());
+      this.numberInput.value = value;
+      this.rangeInput.value = value;
+    });
+  }
+  
+  
+  
+  getValue() {
+    return +this.numberInput.value;
+  }
+  
+  _clamp(value) {
+    const { min, max, step } = this.constraints;
+    return clamp(value, min, max, step);
+  }
+  
+}
+import { round } from './scripts/configutils.js';
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return {S: S, M: M, L: L};
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+const baseCost = 30;
+const frameStyleCosts = {
+    'classic': 0.1,
+    'natural': 0.08,
+    'shabby': 0.09,
+    'elegant': 0.085,
+};
+const matCost = 0.005;
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = baseCost;
+    price += frameStyleCosts[frameStyle] * frameWidth;
+    price += matCost * matWidth;
+    switch (printSize) {
+        case 'M':
+            price *= 2;
+            break;
+        case 'L':
+            price *= 3.5;
+            break;
+        case 'S':
+        default:
+    }
+    return round(price);
+}
+const URLID = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const URLIMAGE = '"https://images.metmuseum.org/CRDImages/ep/original/';
+const URLLARGEIMAGE = 'https://images.metmuseum.org/CRDImages/ep/web-large/';
+const SEARCHURL = 'https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=';
+export 
+
+
+export function retrieveObject(id) {
+    return fetch(URLID + id)
+        .then((response) => {
+            if (!response.ok) 
+            return response.json();
+        });
+}
+
+
+export 

@@ -1,0 +1,165 @@
+export function retrieve(searchName) {
+    const key = searchName;
+    if(key in localStorage) 
+}
+
+export async function store(searchName, artObject) {
+    const key = searchName;
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(artObject);
+}
+
+import * as DOM from './dom-helpers.js';
+
+export class ArtDocumentContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addArtToDocument(art) {
+        this.container.appendChild(createArtElements(art));
+
+        function createArtElements(art) {
+            let divContainer = DOM.container([
+                createThumbnailUrlContainer(art)
+            ],'div');
+
+            divContainer.setAttribute('class', 'thumb');
+            return divContainer;
+        }
+
+        function createThumbnailUrlContainer(art) {
+            return DOM.setAttributes(DOM.container([
+                DOM.setAttributes(document.createElement('img'), {src: art.thumbnail ,alt: '', id: 'object-image-'+ art.objectID}),
+                createLabelContainer(art.artist, art.title, art.date)
+            ], 'a'), {href: art.url, id: 'object-' + art.objectID});
+        } 
+
+        function createLabelContainer(artist, title, date){
+            let artistSpan = DOM.textElement('span', art.artist);
+            artistSpan.setAttribute('class', 'artist');
+            let titleSpan = DOM.textElement('span', art.title + ', ');
+            titleSpan.setAttribute('class', 'title');
+            let dateSpan = DOM.textElement('span', art.date);
+            dateSpan.setAttribute('class', 'date');
+            let labelContainer = DOM.container([
+                artistSpan,
+                titleSpan,
+                dateSpan
+            ]);
+            labelContainer.setAttribute('class', 'museum-label');
+            return labelContainer;
+            
+        }
+
+    }
+}import {Art} from './search.js';
+import * as ArtCache from './art-cache.js';
+import {ArtDocumentContainer} from './art-dom.js'
+
+var highlights;
+const artContainer = new ArtDocumentContainer();
+
+export async function retrieve(searchTerm){
+    let arts = ArtCache.retrieve(searchTerm);
+    if(arts)
+   
+    const url = api_url(searchTerm);
+    try{
+        if(searchTerm === ''){
+            await fetch('./highlights.json')
+            .then(res => res.json())
+            .then(data => {highlights = data;});
+            arts = await retrieveObjects(highlights['highlights']);
+        }
+       
+        ArtCache.store(searchTerm, arts);
+        
+        return arts.length;
+    }}
+
+async function retrieveObjects(objectIDs){
+    let result = [];
+    const frameURL = '/config.html?objectID=';
+    objectIDs = objectIDs.slice(0,100);
+    await Promise.all(objectIDs.map(objectID => fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`).then(r => r.json())
+    .then(artObject => 
+        {result.push(new Art(artObject.title,artObject.artistDisplayName,artObject.objectDate, artObject.primaryImageSmall, frameURL + artObject.objectID, artObject.objectID)); 
+            artContainer.addArtToDocument(result[result.length - 1])})));
+      return result;
+}
+
+function api_url(searchTerm){
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${searchTerm}&hasImages=true`;
+    return API_URL;
+}export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+    import * as ArtCache from './art-cache.js';
+    import {Art} from './search.js';
+    import * as ArtAPI from './art-search-api.js';
+    import {ArtDocumentContainer} from './art-dom.js';
+
+    
+    /*
+    async function artSearch(searchTerm){
+      const artContainer = new ArtDocumentContainer();
+      if(searchTerm !== '')
+      artContainer.clear();
+      const artsLength = await ArtAPI.retrieve(searchTerm);
+      if(searchTerm !== '')
+    }
+
+     async function retrieveCart(){
+      let cartItems = ArtCache.retrieve('cart');
+      if(cartItems !== undefined 
+    }
+
+    document.addEventListener('DOMContentLoaded', event => {
+      retrieveCart();
+      const params = (new URL(document.location)).searchParams;
+      const searchQuery = params.get('q');
+      
+      if(!searchQuery){
+        artSearch('');
+      }
+      
+    })
+
+    const form = document.querySelector('.search-form');
+    form.addEventListener('submit', );
+
+  export class Art {
+    constructor(title, artist, date, thumbnail, url, objectID){
+        this.title = title;
+        this.artist = artist;
+        this.date = date;
+        this.thumbnail = thumbnail;
+        this.url = url;
+        this.objectID = objectID;
+      }
+}

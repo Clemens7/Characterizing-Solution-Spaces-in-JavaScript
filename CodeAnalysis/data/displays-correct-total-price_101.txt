@@ -1,0 +1,319 @@
+export 
+
+export function storeArtwork(artwork) {
+  console.log(`store: ${JSON.stringify(artwork)}`);
+  localStorage.setItem(artwork.objectID, JSON.stringify(artwork));
+}
+
+export 
+
+export 
+
+
+export function retrieveArtwork(objectID) {
+  console.log(`Retrieving ${objectID} from local storage`);
+  if (localStorage.getItem(objectID) !== null) 
+}export class Artwork {
+  
+}
+
+export var NumberOfItems = {
+  store: ,
+  getNumber: 
+}import * as Storage from './helper/storage.js'
+import * as DomBuilder from './helper/dom-builder.js';
+import * as ArtworkCach from './helper/artwork-cache.js';
+import * as FrameConfigurator from '../frame.js';
+import * as ArtworkAPI from './helper/met-museum-api.js';
+
+
+async function updateCart() {
+  var cart = Storage.getCart();
+  const cartContainer = new CartContainer();
+  cartContainer.clear();
+
+  if (cart == null)  else {
+    cartContainer.displayCartAmount(cart.length);
+    for (let item of cart) {
+      await cartContainer.addItemToCart(item);
+    }
+    cartContainer.updatePrice(cart);
+  }
+}
+
+window.addEventListener("load", async function() {
+  await updateCart();
+});
+
+document.getElementById("checkout-button").addEventListener("click", );
+
+
+class CartContainer {
+  constructor(results) {
+    this.cartContainer = document.getElementById("cart");
+    if (!this.cartContainer) 
+    this.cartLink = document.getElementById("cart-link");
+    if (!this.cartLink) 
+    this.priceTotal = document.getElementById("price-total");
+    if (!this.priceTotal) 
+  }
+  clear() {
+    this.cartContainer.querySelectorAll('.cart-item').forEach();
+    document.getElementById('checkout-button').disabled = false;
+  }
+
+  updatePrice(cart) {
+    let price = 0;
+    for (let item of cart) {
+      console.log(item);
+      price += FrameConfigurator.calculatePrice(
+        item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    this.priceTotal.innerHTML = price.toFixed(2);
+  }
+
+  displayCartAmount(amount) {
+    if (amount > 0) {
+      this.cartLink.innerHTML = `Cart (${amount})`
+    }
+  }
+
+  
+
+  async addItemToCart(cartItem) {
+    console.log(`Adding ${cartItem.objectID} to cart`);
+    const artwork = await ArtworkAPI.retrieveUsingObjectID(cartItem.objectID);
+
+    let cartItemContainer = DomBuilder.container("div", [
+      createCartPreviewContainer(), createMuseumLabelContainer()
+    ]);
+    cartItemContainer.setAttribute("class", "cart-item");
+
+    this.cartContainer.insertBefore(cartItemContainer, this.cartContainer.firstChild);
+    return cartItemContainer;
+
+
+    function createCartPreviewContainer() {
+      let imgCardThumb = document.createElement('img');
+      imgCardThumb.setAttribute("class", "cart-thumb");
+      imgCardThumb.setAttribute("src", artwork.primaryImageSmall);
+      imgCardThumb.setAttribute("id", `preview-${cartItem.objectID}`);
+      imgCardThumb.setAttribute("alt", artwork.title);
+
+      let aContainer = DomBuilder.container("a", [imgCardThumb]);
+      aContainer.setAttribute("href", `./config.html?objectID=${cartItem.objectID}&printSize=${cartItem.printSize}&frameStyle=${cartItem.frameStyle}&frameWidth=${cartItem.frameWidth}&matColor=${cartItem.matColor}&matWidth=${cartItem.matWidth}`);
+      let divPreview = DomBuilder.container("div", [aContainer]);
+      divPreview.setAttribute("class", "cart-preview");
+      divPreview.setAttribute("class", `preview-container-${cartItem.objectID}`);
+
+      imgCardThumb.addEventListener("load", function() {
+        FrameConfigurator.render(imgCardThumb, divPreview, cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth / 10, cartItem.matColor, cartItem.matWidth / 10);
+      });
+
+      return divPreview;
+    }
+
+    function createMuseumLabelContainer() {
+      let spanArtist = DomBuilder.createTextElement("span", artwork.artistDisplayName);
+      spanArtist.setAttribute("class", "artist");
+      let spanTitle = DomBuilder.createTextElement("span", artwork.title);
+      spanTitle.setAttribute("class", "title");
+      let spanDate = DomBuilder.createTextElement("span", ", " + artwork.objectDate);
+      spanDate.setAttribute("class", "date");
+      let spanFrame = DomBuilder.createTextElement("span", frameDescription());
+      spanFrame.setAttribute("class", "frame-description");
+      let divContainer = DomBuilder.container('div', [
+        spanArtist,
+        spanTitle,
+        spanDate,
+        document.createElement("br"),
+        document.createElement("br"),
+        spanFrame
+      ]);
+
+      let spanPrice = DomBuilder.createTextElement("span", FrameConfigurator.calculatePrice(
+        cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth).toFixed(2));
+      spanPrice.setAttribute("id", `price-${cartItem.objectID}`);
+      let divPrice = DomBuilder.container('div', [spanPrice], `€ `);
+      divPrice.setAttribute("class", "cart-price");
+
+      let buttonRemove = document.createElement("button");
+      buttonRemove.setAttribute("class", "cart-remove");
+      buttonRemove.addEventListener("click", );
+
+      let divMuseumLabel = DomBuilder.container('div', [divContainer, divPrice, buttonRemove]);
+      divMuseumLabel.setAttribute("class", "museum-label");
+
+      return divMuseumLabel;
+    }
+
+    function frameDescription() {
+      let desc = "";
+      switch (cartItem.printSize) {
+        case "S":
+          desc += "Small ";
+          break;
+        
+        case "L":
+          desc += "Large ";
+          break;
+        
+      }
+      desc += `print in a ${Math.round(cartItem.frameWidth)/10} cm ${cartItem.frameStyle} frame`;
+      if (cartItem.matWidth > 0 && cartItem.matColor) {
+        desc += ` with a ${Math.round(cartItem.matWidth)/10} cm ${cartItem.matColor} mat`;
+      }
+      desc += `.`;
+      return desc;
+    }
+
+  }
+}export 
+
+export function container(tag = 'div', elements, text = '') {
+  let container = document.createElement(tag);
+  container.innerText = text;
+  for (let element of elements) {
+    container.appendChild(element);
+  }
+  return container;
+}
+
+export function createTextElement(tag, text) {
+  const element = document.createElement(tag);
+  element.innerText = text;
+  return element;
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return {
+        S: S,
+        M: M,
+        L: L
+    };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+    switch (frameStyle) {
+        
+        case "natural":
+            price += 0.8 * frameWidth / 10;
+            break;
+        case "shabby":
+            price += 0.9 * frameWidth / 10;
+            break;
+        case "elegant":
+            price += 0.85 * frameWidth / 10;
+            break;
+        
+    }
+    price += 0.05 * matWidth / 10;
+    switch (printSize) {
+        
+        case "L":
+            price = price * 3.5;
+            break;
+        default:
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}import * as ArtworkCache from './artwork-cache.js';
+import {
+  Artwork,
+  NumberOfItems
+} from './artwork.js';
+
+const API_SEARCH_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+const API_OBJECT_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const HIGHLIGHTS_URL = './highlights.json';
+const SEARCH_CONDITION = 'hasImages=true';
+
+export 
+
+export async function retrieveUsingObjectID(objectID) {
+  let artworksCache = ArtworkCache.retrieveArtwork(objectID);
+  console.log(`artworksCache:  ${JSON.stringify(artworksCache)}`);
+  if (artworksCache) 
+  let artworkResponse = await retrieveArtwork(objectID);
+  console.log(`artwork ${JSON.stringify(artworkResponse)}`);
+  ArtworkCache.storeArtwork(artworkResponse);
+  return artworkResponse;
+}
+
+async function retrieveArtwork(objectID) {
+  const url = `${API_OBJECT_BASE_URL}${objectID}`;
+  try {
+    let response = await fetch(url);
+    let responseJson = await response.json();
+    return responseJson;
+  }}
+
+
+
+
+
+export 
+
+
+
+export function getCart() {
+    return JSON.parse(window.localStorage.getItem('cart'));
+}
+
+export 
+
+export 
+
+export 

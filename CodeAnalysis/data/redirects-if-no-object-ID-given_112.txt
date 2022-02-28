@@ -1,0 +1,88 @@
+const BASE_URL = 'https://collectionapi.metmuseum.org';
+
+export async function getObject(id) {
+  let artwork = JSON.parse(localStorage.getItem(id));
+  if (!artwork) {
+    const response = await object(id);
+    if (response.status === 400 || response.status === 404) 
+    artwork = await response.json();}
+
+export 
+
+export async function highlights(){
+  const idObject= await fetch('highlights.json').then(ids => ids.json());
+  return idObject.highlights;
+}
+
+export async function object(objectID) {
+  return fetch(`${BASE_URL}/public/collection/v1/objects/${objectID}`);
+}
+
+export 
+
+export 
+import {getAllProducts, add, CObject, remove} from './cart.js';
+import {getObject} from "./api.js";
+import {calculatePrice, render} from "./frame.js";
+
+
+
+export 
+
+
+
+
+
+export function cartElements(){
+    let cartn = document.getElementById("cart-link");
+   if(getAllProducts().length !== 0)else{
+   cartn.innerHTML = "Cart";
+   }
+}
+
+
+export function getAllProducts() {
+  var cart = JSON.parse(localStorage.getItem('cart'));
+  if (!cart) {
+    cart = [];
+  }
+  return cart;
+}
+
+export class CObject{
+  
+}
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+import {search, highlights, getObject} from "./api.js";
+import {cartElements} from "./cart-display.js";
+
+cartElements();
+
+let params = (new URL(document.location)).searchParams.get('q');
+if (!params) params = '';
+artworkSearch(params);
+
+async function artworkSearch(q) {
+  document.getElementById("search").value = q;
+  document.getElementById('gallery').innerText = '';
+  const searchInfo = document.getElementById('search-info');
+  let ids = [];
+  if (q!='')  else {
+    ids = await highlights();
+  }
+  ids.map(objectID => getObject(objectID).then(appendArtworkElement));
+}
+
+
+
+

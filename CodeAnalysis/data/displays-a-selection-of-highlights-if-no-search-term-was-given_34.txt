@@ -1,0 +1,178 @@
+import * as DOM from './domHelper.js'
+import {Artwork} from './artwork.js'
+
+export function createArtworkDom(artwork, i) {
+    console.log("creating DOM element")
+    return DOM.container([
+            DOM.linkContainer([
+                DOM.img(artwork.thumbnail, '', 'object-image-' + i),
+                DOM.container([
+                    DOM.textElement(artwork.artist,'span', 'artist'),
+                    DOM.textElement(artwork.title,'span', 'title'),
+                    artwork.date === ""  : DOM.textElement(", "+artwork.date,'span', 'date')
+                ], 'div', 'museum-label')
+            ],'config.html' + "?objectID=" + artwork.id,'object-' + i)
+    ],'div','thumb')
+}export class Artwork {
+    constructor(id, artist, title, date,  thumbnail) {
+        this.id = id;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+        this.thumbnail = thumbnail;
+    }
+}import {removeFromLocalStorage} from "./searchService.js";
+
+export function container(elements, tag='div', theClass) {
+    const container = document.createElement(tag);
+    container.setAttribute('class', theClass);
+    for (let element of elements){
+        container.appendChild(element);
+    }
+    return container;
+}
+
+export function textElement(text, tag, theClass) {
+    const element = document.createElement(tag);
+    element.setAttribute('class', theClass);
+    element.innerText = text;
+    return element;
+}
+
+
+export function img(src, alt, id) {
+    const element = document.createElement('img');
+    element.setAttribute('src', src);
+    element.setAttribute('alt', alt);
+    element.setAttribute('id', id);
+    return element;
+}
+
+export function linkContainer(elements, href,  id) {
+    const container = document.createElement('a')
+    container.setAttribute('href', href);
+    container.setAttribute('id', id);
+    for (let element of elements){
+        container.appendChild(element);
+    }
+    return container
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+export 
+export const cart = "cart";
+
+export function displayCartCount(){
+    let count = JSON.parse(window.localStorage[cart]).length;
+    if(count > 0)
+}const url = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export async function getOneArtworkByID(id) {
+    let obj = getFromLocalStorage(id);
+    if (obj !== null ) 
+
+    let artwork = null;
+
+    await fetch(url + 'objects' + '/' + id, {
+        method: 'GET', headers: {'Content-Type': 'application/json'}
+    })
+        .then(response => {
+            return response.json()
+        })
+        .then(response => {
+            artwork = (response);
+            addToLocalStorage(artwork, "" + id);
+        });
+    return artwork;
+}
+
+export 
+
+export async function addToLocalStorage(element, id) {
+    window.localStorage[id] = JSON.stringify(element);
+}
+
+export function getFromLocalStorage(id) {
+    return JSON.parse(window.localStorage.getItem([id]))
+}
+
+export 
+import {getArtworkIDsFiltered, getOneArtworkByID} from './searchService.js'
+import {Artwork} from "./artwork.js";
+import * as artworkDom from './artworkDom.js'
+import {displayCartCount} from './main.js'
+
+
+
+const form = document.getElementById('search-form');
+form.addEventListener("submit", );
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    let searchInput = urlParams.get("q");
+
+    if (searchInput !== undefined && searchInput !== null)  else {
+        initializeHighlights()
+    }
+
+    displayCartCount();
+});
+
+function initializeHighlights() {
+    let response;
+    fetch('./highlights.json')
+        .then(response => {
+                return response.json();
+            }
+        )
+        .then(result => {
+            return result["highlights"];
+        })
+        .then(result => {
+            response = getHighlightInfo(result);
+        });
+}
+
+
+
+
+
+function getHighlightInfo(highlights) {
+    let gallery = document.getElementById('gallery');
+
+    for (let i in highlights) {
+        if (highlights.hasOwnProperty(i)) {
+            let id = highlights[i];
+            getOneArtworkByID(id).then(result => {
+
+                let artwork = new Artwork(
+                    result.objectID,
+                    result.artistDisplayName,
+                    result.title,
+                    result.objectDate,
+                    result.primaryImageSmall);
+
+                gallery.appendChild(artworkDom.createArtworkDom(artwork, i));
+            })
+
+        }
+    }
+
+}

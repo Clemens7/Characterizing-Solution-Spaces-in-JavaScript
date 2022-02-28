@@ -1,0 +1,78 @@
+remove(369856)export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    let frameStylePrice = 0.0;
+    let matCost = 0.05;
+    switch(frameStyle) {
+        
+        
+        
+        case "elegant" : frameStylePrice = 0.85;
+        break;
+    }
+    let smallPrice = 30 + (frameStylePrice*frameWidth*0.1) + (matCost * matWidth*0.1);
+    let mediumPrice = 2*smallPrice;
+    let largePrice = 3.5*smallPrice;
+    switch(printSize){
+        case "S" : price = smallPrice;
+        break;
+        case "M" : price = mediumPrice;
+        break;
+        case "L" : price = largePrice;
+        break;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { Picture } from './localStorage.js';
+
+export function retrieve(attribute) {
+   
+    if(attribute in localStorage) {
+        return JSON.parse(localStorage[attribute]);
+    }
+}
+
+export function store(attribute, picture) {
+ 
+    localStorage[attribute] = JSON.stringify(picture); 
+}
+
+export 
+
+export function removeFromCart(id) {
+    let existing = localStorage.getItem('cart');
+    existing = existing ? JSON.parse(existing) ;
+    existing = existing.filter(function(el){
+        return el.objectID !== id;
+    });
+    localStorage.setItem('cart', JSON.stringify(existing));
+}
+
+export 
+export 
+
+export function cartSize(){
+    let existing = localStorage.getItem('cart');
+    existing = existing ? JSON.parse(existing) ;
+    return existing.length;
+}
+
+export 
+
+
+export export class Picture{
+	constructor(image,title,artist,date,dimensions){
+		this.image=image;
+		this.artist=artist;
+		this.title=title;
+		this.date=date;
+		this.dimensions=dimensions;
+		this.quantity=0;
+	}
+}
+export class CartPicture{
+	
+}

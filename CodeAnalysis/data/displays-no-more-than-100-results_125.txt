@@ -1,0 +1,179 @@
+import { Art,ObjectsList,SearchList } from './art.js';
+import * as ArtCache from './art-cache.js'
+
+const MET_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export let art_collection = [];
+
+export let IDList = [];
+
+/*
+
+
+export 
+
+export 
+
+/*
+    return fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchTerm}`)
+        .then(response => {
+            console.log("call to MOMA Api with search: "+searchTerm.value)
+            return response.json()
+        }).then(value => {
+            console.log(" call successfull: IDList"+ IDList.length)
+            return IDList = value.objectIDs;
+        }).catch(reason => {
+            console.log(reason);
+            return [];
+        });*/
+
+
+export 
+
+export 
+
+
+export 
+
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export class Art {
+    
+}
+
+export class ObjectsList {
+    
+}
+
+export class SearchList {
+    
+}
+const LS_CART_KEY = 'cart';
+
+/*
+
+export class CartEntry {
+    
+}
+
+/*
+
+export function getCartContent() {
+    const jsonCartContent = localStorage.getItem(LS_CART_KEY);
+    const cartContent = jsonCartContent  : [];
+    let missingUUID = false;
+    for (const item of cartContent) 
+    if (missingUUID) 
+    return cartContent;
+}
+
+export 
+
+export 
+
+export 
+
+/*
+
+export 
+import {getCartContent} from "./cart-cache.js";
+
+document.addEventListener('DOMContentLoaded', () => updateHeaderCartItemCount());
+
+export function updateHeaderCartItemCount() {
+    const count = getCartContent().length;
+    if (count > 0)  else {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}
+const LS_CART_KEY = 'search';
+
+/*
+
+export class SearchItem {
+    
+}
+
+/*
+
+export function getSearchCartContent() {
+    const jsonCartContent = localStorage.getItem(LS_CART_KEY);
+    const cartContent = jsonCartContent  : [];
+    let missingUUID = false;
+    for (const item of cartContent) 
+    if (missingUUID) 
+    return cartContent;
+}
+
+export 
+
+export 
+
+/*
+
+export import {updateHeaderCartItemCount} from "./cart-dom.js";
+import * as SearchCache from "./search-cache.js";
+import * as ArtAPI from "./art-api.js";
+
+
+document.getElementById('test-add').addEventListener('click', );
+document.getElementById('test-clear').addEventListener('click', );
+document.getElementById('test-update').addEventListener('click', );
+
+/*
+document.addEventListener('DOMContentLoaded', () => updatePage());
+
+var count = parseInt(localStorage['count'] || '0', 10);
+var msg = "Placeholder";
+
+
+
+
+submitSearch();
+
+async function submitSearch() {
+    const form= document.querySelector('*');
+    const cart = document.getElementById('gallery')
+
+    form.addEventListener('submit',)
+
+}
+
+function updatePage() {
+    updateHeaderCartItemCount();
+    updateSearchCart();
+}
+
+
+
+
+
+function updateSearchCart() {
+    const cart = document.getElementById('gallery')
+    if (cart) {
+        const cartContent = SearchCache.getSearchCartContent();
+        console.log("Going into update SearchCart")
+        let cartItems;
+        cartItems = Array.from(cart.getElementsByClassName('thumb'));
+        for (const item of cartContent) 
+
+    }
+}
+
+
+
+
+
+
+
+

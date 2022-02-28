@@ -1,0 +1,92 @@
+import { Artwork } from '/artwork.js';
+
+export function retrieve(objID) {
+    const key = objID;
+    if(key in localStorage) 
+}
+
+export 
+
+import { Artwork } from "/artwork.js";
+
+export class ArtworkDocumentContainer {
+
+	constructor(containerID='gallery'){
+		this.container = document.getElementById(containerID);
+		if(!this.container) 
+	}
+
+	clear(){
+		this.container.innerHTML = '';
+	}
+
+
+	
+}export class Artwork {
+	
+}let cart = [];
+
+
+export function retrieve() {
+    if(!localStorage['cart']){
+        return;
+    }}
+
+
+export 
+import { Artwork } from '/artwork.js';
+import * as ArtworkCache from '/artwork-cache.js';
+import { ArtworkDocumentContainer } from '/artwork-dom.js';
+
+export ;
+
+export 
+
+
+export async function displayHighlights() {
+	let artworks = [];
+
+	const response = await fetch('/highlights.json');
+	const rawData = await response.json();
+	let responseData = await rawData.highlights;
+
+	const artworkContainer = new ArtworkDocumentContainer();
+    artworkContainer.clear();
+
+	for(let i = 0; i < responseData.length; ++i){
+			
+			artworks[i] = ArtworkCache.retrieve(responseData[i]);
+			if(artworks[i])
+
+			const objURL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${responseData[i]}`;
+			const objResponse = await fetch(objURL);
+    import * as SearchAPI from '/search-api.js';
+    import { Artwork } from '/artwork.js';
+    import { ArtworkDocumentContainer } from '/artwork-dom.js';
+    import * as CartCache from '/cart-cache.js';
+
+
+
+    ;
+
+    document.addEventListener('DOMContentLoaded', event => {    
+
+      const cache = CartCache.retrieve();
+      const cart = document.getElementById('cart-link');
+      if(cache)
+      const params = (new URL(document.location)).searchParams;
+      let searchQuery = params.get('q');
+      if(searchQuery == "null")
+      else if(!searchQuery){
+        SearchAPI.displayHighlights();
+        return;
+      }
+
+
+
+      
+});
+
+    
+
+

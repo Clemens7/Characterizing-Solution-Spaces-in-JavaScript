@@ -1,0 +1,69 @@
+export 
+
+export export class Artwork{
+    
+}
+    import {calculatePrice} from "./frame.js";
+    import * as GalleryAPI from "./searchAPI.js";
+    import {showNumItems} from "./common.js";
+    import {render} from "./frame.js";
+    import * as GalleryCache from "./artwork-cache.js"
+
+    /*let cart = [{objectID: 823328, printSize: 'L', frameWidth: 27, frameStyle: 'classic', matWidth: 31, matColor: 'indigo'},
+      {objectID: 436529, printSize: 'S', frameWidth: 20, frameStyle: 'shabby', matWidth: 0},];
+    localStorage.setItem("cart", JSON.stringify(cart));*/
+
+    let artworks = JSON.parse(localStorage.getItem("cart"));
+
+    setUp();
+
+    function setUp(){
+      document.getElementById('cart-link').innerHTML = 'Cart' + showNumItems();
+      showArtworks();
+      setTotalPrice();
+
+      const form = document.getElementById('cart');
+      form.addEventListener("submit", removeElement, false)
+    }
+
+    async function showArtworks() {
+      const results = document.getElementById('cart');
+      results.innerHTML = '';
+      if (artworks == null ){
+        results.innerHTML = `<p> There are no items in your shopping cart.</p>`;
+        document.getElementById('checkout-button').disabled = true;
+      }
+    }
+
+    
+
+    
+
+    function setTotalPrice() {
+      let total = 0;
+      for (let artwork in artworks)}
+
+    
+
+  
+
+
+
+export function showNumItems() {
+    let artworks = JSON.parse(localStorage.getItem("cart"));
+    let counter = 0;
+    for (let artwork in artworks){
+        return "";
+    }
+}export 
+
+export 
+
+export 
+import {Artwork} from "./artwork.js";
+
+export 
+
+
+export 
+

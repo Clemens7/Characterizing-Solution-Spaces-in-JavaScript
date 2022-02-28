@@ -1,0 +1,94 @@
+export class Artwork {
+    
+}const key = 'cart';
+
+export 
+
+export function getCartItemCount() {
+    return key in localStorage  : 0;
+}
+
+export const CONFIG_URL = 'config.html';
+
+export 
+
+export 
+
+export 
+
+export import * as Cache from "../cache/met-cache.js";
+import {Artwork} from "./artwork.js";
+import {retrieveObject} from "../cache/met-cache.js";
+
+export async function getSearchResults(searchTerm) {
+    let cachedArtworks = Cache.retrieve(searchTerm);
+    if(cachedArtworks)
+    const ids = await getSearchResultsIDs(searchTerm);}
+
+export 
+
+
+async function getSearchResultsIDs(searchTerm) {
+    const url = searchApiUrl(searchTerm);
+    try {
+        const response = await fetch(url);}
+
+
+
+
+export 
+
+
+
+
+function searchApiUrl(searchTerm) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchTerm}`;
+}export function retrieve(searchTerm) {
+    let lowerCaseSearch = searchTerm ? searchTerm.toLowerCase();
+    if (lowerCaseSearch in localStorage) 
+}
+
+export 
+
+export 
+
+export 
+    import * as MetAPI from './met/met-api.js';
+    import { SearchDocumentContainer } from './dom-manipulator/search.js';
+    import {getCartItemCount} from "./cache/cart-cache.js";
+
+    /*
+    async function artworkSearch(searchTerm) {
+      document.getElementById('search-info').innerText = `Searching for “${searchTerm}”...`;
+      const artworks = await MetAPI.getSearchResults(searchTerm);;
+      document.getElementById('search-info').innerText = `Found ${artworks.length} ${pluralString} for “${searchTerm}”`;
+      if(!artworks) }
+
+     synchronized url and search bar input
+    document.addEventListener('DOMContentLoaded', event => {
+      const cartItemCount = getCartItemCount();
+      const cartItemsString = cartItemCount === 0 ? '' ;
+      document.getElementById('cart-link').innerText = `Cart${cartItemsString}`;
+
+      const params = (new URL(document.location)).searchParams;
+      const query = params.get('q');
+      if(!query) 
+      document.getElementById('search').value = query;
+      artworkSearch(query);
+    });
+
+    
+
+
+    const form = document.querySelector('main');
+    form.addEventListener('submit', );
+
+  import * as DOM from './dom-helper.js';
+
+export class SearchDocumentContainer {
+    
+
+    
+
+    
+}

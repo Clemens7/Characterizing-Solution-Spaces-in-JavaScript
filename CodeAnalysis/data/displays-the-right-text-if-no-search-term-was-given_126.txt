@@ -1,0 +1,76 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    
+    return new (P || (P = Promise))(function (resolve, reject) {
+        
+        
+        function step(result) { result.done ? resolve(result.value) ; }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export function setCurrentCartCount() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let storage = localStorage.getItem("cart");
+        if (storage !== null) 
+    });
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        
+        
+        function step(result) { result.done  : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export function getObject(objectId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const cachedObject = localStorage.getItem(objectId);
+        if (cachedObject) 
+        else {
+            const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`;
+            const response = yield fetch(API_URL);
+    });
+}
+export 
+export function fetchResults(searchResponse, resultLimit) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let result = [];
+        if (searchResponse.objectIDs !== null) {
+            for (let objId of searchResponse.objectIDs) {
+                if (result.length === resultLimit) 
+                const artObject = yield getObject(objId.toString());
+            }});
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done  : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { fetchResults, search } from "./met-api.js";
+import { setCurrentCartCount } from "./cart-count.js";
+const RESULT_LIMIT = 100;
+performSearch("q");
+setCurrentCartCount();
+function performSearch(queryParam) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const searchQuery = (new URL(document.location.toString())).searchParams.get(queryParam);
+        const searchInfo = document.getElementById("search-info");
+        const gallery = document.getElementById("gallery");
+        let resultNumber = 0;
+        if (searchQuery === null ) {
+            let highlightsResponse = yield fetch('highlights.json');
+            let highlightsJson = [];
+            yield highlightsResponse.json()
+                .then(res => highlightsJson = res.highlights);
+            const highlightsSearchResponse = {
+                objectIDs: highlightsJson,
+                total: highlightsJson.length
+            };
+            let connectedResults = yield fetchResults(highlightsSearchResponse, highlightsJson.length);
+    });
+}
+

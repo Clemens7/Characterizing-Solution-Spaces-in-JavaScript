@@ -1,0 +1,56 @@
+function getCartData() {
+  let storageData = localStorage.getItem('cart');
+  if (!storageData) 
+  return JSON.parse(storageData);
+}
+
+function updateNavigationText(cartData) {
+  if (cartData.length == 0) {
+    document.getElementById('cart-link').innerText = 'Cart';
+  }
+}
+
+async function fetchProductData(objectID) {
+  let response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+  let data = await response.json();}
+
+
+async function getObject(objectID){
+  let object;
+  if(!localStorage.getItem(objectID)){
+    object = await fetchProductData(objectID);
+    
+
+    async function getHighlights() {
+      let result = await fetch("highlights.json");
+      return result.json();
+    }
+
+    
+
+    
+
+    let cartData = getCartData();
+    updateNavigationText(cartData);
+
+    var parseQueryString = ;
+
+    async function displayProducts(objects) {
+      let html = '';
+
+      await Promise.all(objects.map(async (objectID, i) => {
+        if (i >= 100) 
+
+        let product = await getObject(objectID);}));}
+
+
+
+    if (window.location.href.indexOf("?q=") > -1)  else {
+      (async () => {
+        let highlights = await getHighlights();
+        console.log(highlights);
+        displayProducts(highlights.highlights);
+      })();
+    }
+
+  

@@ -1,0 +1,119 @@
+import {SearchItem} from "./search-item.js";
+
+export async function retrieve(objectID) {
+    const key = objectID;
+    if(key in localStorage)  else {
+        try {
+            const url = api_object(objectID);
+            const response = await fetch(url);
+    }}
+
+
+
+function api_object(objectID) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+}
+import {cart} from "./cart_objects.js";
+
+function displayCartCount() {
+    const count = cart.count();
+    let text = "Cart";
+    if (count > 0) 
+    document.getElementById("cart-link").innerText = text;
+    console.log("refreshed Cart Count");
+}
+
+displayCartCount();
+cart.addOnChangeEvent(displayCartCount);export class Frame {
+    
+}
+
+class Cart {
+
+    constructor() {
+        this._onChangeEvents = [];
+        this._load();
+        window.addEventListener('storage', );
+    }
+
+    addOnChangeEvent(event) {
+        this._onChangeEvents.push(event);
+    }
+
+    
+
+    _load() {
+        let cart = window.localStorage.getItem("cart");
+        if (cart !== null) 
+        if (!Array.isArray(this._frames)) {
+            this._frames = [];
+        }
+    }
+
+    
+
+    
+
+    
+
+    count() {
+        return this._frames.length;
+    }
+
+    
+}
+
+export const cart = new Cart();export 
+
+export 
+
+export 
+
+export 
+export class SearchItem {
+    
+}
+
+export var SearchParser = {
+    serialize : ,
+    parse : 
+};
+import * as DOM from './dom-helpers.js';
+import * as Cache from './cache.js';
+import {SearchParser} from './search-item.js';
+
+const searchInfo = document.getElementById("search-info");
+const artworkLimit = 100;
+readGETParameter();
+
+function readGETParameter(){
+    const url = new URL(window.location.href);
+    const query = url.searchParams.get('q');
+    loadArtworks(query);
+}
+
+
+
+async function loadArtworks(query){
+    const gallery = document.querySelector(".gallery");
+    gallery.innerHTML = '';
+
+    if (query) 
+    let objectIDs = await getObjectIDsFromQuery(query);
+    if (query) 
+
+    for (let objectID of objectIDs.slice(0,artworkLimit)) {
+        let artwork = await Cache.retrieve(objectID);}
+
+async function getObjectIDsFromQuery(query){
+    if (!query) {
+        const highlights = await fetch('./highlights.json');
+        const rawData = await highlights.json();
+        return await rawData.highlights;
+    }}
+
+
+
+
+
+

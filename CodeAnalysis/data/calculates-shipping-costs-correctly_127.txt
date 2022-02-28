@@ -1,0 +1,221 @@
+import * as metObjCache from './metObjCache.js';
+import {HTTP} from "./http.js";
+export class API {
+
+    
+
+    
+
+    
+
+    
+}
+import {Destination} from './destination.js';
+
+export async function retrieve() {
+    const url = api_url();
+    try{
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const responseDestinations = await rawData.destinations;
+        console.log(responseDestinations);
+        const destinations = responseDestinations.map(
+            destination => new Destination(destination.country,
+                destination.displayName,
+                destination.cost)
+        );
+        return destinations;
+    }}
+
+
+function api_url(){
+    const API_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping'
+    return API_URL;
+}
+
+
+import {CartObj} from './cartObj.js';
+
+const KEY = 'cart';
+let cart = [];
+
+export function retrieve() {
+    if(KEY in localStorage) {
+        let response = JSON.parse(localStorage[KEY]);
+        let newArray = [];
+        for (let cartObj of response){
+            newArray.push(new CartObj(cartObj.objectID, cartObj.printSize,
+                cartObj.frameStyle, cartObj.frameWidth, cartObj.matColor,
+                cartObj.matWidth));
+        }
+        return newArray;
+    }
+}
+
+/*
+export function addObjToCart(cartObj) {
+    if (cartObj===undefined || !cartObj){
+        return;
+    }
+    cart.push(cartObj);
+    store();
+}*/
+
+export 
+
+export 
+
+
+
+
+/*
+
+import * as Cart from './cartCache.js';
+
+
+Example for adding cartObj to cart:
+Cart.addToCart(123456, 'm', 'woody', 500, 'green', 500);
+Cart.addToCart(5654561, 'l', 'allen', 200, 'blue', 500);
+
+/*
+Example how to use items from Cart
+let currentCart = Cart.retrieve();
+console.log(`length of currentcart: ${currentCart.length}`);
+console.log(`response from reading cart: ${currentCart[0].objectID}`);
+console.log(`response from reading cart: ${currentCart[1].objectID}`);
+export class CartObj{
+    constructor(objectID, printSize, frameStyle, frameWidth, matColor, matWidth) {
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+    }
+}
+import * as artmartAPI from './artmartAPI.js';
+import * as frame from './frame.js';
+import * as Cart from './cartCache.js'
+
+
+let shippingCost = 0;
+let shippingList;
+let cartObjects = Cart.retrieve();
+
+if (cartObjects.length === 0) 
+
+async function loadShippingCountries(){
+    const destinations = await artmartAPI.retrieve();
+    shippingList = destinations;
+    if (!destinations)else {
+        generateOptionHTML(destinations);
+        document.getElementById("pay-button").disabled = false;
+    }
+}
+function generateOptionHTML(destinations) {
+    const selector = document.getElementById("country");
+    for (let dest of destinations){
+        const option = document.createElement("option");
+        option.innerText = dest.displayName;
+        option.setAttribute("value", dest.country);
+        selector.appendChild(option);
+    }
+}
+
+
+
+function setShippingCost(){
+    const selector = document.getElementById("country");
+    for (let dest of shippingList){
+        if (dest.country === selector.value){
+            let cost = parseFloat(parseFloat(dest.cost)/100).toFixed(2);
+            console.log("Currently selected country is " + dest.country + ": " + dest.displayName);
+            document.getElementById("price-shipping").innerHTML = cost;
+        }
+    }
+}
+
+
+function calculateSubtotal(){
+    console.log('in calculateSubtotal');
+    let cart = Cart.retrieve();
+    let subtotal = 0.0;
+
+    for (let item of cart){
+        console.log(`Checking price for ${item.objectID}`);
+        subtotal = subtotal + frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    subtotal = subtotal.toFixed(2);
+    document.getElementById("price-subtotal").innerText = subtotal;
+}
+
+function calculateTotal(){
+    console.log('In calculateTotal');
+    let subtotal = parseFloat(document.getElementById('price-subtotal').innerHTML);
+    console.log(`Got subtotal: ${subtotal}`);
+    let shippingCost = parseFloat(document.getElementById('price-shipping').innerHTML);
+    console.log(`Got shippingCost: ${shippingCost}`);
+
+    let total  = subtotal + shippingCost;
+    total = total.toFixed(2);
+
+    document.getElementById("price-total").innerHTML = total;
+}
+
+window.addEventListener('DOMContentLoaded', async function () {
+    calculateSubtotal();
+    await loadShippingCountries();
+
+    setShippingCost();
+    calculateTotal();
+    document.getElementById('country').addEventListener('change',function (e) {
+        calculateSubtotal();
+        setShippingCost();
+     calculateTotal();
+    });
+});
+export class Destination{
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}
+
+import {API} from "./api.js";
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    switch (frameStyle) {
+        case "classic":
+            price += 1 * frameWidth;
+            break;
+        case "natural":
+            price += 0.80 * frameWidth;
+            break;
+        
+        
+    }
+    price += 0.05 * matWidth;
+    switch (printSize) {
+        case "M":
+            price *= 2;
+            break;
+        case "L":
+            price *= 3.5;
+            break;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+export const HTTP = Object.freeze({
+    OK: 200,
+});
+
+
+export 
+
+export 

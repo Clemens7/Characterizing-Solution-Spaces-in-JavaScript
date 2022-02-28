@@ -1,0 +1,158 @@
+import { RequestService } from './RequestService.js'
+import { baseUrlArtmart } from './environment.js'
+
+export class ArtmartService {
+
+    async countries(shouldCache) {
+        const rs = new RequestService(baseUrlArtmart, shouldCache)
+        return rs.get(`shipping`)
+    }
+
+}
+export function get(key) {
+    return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)) : null
+}
+
+export async function set(key, callback) {
+    return localStorage.setItem(key, JSON.stringify(await callback()))
+}
+
+export 
+import { calculatePrice } from './frame.js';
+import * as CacheService from './CacheService.js';
+import { ArtmartService } from "./ArtmartService.js";
+
+let countries = null;
+
+let subtotal = 0;
+
+(async () => {
+  checkCart();
+  subtotal = showSubtotal();
+  document.getElementById("country").addEventListener("change", calcTotal);
+  try {
+    const artmartService = new ArtmartService;
+    const { destinations } = await artmartService.countries();
+    countries = destinations;
+    fillCountries(destinations);
+    enableElements();
+  }
+  
+
+})();
+
+function checkCart() {
+  let cartItems = CacheService.get("cart");
+  if (cartItems === null || cartItems.length === 0) 
+}
+
+function fillCountries(destinations) {
+  let countrySelector = document.getElementById("country");
+  for (let i = 0; i < destinations.length; i++) {
+    let currOption = document.createElement("option");
+    currOption.innerHTML = destinations[i].displayName;
+    currOption.setAttribute("value", destinations[i].country);
+    countrySelector.appendChild(currOption);
+  }
+}
+
+function enableElements() {
+  document.getElementById("pay-button").removeAttribute("disabled");
+  calcTotal();
+}
+
+function calcTotal() {
+  let shipping = calcShipping();
+  document.getElementById("price-total").innerHTML = (subtotal + shipping).toFixed(2);
+}
+
+function calcShipping() {
+  let countrySelector = document.getElementById("country");
+  let shippingCost = parseInt(countries[countrySelector.selectedIndex].cost) / 100;
+  document.getElementById("price-shipping").innerHTML = shippingCost.toFixed(2);
+  return shippingCost;
+}
+
+function showSubtotal() {
+  let cartItems = CacheService.get("cart");
+  let subtotal = 0;
+  for (let i = 0; i < cartItems.length; i++) {
+    subtotal += calculatePrice(cartItems[i].printSize, cartItems[i].frameStyle, parseInt(cartItems[i].frameWidth), parseInt(cartItems[i].matWidth));
+  }
+  document.getElementById("price-subtotal").innerHTML = subtotal.toFixed(2);
+  return subtotal;
+}export const baseUrlMetropolitan = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+export const baseUrlArtmart = 'https://web-engineering.big.tuwien.ac.at/s20/a2/'
+export const apiResultLimit = 100import { PrintSizes } from "./PrintSize.js";
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    const frameStylePrices = {
+        'classic': 1.0,
+        'natural': 0.80,
+        'shabby': 0.90,
+        'elegant': 0.85
+    }
+
+    price = price + (frameStylePrices[frameStyle] * frameWidth) + (0.05 * matWidth)
+    if (printSize === PrintSizes.MEDIUM) {
+        price = price * 2.0;
+    }
+    if (printSize === PrintSizes.LARGE) {
+        price = price * 3.5;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { getPrintSizes } from "./frame.js";
+
+export class PrintSize {
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+}
+
+export const PrintSizes = Object.freeze({
+    SMALL: 'S',
+    MEDIUM: 'M',
+    LARGE: 'L'
+});import * as CacheService from './CacheService.js';
+export class RequestService {
+
+    constructor(baseUrl, shouldCache = false) {
+        this.baseUrl = baseUrl
+        this.shouldCache = shouldCache;
+    }
+
+    async get(path) {
+        let resp = null;
+        const cachedResponse = CacheService.get(`cachedResponse-${path}`);
+
+        if (cachedResponse ) 
+        else {
+            resp = await (await fetch(this.baseUrl + path, { method: 'GET' })).json()
+            CacheService.set(`cachedResponse-${path}`, _ => resp);
+        }
+        return await resp
+    }
+}

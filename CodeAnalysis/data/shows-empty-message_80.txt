@@ -1,0 +1,134 @@
+import { Artwork } from './artwork.js';
+import { retrieveArtwork, storeArtwork } from './cache.js';
+
+const baseUrl = 'https://collectionapi.metmuseum.org/public/collection/v1';
+const searchEndpoint = baseUrl + '/search';
+const objectsEndpoint = baseUrl + '/objects';
+
+export 
+
+export 
+
+export export class Artwork {
+
+
+    
+
+}import {Artwork} from "./artwork.js";
+import {Cart} from "./cart.js";
+
+
+
+export 
+
+export 
+
+function getCartStorageKey() {
+    return "cart";
+}
+
+export function retrieveCart() {
+    let key = getCartStorageKey();
+    if (key in localStorage)  else {
+        return new Cart([]);
+    }
+}
+
+export 
+
+import * as Cache from "./cache.js";
+import * as Util from "./util.js";
+import * as Frame from "./frame.js";
+import {Cart} from "./cart.js";
+import * as Api from "./api.js";
+
+async function loadData() {
+    cartSection.innerText = '';
+
+    if(Cache.retrieveCart().getItemCount() === 0) {
+        const cartItemDiv = document.createElement('div');
+        cartItemDiv.classList.add('cart-item');
+        const emptyCartSpan = document.createElement('span');
+        emptyCartSpan.innerText = 'There are no items in your shopping cart.';
+        cartItemDiv.appendChild(emptyCartSpan);
+        cartSection.appendChild(cartItemDiv);
+    }
+    addCheckoutSection();
+}
+
+
+
+
+
+
+
+
+
+function addCheckoutSection() {
+    const cartTotalDiv = document.createElement('div');
+    cartTotalDiv.classList.add('cart-total');
+
+    const priceDiv = document.createElement('div');
+    priceDiv.classList.add('price');
+    priceDiv.innerText = 'Total: € ';
+    const priceTotalSpan = document.createElement('span');
+    priceTotalSpan.id = 'price-total';
+    priceTotalSpan.innerText = Util.formatPrice(Cache.retrieveCart().getTotalPrice());
+    priceDiv.appendChild(priceTotalSpan);
+
+    const checkoutButton = document.createElement('button');
+    checkoutButton.type = 'button';
+    checkoutButton.id = 'checkout-button';
+    checkoutButton.innerText = 'Checkout';
+    checkoutButton.disabled = Cache.retrieveCart().getItemCount() === 0;
+    checkoutButton.addEventListener('click', );
+
+    cartTotalDiv.appendChild(priceDiv);
+    cartTotalDiv.appendChild(checkoutButton);
+
+    cartSection.appendChild(cartTotalDiv);
+}
+
+const cartSection = document.getElementById('cart');
+
+loadData();
+import * as Cache from './cache.js';
+import {calculatePrice} from './frame.js';
+
+export class Cart {
+
+    constructor(items) {
+        this.items = items;
+    }
+
+    isEmpty() {
+        return this.getItemCount() === 0;
+    }
+
+    getItemCount(){
+        if(this.items === undefined)
+            
+        return this.items.length;
+    }
+
+    
+
+    getTotalPrice() {
+        let total = 0;
+        this.items.map();
+        return total;
+    }
+}export 
+
+export 
+
+export import { retrieveCart } from './cache.js';
+
+document.addEventListener("DOMContentLoaded",() => {
+    const cart = retrieveCart();
+    if(!cart.isEmpty())
+});export 
+
+export function formatPrice(cost) {
+    return (cost / 100).toFixed(2);
+}

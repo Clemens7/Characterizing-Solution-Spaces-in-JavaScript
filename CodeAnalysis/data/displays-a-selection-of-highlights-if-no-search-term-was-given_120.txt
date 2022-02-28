@@ -1,0 +1,166 @@
+import * as Storage from './picture-storage.js'
+
+/*
+export function getCartString() {
+    let cart = Storage.get("cart");
+    if (!cart ) {
+        return "Cart";
+    }}
+export function setAttributes(element, attributes) {
+    for (let key in attributes) {
+        if (typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+
+    return element;
+}
+
+export function setClassList(element, classes) {
+    for (let className of classes) {
+        if (!element.classList.contains(className)) {
+            element.classList.add(className);
+        }
+    }
+    return element;
+}
+
+export function container(children, tag='div') {
+    const container = document.createElement(tag);
+    for (let child of children) {
+        container.appendChild(child);
+    }
+    return container;
+}
+
+export function innerTextElement(text, tag) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}import { Picture } from './picture.js';
+import * as PictureCache from './picture-storage.js';
+
+const SEARCH_RESULT_SIZE = 100;
+
+export async function retrieve_picture(objectID) {
+    let picture = PictureCache.get(objectID);
+    if(picture)
+    
+
+    const url = object_url(objectID);
+
+    try {
+        const response = await fetch(url);
+        if (response.status !== 200) 
+
+        const pictureData = await response.json();
+        picture = new Picture(
+            objectID,
+            pictureData.primaryImage,
+            pictureData.primaryImageSmall,
+            pictureData.artistDisplayName,
+            pictureData.title,
+            pictureData.objectDate
+        );
+        PictureCache.store(objectID, picture);
+        return picture;
+    }}
+
+export async function search_pictures(searchTerm) {
+    let url = 'highlights.json';
+    if (searchTerm) 
+    
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const objectIDs = await (searchTerm  : rawData.highlights);
+
+        return {
+            total: objectIDs ? objectIDs.length ,
+            objectIDs: (objectIDs ? objectIDs.slice(0, SEARCH_RESULT_SIZE) ),
+        }
+    }}
+
+export 
+
+function object_url(objectID) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    return API_URL;
+}
+
+
+
+import { Picture } from './picture.js';
+import * as DOM from './dom-helpers.js';
+
+export function createThumbnail(picture) {
+    return DOM.setClassList(DOM.container([
+        DOM.setAttributes(
+            DOM.container([
+                DOM.setAttributes(document.createElement('img'), {
+                    src: picture.imageURLSmall, 
+                    alt: 'Picture of ' + picture.title + ' by ' + picture.artist,
+                    id: 'object-image-' + picture.objectID
+                }),
+                createLabel(picture)
+            ], 'a'), {
+            href: 'config.html?objectID=' + picture.objectID, 
+            id: 'object-' + picture.objectID
+        })
+    ]), ['thumb']);
+}
+
+export function createLabel(picture) {
+    return DOM.setClassList(
+        DOM.container([
+            DOM.setClassList(DOM.innerTextElement(picture.artist, 'span'), ['artist']),
+            DOM.setClassList(DOM.innerTextElement(picture.title + ', ', 'span'), ['title']),
+            DOM.setClassList(DOM.innerTextElement(picture.date, 'span'), ['date']),
+        ]), ['museum-label']
+    );
+}export function get(key) {
+    if (key in window.localStorage) 
+}
+
+export function store(key, data) {
+    localStorage[key] = JSON.stringify(data);
+}export class Picture {
+    constructor(objectID, imageURL, imageURLSmall, artist, title, date) {
+        this.objectID = objectID;
+        this.imageURL = imageURL;
+        this.imageURLSmall = imageURLSmall;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+    }
+}
+    import { Picture } from './picture.js';
+    import * as PictureAPI from './picture-api.js';
+    import * as PictureDOM from './picture-dom.js';
+    import * as CartHelper from './cart.js';
+
+    document.getElementById("cart-link").innerText = CartHelper.getCartString();
+
+    let searchParam = (new URLSearchParams(window.location.search)).get('q');
+    let searchInfoText = document.getElementById('search-info');
+
+    if (searchParam) 
+
+    let pictureSearch = PictureAPI.search_pictures(searchParam).then((response) => {
+      if (response['total'] <= 0) 
+
+      response['objectIDs'].forEach(objectID => {
+        PictureAPI.retrieve_picture(objectID).then((picture) => {
+          document.getElementById("gallery").appendChild(
+            PictureDOM.createThumbnail(picture)
+          )
+        });
+      });
+
+      return response.total;
+    });
+
+    if (searchParam) 
+
+    
+  

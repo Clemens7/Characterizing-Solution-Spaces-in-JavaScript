@@ -1,0 +1,294 @@
+
+    import { CartDocumentContainer } from './dom-helpers.js';
+    import { FramedPicture } from './config.js';
+    const cartDocumentContainer = new CartDocumentContainer();
+    (async () => {
+      try {
+        await cartDocumentContainer.displayCartItems();
+        await getNumberOfCartItems();
+        const removeButtons = document.querySelectorAll('.cart-remove');
+        removeButtons.forEach();
+      } 
+    })();
+
+
+    async function getNumberOfCartItems() {
+       let items = await FramedPicture.loadFromLocalStorage();
+       if (items.length>0)else{
+         document.getElementById('cart-link').innerText = "Cart";
+       }
+
+    }
+    document.getElementById('checkout-button').onclick = ;
+  
+    import * as Frame from './frame.js';
+    import {FrameConfiguration,FramedPicture} from './config.js';
+    import {appendImageLabel} from './dom-helpers.js'
+
+    const container = document.getElementById("preview-container");
+    const preview = document.getElementById("preview-image");
+    const priceTag = document.getElementById('price');
+    const totalSize = document.getElementById('total-size');
+    const frameWidth = document.getElementById('frame-width');
+    const frameRange = document.getElementById('frame-width-range');
+    const matWidth = document.getElementById('mat-width');
+    const matRange = document.getElementById('mat-width-range');
+    const configForm = document.getElementById('config-form');
+
+    const searchParams = new URL(document.location).searchParams;
+    const objectID = searchParams.get('objectID');
+    if(!objectID)
+    
+
+    getNumberOfCartItems();
+
+    async function getNumberOfCartItems() {
+      let items = await FramedPicture.loadFromLocalStorage();
+      if (items.length>0)
+      return ;
+    }
+
+    const frameConfig = new FrameConfiguration();
+    let framedImage;
+    FramedPicture.fromObjectID(objectID,preview,frameConfig)
+      .catch()
+      .then((loadedImage)=>{
+        framedImage = loadedImage;
+
+        appendImageLabel(loadedImage.picture,document.getElementById('preview-container'));
+
+        preview.addEventListener('load',updatePrintSizes);
+        preview.addEventListener('load',updatePriceAndPreview);
+
+        configForm.addEventListener('submit',);
+
+        function updatePrintSizes() {
+          function setPrintSize(text,size,element){
+            element.innerHTML = `${text}<br>${size[0]/10} × ${size[1]/10} cm`;
+          }
+          preview.removeEventListener('load',updatePrintSizes);
+
+          const sizes = Frame.getPrintSizes(preview);
+          setPrintSize("Small",sizes.S,document.getElementById('print-size-s-label'));
+          setPrintSize("Medium",sizes.M,document.getElementById('print-size-m-label'));
+          setPrintSize("Large",sizes.L,document.getElementById('print-size-l-label'));
+        }
+    });
+
+    if(searchParams.has('printSize'))
+    if(searchParams.has('frameStyle'))
+    if(searchParams.has('frameWidth'))
+    if(searchParams.has('matColor'))
+    if(searchParams.has('matWidth'))
+    let printSizeButtonName="";
+    switch(frameConfig.printSize) {
+      case 'S':
+        printSizeButtonName = 'print-size-s';
+        break;
+      
+      
+    }
+    document.getElementById(printSizeButtonName).checked = true;
+
+    frameRange.value = frameWidth.value = frameConfig.frameWidthCM;
+
+    document.getElementById('frame-style-'+frameConfig.frameStyle).checked = true;
+
+    matRange.value = matWidth.value = frameConfig.matWidthCM;
+
+    document.getElementById('mat-color-'+frameConfig.matColor).checked = true;
+
+    frameWidth.addEventListener('change',);
+    frameRange.addEventListener('input',);
+    matWidth.addEventListener('change',);
+    matRange.addEventListener('input',);
+
+    const printSizeButtons = configForm.printSize;
+    for(const printSizeButton of printSizeButtons) {
+      printSizeButton.addEventListener('change',)
+    }
+
+    const frameStyleButtons = configForm.frameStyle;
+    for(const frameStyleButton of frameStyleButtons) {
+      frameStyleButton.addEventListener('change',)
+    }
+
+    const matColorButtons = configForm.matColor;
+    for(const matColorButton of matColorButtons) {
+      matColorButton.addEventListener('change',)
+    }
+
+    function updatePriceAndPreview() {
+      if(framedImage)
+        framedImage.render(container);
+
+      priceTag.textContent = `€ ${frameConfig.price.toFixed(2)}`;
+
+      const frameMatWidth = Number(frameWidth.value)+Number(matWidth.value);
+      const printSize = Frame.getPrintSizes(preview)[configForm.printSize.value];
+      totalSize.textContent = `${Number((frameMatWidth*2+printSize[0]*0.1).toFixed(1))} x ${Number((frameMatWidth*2+printSize[1]*0.1).toFixed(1))} cm`;
+    }
+  import * as FrameHelper from './frame.js';
+import * as METAPI from './metAPI.js';
+
+frameWidth and matWidth are given in mm
+export class FrameConfiguration {
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+
+export class FramedPicture {
+  
+
+  
+
+  
+
+  static 
+
+  static 
+
+  
+
+  static 
+
+  static async loadFromLocalStorage(key="cart") {
+    const array = JSON.parse(localStorage.getItem(key));
+    if(!Array.isArray(array)) 
+    const loadingImages = array.map();
+    const pictures = await Promise.all(loadingImages);
+    return pictures;
+  }
+}
+
+export 
+
+export 
+
+export 
+export 
+import * as DOM from './dom-helpers.js';
+import { FramedPicture, calculateTotalCartPrice, cartIsEmpty } from './config.js';
+import { FrameConfiguration } from './config.js';
+import { render } from './frame.js';
+
+export 
+
+export class CartDocumentContainer {
+    constructor(containerID='cart', priceTag='price-total', checkoutButton='checkout-button') {
+        this.container = document.getElementById(containerID);
+        this.priceTag = document.getElementById(priceTag);
+        this.emptyCartMessage = document.createElement('h1');
+        this.emptyCartMessage.innerText = "There are no items in your shopping cart.";
+        this.checkoutButton = document.getElementById(checkoutButton);
+        if(!this.container) 
+    }
+
+    
+    
+
+    
+
+    async displayCartItems() {
+        const itemsTemp = await FramedPicture.loadFromLocalStorage();
+        const items = itemsTemp.reverse();
+        let totalPrice = 0.0;
+        if (Object.keys(items).length === 0) {
+            this.container.prepend(this.emptyCartMessage);
+            this.priceTag.innerText = '-';
+            this.checkoutButton.disabled = true;
+        }
+
+
+
+
+        
+
+        
+    }
+}
+
+export class SearchResultDocumentContainer {
+    
+
+    
+
+    
+}
+export 
+
+export 
+
+export 
+
+export 
+
+import {Picture} from './Picture.js';
+import * as PictureCache from './PictureCache.js'
+export 
+
+export 
+
+
+
+
+import { Picture} from './Picture.js';
+
+export 
+
+export export class Picture {
+    
+}
+       import * as metAPI from './metAPI.js';
+       import {Picture} from './Picture.js';
+       import { SearchResultDocumentContainer } from './dom-helpers.js';
+       import { FramedPicture } from './config.js';
+       let Pictures = new Array();
+
+       async function getHighlights(){
+          let RawData =  await fetch('./highlights.json');
+          let JSONData = await RawData.json();
+          let Highlights = JSONData.highlights;
+          loadPictures(Highlights);
+       }
+
+
+       
+
+       async function getNumberOfCartItems() {
+          let items = await FramedPicture.loadFromLocalStorage();
+          if (items.length>0)
+          return ;
+       }
+
+       document.addEventListener('DOMContentLoaded', event => {
+                const params = (new URL(document.location)).searchParams;
+                getNumberOfCartItems();
+                let q = params.get('q');
+                if(!q) {
+                    getHighlights();
+                    return;
+                }});
+
+        async function loadPictures(ObjectIds){
+          const searchResultContainer = new SearchResultDocumentContainer();
+          Promise.all(
+            ObjectIds.slice(0,100).map(async objectId => {
+              const picture = await metAPI.api_getObject(objectId);
+              searchResultContainer.addSearchResultToDocument(picture);
+            })
+          )
+        }
+
+       const form = document.querySelector('#search-form');
+       form.addEventListener('submit', );
+    

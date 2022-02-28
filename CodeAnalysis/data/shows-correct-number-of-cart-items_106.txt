@@ -1,0 +1,387 @@
+import {calculatePrice, render} from './frame.js';
+
+window.onload = async function() {
+    await fillCart();
+    addNumberToNav();
+};
+
+export function addNumberToNav() {
+    const shoppingCart = getShoppingCartFromLocalStorage();
+    if (shoppingCart.length) 
+}
+
+export 
+
+export function getShoppingCartFromLocalStorage() {
+    const cartInLocalStorage = localStorage.getItem('cart');
+    if (cartInLocalStorage) {
+        const parsedCartInLocalStorage = JSON.parse(cartInLocalStorage);
+        if (typeof parsedCartInLocalStorage === typeof []) {
+            return parsedCartInLocalStorage;
+        }
+    }}
+
+
+
+async function fillCart() {
+    const shoppingCart = getShoppingCartFromLocalStorage();
+    const cartElement = document.getElementById('cart');
+    let totalPrice = 0;
+
+    for (const item of shoppingCart) 
+
+    const cartTotalElement = document.createElement('div');
+    cartTotalElement.setAttribute('class', 'cart-total');
+
+    const totalPriceDiv = document.createElement('div');
+    totalPriceDiv.setAttribute('class', 'price');
+    totalPriceDiv.appendChild(document.createTextNode('Total: € '));
+
+    const totalPriceSpan = document.createElement('span');
+    totalPriceSpan.setAttribute('id', 'price-total');
+    totalPriceSpan.appendChild(document.createTextNode(totalPrice.toString()));
+    totalPriceDiv.appendChild(totalPriceSpan);
+
+    const checkoutButton = document.createElement('button');
+    checkoutButton.setAttribute('type', 'button');
+    checkoutButton.setAttribute('id', 'checkout-button');
+    checkoutButton.appendChild(document.createTextNode('Checkout'));
+
+    checkoutButton.onclick = ;
+
+    if (!shoppingCart.length) {
+        cartElement.appendChild(document.createTextNode("There are no items in your shopping cart."));
+        checkoutButton.setAttribute('disabled', 'true');
+    }
+
+    cartTotalElement.append(totalPriceDiv);
+    cartTotalElement.append(checkoutButton);
+
+    cartElement.appendChild(cartTotalElement);
+}
+
+
+
+
+
+
+
+
+
+
+export 
+import { fetchObjectFromAPI } from './cart.js';
+import { calculatePrice, render, getPrintSizes } from './frame.js';
+import { addNumberToNav, addToShoppingCart } from './cart.js';
+
+document.addEventListener('DOMContentLoaded', initValues);
+
+window.onload = async function () {
+  await validatePageLoad();
+  updatePrice();
+  addNumberToNav();
+
+  this.document
+    .getElementsByName('printSize')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('printSize')[1]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('printSize')[2]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[1]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[2]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[3]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameWidth')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameWidthR')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('matWidthR')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('matWidth')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('submitButton')[0]
+    .addEventListener('click', );
+};
+
+async function validatePageLoad() {
+  var urlParams = new URLSearchParams(window.location.search);
+  const objectID = urlParams.get('objectID');
+
+  if (!objectID) 
+
+  const painting = await fetchObjectFromAPI(objectID);
+  if (painting.message) 
+  const imgElement = document.getElementById('preview-image');
+  imgElement.src = painting.primaryImageSmall;
+  const labelElement = document.getElementById('image-label');
+
+  var artist = document.createElement('span');
+  var artistStyleClass = document.createAttribute('class');
+  artistStyleClass.value = 'artist';
+  artist.setAttributeNode(artistStyleClass);
+  artist.innerText = painting.artistDisplayName;
+
+  var title = document.createElement('span');
+  var titleStyleClass = document.createAttribute('class');
+  titleStyleClass.value = 'title';
+  title.setAttributeNode(titleStyleClass);
+  title.innerText = painting.title;
+
+  var date = document.createElement('span');
+  var dateStyleClass = document.createAttribute('class');
+  dateStyleClass.value = 'date';
+  date.setAttributeNode(dateStyleClass);
+  date.innerText = painting.objectDate;
+
+  labelElement.appendChild(artist);
+  labelElement.appendChild(title);
+  labelElement.appendChild(document.createTextNode(', '));
+  labelElement.appendChild(date);
+
+  imgElement.onload = function () {
+    const sizeS = document.getElementById('print-size-s-value');
+    const sizeM = document.getElementById('print-size-m-value');
+    const sizeL = document.getElementById('print-size-l-value');
+    var sizes = getPrintSizes(imgElement);
+    sizeS.innerText = `${sizes.S[0] / 10} x ${sizes.S[1] / 10}`;
+    sizeM.innerText = `${sizes.M[0] / 10} x ${sizes.M[1] / 10}`;
+    sizeL.innerText = `${sizes.L[0] / 10} x ${sizes.L[1] / 10}`;
+    renderImg();
+  };
+}
+
+function initValues() {
+  var urlParams = new URLSearchParams(window.location.search);
+
+  let printSize = urlParams.get('printSize');
+  let frameStyle = urlParams.get('frameStyle');
+  let frameWidth = urlParams.get('frameWidth');
+  let matColor = urlParams.get('matColor');
+  let matWidth = urlParams.get('matWidth');
+
+  frameWidth = frameWidth / 10;
+  matWidth = matWidth / 10;
+
+  switch (printSize) {
+    
+
+    
+
+    default:
+      document.getElementById('print-size-m').checked = true;
+      break;
+  }
+
+  switch (frameStyle) {
+    
+
+    
+
+    
+
+    default:
+      document.getElementById('frame-style-natural').checked = true;
+      break;
+  }
+
+  if (!frameWidth) frameWidth = 4;
+  document.getElementsByName('frameWidth')[0].value = frameWidth;
+  document.getElementsByName('frameWidthR')[0].value = frameWidth;
+
+  switch (matColor) {
+    
+
+    
+
+    
+
+    
+
+    default:
+      document.getElementById('mat-color-mint').checked = true;
+      break;
+  }
+
+  if (!matWidth) matWidth = 5.5;
+  document.getElementsByName('matWidth')[0].value = matWidth;
+  document.getElementsByName('matWidthR')[0].value = matWidth;
+}
+
+export function updatePrice() {
+  let printSize = 'S';
+
+  if (document.getElementsByName('printSize')[1].checked) printSize = 'M';
+  if (document.getElementsByName('printSize')[2].checked) 
+
+  let frameStyle = 'natural';
+
+  if (document.getElementsByName('frameStyle')[0].checked)
+    
+  if (document.getElementsByName('frameStyle')[2].checked)
+    
+  if (document.getElementsByName('frameStyle')[3].checked)
+    
+
+  const frameWidth = document.getElementsByName('frameWidth')[0].value;
+  const matWidth = document.getElementsByName('matWidth')[0].value;
+
+  let price = calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+  document.getElementById('price').innerHTML = '€ ' + price.toFixed(2);
+  renderImg();
+}
+
+function renderImg() {
+  const imgElement = document.getElementById('preview-image');
+  const containerElement = document.getElementById('preview-container');
+  const printSize = document.getElementsByName('printSize')[0].value;
+  const frameStyle = document.getElementsByName('frameStyle')[0].value;
+  const frameWidth = document.getElementsByName('frameWidth')[0].value;
+  const matColor = document.getElementsByName('matColor')[0].value;
+  const matWidth = document.getElementsByName('matWidth')[0].value;
+  render(
+    imgElement,
+    containerElement,
+    printSize,
+    frameStyle,
+    frameWidth,
+    matColor,
+    matWidth
+  );
+}
+export 
+
+export 
+
+export 
+import { addNumberToNav } from './cart.js';
+
+document.addEventListener('DOMContentLoaded', function (event) {
+  var urlParams = new URLSearchParams(window.location.search);
+  document.getElementById('search').value = urlParams.get('q');
+  if (document.getElementById('search').value) 
+  searchImages();
+  addNumberToNav();
+});
+
+function searchImages() {
+  var searchString = document.getElementById('search').value;
+  if (searchString)  else {
+    var highlights = JSON.parse(
+      '{ "highlights": [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105] }'
+    );
+    showImages(highlights, true);
+  }
+}
+
+function showImages(foundObjects, highlights) {
+  if (foundObjects) {
+    var max = 100;
+    if (!highlights )  else if (highlights) {
+      max = foundObjects.highlights.length;
+    }
+    for (var i = 0; i < max; i++) {
+      if (highlights) {
+        if (!window.localStorage.getItem(foundObjects.highlights[i]))  else {
+          showImage(
+            JSON.parse(window.localStorage.getItem(foundObjects.highlights[i])),
+            i
+          );
+        }
+      }
+    }
+  }
+}
+
+function showImage(foundObject, i) {
+  var gallery = document.getElementById('gallery');
+  if (foundObject) {
+    var thumb = document.createElement('div');
+    var thumbStyleClass = document.createAttribute('class');
+    var href = document.createAttribute('href');
+    var imgSrc = document.createAttribute('src');
+    var imgAlt = document.createAttribute('alt');
+
+    thumbStyleClass.value = 'thumb';
+    thumb.setAttributeNode(thumbStyleClass);
+
+    var link = document.createElement('a');
+    href.value = './config.html?objectID=' + foundObject.objectID;
+    var linkId = document.createAttribute('id');
+    linkId.value = 'object-' + i;
+    link.setAttributeNode(href);
+    link.setAttributeNode(linkId);
+
+    var img = document.createElement('img');
+    var imgId = document.createAttribute('id');
+    imgSrc.value = foundObject.primaryImageSmall;
+    imgAlt.value = foundObject.title;
+    imgId.value = 'object-image-' + i;
+    img.setAttributeNode(imgSrc);
+    img.setAttributeNode(imgAlt);
+    img.setAttributeNode(imgId);
+
+    var label = document.createElement('div');
+    var labelStyleClass = document.createAttribute('class');
+    labelStyleClass.value = 'museum-label';
+    label.setAttributeNode(labelStyleClass);
+
+    var artist = document.createElement('span');
+    var artistStyleClass = document.createAttribute('class');
+    artistStyleClass.value = 'artist';
+    artist.setAttributeNode(artistStyleClass);
+    artist.innerText = foundObject.artistDisplayName;
+
+    var title = document.createElement('span');
+    var titleStyleClass = document.createAttribute('class');
+    titleStyleClass.value = 'title';
+    title.setAttributeNode(titleStyleClass);
+    title.innerText = foundObject.title;
+
+    var date = document.createElement('span');
+    var dateStyleClass = document.createAttribute('class');
+    dateStyleClass.value = 'date';
+    date.setAttributeNode(dateStyleClass);
+    date.innerText = foundObject.objectDate;
+
+    label.appendChild(artist);
+    label.appendChild(title);
+    label.appendChild(document.createTextNode(', '));
+    label.appendChild(date);
+
+    link.appendChild(img);
+    link.appendChild(label);
+
+    thumb.appendChild(link);
+
+    gallery.appendChild(thumb);
+  }
+}
+
+

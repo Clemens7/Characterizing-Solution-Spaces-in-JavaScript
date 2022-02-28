@@ -1,0 +1,242 @@
+export function retrieveJson(key) {
+    if (key in localStorage) 
+}
+export 
+export function storeJson(key, value) {
+    localStorage[key] = JSON.stringify(value);
+}import * as CacheApi from "./cache-api.js";
+import * as CONSTANTS from "./constants.js";
+
+export function loadCartLink() {
+    const cartLinkElement = document.getElementById('cart-link');
+    const cartData = CacheApi.retrieveJson(CONSTANTS.CACHE_CART);
+    if (cartData )  else {
+        cartLinkElement.innerText = 'Cart';
+    }
+}
+
+export export const ARTWORK_OBJECT_ID = 'objectID';
+export const ARTWORK_PRINT_SIZE = 'printSize';
+export const ARTWORK_FRAME_STYLE = 'frameStyle';
+export const ARTWORK_FRAME_WIDTH = 'frameWidth';
+export const ARTWORK_MAT_COLOR = 'matColor';
+export const ARTWORK_MAT_WIDTH = 'matWidth';
+
+export const CACHE_CART = 'cart';
+export function setAttributes(element, attributes) {
+    for (let key in attributes) {
+        if (typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+export function addCSSClass(element, classes) {
+    for (let cls of classes) {
+        element.classList.add(cls);
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag = 'div') {
+    const container = document.createElement(tag);
+    for (let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}import * as MuseumCache from "../cache-api.js";
+import * as CONSTANTS from "./museum-constants.js";
+import {Thumb} from "../thumb.js";
+
+export async function retrieveByObjectId(objectId) {
+    let thumb = MuseumCache.retrieveJson(objectId)
+    if (thumb) 
+
+    const url = objects_api_url(objectId);
+
+    thumb = fetchObjects(url).then(data => {
+        const t = new Thumb(data.artistDisplayName, data.title, data.objectDate, data.primaryImageSmall, data.objectID);
+        MuseumCache.storeJson(objectId, t);
+        return t;
+    });
+    return thumb;
+}
+
+export async function retrieveBySearchTerm(searchTerm) {
+    const url = search_api_url(searchTerm);
+    return await fetchObjects(url).then(result => {
+        console.log("result.total for " + searchTerm + ": " + result.total);
+        let newResult = {};
+
+        if (result.total > CONSTANTS.MAX_RESULTS)  else {
+            newResult.objectIDs = result.objectIDs;
+        }
+
+        newResult.total = result.total;
+        return newResult;
+    });
+}
+
+async function fetchObjects(url) {
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) 
+            return response.json()
+        })
+        .then(data => {
+            return data;
+        })
+        .catch();
+}
+
+function objects_api_url(oid) {
+    return CONSTANTS.METMUESUM_API.OBJECTS + oid;
+}
+
+function search_api_url(searchTerm) {
+    return CONSTANTS.METMUESUM_API.SEARCH + "?q=" + searchTerm + CONSTANTS.METMUESUM_API.HAS_IMAGE;
+}
+export const METMUESUM_API = {
+    V1: "https://collectionapi.metmuseum.org/public/collection/v1/",
+    HAS_IMAGE: "&hasImages=true"
+}
+METMUESUM_API.OBJECTS = METMUESUM_API.V1 + "objects/";
+METMUESUM_API.SEARCH = METMUESUM_API.V1 + "search";
+
+export const MAX_RESULTS = 100;
+import * as MUSEUM_API from "../museum/museum-api.js"
+
+export async function retrieveByObjectIds(objectIDs) {
+    return await Promise.all(
+        objectIDs.map(oid => {
+            return MUSEUM_API.retrieveByObjectId(oid)
+        })
+    );
+}
+import * as CONSTANTS from "../constants.js";
+
+export const FRAME_CONFIG_URL = "/config.html?" + CONSTANTS.ARTWORK_OBJECT_ID + "=";
+import * as DOM from '../dom-helpers.js';
+
+export class ThumbDocumentContainer {
+    constructor(containerID = 'gallery') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+    clear() {
+        this.container.innerHTML = '';
+    }
+    addThumbToDocument(thumb) {
+        this.container.appendChild(createThumbElement(thumb));
+
+        function createThumbElement(thumb) {
+            let div = DOM.container([createFormConfigLinkContainer(thumb)], 'div');
+            return DOM.addCSSClass(div, ["thumb"]);
+        }
+
+        function createFormConfigLinkContainer(thumb) {
+            let a = DOM.container([
+                createImage(thumb),
+                createMuseumLabel(thumb.artistDisplayName, thumb.title, thumb.objectDate)
+            ], 'a');
+            return DOM.setAttributes(a, { href: thumb.frameConfigHref, id: "object-" + thumb.objectID })
+        }
+
+        function createImage(thumb) {
+            return DOM.setAttributes(document.createElement('img'), { src: thumb.primaryImage, alt: thumb.title, id: "object-image-" + thumb.objectID });
+        }
+
+        function createMuseumLabel(artistDisplayName, title, objectDate) {
+            let div = DOM.container([
+                DOM.addCSSClass(DOM.textElement('span', artistDisplayName), ["artist"]),
+                DOM.addCSSClass(DOM.textElement('span', title), ["title"]),
+                document.createTextNode(", "),
+                DOM.addCSSClass(DOM.textElement('span', objectDate), ["date"])
+            ]);
+            DOM.addCSSClass(div, ["museum-label"]);
+            return div;
+        }
+    }
+}
+import { ThumbDocumentContainer } from "./search-dom.js"
+import * as SearchAPI from "./search-api.js"
+import * as MuseumAPI from "../museum/museum-api.js"
+import { loadCartLink } from "../cart-service.js";
+
+String.prototype.trim = function(charlist) {
+    return this.trimLeft(charlist).trimRight(charlist);
+};
+
+const searchInfoElement = document.getElementById("search-info");
+
+function checkQueryParams() {
+    let params = (new URL(document.location)).searchParams;
+    let q = params.get("q");
+    console.log("Query params: " + q);
+    if (validateSearchString(q)) {
+        changeSearchInfo("Searching for “" + q + "”" + "...");
+        searchForImages(q);
+    }
+}
+checkQueryParams();
+
+loadCartLink();
+
+function searchForImages(searchText) {
+    if (validateSearchString(searchText)) {
+        changeSearchInfo("Searching for “" + searchText + "”" + "...");
+        MuseumAPI.retrieveBySearchTerm(searchText).then(res => {
+            searchAndDisplayByObjectIds(res.objectIDs);
+            let artworkPluralize = res.total == 1  : "artworks";
+            changeSearchInfo("Found " + res.total + " " + artworkPluralize + " for “" + searchText + "”");
+        });
+    }
+}
+
+function changeSearchInfo(str) {
+    searchInfoElement.innerHTML = str;
+}
+
+
+
+function searchAndDisplayByObjectIds(objectIds) {
+    SearchAPI.retrieveByObjectIds(objectIds)
+        .then(retrievedThumbs => {
+            displayResultsInHtml(retrievedThumbs)
+        });
+}
+
+function displayResultsInHtml(retrievedThumbs) {
+    const galleryContainer = new ThumbDocumentContainer();
+    galleryContainer.clear();
+    for (let thumb of retrievedThumbs) {
+        galleryContainer.addThumbToDocument(thumb);
+    }
+}
+
+
+
+function validateSearchString(str) {
+    if (str && str.trim()) {
+        return str.trim();
+    }
+}import * as CONSTANTS from "./search/search-constants.js"
+
+export class Thumb {
+    constructor(artistDisplayName, title, objectDate, primaryImage, objectID) {
+        this.artistDisplayName = artistDisplayName;
+        this.title = title;
+        this.objectDate = objectDate;
+        this.primaryImage = primaryImage;
+        this.objectID = objectID;
+        this.frameConfigHref = CONSTANTS.FRAME_CONFIG_URL + objectID;
+    }
+
+    
+}

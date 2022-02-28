@@ -1,0 +1,245 @@
+import { frameConfigStore } from '../shared/frame-config-store.js';
+export class AbstractRadioComponent extends HTMLDivElement {
+    
+    
+    
+    
+    
+}
+var __awaiter = (this ) || ;
+class ArtworkApi {
+    
+    
+    
+    
+}
+export const artworkApi = new ArtworkApi();
+export 
+import { cartStore } from '../shared/cart-store.js';
+export class CartDisplayController extends HTMLAnchorElement {
+    constructor() {
+        super();
+        cartStore.getAndWatch(this.update.bind(this));
+    }
+    update(values) {
+        this.innerText = `Cart (${values.length})`;
+    }
+}
+import { calculatePrice } from '../frame.js';
+export class CartStore {
+    constructor() {
+        this.state = [];
+        this.listeners = [];
+        this.state = this.readState();
+    }
+    get mayCheckout() {
+        return this.state.length > 0;
+    }
+    get totalPrice() {
+        return this.state.reduce(, 0);
+    }
+    getAndWatch(listener) {
+        this.listeners.push(listener);
+        listener(this.state);
+    }
+    
+    
+    readState() {
+        var _a;
+        const cachedCart = (_a = localStorage.getItem('cart')) !== null  : '[]';
+        return JSON.parse(cachedCart);
+    }
+    
+}
+export const cartStore = new CartStore();
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { artworkApi, cartStore } from './shared/index.js';
+import { calculatePrice, render } from './frame.js';
+import { renderArtworkLabel } from './shared/model-utils.js';
+class CartClient {
+    renderCart(items) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cartWrapper = document.getElementById('cart');
+            const promises = items.map();
+            const renderedElements = yield Promise.all(promises);
+            cartWrapper.innerHTML = ``;
+            renderedElements.forEach();
+            if (promises.length === 0) {
+                cartWrapper.innerHTML += `<div>There are no items in your shopping cart.</div>`;
+            }
+            cartWrapper.appendChild(this.renderTotal());
+        });
+    }
+    
+    
+    
+    
+    
+    renderTotal() {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('cart-total');
+        const priceString = cartStore.totalPrice.toString();
+        wrapper.innerHTML = `<div class="price">Total: € <span id="price-total">${priceString}</span></div>`;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.id = 'checkout-button';
+        button.textContent = 'Checkout';
+        button.disabled = !cartStore.mayCheckout;
+        button.addEventListener('click', );
+        wrapper.appendChild(button);
+        return wrapper;
+    }
+    
+}
+export const cartClient = new CartClient();
+cartStore.getAndWatch((state) => cartClient.renderCart(state));
+import { allMatColors } from '../shared/model.js';
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { getMaterialColorDescription } from '../shared/model-utils.js';
+import { AbstractRadioComponent } from './abstract-radio-component.js';
+export class ColorSelectorComponent extends AbstractRadioComponent {
+    
+    
+    
+    
+    
+}
+import { calcPrintSizes } from './calc-print-sizes.js';
+import { parseFrameStyle, parseMaterialColor, parseNumberWithDefault, parsePrintSize } from './model-utils.js';
+export class FrameConfigStore {
+    constructor() {
+        this.watchers = [];
+        const urlSearchParams = new URLSearchParams(location.href);
+        const printSize = urlSearchParams.get('printSize');
+        const frameWidth = urlSearchParams.get('frameWidth');
+        const matWidth = urlSearchParams.get('matWidth');
+        const frameStyle = urlSearchParams.get('frameStyle');
+        const matColor = urlSearchParams.get('matColor');
+        this.frameConfig = {
+            printSize: parsePrintSize(printSize),
+            frameWidth: parseNumberWithDefault(frameWidth, 20, 50, 2),
+            matWidth: parseNumberWithDefault(matWidth, 0, 100, 0),
+            frameStyle: parseFrameStyle(frameStyle),
+            matColor: parseMaterialColor(matColor),
+        };
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+export const frameConfigStore = new FrameConfigStore();
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { cmToMm, mmToCm } from '../shared/model-utils.js';
+export class FrameSliderSelectorComponent extends HTMLDivElement {
+    
+    
+    
+    
+    
+    
+    
+}
+import { calcPrintSizes } from './shared/calc-print-sizes.js';
+import { mmToCm } from './shared/model-utils.js';
+export 
+export 
+import { CartDisplayController } from './cart-display-component.js';
+import { SizeSelectorComponent } from './size-selector-component.js';
+import { StyleSelectorComponent } from './style-selector-component.js';
+import { ColorSelectorComponent } from './color-selector-component.js';
+import { FrameSliderSelectorComponent } from './frame-slider-selector-component.js';
+import { MatWidthSliderSelectorComponent } from './mat-width-slider-selector-component.js';
+export * from './cart-display-component.js';
+customElements.define('shopping-cart-display', CartDisplayController, { extends: 'a' });
+customElements.define('size-selector', SizeSelectorComponent, { extends: 'div' });
+customElements.define('style-selector', StyleSelectorComponent, { extends: 'div' });
+customElements.define('color-selector', ColorSelectorComponent, { extends: 'div' });
+customElements.define('frame-slider-selector', FrameSliderSelectorComponent, { extends: 'div' });
+customElements.define('mat-width-slider-selector', MatWidthSliderSelectorComponent, { extends: 'div' });
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { cmToMm, mmToCm } from '../shared/model-utils.js';
+export class MatWidthSliderSelectorComponent extends HTMLDivElement {
+    
+    
+    
+    
+    
+    
+    
+}
+import { allFrameStyles, allMatColors, allPrintSizes, } from './model.js';
+export 
+export 
+export 
+export 
+export 
+function verifyType(value, allValues) {
+    if (value == null) {
+        return false;
+    }}
+export function parsePrintSize(value) {
+    return verifyType(value, allPrintSizes)  : 'M';
+}
+export function parseFrameStyle(value) {
+    return verifyType(value, allFrameStyles)  : 'natural';
+}
+export function parseMaterialColor(value) {
+    return verifyType(value, allMatColors)  : 'mint';
+}
+export function parseNumberWithDefault(value, min, max, def) {
+    if (value == null) {
+        return def;
+    }) }
+export 
+export 
+export const allPrintSizes = ['S', 'M', 'L'];
+export const allFrameStyles = ['classic', 'natural', 'shabby', 'elegant'];
+export const allMatColors = ['ivory', 'mint', 'wine', 'indigo', 'coal'];
+export 
+var __awaiter = (this ) || ;
+class SearchApi {
+    
+    
+}
+export const searchApi = new SearchApi();
+import { allPrintSizes } from '../shared/model.js';
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { getPrintSizeDescription } from '../shared/model-utils.js';
+import { AbstractRadioComponent } from './abstract-radio-component.js';
+export class SizeSelectorComponent extends AbstractRadioComponent {
+    
+    
+    
+    
+    
+}
+import { allFrameStyles } from '../shared/model.js';
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { getFrameStyleDescription } from '../shared/model-utils.js';
+import { AbstractRadioComponent } from './abstract-radio-component.js';
+export class StyleSelectorComponent extends AbstractRadioComponent {
+    
+    
+    
+    
+    
+}

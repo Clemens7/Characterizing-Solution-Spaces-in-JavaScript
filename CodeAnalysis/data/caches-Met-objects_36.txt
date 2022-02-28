@@ -1,0 +1,507 @@
+export class Artwork {
+    
+}const key = 'cart';
+
+export 
+
+export function getCartItemCount() {
+    return key in localStorage  : 0;
+}
+
+import * as DOM from './dom-helper.js';
+import {render} from "../frame.js";
+import {calculatePrice} from "../frame.js";
+import {getArtwork} from "../met/met-api.js";
+
+const container = document.getElementById('cart');
+
+document.addEventListener('DOMContentLoaded', async() => {
+    if('cart' in localStorage){
+        let cart = JSON.parse(localStorage["cart"]);
+        if (cart.length !== 0) {
+            for (let item of cart) {
+                let artwork = await getArtwork(item.objectID);
+                addArtworkToDocument(artwork, item);
+            }
+            calculateTotalPrice();
+            document.getElementById('cart-link').innerText = cart.length === 0  : `Cart (${cart.length})`;
+        }
+    }
+});
+
+document.getElementById("checkout-button").addEventListener("click", );
+
+function addArtworkToDocument(artwork, cartItem) {
+    container.insertBefore(createCartItemContainer(artwork, cartItem), container.firstChild)
+}
+
+function createCartItemContainer(artwork, cartItem) {
+    let cart_preview = DOM.container([createImageContainer(artwork, cartItem)], 'div');
+    cart_preview.className = 'cart-preview';
+    DOM.setAttributes(cart_preview, {id: 'preview-container-' + hash(cartItem)});
+
+    let cart_item = DOM.container([cart_preview, createLabelContainer(artwork, cartItem)], 'div');
+    cart_item.className = 'cart-item';
+    return cart_item;
+}
+
+function createImageContainer(artwork, cartItem) {
+    let a = document.createElement('a');
+    DOM.setAttributes(a, {href: `config.html?objectID=${cartItem.objectID}&printSize=${cartItem.printSize}&frameStyle=${cartItem.frameStyle}&frameWidth=${cartItem.frameWidth}&matColor=${cartItem.matColor}&matWidth=${cartItem.matWidth}`});
+    let img = document.createElement('img');
+    img.className = 'cart-thumb';
+    DOM.setAttributes(img, {id: 'preview-' + hash(cartItem)});
+    DOM.setAttributes(img, {src: artwork ? artwork.imgUrl });
+    DOM.setAttributes(img, {alt: artwork ? artwork.title });
+
+    a.appendChild(img);
+
+    img.onload = function () {
+        render(img, a, cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matColor, cartItem.matWidth);
+    };
+
+    return a;
+}
+
+function createLabelContainer(artwork, cartItem) {
+    let museum_label = DOM.container([createDescriptionContainer(artwork, cartItem), createCartPriceContainer(artwork, cartItem), createButton(artwork, cartItem)], 'div');
+    museum_label.className = 'museum-label';
+    return museum_label;
+}
+
+function createButton(artwork, cartItem) {
+    let button = document.createElement('button');
+    button.className = 'cart-remove';
+
+    button.addEventListener('click', );
+
+    return button;
+}
+
+function createDescriptionContainer(artwork, cartItem) {
+    let artist = DOM.textElement('span', artwork ? artwork.artist );
+    artist.className = 'artist';
+
+    let date = DOM.textElement('span', artwork ? artwork.date );
+    date.className = 'date';
+
+    let title = DOM.textElement('span', artwork ? artwork.title + (artwork.date !== "" ? ', ' ) );
+    title.className = 'title';
+
+    let text = `${printSizeToString(cartItem.printSize)} print in a ${cartItem.frameWidth / 10} cm ${cartItem.frameStyle} frame` +
+        (cartItem.matWidth > 0 ? ` with a ${cartItem.matWidth / 10} cm ${cartItem.matColor} mat.` );
+    let frame_description = DOM.textElement('span', text);
+    frame_description.className = 'frame-description';
+
+    return DOM.container([artist, title, date, document.createElement('br'), document.createElement('br'), frame_description], 'div');
+}
+
+function printSizeToString(printSize) {
+    let name = '';
+    switch (printSize) {
+        case 'S':
+            name = 'Small';
+            break;
+        case 'M':
+            name = 'Medium';
+            break;
+        
+    }
+    return name;
+}
+
+function createCartPriceContainer(artwork, cartItem) {
+    let price = document.createElement('span');
+    DOM.setAttributes(price, {id: `price-${hash(cartItem)}`});
+
+    price.innerText = "" + calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth);
+
+    let cart_price = document.createElement('div');
+    cart_price.className = 'cart-price';
+    cart_price.innerText = '€ ';
+    cart_price.appendChild(price);
+
+    return cart_price;
+}
+
+function calculateTotalPrice() {
+    let total = 0;
+    let prices = document.querySelectorAll('.cart-price');
+    for (let price of prices) {
+        total += parseFloat(price.innerText.substring(2));
+    }
+    let totalPriceElem = document.getElementById('price-total');
+    totalPriceElem.innerText = '' + total.toFixed(2);
+}
+
+
+
+function hash(toHash) {
+    let hash = 0;
+    let object = JSON.stringify(toHash);
+    for (let i = 0; i < object.length; i++) {
+        let char = object.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}import {calculatePrice, getPrintSizes, render} from "./frame.js";
+import {getArtwork} from "./met/met-api.js";
+import {addToCart, getCartItemCount} from "./cache/cart-cache.js";
+
+const cartLabel = document.getElementById('cart-link');
+const image = document.getElementById('preview-image');
+const imageContainer = document.getElementById('preview-container');
+const form = document.getElementById('config-form');
+const printSizeRadios = document.getElementsByName('printSize');
+const frameWidthInput = document.getElementById("frameWidth");
+const frameWidthRange = document.getElementById("frameWidthR");
+const frameStyleRadios = document.getElementsByName('frameStyle');
+const matWidthInput = document.getElementById("matWidth");
+const matWidthRange = document.getElementById("matWidthR");
+const matColorRadios = document.getElementsByName('matColor');
+const sizeS = document.getElementById("print-size-s-label");
+const sizeM = document.getElementById("print-size-m-label");
+const sizeL = document.getElementById("print-size-l-label");
+const sizeTotal = document.getElementById("total-size");
+const priceLabel = document.getElementById("price");
+
+let objectID = '-1';
+let sizes;
+let printSize = 'M';
+let frameStyle = 'natural';
+let frameWidth = 40;
+let matColor = 'mint';
+let matWidth = 55;
+
+const queryString = window.location.search;
+const params = new URLSearchParams(queryString);
+objectID = params.get('objectID');
+
+printSize = params.get('printSize')  : printSize;
+frameStyle = params.get('frameStyle')  : frameStyle;
+frameWidth = params.get('frameWidth')  : frameWidth;
+matColor = params.get('matColor')  : matColor;
+matWidth = params.get('matWidth')  : matWidth;
+
+document.getElementById(`print-size-${printSize.toLowerCase()}`).checked = true;
+document.getElementById(`frame-style-${frameStyle}`).checked = true;
+document.getElementById(`mat-color-${matColor}`).checked = true;
+frameWidthInput.value = frameWidth / 10;
+frameWidthRange.value = frameWidth / 10;
+matWidthInput.value = matWidth / 10;
+matWidthRange.value = matWidth / 10;
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const cartItemCount = getCartItemCount();
+    const cartItemsString = cartItemCount === 0 ? '' ;
+    cartLabel.innerText = `Cart${cartItemsString}`;
+
+    if (objectID) {
+        const artwork = await getArtwork(objectID);
+        if (artwork)
+            renderArtwork(params, artwork);
+    }
+});
+
+
+for (let radio of printSizeRadios) {
+    radio.onclick = 
+}
+
+
+frameWidthInput.onchange = frameWidthAction;
+frameWidthRange.onchange = frameWidthAction;
+
+
+
+
+for (let radio of frameStyleRadios) {
+    radio.onclick = 
+}
+
+
+matWidthInput.onchange = matWidthAction;
+matWidthRange.onchange = matWidthAction;
+
+
+
+
+for (let radio of matColorRadios) {
+    radio.onclick = 
+}
+
+
+form.onsubmit = ;
+
+
+function renderArtwork(params, artwork) {
+    const label = document.getElementById('image-label');
+    const artist = document.getElementById('label-artist');
+    const title = document.getElementById('label-title');
+
+    artist.innerText = artwork.artist;
+    title.innerText = `${artwork.title}${artwork.date ? ", " + artwork.date }`;
+    image.src = artwork.imgUrl;
+    image.onload = () => {
+        label.hidden = false;
+        render(image, imageContainer, printSize, frameStyle, frameWidth, matColor, matWidth);
+        sizes = getPrintSizes(image);
+        setSizes();
+        setTotalSize();
+        updatePrice();
+    };
+}
+
+
+function setSizes() {
+    sizeS.innerHTML = `Small<br>${sizes.S[0]} × ${sizes.S[1]} cm`;
+    sizeM.innerHTML = `Medium<br>${sizes.M[0]} × ${sizes.M[1]} cm`;
+    sizeL.innerHTML = `Large<br>${sizes.L[0]} × ${sizes.L[1]} cm`;
+}
+
+
+function setTotalSize() {
+    let totalWidth = sizes[printSize][0] + 2 * frameWidth / 10 + 2 * matWidth / 10;
+    if (!Number.isInteger(totalWidth))
+        
+    let totalHeight = sizes[printSize][1] + 2 * frameWidth / 10 + 2 * matWidth / 10;
+    if (!Number.isInteger(totalHeight))
+        
+    sizeTotal.innerText = `${totalWidth} × ${totalHeight} cm`;
+}
+
+
+function updatePrice() {
+    priceLabel.innerText = `€ ${calculatePrice(printSize, frameStyle, frameWidth, matWidth).toFixed(2)}`;
+}export const CONFIG_URL = 'config.html';
+
+export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const framePrices = {
+        'classic': 1,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85
+    };
+    price += 30;
+    price += framePrices[frameStyle] * frameWidth / 10;
+    price += 0.05 * matWidth / 10;
+    if (printSize === 'M')
+        price *= 2;
+    else if (printSize === 'L')
+        
+
+    return parseFloat((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}
+import * as Cache from "../cache/met-cache.js";
+import {Artwork} from "./artwork.js";
+import {retrieveObject} from "../cache/met-cache.js";
+
+export 
+
+export 
+
+
+
+
+
+
+
+export async function getArtwork(id) {
+    let artwork = retrieveObject(id);
+    if (artwork)
+        return artwork;}
+
+
+
+
+export 
+
+export 
+
+export function retrieveObject(objectId) {
+    if(objectId in localStorage){
+        return JSON.parse(localStorage[objectId]);
+    }
+}
+
+export 
+    import * as MetAPI from './met/met-api.js';
+    import { SearchDocumentContainer } from './dom-manipulator/search.js';
+    import {getCartItemCount} from "./cache/cart-cache.js";
+
+    /*
+    async function artworkSearch(searchTerm) {
+      document.getElementById('search-info').innerText = `Searching for “${searchTerm}”...`;
+      const artworks = await MetAPI.getSearchResults(searchTerm);
+      let pluralString = artworks.length !== 1 ? 'artworks';
+      document.getElementById('search-info').innerText = `Found ${artworks.length} ${pluralString} for “${searchTerm}”`;
+      if(!artworks) 
+      const searchDocumentContainer = new SearchDocumentContainer();
+      searchDocumentContainer.clear();
+      for(let artwork of artworks) {
+        searchDocumentContainer.addArtworkToDocument(artwork);
+      }
+    }
+
+     synchronized url and search bar input
+    document.addEventListener('DOMContentLoaded', event => {
+      const cartItemCount = getCartItemCount();
+      const cartItemsString = cartItemCount === 0 ? '' ;
+      document.getElementById('cart-link').innerText = `Cart${cartItemsString}`;
+
+      const params = (new URL(document.location)).searchParams;
+      const query = params.get('q');
+      if(!query) 
+      document.getElementById('search').value = query;
+      artworkSearch(query);
+    });
+
+    
+
+
+    const form = document.querySelector('main');
+    form.addEventListener('submit', );
+
+  import * as DOM from './dom-helper.js';
+
+export class SearchDocumentContainer {
+    constructor(containerID = 'gallery') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addArtworkToDocument(artwork) {
+        this.container.appendChild(createArtworkElements(artwork));
+
+        function createArtworkElements(artwork) {
+            let elem = DOM.container([createAContainer(artwork)], 'div');
+            elem.className = 'thumb';
+            return elem;
+        }
+
+        function createAContainer(artwork) {
+            let a = DOM.container([
+                createImgContainer(artwork),
+                createLabelContainer(artwork)
+            ], 'a');
+
+            DOM.setAttributes(a, {href: `${DOM.CONFIG_URL}?objectID=${artwork.objectID}`});
+            DOM.setAttributes(a, {id: artwork.objectID});
+            return a;
+        }
+
+        function createImgContainer(artwork) {
+            let img = document.createElement('img');
+            DOM.setAttributes(img, {src: artwork.imgUrl});
+            DOM.setAttributes(img, {alt: artwork.title});
+            DOM.setAttributes(img, {id: artwork.objectID});
+            return img;
+        }
+
+        function createLabelContainer(artwork) {
+            let artist = DOM.textElement('span', artwork.artist);
+            artist.className = 'artist';
+
+            let title = DOM.textElement('span', `${artwork.title},`);
+            title.className = 'title';
+
+            let date = DOM.textElement('span', ` ${artwork.date}`);
+            date.className = 'date';
+
+            let label = DOM.container([artist, title, date], 'div');
+            label.className = 'museum-label';
+
+            return label;
+        }
+    }
+}

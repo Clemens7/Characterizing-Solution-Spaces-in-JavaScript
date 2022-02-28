@@ -1,0 +1,126 @@
+import * as API from './met-api.js';
+import {setCartQty} from './helpers.js';
+import * as DOM from "./dom-helpers.js";
+import {calculatePrice, render} from "./frame.js";
+
+export const fetchCart = () => {
+    if ('cart' in localStorage)  else {
+        return [];
+    }
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+    shoppingCart = fetchCart();
+    /* construct html */
+    cartItems(shoppingCart);
+})
+
+/* get array of items in cart */
+const printSizes = {"S": "Small", "M": "Medium", "L": "Large"};
+var priceList = [];
+let shoppingCart = fetchCart();
+
+/* add html dynamically */
+const cartItems = async (cart) => {
+    /* set number of cart items in header */
+    setCartQty();
+    shoppingCart = fetchCart();
+    const cartSection = document.getElementById("cart");
+    if (cartSection) {
+        cartSection.innerHTML = '';
+        /* reset list of prices */
+        priceList = [];
+
+        for (const idx in cart) 
+        cartSection.appendChild(cartTotal());
+    }
+};
+
+const renderEntry = ;
+
+
+const frameDescr = ;
+
+const museumLabel = ;
+
+const cartPreview = ;
+
+const cartTotal = () => {
+
+    let price, checkout;
+    if (!shoppingCart || shoppingCart.length === 0) {
+        price = DOM.textElement("div", "There are no items in your shopping cart.");
+        checkout = DOM.setAttributes(DOM.textElement("button", "Checkout"), {
+            type: "button",
+            id: "checkout-button",
+            disabled: true
+        });
+    }
+
+    return DOM.setAttributes(DOM.container([price, checkout], "div"), {class: ["cart-total"]});
+};
+
+
+export 
+
+export function setAttributes(element, attributes) {
+  for(let key in attributes) {
+      if(key === 'class'){
+        setClasses(element, attributes[key]);
+        continue;
+      }
+      
+
+      if(typeof(attributes[key]) === 'object')  else {
+          element[key] = attributes[key];
+      }
+  }
+  return element;
+}
+
+export 
+
+export function textElement(tag, text) {
+  const element = document.createElement(tag);
+  element.innerText = text;
+  return element;
+}
+
+export function container(elements, tag='div') {
+  const container = document.createElement(tag);
+  for(let element of elements) {
+      container.appendChild(element);
+  }
+  return container;
+}
+
+export 
+
+export function setClasses(element, classes){
+  return element.className = classes.join(',');
+}export 
+
+export 
+
+export 
+import { fetchCart } from './cart.js';
+
+export const getQueryParameter = 
+
+export const setCartQty = () => {
+  const cart = fetchCart();
+  const element = document.getElementById('cart-link');
+  element.innerText = cart.length === 0 ? 'Cart' ;
+}
+import * as MetCache from './met-cache.js';
+import { ImageObject } from './met.js';
+
+const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
+
+export const search = 
+
+export const fetchObjectData = export const storeImage = 
+
+export const fetchImage = export class ImageObject {
+  
+}

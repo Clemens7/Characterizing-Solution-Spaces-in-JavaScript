@@ -1,0 +1,64 @@
+export 
+
+export export class Artwork {
+    
+}import { calculatePrice } from  './frame.js';
+export function getCartItemNumber(){
+    let text;
+    let counter = 0;
+    if (!localStorage.getItem('cart')){
+    text = "Cart";
+    }
+
+    document.getElementById("cart-link").innerHTML = text;
+}
+
+export 
+
+export export 
+
+export 
+
+export 
+
+    import * as Cache from './artwork-cache.js';
+    import { Artwork } from './artwork.js';
+    import * as CartHelper from './cartHelper.js';
+
+    CartHelper.getCartItemNumber();
+
+
+    const searchInput = document.getElementById(`search`);
+    searchInput.addEventListener(`click`, )
+
+    document.addEventListener(`DOMContentLoaded`, event => {
+        const params = (new URL(document.location)).searchParams;
+        const keyword = params.get(`q`);
+        searchArtworks(keyword);
+    });
+
+    const form = document.querySelector(`#search-section form`);
+    form.addEventListener(`submit`, );
+
+    async function searchArtworks(keyword) {
+        var objectIDs;
+        if (!keyword)  else {
+            document.getElementById("search-info").innerHTML = `Searching for “${keyword}”...`;
+            const responseRaw = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${keyword}`);
+            const response = await responseRaw.json();
+            const noOfResults = response.total;
+
+            if (noOfResults == 0) {
+                document.getElementById("search-info").innerHTML = `Found ${noOfResults} ${(noOfResults == 1 : "artworks")} for “${keyword}”`;
+                return;
+            })} for “${keyword}”`;
+
+            const objectIDsQuery = response.objectIDs;
+            objectIDs = objectIDsQuery.slice(0,100);
+        }}
+
+    
+
+    
+
+  

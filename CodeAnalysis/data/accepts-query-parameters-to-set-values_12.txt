@@ -1,0 +1,114 @@
+
+  import {initConfig, renderPreview, roundWidth } from './config.js'
+
+  const config = initConfig()
+
+  document.querySelectorAll('input[type="radio"], input[type="range"]')
+    .forEach(input => input.addEventListener('change', ))
+
+  document.getElementById("frame-width").addEventListener('change', )
+
+  document.getElementById('mat-width').addEventListener('change', )
+
+  Object.entries(config).forEach(([name, value]) => {
+    const radios = document.querySelectorAll(`input[type="radio"][name="${name}"]`)
+    radios.forEach(input => input.checked = (input.value === value ))
+    const inputs =  document.querySelectorAll(`input:not([type="radio"])[name^="${name}"]`)
+    inputs.forEach(input => input.value = value / 10)
+  })
+
+  renderPreview(config);
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  if (cart != null && cart.length >= 1) 
+
+  document.querySelector('button[type="submit"]').addEventListener('click', )
+import {render, getPrintSizes, calculatePrice} from "./frame.js";
+import {getObject, cache} from './met-api.js'
+
+export const initConfig = () => {
+  const url = new URL(window.location);
+
+  const params = {
+    objectID: url.searchParams.get('objectID'),
+    printSize: url.searchParams.get('printSize') ,
+    frameStyle: url.searchParams.get('frameStyle') ,
+    frameWidth: url.searchParams.get('frameWidth') ,
+    matColor: url.searchParams.get('matColor') ,
+    matWidth: url.searchParams.get('matWidth') ,
+  }
+
+  const config = new Proxy(params, {
+    
+  })
+
+  return config
+}
+
+export const renderPreview = async (config) => {
+  const id = config.objectID
+
+  if (!id) 
+
+  const item = await getObject(id, cache);
+
+  if (!item) 
+
+  if (!cache.getById(id)) {
+      cache.add([item])
+  }
+
+  const label = document.getElementById('image-label')
+  label.innerHTML = `
+    <span class="artist">${item.artistDisplayName}</span>
+    <span class="title">${item.title}</span>,
+    <span class="date">${item.objectDate}</span>
+  `
+
+  const img = document.getElementById('preview-image')
+  img.alt = item.title
+  img.onload = 
+  img.src = item.primaryImageSmall
+}
+
+export const updatePreview = 
+
+export const roundWidth = 
+export 
+
+export 
+
+export 
+export const MET_API = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+
+export const fetchObject = async id => {
+  console.log(`Fetch object with id ${id} from API`)
+  const request = await fetch(`${MET_API}objects/${id}`)
+  const response = await request.json()
+
+  if (response.message)  else {
+    return response
+  }}
+
+export const getObject = async (id, cache) => {
+  return cache.getById(id) || await fetchObject(id)
+}
+
+export const getSearchResults = 
+
+class Cache {
+  constructor() {
+    this.objects = JSON.parse(localStorage.getItem('cache') )
+  }
+
+  getById(id) {
+    return this.objects.find(object => object.objectID == id)
+  }
+
+  add(items) {
+    this.objects = Array.from(new Set([...this.objects, ...items]))
+    localStorage.setItem('cache', JSON.stringify(this.objects))
+  }
+}
+
+export const cache = new Cache()

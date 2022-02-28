@@ -1,0 +1,112 @@
+export async function searchIds(query) {
+
+    let response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${query}&hasImages=true`);}
+
+let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+let storage = window.localStorage;
+
+export async function searchObjects(query) {
+    let ids = await searchIds(query);}
+
+export  
+
+export 
+
+
+export class Cart {
+    constructor(items) {
+        this.items = items;
+    }
+
+    
+
+    
+}
+
+export class Item {
+    
+}
+
+export class Destination {
+    
+}
+
+/* Only store the array to comply with tests */
+export function retrieveCart(){
+    const cachedItems = window.localStorage.getItem('cart');
+    if (cachedItems != null)  else {
+        const cart = new Cart([]);
+        store('cart', cart.items);
+        return cart;
+    }
+
+}
+
+export function store(key, value) {
+    window.localStorage.setItem(key, JSON.stringify(value));
+    return value;
+}
+import * as api from './metmuseumAPI.js';
+import * as util from './util.js';
+
+const urlParams = new URLSearchParams(window.location.search);
+const queryParam = urlParams.get('q');
+
+var gallery = document.getElementById("gallery");
+var template = createTemplate(gallery, ".thumb");
+var searchInfo = document.getElementById("search-info");
+
+util.showCartNumber();
+
+if (queryParam) {
+    doSearch(queryParam);
+}
+
+function doSearch(query) {
+    searchInfo.textContent = `Searching for “${query}”...`;
+
+    api.searchObjects(query)
+        .then()
+        .then();
+}
+
+
+
+
+
+function createTemplate(parent, query) {
+    var template = parent.querySelector(query);
+    template.remove();
+
+    return template;
+}
+
+
+
+
+
+
+import * as Model from './models.js';
+
+export 
+
+export 
+
+export 
+
+export 
+
+export function showCartNumber() {
+    const cart = Model.retrieveCart();
+    const cartNum = cart.items.length;
+    const cartLink = document.getElementById("cart-link");
+    if(cartNum <= 0) {
+        cartLink.innerText = "Cart";
+    }
+    console.log(cart.items.length);
+
+    
+}
+
+
+export 

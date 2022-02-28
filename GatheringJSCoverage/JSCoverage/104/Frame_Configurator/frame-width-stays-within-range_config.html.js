@@ -1,0 +1,1 @@
+frameWidthR.value = frameWidth.value

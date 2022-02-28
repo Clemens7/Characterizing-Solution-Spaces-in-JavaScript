@@ -1,0 +1,83 @@
+import {updateCartNavigationItemCount} from "./common.js";
+
+export 
+
+export 
+
+export function readCart() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) 
+    return JSON.parse(cart);
+}
+
+export 
+
+export class CartObject {
+    
+}
+    import { updateCartNavigationItemCount } from "./common.js";
+    import { calculatePrice } from "./checkout.js";
+
+    updateCartNavigationItemCount();
+    calculatePrice();
+  import * as Frame from "./frame.js";
+import { readCart } from "./cart-model.js";
+
+function calculateTotal(shipping, subtotal) {
+    let scost = shipping.cost / 100.0;
+    document.getElementById("price-shipping").innerText = scost.toFixed(2);
+    document.getElementById("price-total").innerText = (subtotal + scost).toFixed(2);
+}
+
+export async function calculatePrice() {
+    if (readCart().length === 0) 
+
+    let subtotal = 0;
+    readCart().map(p => subtotal += Frame.calculatePrice(p.printSize, p.frameStyle, p.frameWidth, p.matWidth));
+    document.getElementById("price-subtotal").innerText = subtotal.toFixed(2);
+
+    fetch("https://web-engineering.big.tuwien.ac.at/s20/a2/shipping").then(response => response.json()).then(result => {
+        let dropdown = document.getElementById("country");
+        for (let dest of result.destinations) {
+            let option = document.createElement("option");
+            option.value = dest.country
+            option.text = dest.displayName;
+            dropdown.appendChild(option);
+        }
+        dropdown.addEventListener("change", );
+        calculateTotal(result.destinations[dropdown.selectedIndex], subtotal);
+    }).catch();
+}
+import {readCart} from "./cart-model.js";
+
+const BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export 
+
+export 
+
+export function updateCartNavigationItemCount(items = null) {
+    let elem = document.getElementById("cart-link");
+    if (elem) 
+}
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const frameCosts = {
+        "classic": 1,
+        "shabby": 0.9,
+        "elegant": 0.85,
+        "natural": 0.8,
+    };
+    const sizeMult = {
+        "S": 1,
+        "M": 2,
+        "L": 3.5,
+    }
+
+    const price = (30 + frameWidth / 10 * frameCosts[frameStyle] + 0.05 * matWidth / 10) * sizeMult[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

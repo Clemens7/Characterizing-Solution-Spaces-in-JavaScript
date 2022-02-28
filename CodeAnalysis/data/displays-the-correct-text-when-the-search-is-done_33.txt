@@ -1,0 +1,98 @@
+export function updateCartSize() {
+    let cart  = JSON.parse(localStorage.getItem('cart'));
+
+    if (cart )  else {
+        document.getElementById("cart-link").innerHTML = "Cart";
+    }
+}import {Image} from "./image.js";
+import {store, retrieve} from "./image-cache.js";
+import {addImageToGallery,clearGallery} from "./image-dom.js";
+
+export async function retrieveIDs(query) {
+    const url = api_search_url(query);
+    try {
+        return await fetch(url).then(response => response.json()).then(data => {
+            const objectIDs = data.objectIDs;
+            if (!objectIDs) {
+                return [];
+            }
+        });
+    }}
+
+export async function retrieveArtworks(objectIDs) {
+    clearGallery();
+    Promise.all(objectIDs.map());
+
+}
+
+export 
+
+
+function api_search_url(query) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}`;
+}
+
+
+export 
+
+export export function clearGallery() {
+    const gallery = document.getElementById('gallery')
+    gallery.innerText = '';
+}
+
+export 
+
+
+
+
+
+
+
+
+/*
+Template:
+
+<div class="thumb">
+    <a href="" id="object--1">
+     <img src="" alt="" id="object-image--1">
+        <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+        </div>
+    </a>
+</div>
+export class Image {
+    
+}
+        import {retrieveIDs, retrieveArtworks} from "./image-api.js";
+
+        import * as cart from './cart.js';
+
+        const updateHeader = (text) => document.getElementById("search-info").innerText = text;
+
+        function searchImages(search) {
+            document.getElementById("search").value = search;
+            updateHeader(`Searching for “${search}”...`)
+            retrieveIDs(search).then(objectIDs => {
+                const size = objectIDs.length;
+                updateHeader(`Found ${size} ${size === 1  : "artworks"} for “${search}”`);
+                retrieveArtworks(objectIDs);
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', event => {
+            const search = new URLSearchParams(location.search).get('q')
+            if (search && search !== '') {
+                searchImages(search);
+            }
+
+            cart.updateCartSize();
+        });
+
+        document.querySelector(".search-form").addEventListener('submit', );
+
+        
+
+        document.getElementById("search").addEventListener('keyup', )
+    

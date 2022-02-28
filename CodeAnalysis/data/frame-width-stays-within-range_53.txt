@@ -1,0 +1,385 @@
+import { Artmart, Searchterm} from './artmart.js';
+
+export function retrieveObject(objectID) {
+     if (objectID in localStorage) 
+}
+
+export function store(objectID, artmart) {
+    console.log(`Storing ${objectID} in local storage`);
+    localStorage[objectID] = JSON.stringify(artmart);
+}export class Artmart {
+
+    constructor(objectID, objectDate, primaryImageSmall, objectName, title, artistDisplayName) {
+        this.objectID = objectID;
+        this.objectDate = objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+        this.objectName = objectName;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+    }
+}
+
+export var Searchterm = {
+    replaceBlank: 
+}import { Artmart } from "./artmart.js";
+import {render, getPrintSizes, calculatePrice, loadPreviewImage} from './frame.js';
+
+export function initConfiguratorControls(frameConfig) {
+    setPrintSize(frameConfig);
+    setWidth(frameConfig);
+    setFrameStyle(frameConfig);
+    setMatColor(frameConfig);
+    setPrice(frameConfig);
+}
+
+export async function setPreviewImage(artmart, frameConfig) {
+    let previewImage = document.getElementById('preview-image');
+    let previewContainer = document.getElementById('preview-container');
+    console.info('Loading Preview Image from API')
+    let initializedImage = await loadPreviewImage(artmart, previewImage);
+    render(initializedImage, previewContainer, frameConfig.printSize, frameConfig.frameStyle, frameConfig.frameWidth, frameConfig.matColor, frameConfig.matWidth)
+    initializedImage.alt = artmart.objectName;
+    setPrintAndTotalSize(initializedImage, frameConfig);
+}
+
+export function createLabel(artmart) {
+    const labelContainer = document.getElementById('image-label');
+
+    const artist = document.createElement('span');
+    artist.className = 'artist';
+    artist.innerText = artmart.artistDisplayName;
+
+    const title = document.createElement('span');
+    title.className = 'title';
+    title.innerText = artmart.title;
+
+    const date = document.createElement('span');
+    date.className = 'date';
+    date.innerText = ", " + artmart.objectDate;
+
+    labelContainer.appendChild(artist);
+    labelContainer.appendChild(title);
+    labelContainer.appendChild(date);
+}
+
+export function updateConfigurator(frameConfig) {
+    console.info('Updating configurator with configuration')
+    reRenderPreviewImage(frameConfig);
+    setPrice(frameConfig);
+    let initializedImage = document.getElementById('preview-image');
+    setPrintAndTotalSize(initializedImage, frameConfig);
+}
+
+function reRenderPreviewImage(frameConfig) {
+    let initializedImage = document.getElementById('preview-image');
+    let previewContainer = document.getElementById('preview-container');
+    render(initializedImage, previewContainer, frameConfig.printSize, frameConfig.frameStyle, frameConfig.frameWidth, frameConfig.matColor, frameConfig.matWidth)
+}
+
+function setPrintSize(frameConfig) {
+    document.getElementById(`print-size-${frameConfig.printSize.toLowerCase()}`).checked = true;
+}
+
+function setWidth(frameConfig) {
+    let frameWidthNumber = document.querySelector('.config-row input[name="frameWidth"]');
+    frameWidthNumber.value = frameConfig.frameWidth/10;
+
+    let matWidthNumber = document.querySelector('.config-row input[name="matWidth"]');
+    matWidthNumber.value = frameConfig.matWidth/10;
+}
+
+function setFrameStyle(frameConfig) {
+    let frameStyle = document.getElementById(`frame-style-${frameConfig.frameStyle}`);
+    frameStyle.checked = true;
+}
+
+function setMatColor(frameConfig) {
+    let matColor = document.getElementById(`mat-color-${frameConfig.matColor}`);
+    matColor.checked = true;
+}
+
+function setPrintAndTotalSize(image, frameConfig) {
+    const printSizes = getPrintSizes(image);
+    let printSizeLabelSmall = document.getElementById('print-size-s-label');
+    printSizeLabelSmall.innerHTML = `Small <br> ${printSizes['S'][0]/10} x ${printSizes['S'][1]/10}`;
+    let printSizeLabelMedium = document.getElementById('print-size-m-label');
+    printSizeLabelMedium.innerHTML = `Medium <br> ${printSizes['M'][0]/10} x ${printSizes['M'][1]/10}`;
+    let printSizeLabelLarge = document.getElementById('print-size-l-label');
+    printSizeLabelLarge.innerHTML = `Large <br> ${printSizes['L'][0]/10} x ${printSizes['L'][1]/10}`;
+
+    let totalSizeOutput = document.getElementById('total-size');
+    const actualPrintSize = printSizes[frameConfig.printSize]
+    const totalSizeCentimeter = actualPrintSize.map(x => (x + 2*frameConfig.matWidth + 2*frameConfig.frameWidth) / 10);
+    totalSizeOutput.innerText = `${totalSizeCentimeter[0]} × ${totalSizeCentimeter[1]} cm`;
+}
+
+function setPrice(frameConfig) {
+    const price = calculatePrice(frameConfig.printSize, frameConfig.frameStyle, frameConfig.frameWidth, frameConfig.matWidth);
+    let priceOutput = document.getElementById('price');
+    priceOutput.innerHTML = `&euro; ${price.toFixed(2)}`;
+}
+
+  import { ShoppingCartDOM } from './shopping-cart-dom.js';
+  import { ShoppingCartItem } from './shopping-cart.js';
+  import * as ShoppingCartStorage from './shopping-cart-storage.js';
+  import {retrieveObject} from './metmuseum-api.js';
+  import {initConfiguratorControls, updateConfigurator, setPreviewImage, createLabel} from './config-dom.js';
+
+  let frameConfigItem = null; // model of frame configuration
+
+  document.addEventListener('DOMContentLoaded', event => {
+    updateCartLink();
+    applyUrlQueryParams();
+    registerEventHandler();
+  });
+
+  function registerEventHandler() {
+    const addToCartButton = document.getElementById('config-form');
+    addToCartButton.addEventListener('submit', );
+    registerEventChangeOnNumberAndRangeInput('matWidth');
+    registerEventChangeOnNumberAndRangeInput('frameWidth');
+    registerEventChangeOnRadioInput('printSize');
+    registerEventChangeOnRadioInput('frameStyle');
+    registerEventChangeOnRadioInput('matColor');
+  }
+
+   Number.prototype.clamp = function(min, max) {
+    return Math.min(Math.max(this, min), max);
+  };
+
+  function registerEventChangeOnRadioInput(fieldName) {
+    const radioInputs = document.querySelectorAll(`input[name="${fieldName}"]`);
+    for (let radioInput of radioInputs) {
+      radioInput.addEventListener('change', );
+    }
+  }
+
+  function registerEventChangeOnNumberAndRangeInput(fieldName) {
+    const rangeInputName = `${fieldName}R`;
+    const rangeInput = document.querySelector(`input[name="${rangeInputName}"]`);
+    const numberInput = document.querySelector(`input[name="${fieldName}"]`);
+    numberInput.addEventListener('change', event => {
+      let newValue = event.target.value;
+      if (newValue && (newValue = newValue.trim()) !== '' && !isNaN(newValue) && Number.isFinite(Number(newValue))) {
+        const parsedValue = Number(parseFloat(newValue).toFixed(1)).clamp(event.target.getAttribute('min'), event.target.getAttribute('max'));
+        console.info(`Recevied new value '${newValue}' parsed as ${parsedValue} for number input field ${fieldName}`);
+        if (parsedValue * 10 !== frameConfigItem[fieldName]) {
+          frameConfigItem[fieldName] = parsedValue * 10;
+          console.info(`Updated model's ${fieldName} with value ${parsedValue*10}`, frameConfigItem);
+          rangeInput.value = parsedValue;
+          updateConfigurator(frameConfigItem);
+        }
+        event.target.value = parsedValue; // reset value even if model value did not change, because input might have been rewritten (e.g. rounding/clamp)
+      }
+    });
+
+    rangeInput.addEventListener('change', );
+  }
+
+  
+
+  
+
+  async function applyUrlQueryParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const objectId = urlParams.get('objectID');
+    if (!objectId) 
+    let artmartObject = null;
+
+    const printSize = urlParams.get('printSize') || 'M'; 
+    const frameStyle = urlParams.get('frameStyle') || 'natural'; 
+    const frameWidth = urlParams.get('frameWidth') || 40; // string should be given in millimeters
+    const matColor = urlParams.get('matColor') || 'mint'; 
+    const matWidth = urlParams.get('matWidth') || 55; // string should be given in millimeters
+
+    frameConfigItem = new ShoppingCartItem(objectId, printSize, frameStyle, frameWidth, matWidth, matColor);
+    initConfiguratorControls(frameConfigItem);
+
+    retrieveObject(objectId)
+      .then((artmartObject) => {
+        setPreviewImage(artmartObject, frameConfigItem);
+        createLabel(artmartObject);
+      })
+      .catch( );
+  }
+
+  function updateCartLink() {
+    const items = ShoppingCartStorage.retrieve();
+    const shoppingCart = new ShoppingCartDOM(items);
+    shoppingCart.updateCartLink();
+  }
+  
+  
+export 
+
+export 
+
+export 
+
+export 
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+    img.style.visibility='visible'; // prevent down-size flash when loaded
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const basePriceSmallPrint = 30.0; // For small prints, each frame has a base cost of 30 euro
+    const baseMatCosts = 0.05; // One centimeter of mat costs 5 cents
+    const baseFrameCosts = {'classic': 1, 'natural': 0.8, 'shabby': 0.9, 'elegant': 0.85};
+    const printSizeMultiFactor = {'S': 1, 'M': 2, 'L': 3.5}; 
+
+    const frameCosts = baseFrameCosts[frameStyle] * frameWidth / 10;
+    const matCosts = baseMatCosts * matWidth / 10;
+    const price = (basePriceSmallPrint + frameCosts + matCosts) * printSizeMultiFactor[printSize];
+
+    return Math.round((price + Number.EPSILON) * 100) / 100;
+}
+
+export function loadPreviewImage(artmart, previewImage) {
+    return new Promise((resolve, reject) => {
+        let img = previewImage;
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = artmart.primaryImageSmall;
+        img.style.visibility='hidden'; // prevent down-size flash when loaded
+    });
+}import {Artmart, Searchterm} from "./artmart.js";
+import * as ArtmartCache from "./artmart-cache.js";
+
+export 
+
+export async function retrieveObject(objectID) {
+    let artmart = ArtmartCache.retrieveObject(objectID);
+    if (artmart) 
+
+    const objectUrl = api_url_Object(objectID);
+    const responseObject = await fetch(objectUrl);
+
+    if (responseObject.status === 404)  else if (responseObject.status !== 200) 
+
+    const objectsRawData = await responseObject.json();
+    console.log(objectsRawData);
+
+    artmart = new Artmart(objectsRawData.objectID, objectsRawData.objectDate, objectsRawData.primaryImageSmall,
+        objectsRawData.objectName, objectsRawData.title, objectsRawData.artistDisplayName);
+    ArtmartCache.store(objectID, artmart);
+
+    return artmart;
+
+    function api_url_Object(objectId) {
+        return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`;
+    }
+}
+import {
+  ShoppingCartItem
+} from './shopping-cart.js';
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import * as ShoppingCartStorage from './shopping-cart-storage.js';
+import * as MetmuseumAPI from './metmuseum-api.js';
+
+export class ShoppingCartDOM {
+  constructor(items) {
+    this.items = items;
+    this.containerId = 'cart';
+  }
+
+  updateCartLink() {
+    const cartLink = document.getElementById('cart-link');
+
+    if (this.items )  else {
+      cartLink.innerText = `Cart`;
+    }
+  }
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+import { ShoppingCartItem } from './shopping-cart.js';
+
+export function retrieve() {
+  const key = 'cart';
+
+  if (key in localStorage) 
+}
+
+export 
+
+export 
+export class ShoppingCartItem {
+  
+  constructor (objectID, printSize, frameStyle, frameWidth, matWidth, matColor) {
+    this.objectID = objectID;
+    this.printSize = printSize;
+    this.frameStyle = frameStyle;
+    this.frameWidth = frameWidth;
+    this.matWidth = matWidth;
+    this.matColor = matColor;
+  }
+}

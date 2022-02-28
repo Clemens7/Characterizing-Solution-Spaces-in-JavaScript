@@ -1,0 +1,196 @@
+
+    import * as CartCache from './cartCache.js';
+    import { ItemDocumentContainer } from './met-dom.js';
+    import * as MetAPI from './metAPI.js';
+    import * as Frame from './frame.js';
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+    let itemContainer = new ItemDocumentContainer("cart");
+
+    
+
+    async function retrieveCart() {
+      const items = await CartCache.retrieveAll();
+      if (!items ) {
+        itemContainer.clear();
+        itemContainer.addNoItemText();
+        itemContainer.addCartCheckout(0);
+        document.getElementById("checkout-button").disabled = true;
+        return;
+      }}
+
+    document.addEventListener('DOMContentLoaded', event => {
+      retrieveCart();
+    });
+
+		cartLinkHelper.updateCartLink();
+  /*
+export function retrieveAll() {
+    console.log(`Retrieving all cart objects from local storage`);
+    const key = "cart";
+
+    if(key in localStorage) 
+}
+
+/*
+export 
+
+
+export 
+
+import * as CartCache from './cartCache.js';
+export async function updateCartLink() {
+    const items = await CartCache.retrieveAll();
+    if (!items ) {
+        document.getElementById("cart-link").innerText = `Cart`;
+    }
+}/*
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+/*
+export 
+
+/*
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+
+/*
+export function containerWithAttributes(elements, attributes, tag='div') {
+    return setAttributes(container(elements, tag), attributes);
+}
+export 
+
+export 
+
+export 
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import { retrieveObj } from './metCache.js';
+
+export class ItemDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+
+    addNoItemText() {
+        this.container.appendChild(createCartItem());
+
+        function createCartItem() {
+            let container = DOM.containerWithAttributes([], {id: "noItem"}, "div");
+            container.innerText = "There are no items in your shopping cart.";
+            return container;
+        }
+    }
+
+/*
+      <div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€
+            <span id="price-0">0</span>
+          </div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>
+    
+
+    /*
+      <div class="cart-total">
+        <div class="price">Total: €
+            <span id="price-total">0</span>
+        </div>
+        <button type="button" id="checkout-button">Checkout</button>
+      </div>
+    addCartCheckout(totalPrice) {
+        this.container.appendChild(createCheckout());
+
+        function createCheckout() {
+            return DOM.containerWithAttributes([
+                createPriceElem(),
+                createButtonElem(),
+            ], {className: "cart-total"}, "div");
+        }
+
+            function createButtonElem() {
+                let container = DOM.containerWithAttributes([], {type: "button", id: "checkout-button"}, "button");
+                container.innerText = "Checkout";
+                return container;
+            }
+
+            function createPriceElem() {
+            /*
+                let container = DOM.containerWithAttributes([
+                    createPrice(totalPrice)
+                ], {className: "price"}, "div");
+                container.innerText = "Total: \u20AC";
+                return container;
+
+                function createPrice(innerText) {
+                    let container = DOM.containerWithAttributes([], {id: "price-total"}, "span");
+                    container.innerText = innerText;
+                    return container;
+                }
+                let p = document.createElement("div");
+                p.setAttribute("class", "price");
+                p.innerHTML = "Total: \u20AC ";
+
+                let t = document.createElement("span");
+                t.setAttribute("id", "price-total");
+                t.innerHTML = totalPrice.toFixed(2);
+                p.appendChild(t);
+
+                return p;
+            }
+    }
+
+
+}
+
+import { MetObject } from './met.js';
+import * as MetCache from './metCache.js';
+
+const API_OBJ_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search?q=";
+
+export 
+
+export 
+
+import { MetObject } from './met.js';
+
+export 
+
+export export class MetObject {
+    
+}

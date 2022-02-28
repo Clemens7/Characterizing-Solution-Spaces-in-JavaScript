@@ -1,0 +1,19 @@
+export class artDocumentContainer {
+  
+  
+
+
+
+
+
+  
+  
+
+
+  
+
+  
+}
+
+
+export 

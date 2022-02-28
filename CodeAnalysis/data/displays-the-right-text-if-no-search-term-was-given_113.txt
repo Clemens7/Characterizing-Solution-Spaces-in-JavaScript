@@ -1,0 +1,160 @@
+import * as API from './met-api.js';
+import {setCartQty} from './helpers.js';
+import * as DOM from "./dom-helpers.js";
+import {calculatePrice, render} from "./frame.js";
+
+export const fetchCart = () => {
+    if ('cart' in localStorage)  else {
+        return [];
+    }
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+    shoppingCart = fetchCart();
+    /* construct html */
+    cartItems(shoppingCart);
+})
+
+/* get array of items in cart */
+const printSizes = {"S": "Small", "M": "Medium", "L": "Large"};
+var priceList = [];
+let shoppingCart = fetchCart();
+
+/* add html dynamically */
+const cartItems = async (cart) => {
+    /* set number of cart items in header */
+    setCartQty();
+    shoppingCart = fetchCart();
+    const cartSection = document.getElementById("cart");
+    if (cartSection) 
+};
+
+const renderEntry = ;
+
+
+const frameDescr = ;
+
+const museumLabel = ;
+
+const cartPreview = ;
+
+const cartTotal = ;
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export export 
+
+export 
+
+export 
+import { fetchCart } from './cart.js';
+
+export const getQueryParameter = (param) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(param);
+}
+
+export const setCartQty = () => {
+  const cart = fetchCart();
+  const element = document.getElementById('cart-link');
+  element.innerText = cart.length === 0 ? 'Cart' ;
+}
+import * as MetCache from './met-cache.js';
+import { ImageObject } from './met.js';
+
+const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
+
+export const search = 
+
+export const fetchObjectData = async (id) => {
+  const url = `${BASE_URL}/objects/${id}`;
+
+  let image = MetCache.fetchImage(id);
+  if(image)
+
+  try {
+    const data = await fetch(url).then((response)=>{
+      console.log(`received response ${response.ok}`)
+      if(response.ok) {
+        return response.json();
+      }
+    }).catch();
+    if(!data) 
+    const img = new ImageObject(data.objectID, data.primaryImageSmall, data.artistDisplayName, data.title, data.objectDate);
+    MetCache.storeImage(img);
+    return img;
+  }export const storeImage = (image) => {
+  const key = image.id;
+  console.log(`Storing image with id ${key} in local storage.`);
+  localStorage[key] = JSON.stringify(image);
+}
+
+export const fetchImage = (id) => {
+  if(id in localStorage)
+}export class ImageObject {
+  constructor(id, url, artist, title, year){
+    this.id = id;
+    this.url = url;
+    this.artist = artist;
+    this.title = title;
+    this.year = year;
+  }
+}import * as API from './met-api.js';
+import { getQueryParameter, setCartQty } from './helpers.js';
+import * as DOM from './dom-helpers.js';
+
+const setHeadline = 
+
+const searchCollection = async (term) => {
+  const CHUNKSIZE = 10;
+
+  let ids = [];
+
+  const container = document.getElementById('gallery');
+  container.innerHTML = '';
+
+  if(term) else {
+    const repsonse = await fetch('./highlights.json')
+    const data = await repsonse.json();
+    ids = ids.concat(data.highlights);
+  }
+
+  const jobs = ids.map(id => API.fetchObjectData(id));
+
+  const chunks = jobs.reduce((chunks, job, i) => {
+    const chunkIndex = Math.floor(i/CHUNKSIZE);
+    if(!chunks[chunkIndex]){
+      chunks[chunkIndex] = [];
+    }
+
+    chunks[chunkIndex].push(job);
+    return chunks;
+  }, []);
+  
+  for (const chunk of chunks) {
+    console.log(chunk);
+    
+    const objects = await Promise.all(chunk);}
+
+const renderEntry = 
+
+document.addEventListener('DOMContentLoaded', event => {
+  setCartQty();
+  const term = getQueryParameter('q');
+  if(term)
+  searchCollection(term);
+});
+
+const form = document.querySelector('.search-form');
+form.addEventListener('submit', );

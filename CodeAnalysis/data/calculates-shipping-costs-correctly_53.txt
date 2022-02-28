@@ -1,0 +1,141 @@
+
+
+      import * as ShippingAPI from './shipping-api.js';
+      import * as Frame from './frame.js';
+      import * as ShoppingCartStorage from './shopping-cart-storage.js';
+
+      var cartItemCache;
+      var subtotal = 0.0;
+      
+      var shippingDataCache;
+      var shippingCosts = 0.0;
+     
+      document.addEventListener('DOMContentLoaded', event => {
+        cartItemCache = loadCartItems();
+        setSubtotal()
+        loadShippingDestinationsAndSetPriceTags();
+        registerCountryFieldChangeListener()
+      });
+
+      function registerCountryFieldChangeListener() {
+        let countryField = document.getElementById('country');
+        countryField.addEventListener('change', event => {
+          setShippingCosts();
+          setTotal()
+        });
+      }
+
+      function loadCartItems() {
+        const items = ShoppingCartStorage.retrieve();
+        if (!items || items.length <= 0)  else {
+          return items;
+        }
+      }
+
+      function setSubtotal() {
+        subtotal = calculateTotalPrice(cartItemCache);
+        const priceSubtotal = document.getElementById('price-subtotal')
+        priceSubtotal.innerText = subtotal;
+      }
+
+      function setShippingCosts() {
+        const priceShippingElement = document.getElementById('price-shipping');
+        if (!shippingDataCache)  else {
+          const countryField = document.getElementById('country');
+          let countryCost = shippingDataCache.find(x => x.country === countryField.value).cost;
+          shippingCosts = parseFloat(countryCost / 100);
+          priceShippingElement.innerText = (Math.round((shippingCosts + Number.EPSILON) * 100) / 100).toFixed(2);
+        }
+      }
+
+      function setTotal() {
+        const priceTotalElement = document.getElementById('price-total');
+        if (!shippingDataCache)  else {
+          priceTotalElement.innerText = (Number(subtotal) + shippingCosts).toFixed(2);
+      
+        }
+      }
+
+      async function loadShippingDestinationsAndSetPriceTags() {
+        const payButton = document.getElementById('pay-button');
+        payButton.disabled = true;
+        const priceShippingElement = document.getElementById('price-shipping');
+        const priceTotalElement = document.getElementById('price-total')
+        priceShippingElement.innerText = "\u2014";
+        priceTotalElement.innerText = "\u2014";
+        shippingDataCache = await ShippingAPI.getShippingInfos()
+        if (!shippingDataCache) 
+        addShippingOptions(shippingDataCache)
+        setShippingCosts()
+        setTotal()
+        payButton.disabled = false;
+      }
+      
+      function addShippingOptions(destinations) {
+        const countryField = document.getElementById('country')
+        for (var key in destinations) {
+          const option = document.createElement('option');
+          option.value = destinations[key].country;
+          option.text = destinations[key].displayName;
+          countryField.add(option);
+        }
+      }
+
+      function calculateTotalPrice(items) {
+        let total = 0.0;
+        for (let item of items) {
+          const price = Frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+          total += price;
+        }
+        return total.toFixed(2);
+      }
+
+    export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const basePriceSmallPrint = 30.0; // For small prints, each frame has a base cost of 30 euro
+    const baseMatCosts = 0.05; // One centimeter of mat costs 5 cents
+    const baseFrameCosts = {'classic': 1, 'natural': 0.8, 'shabby': 0.9, 'elegant': 0.85};
+    const printSizeMultiFactor = {'S': 1, 'M': 2, 'L': 3.5}; 
+
+    const frameCosts = baseFrameCosts[frameStyle] * frameWidth / 10;
+    const matCosts = baseMatCosts * matWidth / 10;
+    const price = (basePriceSmallPrint + frameCosts + matCosts) * printSizeMultiFactor[printSize];
+
+    return Math.round((price + Number.EPSILON) * 100) / 100;
+}
+
+export export async function getShippingInfos() {
+    
+  try {
+    const url = api_url();
+    const response = await fetch(url);
+    const rawData = await response.json();
+    const responseDestinations = await rawData.destinations;
+    console.log(responseDestinations);
+    return responseDestinations;
+  }}
+
+  function api_url() {
+    return 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+  }
+import { ShoppingCartItem } from './shopping-cart.js';
+
+export function retrieve() {
+  const key = 'cart';
+
+  if (key in localStorage) {
+    console.log(`Retrieving ${key} from local storage`);
+    return JSON.parse(localStorage[key]);
+  }
+}
+
+export 
+
+export 
+export class ShoppingCartItem {
+  
+  
+}

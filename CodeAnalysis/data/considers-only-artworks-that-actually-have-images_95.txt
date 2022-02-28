@@ -1,0 +1,73 @@
+import {Object} from "./object.js"
+import * as ArtworkCache from './artwork-cache.js';
+
+export 
+
+
+export async function retrieveObjectIDs(searchTerm) {
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchTerm}`;
+    try {
+        const response = await fetch(url);}
+
+export 
+
+
+
+
+
+
+export 
+
+export import * as Frame from './frame.js';
+
+export 
+
+export function getItems() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) return [];}
+
+export function updateCartString() {
+    let cartLink = document.getElementById('cart-link');
+    let noOfItems = getItems().length;
+    let cartString = '';
+    if (noOfItems > 0) 
+    cartLink.innerText = `Cart${cartString}`;
+}
+
+export 
+
+export export 
+
+export 
+
+export 
+
+
+import * as ArtAPI from './art-api.js'; 
+
+export class Object{
+    
+}
+      import * as ArtAPI from './art-api.js';
+      import * as Cart from './cart.js';
+
+      Cart.updateCartString();
+
+      document.addEventListener('DOMContentLoaded', event => {
+          const params = (new URL(document.location)).searchParams;
+          const objectQuery = params.get('q');
+          if (!objectQuery) 
+          document.getElementById('search').value = objectQuery;
+          const heading = document.getElementById('search-info');
+          heading.innerText = `Searching for “${objectQuery}”...`;
+          ArtAPI.retrieveObjectIDs(objectQuery)
+              .then();
+      });
+
+      
+
+      
+
+      
+
+  

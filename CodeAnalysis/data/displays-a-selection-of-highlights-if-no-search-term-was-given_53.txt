@@ -1,0 +1,257 @@
+import { Artmart, Searchterm} from './artmart.js';
+
+export function retrieveObject(objectID) {
+     if (objectID in localStorage) 
+}
+
+export function store(objectID, artmart) {
+    console.log(`Storing ${objectID} in local storage`);
+    localStorage[objectID] = JSON.stringify(artmart);
+}export class ArtmartDocumentContainer {
+    constructor(containerId = 'searchResults') {
+        this.container = document.getElementById(containerId);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = "";
+    }
+
+    addSearchResultToDom(artmart) {
+        this.container.appendChild(createSearchResult(artmart));
+
+
+        function createSearchResult(artmart) {
+            const thumbContainer = document.createElement('div');
+            thumbContainer.className = 'thumb';
+
+            const linkToObject = document.createElement('a');
+            linkToObject.href = `config.html?objectID=${artmart.objectID}`
+            linkToObject.id = artmart.objectID;
+
+            const image = document.createElement('img');
+            image.src = artmart.primaryImageSmall;
+            image.alt = artmart.objectName;
+            image.id = artmart.objectID;
+
+            const labelContainer = document.createElement('div');
+            labelContainer.className = 'museum-label';
+
+            const artist = document.createElement('span');
+            artist.className = 'artist';
+            artist.innerText = artmart.artistDisplayName;
+
+            const title = document.createElement('span');
+            title.className = 'title';
+            title.innerText = artmart.title;
+
+            const date = document.createElement('span');
+            date.className = 'date';
+            date.innerText = ", " + artmart.objectDate;
+
+            labelContainer.appendChild(artist);
+            labelContainer.appendChild(title);
+            labelContainer.appendChild(date);
+            
+            linkToObject.appendChild(image);
+            thumbContainer.appendChild(linkToObject);
+            
+            thumbContainer.appendChild(labelContainer);
+
+            return thumbContainer;
+        }
+    }
+
+}export class Artmart {
+
+    constructor(objectID, objectDate, primaryImageSmall, objectName, title, artistDisplayName) {
+        this.objectID = objectID;
+        this.objectDate = objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+        this.objectName = objectName;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+    }
+}
+
+export var Searchterm = {
+    replaceBlank: 
+}
+export 
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+
+export import {Artmart, Searchterm} from "./artmart.js";
+import * as ArtmartCache from "./artmart-cache.js";
+
+export 
+
+export async function retrieveObject(objectID) {
+    let artmart = ArtmartCache.retrieveObject(objectID);
+    if (artmart) 
+
+    const objectUrl = api_url_Object(objectID);
+    const responseObject = await fetch(objectUrl);
+
+    if (responseObject.status === 404)  else if (responseObject.status !== 200) 
+
+    const objectsRawData = await responseObject.json();
+    console.log(objectsRawData);
+
+    artmart = new Artmart(objectsRawData.objectID, objectsRawData.objectDate, objectsRawData.primaryImageSmall,
+        objectsRawData.objectName, objectsRawData.title, objectsRawData.artistDisplayName);
+    ArtmartCache.store(objectID, artmart);
+
+    return artmart;
+
+    function api_url_Object(objectId) {
+        return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`;
+    }
+}
+
+
+        import {ArtmartDocumentContainer} from './artmart-dom.js';
+        import * as MetmuseumAPI from './metmuseum-api.js';
+        import {ShoppingCartDOM} from './shopping-cart-dom.js';
+        import * as ShoppingCartStorage from './shopping-cart-storage.js';
+
+        const defaultBorderLayout = 'none'; // no border is default
+        const notValidBorderLayout = '1px solid red'; // invalid input validation style
+        const resultSize = 100; // max items in search result page
+
+        document.addEventListener('DOMContentLoaded', event => {
+            registerFormSubmitEventListener();
+            applyUrlQueryParam();
+            updateCartLink();
+        })
+
+        function applyUrlQueryParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('q');
+
+            /* Query term info */
+            const searchInfo = document.getElementById('search-info');
+            if (searchQuery === null ) {
+                searchInfo.innerText = "Search our collection of more than 400,000 artworks."
+            }
+            artmartSearch(searchQuery)
+        }
+
+        function registerFormSubmitEventListener() {
+            const form = document.getElementById('searchForm');
+
+            /* Register event handler on search form submit */
+            form.addEventListener('submit', );
+        }
+
+        /* search */
+        function artmartSearch(searchterm) {
+            /* search by term or show defaults (highlights) */
+            if (searchterm)  else {
+                getAndSetHighlights();
+            }
+        }
+
+        /* retrieve all objects by searched-ids and add to DOM */
+        
+
+        /* retrieve all objects by preset ids (highlights) and add to DOM */
+        async function getAndSetHighlights() {
+            var highlights = await loadHighlights()
+            const artmartResultDomCreator = new ArtmartDocumentContainer("gallery");
+            artmartResultDomCreator.clear();
+            for (let objectId of highlights) {
+                retrieveAndAddObject(objectId, artmartResultDomCreator);
+            }
+        }
+
+        /* retrieve object from met api asynchronosly and add it to the gallery if promise resolved using the creator */
+        async function retrieveAndAddObject(objectId, artmartResultDomCreator) {
+            let result = await MetmuseumAPI.retrieveObject(objectId);
+            artmartResultDomCreator.addSearchResultToDom(result);
+        }
+
+
+        /* load highlight-ids from json file */
+        async function loadHighlights() {
+            const highlights = await fetch("highlights.json")
+                .then((res) => res.json())
+                .then((data) => data.highlights)
+                .catch()
+            return highlights
+        }
+
+        /* updates header with cart item amount */
+        function updateCartLink() {
+            const items = ShoppingCartStorage.retrieve();
+            const shoppingCart = new ShoppingCartDOM(items);
+            shoppingCart.updateCartLink();
+        }
+
+    import {
+  ShoppingCartItem
+} from './shopping-cart.js';
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import * as ShoppingCartStorage from './shopping-cart-storage.js';
+import * as MetmuseumAPI from './metmuseum-api.js';
+
+export class ShoppingCartDOM {
+  constructor(items) {
+    this.items = items;
+    this.containerId = 'cart';
+  }
+
+  updateCartLink() {
+    const cartLink = document.getElementById('cart-link');
+
+    if (this.items )  else {
+      cartLink.innerText = `Cart`;
+    }
+  }
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+import { ShoppingCartItem } from './shopping-cart.js';
+
+export function retrieve() {
+  const key = 'cart';
+
+  if (key in localStorage) 
+}
+
+export 
+
+export 
+export class ShoppingCartItem {
+  
+  
+}

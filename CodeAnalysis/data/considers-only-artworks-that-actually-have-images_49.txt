@@ -1,0 +1,98 @@
+export class ArtObject {
+    
+}import { ArtObject } from './artObject.js'
+import { retrieve, store } from './search-cache.js';
+
+export 
+
+export async function getArtworksbySearch(search){
+    try{    
+        let idList = retrieve(search);
+        if(idList)
+        const resp = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${search}&hasImages=true`);;
+        let objects = await getPromises(idList);} 
+
+
+
+export class CartObject {
+    
+}import {CartObject} from './cartObject.js';
+import {calculatePrice} from "./frame.js";
+import {getTotalSum} from "./cart.js";
+
+export 
+
+export 
+
+export function getNumberOfObjectsInCart() {
+    return loadFromCache('cart', []).length;
+}
+
+export 
+
+export function loadFromCache(key, defaultValue) {
+    return window.localStorage.getItem(key)  : defaultValue;
+}
+
+
+
+import {getNumberOfObjectsInCart, getObjectsFromCart, removeObjectFromCart} from "./cartStore.js";
+import {calculatePrice, render} from "./frame.js";
+import {updateCartCountInHeader} from "./header.js";
+import {getArtObjectByID} from "./artStore.js";
+
+let totalSum = 0;
+
+export 
+
+
+
+
+
+
+
+export export 
+
+export 
+
+export 
+import {$} from './helper.js';
+import {getNumberOfObjectsInCart} from './cartStore.js';
+
+export function updateCartCountInHeader() {
+    let text = 'Cart';
+    let numberOfObjects = getNumberOfObjectsInCart();
+    if (numberOfObjects > 0) 
+    $('#cart-link').textContent = text;
+}
+export function $(selector) {
+    return document.querySelector(selector);
+}
+
+export 
+export function retrieve(search){
+    if(search in localStorage)
+}
+export 
+
+    import {createCart} from "./cart.js";
+    import{updateCartCountInHeader} from "./header.js";
+    updateCartCountInHeader();
+  import * as artStore from './artStore.js';
+import * as searchCache from './search-cache.js';
+
+document.addEventListener('DOMContentLoaded', event =>
+{
+  let q = (new URLSearchParams(location.search)).get("q");
+  if (q) {
+    searchArtworks(q);
+  }
+});
+
+async function searchArtworks(search){
+    document.getElementById('search-info').innerHTML=`Searching for “${search}”...`;
+
+    const artworks = await artStore.getArtworksbySearch(search);}
+
+
+

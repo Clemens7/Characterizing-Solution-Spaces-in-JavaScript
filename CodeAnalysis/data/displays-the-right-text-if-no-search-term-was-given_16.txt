@@ -1,0 +1,181 @@
+import { cache } from "./cache.js";
+
+class ArtService {
+
+    constructor() {
+        this.museumUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.shippingUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+
+    getShipping = 
+
+    getArtObject = async function (objectID) {
+        const endpoint = "/objects/" + objectID;
+
+        const cached = cache.load(objectID);
+        if (cached) 
+
+        try {
+            const response = await fetch(this.museumUrl + endpoint);
+            const jsonData = await response.json();
+            const artObject = new ArtObject(jsonData.objectID, jsonData.primaryImageSmall, jsonData.artistDisplayName, jsonData.title, jsonData.objectDate);
+            cache.store(jsonData.objectID, artObject);
+            return artObject;
+        }}
+
+    getArtObjectPromises = function (objectIDs) {
+        const promiseArray = [];
+
+        for (let objectID of objectIDs) {
+            promiseArray.push(this.getArtObject(objectID));
+        }
+        
+        return promiseArray;
+    }
+    
+    getArtObjects = 
+
+    search = 
+
+    getHighlightObjectPromises = async function () {
+        const file = await fetch("./highlights.json");
+        const highlights = await file.json();
+        
+        return this.getArtObjectPromises(highlights.highlights);
+    }
+
+    getQueryParams = function (...params) {
+        const searchParams = (new URL(document.location)).searchParams;
+        let paramObject = {};
+        for (let param of params) {
+            const queryItem = searchParams.get(param);
+            paramObject[param] = queryItem;
+        }
+        return paramObject;
+    }
+
+}
+
+export class ShippingInfo {
+    
+}
+
+export class ArtObject {
+    constructor(objectID, imgUrl, artist, title, date) {
+        this.objectID = objectID;
+        this.imgUrl = imgUrl;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+    }
+}
+
+export const artService = new ArtService();class Cache {
+
+    load = function (key) {
+        if (key in localStorage) 
+    }
+
+    store = function (key, data) {
+        localStorage[key] = JSON.stringify(data);
+    }
+
+    addToCart = 
+
+    removeFromCart = 
+
+    clearCart = 
+
+    getCartItems = function () {
+        const cart = this.load("cart");
+
+        return cart  : [];
+    }
+
+    cartLength = 
+}
+
+export const cache = new Cache();import { cache } from "./cache.js";
+
+export function displayCartNumber(){
+    const items = cache.getCartItems();
+    const cartLink = document.getElementById("cart-link");
+
+    if(items.length > 0)
+    else{
+        cartLink.innerText = "Cart";
+    }
+}
+
+displayCartNumber();import { artService } from "./artService.js";
+
+async function createElementsArtObjects(artObjectPromises, term) {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+    let i = 0;
+    for (let artObjectPromise of artObjectPromises) {
+        gallery.appendChild(createArtObjectElement(await artObjectPromise));
+
+        if (term) 
+    }}
+
+function createArtObjectElement(artObject) {
+    const thumbnailURLContainer = document.createElement('div');
+    thumbnailURLContainer.setAttribute('class', 'thumb');
+
+    const link = document.createElement('a');
+    link.setAttribute('href', `./config.html?objectID=${artObject.objectID}`);
+    link.setAttribute('id', 'object-' + artObject.objectID);
+
+    const img = document.createElement('img');
+    img.setAttribute('src', artObject.imgUrl);
+    img.setAttribute('alt', artObject.title);
+    img.setAttribute('id', 'object-image-' + artObject.objectID);
+
+    const labelContainer = document.createElement('div');
+    labelContainer.setAttribute('class', 'museum-label');
+
+    const artist = document.createElement('span');
+    artist.setAttribute('class', 'artist');
+    artist.innerText = artObject.artist;
+
+    const title = document.createElement('span');
+    title.setAttribute('class', 'title');
+    title.innerText = artObject.title;
+
+    const date = document.createElement('span');
+    date.setAttribute('class', 'date');
+    date.innerText = artObject.date;
+
+    labelContainer.appendChild(artist);
+    labelContainer.appendChild(title);
+    labelContainer.append(', ');
+    labelContainer.appendChild(date);
+
+    link.appendChild(img);
+    link.appendChild(labelContainer);
+
+    thumbnailURLContainer.appendChild(link);
+    return thumbnailURLContainer;
+}
+
+
+
+
+
+async function searchAndDisplay(q) {
+    if (q )  else {
+        const highlightPromises = await artService.getHighlightObjectPromises();
+        createElementsArtObjects(highlightPromises);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+    const urlParams = artService.getQueryParams("q");
+    const q = urlParams.q;
+
+    const search = document.getElementById("search");
+    search.value = q;
+
+    searchAndDisplay(q);
+});

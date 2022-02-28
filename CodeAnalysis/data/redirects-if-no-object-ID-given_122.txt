@@ -1,0 +1,167 @@
+
+export function retrieve(keywords) {
+    const key = getStorageKey(keywords);
+    if(key in localStorage) 
+}
+
+export 
+
+function getStorageKey(keywords) {
+    return keywords ;
+}
+import * as fr from './frame.js'
+import * as ac from './artwork-cache.js'
+import * as NavigationBar from './navigation-bar.js';
+
+const itemTemplate = {
+    cartItem: '<div class="cart-item"></div>',
+    preview: '<div class="cart-preview"></div>',
+    link: '<a href=""></a>',
+    img: '<img class="cart-thumb" src="" id="preview-" alt="">',
+}
+
+export 
+
+
+
+
+
+
+
+
+window.onload = ;
+
+
+
+
+
+
+export 
+
+
+
+
+export async function getCart() {
+    let cart = localStorage.getItem('cart');
+    if (cart === null) {
+        return [];
+    }}
+
+
+
+/*===================================================DIANA'S CODE===================================================*/
+
+
+export async function cartSize() {
+    const cart = await getCart();
+    return cart.length;
+}
+
+/*
+async function displayCart() {
+    displayTotalCosts();
+}
+
+export 
+
+
+
+
+
+/*===================================================DIANA'S CODE END==================================================*/
+class CartItem {
+    
+}
+
+class Artwork {
+    
+}
+
+export 
+
+export 
+
+export 
+import * as Cart from './cart.js';
+export async function displayCartSize() {
+    let htmlTemplateElement = document.getElementById('cart-link');
+    const size = await Cart.cartSize();
+    console.log('=========');
+    console.log(size);
+    if (size > 0)
+
+}
+import * as ArtworkCache from './artwork-cache.js'
+import * as NavigationBar from './navigation-bar.js';
+window.onload = function () {
+NavigationBar.displayCartSize();
+
+    function getUrlVars() {
+        var vars = [];
+        let i = 0;
+        var parts = window.location.href.replace(/([^+?=]+)=?([^+]*)/gi, function ( value) {
+           vars[i]=value;
+           i=i+1;
+        });
+        return vars;
+    }
+    const keywords = getUrlVars();
+
+    console.log(keywords);
+    if (keywords.length > 0 && keywords[0].includes("?q=")) else {
+
+        gethighlights();
+    }
+
+};
+
+
+    async function gethighlights() {
+        const highlights = await fetch('./highlights.json');
+        const hls = await highlights.json();
+
+        const artobjs = await getbyids(hls.highlights,hls.highlights.length);}
+
+    const form = document.querySelector('#searchsec form');
+
+    btn();
+
+    function btn() {
+        form.addEventListener("submit", );
+    }
+
+class Art{
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+async function getbyids( objectids, length) {
+
+        
+
+
+    var i = 0 ;
+    var returnlist = [];
+
+    while (i<100 && i< length){
+
+        let artwork = ArtworkCache.retrieve(objectids[i]);
+        if(artwork)  else {
+
+            const response1 = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectids[i]}`);
+        }}
+
+
+
+
+

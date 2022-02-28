@@ -1,0 +1,154 @@
+import * as FrameHelper from './frame.js';
+import * as METAPI from './metAPI.js';
+
+frameWidth and matWidth are given in mm
+export class FrameConfiguration {
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+
+export class FramedPicture {
+  
+
+  
+
+  
+
+  static 
+
+  static 
+
+  
+
+  static 
+
+  static async loadFromLocalStorage(key="cart") {
+    const array = JSON.parse(localStorage.getItem(key));
+    if(!Array.isArray(array)) {
+      return [];
+    }}
+}
+
+export 
+
+export 
+
+export 
+export 
+import * as DOM from './dom-helpers.js';
+import { FramedPicture, calculateTotalCartPrice, cartIsEmpty } from './config.js';
+import { FrameConfiguration } from './config.js';
+import { render } from './frame.js';
+
+export 
+
+export class CartDocumentContainer {
+    
+
+    
+    
+
+    
+
+    
+}
+
+export class SearchResultDocumentContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    
+
+    
+}
+export 
+
+export 
+
+export 
+
+export 
+
+import {Picture} from './Picture.js';
+import * as PictureCache from './PictureCache.js'
+export 
+
+export async function api_getObject(objectID) {
+    let picture = PictureCache.retrieve(objectID);
+    if(picture) 
+
+
+    const url = api_url_getObject(objectID);
+
+    try {
+        const response = await fetch(url);}
+
+
+
+function api_url_getObject(objectID){
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    return API_URL;
+}
+import { Picture} from './Picture.js';
+
+export function retrieve(objectID) {
+    const key = objectID;
+    if(key in localStorage) 
+}
+
+export export class Picture {
+    
+}
+       import * as metAPI from './metAPI.js';
+       import {Picture} from './Picture.js';
+       import { SearchResultDocumentContainer } from './dom-helpers.js';
+       import { FramedPicture } from './config.js';
+       let Pictures = new Array();
+
+       async function getHighlights(){
+          let RawData =  await fetch('./highlights.json');
+          let JSONData = await RawData.json();
+          let Highlights = JSONData.highlights;
+          loadPictures(Highlights);
+       }
+
+
+       
+
+       async function getNumberOfCartItems() {
+          let items = await FramedPicture.loadFromLocalStorage();
+          if (items.length>0)
+          return ;
+       }
+
+       document.addEventListener('DOMContentLoaded', event => {
+                const params = (new URL(document.location)).searchParams;
+                getNumberOfCartItems();
+                let q = params.get('q');
+                if(!q) {
+                    getHighlights();
+                    return;
+                }});
+
+        async function loadPictures(ObjectIds){
+          const searchResultContainer = new SearchResultDocumentContainer();
+          Promise.all(
+            ObjectIds.slice(0,100).map(async objectId => {
+              const picture = await metAPI.api_getObject(objectId);})
+          )
+        }
+
+       const form = document.querySelector('#search-form');
+       form.addEventListener('submit', );
+    

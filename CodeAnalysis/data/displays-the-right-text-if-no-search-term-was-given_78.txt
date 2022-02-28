@@ -1,0 +1,96 @@
+export 
+
+export 
+
+export 
+import * as Frame from './frame.js';
+
+export function cartItemsSize() {
+  var cart = JSON.parse(localStorage.getItem('cart')) || [];
+  document.getElementById("cart-link").innerText = (cart.length > 0  : "Cart");
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+/*<!-- TODO: dynamically add cart items using template below -->
+      <!--<div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€ <span id="price-0">0</span></div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>-->*/
+
+export 
+    import * as Helper from './helper.js';
+    const MET_API_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+    Helper.cartItemsSize();
+    
+    document.addEventListener('DOMContentLoaded', event => {
+      const searchQuery = new URLSearchParams(window.location.search).get("q"); // https://www.w3schools.com/jsref/prop_loc_search.asp | https://developer.mozilla.org/de/docs/Web/API/URLSearchParams
+      
+      if (searchQuery) else {
+        showHighlights();
+      }
+      
+    });
+
+    const searchform = document.querySelector('main .search-form');
+    searchform.addEventListener('submit', );
+
+    async function showHighlights() {
+      const response = await fetch('./highlights.json');
+      const data = await response.json();
+      data.highlights.map(objID => getObject(objID).then(addItem));
+    }
+
+    
+
+    async function getObject(objectID) {
+      const objectUrl = MET_API_URL + 'objects/' + objectID;
+
+      let item = JSON.parse(localStorage.getItem(objectID));
+      if (!item) {
+        const response = await fetch(objectUrl);
+        item = await response.json();
+
+        let itemSerialized = JSON.stringify(item);
+        localStorage.setItem(item.objectID, itemSerialized)
+      }
+      return item;
+    }
+    
+    function addItem(item) {
+      const thumb = document.createElement("div");
+      thumb.classList.add("thumb");
+      thumb.innerHTML = `
+          <a href="config.html?objectID=${item.objectID}" id="object-${item.objectID}">
+            <img src="${item.primaryImageSmall}" alt="${item.title}" id="object-image-${item.objectID}">
+            <div class="museum-label">
+              <span class="artist">${item.artistDisplayName}</span>
+              <span class="title">${item.title}</span>,
+              <span class="date">${item.objectDate}</span>
+            </div>
+          </a>`;
+      document.getElementById("gallery").appendChild(thumb);
+    }
+
+  

@@ -1,0 +1,152 @@
+import { Artwork } from './artwork.js';
+import { retrieveArtwork, storeArtwork } from './cache.js';
+
+const baseUrl = 'https://collectionapi.metmuseum.org/public/collection/v1';
+const searchEndpoint = baseUrl + '/search';
+const objectsEndpoint = baseUrl + '/objects';
+
+export async function search(query) {
+    try {
+        const url = `${searchEndpoint}?hasImages=true&q=${encodeURI(query)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        return { 'total': data.total, 'artworks': await resolveArtworks(data.objectIDs) };
+    }}
+
+export async function resolveArtwork(objectID) {
+    const cachedArtwork = retrieveArtwork(objectID);
+    if(cachedArtwork !== null)
+
+    const url = `${objectsEndpoint}/${objectID}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    const artwork = new Artwork (data.objectID, data.title, data.artistDisplayName, data.primaryImageSmall, data.objectDate);
+    storeArtwork(artwork);
+    return artwork;
+}
+
+export async function resolveArtworks(objectIDs) {
+    try{
+        const size = objectIDs.length > 100 ? 100 ;
+        const limitedObjectIds = objectIDs.slice(0, size);
+        return Promise.all(limitedObjectIds.map (id => {
+            return resolveArtwork(id);
+        }));
+    }export class Artwork {
+
+
+    constructor(objectID, title, artist, image, date) {
+        this.objectID = objectID;
+        this.title = title;
+        this.artist = artist;
+        this.image = image;
+        this.date = date;
+    }
+
+}import {Artwork} from "./artwork.js";
+import {Cart} from "./cart.js";
+
+function getArtworkStorageKey(objectID) {
+    return 'a_' + objectID;
+}
+
+export function retrieveArtwork(objectID) {
+    const key = getArtworkStorageKey(objectID);
+    if (key in localStorage) 
+    return null;
+}
+
+export function storeArtwork(artwork) {
+    const key = getArtworkStorageKey(artwork.objectID);
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(artwork);
+}
+
+function getCartStorageKey() {
+    return "cart";
+}
+
+export function retrieveCart() {
+    let key = getCartStorageKey();
+    if (key in localStorage)  else {
+        return new Cart([]);
+    }
+}
+
+export 
+
+import * as Cache from './cache.js';
+import {calculatePrice} from './frame.js';
+
+export class Cart {
+
+    constructor(items) {
+        this.items = items;
+    }
+
+    isEmpty() {
+        return this.getItemCount() === 0;
+    }
+
+    getItemCount(){
+        if(this.items === undefined)
+            
+        return this.items.length;
+    }
+
+    
+
+    
+}export 
+
+export 
+
+export import { retrieveCart } from './cache.js';
+
+document.addEventListener("DOMContentLoaded",() => {
+    const cart = retrieveCart();
+    if(!cart.isEmpty())
+});import { search, resolveArtworks } from "./api.js";
+
+async function retrieveArtworks(query) {
+    if(query == null || query === '') 
+    return await search(query);
+}
+
+
+
+async function setHeadingDuringSearch(query) {
+    if(query != null && query !== '') {
+        document.getElementById('search-info').innerHTML = `Searching for “${query}”...`
+    }
+}
+
+async function populateGallery(query) {
+    const artworks = await retrieveArtworks(query);
+    if(query != null && query !== '') {
+        const artworksText = artworks.total == 1  : 'artworks'; 
+        document.getElementById('search-info').innerHTML = `Found ${artworks.total} ${artworksText} for “${query}”`
+    }
+
+    const content = artworks.artworks.map(
+        (obj, index) => `
+        <div class="thumb">
+            <a href="config.html?objectID=${encodeURI(obj.objectID)}" id="object-${index}">
+                <img src="${obj.image}" alt="Image of ${obj.title}" id="object-image-${index}">
+                <div class="museum-label">
+                    <span class="artist">${obj.artist}</span>
+                    <span class="title">${obj.title}</span>,
+                    <span class="date">${obj.date}</span>
+                </div>
+            </a>
+        </div>`
+    ).join('');
+    document.getElementById('gallery').innerHTML = content;
+}
+
+document.addEventListener("DOMContentLoaded",() => {
+    const params = (new URL(document.location)).searchParams;
+    const query = params.get('q');
+    setHeadingDuringSearch(query);
+    populateGallery(query);
+});

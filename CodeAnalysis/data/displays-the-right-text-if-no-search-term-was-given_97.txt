@@ -1,0 +1,139 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done  : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { Artwork } from "./model/artwork.js";
+import * as ArtworkCache from "./repository/artwork-cache.js";
+const searchUrl = "https://collectionapi.metmuseum.org/public/collection/v1/search";
+const objectUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+export 
+export function getArtwork(artworkId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = `${objectUrl}${artworkId}`;
+        const artwork = ArtworkCache.retrieve(artworkId);
+        if (artwork) 
+        try {
+            const response = yield fetch(url);
+            const data = yield response.json();});
+}
+import { Artwork } from "../model/artwork.js";
+import { LocalStorageUtil } from "../util/LocalStorageUtil.js";
+export function retrieve(objectID) {
+    let key = objectID;
+    let stored = LocalStorageUtil.retrieve(key);
+    if (stored !== null) 
+    return null;
+}
+export 
+export class Artwork {
+    
+}
+import { ConfiguredFrameRepository } from "./repository/ConfiguredFrameRepository.js";
+const ID_CARTLINK = 'cart-link';
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCounter();
+});
+export function updateCartCounter() {
+    const configuredFrameRepository = new ConfiguredFrameRepository();
+    const cartLink = document.getElementById(ID_CARTLINK);
+    if (cartLink !== null) {
+        const itemsInCart = configuredFrameRepository.getAllFrames().length;
+        if (itemsInCart > 0) 
+        else {
+            cartLink.innerText = 'Cart';
+        }
+    }
+}
+import { LocalStorageUtil } from "../util/LocalStorageUtil.js";
+import { ConfiguredFrame } from "../model/ConfiguredFrame.js";
+export class ConfiguredFrameRepository {
+    getAllFrames() {
+        let allFrames = [];
+        let allFramesFromStorage = LocalStorageUtil.retrieve(ConfiguredFrameRepository.LOCALSTORAGE_KEY);
+        if (allFramesFromStorage !== null) 
+        return allFrames;
+    }
+    
+    
+    
+    
+}
+ConfiguredFrameRepository.LOCALSTORAGE_KEY = 'cart';
+export class ConfiguredFrame {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    static 
+    
+    
+    
+    
+}
+export class LocalStorageUtil {
+    static retrieve(localStorageKey) {
+        if (!(localStorageKey in localStorage)) {
+            return null;
+        }
+    }
+    static 
+}
+export class SearchDom {
+    constructor(containerID = "gallery") {
+        const tmpContainer = document.getElementById(containerID);
+        if (!tmpContainer) 
+        else {
+            this.container = tmpContainer;
+        }
+    }
+    
+    
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import * as ArtworkApi from "./artwork-api.js"; // use .js even tough webstorm may complain as it won't work otherwise after compilation
+import { SearchDom } from "./search-dom.js";
+const searchDom = new SearchDom();
+function parseArtworkIDs(artworkIDs, searchText) {
+    let promises = [];
+    for (let artworkId of artworkIDs) {
+        promises.push(ArtworkApi.getArtwork(artworkId));
+    }
+    Promise.all(promises).then();
+}
+
+document.addEventListener('DOMContentLoaded', (event) => __awaiter(void 0, void 0, void 0, function* () {
+    const params = (new URL(document.location.href)).searchParams;
+    const searchQuery = params.get('q');
+    if (!searchQuery) {
+        try {
+            const result = yield fetch("res/highlights.json");
+            const data = yield result.json();
+            let artworkIDs = [];
+            data.highlights.map((highlight) => artworkIDs.push(highlight));
+            parseArtworkIDs(artworkIDs);
+        }
+        
+        return;
+    }
+}));
+const searchInput = document.getElementById("search");
+const searchForm = document.getElementsByClassName("search-form")[0];
+searchForm.addEventListener("submit", );

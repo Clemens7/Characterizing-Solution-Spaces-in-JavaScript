@@ -1,0 +1,1 @@
+minMaxFrameWidth(this.value, 2, 5)

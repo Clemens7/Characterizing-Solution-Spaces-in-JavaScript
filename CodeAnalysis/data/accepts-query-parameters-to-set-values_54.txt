@@ -1,0 +1,237 @@
+export function setCartItemNumber() {
+  let numberOfItems = 0;
+  const storedCart = localStorage.getItem("cart");
+  if (storedCart !== null)  else {
+    return;
+  }
+    import * as Frame from './frame.js';
+    import * as Common from './common.js';
+
+    function initializeArtwork() {
+      let cachedArtwork = localStorage.getItem("met" + objectID);
+      if(cachedArtwork  !== null)  else {
+        fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`)
+          .then(response => response.json())
+          .then(artwork => {
+            let imgUrl = artwork.primaryImageSmall;
+            if (!imgUrl)  else {
+              let artist = artwork.artistDisplayName;
+              let title = artwork.title;
+              let date = artwork.objectDate;
+
+              localStorage.setItem("met" + artwork.objectID, artist + ";" + title + ";" + date + ";" + imgUrl);
+              setArtwork(artist, title, date, imgUrl);
+            }
+          })
+          .catch(redirectToSearch);
+      }
+    }
+
+    
+
+    
+
+    function setArtwork(artist, title, date, imgUrl) {
+      document.getElementById("preview-image").src = imgUrl;
+      document.getElementById("image-label").innerHTML = `<span class="artist">${artist}</span><span class="title">${title}, </span>${date}`;
+      updateConfigurator();
+    }
+
+    function updateConfigurator() {
+      render();
+      let sizes = Frame.getPrintSizes(document.getElementById("preview-image"));
+      document.getElementById("print-size-s-label").innerHTML = `Small<br>${sizes.S[0]} × ${sizes.S[1]} cm`
+      document.getElementById("print-size-m-label").innerHTML = `Medium<br>${sizes.M[0]} × ${sizes.M[1]} cm`
+      document.getElementById("print-size-l-label").innerHTML = `Large<br>${sizes.L[0]} × ${sizes.L[1]} cm`
+    }
+
+    function render() {
+      Frame.render(
+        document.getElementById("preview-image"),
+        document.getElementById("preview-container"),
+        document.querySelector('input[name = "printSize"]:checked').value,
+        document.querySelector('input[name = "frameStyle"]:checked').value,
+        document.querySelector('input[name = "frameWidth"]').value,
+        document.querySelector('input[name = "matColor"]:checked').value,
+        document.querySelector('input[name = "matWidth"]').value
+      );
+    }
+
+    function correctWidth(min, max, value) {  // in mm
+      if (value ) {
+        value = Math.round(value);
+        if (value < min)  else if (value > max) 
+      }
+      return value;
+    }
+
+    function correctFrame(value) {
+      return correctWidth(20, 50, value);
+    }
+
+    function correctMat(value) {
+      return correctWidth(0, 100, value);
+    }
+
+    function setRadio(name, value) {
+      for (const element of document.getElementsByName(name)) {
+        if (element.value === value) {
+          element.checked = true;
+          return;
+        }
+      }}
+
+    function setValue(numberField, rangeSlider, value) {
+      if (value) {
+        value = value / 10;
+        for (const element of document.getElementsByName(numberField)) {
+          element.value = value;
+        }
+        for (const element of document.getElementsByName(rangeSlider)) {
+          element.value = value;
+        }
+      }
+    }
+
+    function setPrice() {
+      const printSize = document.querySelector('input[name = "printSize"]:checked').value;
+      const frameStyle = document.querySelector('input[name = "frameStyle"]:checked').value;
+      const frameWidth = document.querySelector('input[name = "frameWidth"]').value * 10.0;
+      const matWidth = document.querySelector('input[name = "matWidth"]').value * 10.0;
+
+      const price = Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+      const priceTag = document.getElementById("price");
+      priceTag.innerHTML = `€ ${price.toFixed(2)}`
+    }
+
+    
+
+    function setConfigurationListeners() {
+      for (const printSizeTag of document.getElementsByName("printSize")) {
+        printSizeTag.addEventListener("change", );
+      }
+      for (const frameStyleTag of document.getElementsByName("frameStyle")) {
+        frameStyleTag.addEventListener("change", );
+      }
+      for (const matColorTag of document.getElementsByName("matColor")) {
+        matColorTag.addEventListener("change", updateConfigurator)
+      }
+      document.getElementsByName("frameWidth")[0].addEventListener("change", );
+      document.getElementsByName("matWidth")[0].addEventListener("change", );
+      document.getElementsByName("frameWidthR")[0].addEventListener("change", );
+      document.getElementsByName("matWidthR")[0].addEventListener("change", );
+    }
+
+    
+
+    function setWidthListener(original, copy, correctionFunction) {
+      for (const originalElement of document.getElementsByName(original)) {
+        for (const copyElement of document.getElementsByName(copy)) {
+          originalElement.addEventListener("change", );
+        }
+      }
+    }
+
+    function setDoubleListeners(og, cp, corr) {
+      setWidthListener(og, cp, corr);
+      setWidthListener(cp, og, corr);
+    }
+
+
+    let url = new URL(window.location);
+    let objectID = url.searchParams.get("objectID");
+    let printSize = url.searchParams.get("printSize");
+    let frameStyle = url.searchParams.get("frameStyle");
+    let frameWidth = url.searchParams.get("frameWidth");
+    let matColor = url.searchParams.get("matColor");
+    let matWidth = url.searchParams.get("matWidth");
+
+    Common.setCartItemNumber();
+    setRadio("printSize", printSize);
+    setRadio("frameStyle", frameStyle);
+    setRadio("matColor", matColor);
+    setValue("frameWidth", "frameWidthR", correctFrame(frameWidth));
+    setValue("matWidth", "matWidthR", correctMat(matWidth));
+    setPrice();
+
+    setDoubleListeners("frameWidth", "frameWidthR", correctFrame);
+    setDoubleListeners("matWidth", "matWidthR", correctMat);
+    setConfigurationListeners();
+    document.getElementById('config-form').addEventListener("submit", addToCart);
+
+    let objectIDRegex = /^[0-9]+$/;
+
+    if ((objectID === null) || (!objectIDRegex.test(objectID))) 
+
+    initializeArtwork();
+
+  export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    switch (frameStyle) {
+        case 'classic':
+            price += (frameWidth / 10.0) * 1.0;
+            break;
+        
+        
+        
+    }
+
+    price += (matWidth / 10.0) * 0.05
+
+    if (printSize === 'M')  else if (printSize === 'L') 
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

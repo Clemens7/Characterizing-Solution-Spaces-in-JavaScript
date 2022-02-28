@@ -1,0 +1,93 @@
+export function setCartItemsInHeader() {
+  const cartInHeaderElement = document.getElementById('cart-link');
+  const cart = JSON.parse(localStorage.getItem('cart'));
+  if (cart )  else {
+    cartInHeaderElement.innerText = 'Cart';
+  }
+}
+export class Painting {
+  
+}
+
+export class PaintingithFrameConfig extends Painting {
+  
+}
+export 
+
+export 
+export class PictureDocumentContainer {
+    
+
+    
+
+    
+}
+
+        import * as SearchAPI from './search.js';
+        import {retrieve, store} from './search-cache.js';
+        import {PictureDocumentContainer} from './search-dom.js';
+        import {setCartItemsInHeader} from './header-cart.js';
+
+        document.addEventListener('DOMContentLoaded', event => {
+
+            setCartItemsInHeader();
+            const params = (new URL(document.location)).searchParams;
+            const pictureQuery = params.get('q');
+
+            try {
+                pictureSearch(pictureQuery);
+            } 
+
+        });
+
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('click', );
+
+        const form = document.getElementById('form-search');
+
+        async function pictureSearch(pictureQuery) {
+            try {
+
+                if (pictureQuery == null) {
+                    document.getElementById('search-info').innerText = `Selecting some highlights for you`;
+                }
+
+
+
+                var numberPictureTotal;
+                var listOfPicture;
+                var pictureCacheQuery = `search-cache-${pictureQuery}`;
+
+                if (!pictureQuery) {
+                    if ('highlights' in localStorage)  else {
+                        const finishedObject = await SearchAPI.getHighlightImages();}
+
+
+    
+/*
+import {
+    Painting
+} from './picture.js';
+
+export 
+
+
+export async function getObjectsFromSearch(ObjectIDs) {
+
+    try {
+        let listOfImages = [];
+
+        for (let id of ObjectIDs.slice(0, 100)) {
+            const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+            const temp = await fetch(API_URL);}
+
+
+export async function getHighlightImages() {
+    try {
+        let highlightRaw = await fetch("highlights.json");
+        let highlightJson = await highlightRaw.json();
+
+        let pictureArray = await getObjectsFromSearch(highlightJson.highlights);}
+
+
+export 

@@ -1,0 +1,99 @@
+
+const STORAGE_KEY = 'cart';
+
+export class CartEntry {
+    
+}
+
+export 
+
+export function getAllEntries() {
+    if (STORAGE_KEY in localStorage)  else {
+        return [];
+    }
+}
+
+export 
+
+export function numberOfEntries() {
+    return getAllEntries().length;
+}  
+import { Artwork } from './search.js';
+
+export 
+
+export 
+
+    import { Artwork } from './search.js';
+    import { ArtworkDocumentContainer } from './search.js';
+    import * as ArtworkAPI from './search.js';
+    import { numberOfEntries } from './cart-storage.js';
+
+    /*
+    async function artworkSearch(q) {
+      const searchText = document.getElementById('search-info');
+      searchText.innerHTML = `Searching for “${q}”...`;
+      const artworks = await ArtworkAPI.retrieveArtwork(q);}
+
+    
+
+    document.addEventListener('DOMContentLoaded', event => {
+
+      const numberOfCartItems = numberOfEntries();
+      if (numberOfCartItems ) 
+      const params = (new URL(document.location)).searchParams;
+      const Query = params.get('q');
+      if (!Query) 
+      artworkSearch(Query);
+    });
+
+
+    /* const form = document.querySelector('#search form');
+    form.addEventListener('submit', event => {
+        const searchInput = document.getElementById('q');
+        if(!searchInput.value) {
+            searchInput.style.border = "1px solid red";
+            event.preventDefault();
+        }
+    }); */
+  import * as ArtworkCache from './search-cache.js'
+
+export class Artwork {
+    
+}
+
+export async function retrieveArtwork(searchTerm) {
+
+
+
+    console.log(1);
+    const response = fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchTerm}`);
+    return response
+        .then()
+        .then()
+        .then()
+    /*
+    console.log(2);
+    const rawData = await response.json();
+    console.log(3);
+    let results = await rawData.objectIDs;
+    console.log(4);
+    let length = results.length;
+    results = results.splice(0,100);
+    const foundText = document.getElementById('search-info');
+    foundText.innerHTML = `Found ${length} artworks  for “${searchTerm}”`;
+    return results;
+}
+
+
+
+export 
+
+
+export class ArtworkDocumentContainer {
+    
+
+    
+
+    
+}

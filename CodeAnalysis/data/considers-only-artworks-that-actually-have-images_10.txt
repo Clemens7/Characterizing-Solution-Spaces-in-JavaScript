@@ -1,0 +1,65 @@
+import {Artwork} from "./artwork.js";
+import * as ArtworkCache from "./artwork-cache.js"
+
+export const BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export const retrieve = async searchTerm => {
+    const cachedArtworks = ArtworkCache.retrieve(searchTerm);
+    if (cachedArtworks) 
+    try {
+        const response = await fetch(`${BASE_URL}search?hasImages=true&q=${searchTerm}`);) };
+
+export const retrieveFromObjectIDs = ;
+
+export const retrieveFromObjectID = export const retrieveByObjectID = 
+
+export const storeArtwork = 
+
+export const retrieve = searchTerm => {
+    return JSON.parse(localStorage.getItem(searchTerm));
+}
+
+export const store = export class Artwork {
+    
+}import {FrameConfig} from "./frameconfig.js";
+
+export const STORAGE_KEY = "cart";
+
+export const retrieveCart = () => {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY));
+}
+
+export const insertItemInCart = 
+
+export const removeIndexInCart = 
+
+export const retrieveIndexInCart = 
+
+export class FrameConfig {
+    
+}
+
+    import * as ArtworkAPI from "./artwork-api.js";
+    import * as ArtworkCache from "./artwork-cache.js"
+    import * as Cart from "./cart-cache.js"
+
+    document.addEventListener("DOMContentLoaded", async event => {
+      const cart = Cart.retrieveCart();
+      if (cart) 
+      const params = (new URL(document.location)).searchParams;
+      const artworksQuery = params.get("q");
+      const randomKey = "lsrdkgjnf3498jrmfrsRFmdfk40e9rjf"
+
+      if (!artworksQuery) 
+      document.getElementById("search-info").innerText = `Searching for “${artworksQuery}”...`;
+      await searchArtworks(artworksQuery);});
+
+    const searchArtworks = async searchTerm => {
+      const result = await ArtworkAPI.retrieve(searchTerm);} for “${searchTerm}”`;
+      createGallery(result.artworks);
+    };
+
+    const createArtwork = ;
+
+    const createGallery = 
+  

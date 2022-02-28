@@ -1,0 +1,112 @@
+export default class CartObject {
+
+    
+}import CartObject from "./cartObject.js";
+
+const CartStorage = "cart";
+const CACHE = "cache";
+let id = 816000;
+
+displayItemsInCart();
+
+export function displayItemsInCart() {
+    const cartContent = getCartContent();
+    let size = 0;
+    try {
+        size = cartContent.length
+    }catch (e) {
+    }
+    if (size === 0) {
+        document.getElementById("cart-link").innerText = `Cart`;
+        document.getElementsByTagName("title")[0].innerText = "Cart | Artmart"
+    }
+}
+
+export function getCartContent() {
+    let item = localStorage.getItem(CartStorage);
+    if (item === "" || item === "[null]") 
+    return JSON.parse(item)
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+
+
+export  
+
+
+export  
+
+export 
+import {addToCache, getCache} from "./cartStorage.js";
+
+let formId = document.getElementById('search-form');
+
+
+document.addEventListener('DOMContentLoaded', event => {
+    const params = (new URL(document.location)).searchParams;
+    var searchQuery = params.get('q');
+    const currentlyDisplaying = document.getElementById('gallery');
+    currentlyDisplaying.innerHTML = '';
+    if (!searchQuery ) {
+        return useHighlights();
+    }});
+
+formId.addEventListener('submit', );
+
+
+
+
+
+
+
+
+
+
+function useHighlights() {
+    const inLocalStorage=false;
+    if (!inLocalStorage) {
+        console.log("Highlights");
+        getHighlightsFromJson();
+    }
+}
+
+
+
+
+
+function getHighlightsFromJson(callback) {
+    const request = new XMLHttpRequest();
+    request.overrideMimeType("application/json");
+    request.open('GET', "http://127.0.0.1:8080/highlights.json", true);
+    request.onreadystatechange = function () {
+        if (request.readyState == 4 && request.status == "200") 
+    };
+    request.send();
+}
+
+
+
+
+
+
+
+
+
+
+

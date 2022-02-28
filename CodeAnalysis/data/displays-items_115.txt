@@ -1,0 +1,153 @@
+import { loadObject, metAPI } from './metApi.js';
+import { render, calculatePrice } from './frame.js';
+
+const cart = document.getElementById('cart');
+
+let items = localStorage.getItem('cart');
+
+if (!items)  else {
+	items = JSON.parse(items);
+	document.getElementById('cart-link').textContent = `Cart (${items.length})`;
+
+  Promise.all(items.map(item => loadObject(item.objectID, metAPI))).then( objects => {
+    
+    for(let i = 0; i < items.length; i++) {
+      cart.innerHTML = `
+        <div class="cart-item">
+          <div class="cart-preview" id="preview-container-${i}">
+            <a href="config.html?objectID=${items[i].objectID}&printSize=${items[i].printSize}&frameStyle=${items[i].frameStyle}&frameWidth=${items[i].frameWidth}&matColor=${items[i].matColor}&matWidth=${items[i].matWidth}">
+              <img class="cart-thumb" src="${objects[i].primaryImageSmall}" id="preview-${i}" alt="${objects[i].objectName}">
+            </a>
+          </div>
+          <div class="museum-label">
+            <div>
+              <span class="artist">${objects[i].artistDisplayName}</span>
+              <span class="title">${objects[i].title}</span>,
+              <span class="date">${objects[i].objectDate}</span>
+              <br><br>
+              <span class="frame-description">${sizeToText(items[i].printSize)} print in a ${(items[i].frameWidth / 10.0)} cm ${items[i].frameStyle} frame${matText(items[i])}.</span>
+            </div>
+            <div class="cart-price"> ${calculatePrice(items[i].printSize, items[i].frameStyle, items[i].frameWidth, items[i].matWidth)}€ <span id="price-${i}"></span></div>
+            <button class="cart-remove"></button>
+          </div>
+        </div>` + cart.innerHTML;
+    }
+
+    const cartRemoveButtons = document.querySelectorAll('.cart-remove');
+
+    for(let j = 0; j < items.length; j++) {
+      const img = document.getElementById(`preview-${j}`);
+      const container = document.getElementById(`preview-container-${j}`);
+      img.addEventListener('load', () => {
+        render(img, container, items[j].printSize, items[j].frameStyle, items[j].frameWidth, items[j].matColor, items[j].matWidth);
+      });
+      cartRemoveButtons[j].addEventListener ('click', );
+    }
+    const checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.addEventListener('click', );
+  });
+  
+  let priceTotal = 0.00;
+    items.forEach(function (item) {
+      priceTotal += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+  });
+  document.getElementById('price-total').textContent = `${priceTotal}`;
+
+  function sizeToText(printSize) {
+    if (printSize == 'S')
+    return 'Small';
+    if (printSize == 'M')
+    return 'Medium';}
+
+  function matText(item) {
+    if (item.matWidth > 0) 
+    return ` with a ${(item.matWidth / 10.0)} cm ${item.matColor} mat`;}
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export 
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.00;
+    const matCostPerCm = 0.05;
+
+    const frameCostPerCm = {
+        'classic': 1.00,
+        'natural': 0.80,
+        'shabby': 0.90,
+        'elegant': 0.85
+    };
+
+    price += (frameWidth / 10) * frameCostPerCm[frameStyle] + (matWidth / 10) * matCostPerCm;
+
+    if (printSize === 'M') {
+        price *= 2;
+    } else if (printSize === 'L') 
+
+    return (Math.round((price) * 100) / 100);
+}
+export const metAPI = 'https://collectionapi.metmuseum.org/public/collection/v1';
+
+export async function loadObject(id, API) {
+  if (localStorage.getItem(id)) 
+  try {
+    let res = await fetch(API + '/objects/' + id);
+    let data = await res.json();
+    localStorage.setItem(id, JSON.stringify(data));
+    return data;
+  }

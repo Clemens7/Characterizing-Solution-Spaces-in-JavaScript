@@ -1,0 +1,230 @@
+export function storeObject(artobject){
+    const {objectID} = artobject;
+	let type = typeof objectID;
+    localStorage[objectID] = JSON.stringify(artobject);
+    console.log(`Object ${objectID} stored (type: ${type})`);
+}
+
+export function retrieveObject(objectID){
+    if(objectID in localStorage) 
+}
+
+export 
+
+export 
+
+export function retrieveCart(){
+    if("cart" in localStorage){
+        return JSON.parse(localStorage["cart"]);
+    }
+}import { retrieveObject, storeObject } from "./artmart-cache.js";
+
+class ArtmartAPI {
+    constructor(){
+        this.metMuseumEndpoint = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.artmartEndpoint = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+    
+    
+
+    async getObject(objectID){
+        const retrievedObject = retrieveObject(objectID);
+        
+        if(retrievedObject)
+
+        try{
+            const url = `${this.metMuseumEndpoint}/objects/${objectID}`
+            const response = await this._basicRequest(url);
+            storeObject(response);
+            return response;
+        }}
+
+    
+
+    
+
+    async _basicRequest(url){
+            let response = await fetch(url);
+            response = await response.json();
+            return response;
+    }
+
+    
+
+}
+
+const artmartAPI = new ArtmartAPI();
+window.artmartAPI = artmartAPI;
+export default artmartAPI;
+    import artmartAPI from "./artmartAPI.js";
+    import {retrieveCart, removeFromCart} from "./artmart-cache.js";
+    import {render, calculatePrice} from "./frame.js";
+    
+    var cartSection;
+    var cartTotal;
+    var itemTemplate;
+
+    document.addEventListener('DOMContentLoaded', async (event) => 
+    {
+      cartSection = document.getElementById("cart");
+      cartTotal = document.getElementById("cart-total");
+      itemTemplate = document.getElementById("preview-container-0").parentNode;
+      cartSection.removeChild(itemTemplate);
+      document.getElementById("checkout-button").disabled = true;
+      await loadCart();
+    });
+
+    document.getElementById("checkout-button").addEventListener("click", );
+
+    async function displayItem(item)
+    {
+      var artObject = await artmartAPI.getObject(item['objectID']);
+
+      var cartItem = itemTemplate.cloneNode(true);
+      var imageContainer = cartItem.getElementsByTagName("div")["preview-container-0"];
+      var imageLink = imageContainer.getElementsByTagName("a")[0];
+      var imageElement = imageContainer.getElementsByTagName("img")["preview-0"];
+
+      imageElement.src = artObject.primaryImageSmall;
+      imageElement.alt = artObject.title;
+
+      imageLink.href = `./config.html?objectID=${item.objectID}&printSize=${item.printSize}&frameStyle=${item.frameStyle}&frameWidth=${item.frameWidth}&matColor=${item.matColor}&matWidth=${item.matWidth}`;
+
+      var spans = cartItem.getElementsByTagName("span");
+      spans[0].innerHTML = artObject.artistDisplayName;   // author
+      spans[1].innerHTML = artObject.title;               // title
+      spans[2].innerHTML = artObject.objectDate;          // date
+      spans[3].innerHTML = (
+        `
+        ${item.printSize === "S" ? "Small" : (item.printSize === "L" ? "Large" : "Medium")} print in a
+        ${item.frameWidth/10} cm ${item.frameStyle} frame${item.matWidth > 0 ? ` with a ${item.matWidth/10} cm ${item.matColor} mat.` }
+        `);                                                 // frame-description
+      spans["price-0"].innerHTML = calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+      cartItem.id = `cart-item-${artObject.objectID}`;
+      spans["price-0"].id = `price-${artObject.objectID}`;
+      imageElement.id = `preview-${artObject.objectID}`;
+      imageLink.id = `preview-link-${artObject.objectID}`;
+
+      cartItem.getElementsByTagName("button")[0].addEventListener("click", );
+
+      cartSection.insertBefore(cartItem, cartTotal);
+
+      imageElement.onload = function() 
+      {
+        render(imageElement, imageContainer, item.printSize, item.frameStyle, item.frameWidth, item.matColor, item.matWidth);
+      };
+    }
+
+    async function loadCart()
+    {
+      const cart = retrieveCart();
+      if( cart !==undefined && cart.length > 0)
+      {
+        document.getElementById("checkout-button").disabled = false;
+        document.getElementById("cart-link").innerText = "Cart ("+ cart.length + ")";
+        for (var i = cart.length-1; i >= 0; i--)
+        {
+          var item = cart[i];
+          await displayItem(item);
+        }
+        updatePrice();
+      }
+    }
+
+    
+
+    
+
+    function updatePrice()
+    {
+      const cart = retrieveCart();
+      var totalPrice = 0;
+      for (var item of cart)
+      {
+        totalPrice += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+      }
+      if(cart.length > 0) {
+        document.getElementById("price-total").innerHTML = totalPrice;
+      }
+    }
+
+    
+  export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+
+    const framePrice = (() => {
+        switch (frameStyle){
+            case 'classic': return 0.1;
+            case 'natural': return 0.08;
+            case 'shabby': return 0.09;
+            case 'elegant': return 0.085;
+            
+        }
+    })();
+
+    price = price + frameWidth * framePrice;
+    price = price + matWidth * 0.005;
+
+    price *= (() => {
+        switch(printSize){
+            case 'S': return 1.0;
+            case 'M': return 2.0;
+            case 'L': return 3.5;
+            
+        }
+    })();
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

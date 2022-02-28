@@ -1,0 +1,294 @@
+
+const STORAGE_KEY = 'cart';
+
+export class CartEntry {
+    
+}
+
+export 
+
+export function getAllEntries() {
+    if (STORAGE_KEY in localStorage) {
+        const entries = localStorage.getItem(STORAGE_KEY);
+        return JSON.parse(entries);
+    }
+}
+
+export 
+
+export function numberOfEntries() {
+    return getAllEntries().length;
+}import * as Search from './search.js';
+import * as Frame from './frame.js';
+import { removeEntry, numberOfEntries, getAllEntries } from './cart-storage.js';
+
+
+
+
+class ShoppingCartItem {
+    
+}
+class ShoppingCartItem2 {
+    
+}
+
+const sizeDesc = {
+    S: 'Small',
+    M: 'Medium',
+    L: 'Large'
+};
+
+document.addEventListener('DOMContentLoaded', event => {
+    const numberOfCartItems = numberOfEntries();
+    const cartLink = document.getElementById('cart-link');
+    cartLink.innerText = `Cart (${numberOfCartItems})`;
+    loadCartItems();
+});
+
+function loadCartItems() {
+    const items = getAllEntries();
+    if (!items || items.length == 0) {
+        const button = document.getElementById('checkout-button');
+        button.disabled = true;
+    }
+    cartSearch(items);
+}
+
+function createMessageElement() {
+    const message = document.createElement('h2');
+    message.innerText = 'There are no items in your shopping cart.';
+    return message;
+}
+
+
+const button = document.getElementById('checkout-button')
+button.addEventListener('click', );
+
+export async function cartSearch(entries) {
+
+    const sciContainer = new SciDocumentContainer();
+    sciContainer.clear();
+    let totalP = 0;
+    if (entries.length === 0) {
+        const message = document.getElementById('cart');
+        message.appendChild(createMessageElement());
+    }
+    for (let index in entries) 
+    document.getElementById('price-total').innerText = totalP;
+}
+
+export class SciDocumentContainer {
+    constructor(containerID = 'cart') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+
+
+
+}
+
+import {getPrintSizes, render, calculatePrice} from './frame.js';
+import {getArtworkById} from './search.js';
+import {addCartEntry, CartEntry, numberOfEntries} from './cart-storage.js'
+
+const configForm = document.getElementById('config-form');
+const frameWidthNumber = document.getElementById('frameWidth');
+const frameWidthSlider = document.getElementById('frameWidthR');
+const matWidthNumber = document.getElementById('matWidth');
+const matWidthSlider = document.getElementById('matWidthR');
+
+let imageSizes;
+
+let size = 'M';
+let frameWidth = frameWidthNumber.value;
+let frameStyle = 'natural';
+let matWidth = matWidthNumber.value; 
+let matColor = 'mint'
+let objectID;
+
+function initSizes() {
+    const image = document.getElementById('preview-image');
+    imageSizes = getPrintSizes(image);
+    
+    document.getElementById('print-size-s-label').innerHTML = `Small<br>${imageSizes.S[0] / 10} x ${imageSizes.S[1] / 10} cm`
+    document.getElementById('print-size-m-label').innerHTML = `Medium<br>${imageSizes.M[0] / 10} x ${imageSizes.M[1] / 10} cm`
+    document.getElementById('print-size-l-label').innerHTML = `Large<br>${imageSizes.L[0] / 10} x ${imageSizes.L[1] / 10} cm`
+}
+
+function initParams() {
+    const paramMap = new URLSearchParams(document.location.search);
+
+    const objectID = paramMap.get('objectID');
+    const frameWidthParam = parseInt(paramMap.get('frameWidth'))
+    const frameStyleParam = paramMap.get('frameStyle');
+    const matWidthParam = parseInt(paramMap.get('matWidth'));
+    const matColorParam = paramMap.get('matColor')
+    const printSize = paramMap.get('printSize');
+
+    frameWidth = frameWidthParam  : 40;
+    frameWidthNumber.value = frameWidth / 10;
+    frameWidthSlider.value = frameWidth / 10;
+
+    matWidth = matWidthParam  : 55
+    matWidthNumber.value = matWidth / 10;
+    matWidthSlider.value = matWidth / 10;
+
+    size = printSize  : 'M';
+    document.querySelector(`input[name="printSize"][value="${size}"]`).checked = true;
+    
+    frameStyle = frameStyleParam  : 'natural';
+    document.querySelector(`input[name="frameStyle"][value="${frameStyle}"]`).checked = true;
+    
+    matColor = matColorParam  : 'mint';
+    document.querySelector(`input[name="matColor"][value="${matColor}"]`).checked = true;
+    
+    return objectID;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const numberOfCartItems = numberOfEntries();
+    if (numberOfCartItems ) 
+    objectID = initParams();
+    if (!objectID)  else {
+        getArtworkById(objectID).then((artwork) => {
+            const imageContainer = document.getElementById('preview-container');
+            const image = document.createElement('img');
+
+            image.onload = () => {
+                initSizes();
+                updateForm();
+            }
+            image.src = artwork.image;
+            image.id = 'preview-image';
+            const description = document.createElement('div');
+            description.className = 'museum-label'
+            description.innerHTML = `
+            <span class="artist">${artwork.artist}</span>
+            <span class="title">${artwork.title}</span>,
+            <span class="date">${artwork.date}</span>`
+            imageContainer.appendChild(image);
+            imageContainer.appendChild(description);
+        }, )
+    }
+})
+
+configForm.addEventListener('submit', )        
+
+frameWidthNumber.onchange =     
+
+frameWidthSlider.oninput =     
+
+matWidthSlider.oninput = 
+
+matWidthNumber.onchange = 
+
+document.getElementsByName('printSize').forEach(a => {
+    a.oninput = 
+});
+
+document.getElementsByName('frameStyle').forEach(a => {
+    a.oninput = 
+})
+
+document.getElementsByName('matColor').forEach(a => {
+    a.oninput = 
+})
+
+function updateForm() {
+    document.getElementById('price').innerHTML = `€ ${calculatePrice(size, frameStyle, frameWidth, matWidth).toFixed(2)}`
+    document.getElementById('total-size').innerText = getFullSizeText()
+    renderFromImage();
+}
+
+function renderFromImage() {
+    const image = document.getElementById('preview-image');
+    const imageContainer = document.getElementById('preview-container')
+
+    render(image, imageContainer, size, frameStyle, frameWidth, matColor, matWidth);
+}
+
+function getFullSizeText() {
+    const width = imageSizes[size][0] + 2 * matWidth / 10 + 2 * frameWidth / 10
+    const height = imageSizes[size][1] + 2 * matWidth / 10 + 2 * frameWidth / 10
+    return `${width/10} x ${height/10} cm`
+}
+
+export 
+
+export 
+
+
+
+export 
+  
+import { Artwork } from './search.js';
+
+export 
+
+export 
+
+    import { Artwork } from './search.js';
+    import { ArtworkDocumentContainer } from './search.js';
+    import * as ArtworkAPI from './search.js';
+    import { numberOfEntries } from './cart-storage.js';
+
+    /*
+    
+
+    async function defaultArtworkSearch() {
+      const artworkContainer = new ArtworkDocumentContainer();
+      artworkContainer.clear();
+      const artworks = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+      for (let artworkID of artworks) {
+        ArtworkAPI.getArtworkById(artworkID).then(
+          (artwork) => artworkContainer.addArtworkToDocument(artwork)
+        );
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', event => {
+
+      const numberOfCartItems = numberOfEntries();
+      if (numberOfCartItems ) 
+      const params = (new URL(document.location)).searchParams;
+      const Query = params.get('q');
+      if (!Query) {
+        defaultArtworkSearch();
+        return;
+      }});
+
+
+    /* const form = document.querySelector('#search form');
+    form.addEventListener('submit', event => {
+        const searchInput = document.getElementById('q');
+        if(!searchInput.value) {
+            searchInput.style.border = "1px solid red";
+            event.preventDefault();
+        }
+    }); */
+  import * as ArtworkCache from './search-cache.js'
+
+export class Artwork {
+    
+}
+
+export 
+
+
+
+export 
+
+
+export class ArtworkDocumentContainer {
+    
+
+    
+
+    
+}

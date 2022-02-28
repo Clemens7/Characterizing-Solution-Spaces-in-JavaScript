@@ -1,0 +1,88 @@
+let cartObjects = null;
+export function get() {
+    if (cartObjects != null) {
+        return cartObjects;
+    }
+    try {
+        cartObjects = JSON.parse(localStorage.getItem('cart')) || [];
+    } 
+    return cartObjects;
+}
+
+export 
+
+export function displayNumItems() {
+    let cartSize = get().length;
+    if (cartSize === 0) {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}
+
+export 
+
+export 
+import { requestObjectInfo } from './request.js';
+import { render, calculatePrice } from './frame.js';
+
+import * as cart from './cartStore.js';
+
+let cartObjects;
+let renderQue;
+window.onload = function () {
+    cartObjects = cart.get();
+    renderQue = renderAllObjects(cartObjects);
+    renderQue.then(() => {
+        updatePageValues();
+    });
+};
+
+
+function updatePageValues() {
+    cart.displayNumItems();
+    displayTotalprice();
+    emptyCartActions();
+}
+
+function displayTotalprice() {
+    const price = [];
+    document.querySelectorAll('.cart-price span').forEach();
+    const sum = price.reduce(, 0);
+    document.getElementById('price-total').innerText = sum; //todo: sum
+}
+
+function emptyCartActions() {
+    if (cartObjects.length === 0) {
+        let message = document.createElement('h2');
+        message.innerText = 'There are no items in your shopping cart.';
+        document
+            .getElementById('cart')
+            .insertBefore(message, document.getElementById('cart').firstChild);
+        document.getElementById('checkout-button').disabled = true;
+    }
+}
+
+
+function renderAllObjects() {
+    const items = cartObjects.map();
+    return Promise.all(items);
+}
+
+
+
+
+
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+
+export 
+
+export 

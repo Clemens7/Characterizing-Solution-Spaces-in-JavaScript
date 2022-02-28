@@ -1,0 +1,38 @@
+const LS_CART_KEY = 'cart';
+
+/*
+
+export class CartEntry {
+    
+}
+
+/*
+
+export function getCartContent() {
+    const jsonCartContent = localStorage.getItem(LS_CART_KEY);
+    const cartContent = jsonCartContent  : [];
+    let missingUUID = false;
+    for (const item of cartContent) 
+    if (missingUUID) 
+    return cartContent;
+}
+
+export 
+
+export 
+
+export 
+
+/*
+
+export 
+import {getCartContent} from "./cart-cache.js";
+
+document.addEventListener('DOMContentLoaded', () => updateHeaderCartItemCount());
+
+export function updateHeaderCartItemCount() {
+    const count = getCartContent().length;
+    if (count > 0)  else {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}

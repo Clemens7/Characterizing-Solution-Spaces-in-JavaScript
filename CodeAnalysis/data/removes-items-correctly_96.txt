@@ -1,0 +1,343 @@
+import { getPrintSizes, render, calculatePrice ,getItemPrintDesc} from '../../frame.js';
+import { getQueryVariables, removeCartItem, getCartItems, getArtworkMetadata } from '../util.js';
+
+const queryParameters = getQueryVariables();
+
+const INPUT_LIST = {
+    cart: document.getElementById('cart'),
+    cartTotal: document.getElementById("div-cart-total")
+};
+
+var testCartItem = {
+    objectID: 123,
+    image: {},
+    size: "S",
+    frameStyle:"natural",
+    frameWidth:5.0,
+    matColor:"wine",
+    matWidth:5.1
+};
+
+initCart();
+
+function initCart() {
+    updateCartView()
+}
+
+function updateCartItemsCounter() {
+    if(getCartItems().length > 0){
+        document.getElementById("cart-link").innerHTML = "Cart (" + getCartItems().length + ")";
+    }
+}
+
+function updateCheckoutButton() {
+    document.getElementById("checkout-button").disabled = getCartItems().length <= 0;
+}
+
+
+
+function updateCartItems() {
+    let cartTotal = INPUT_LIST.cartTotal;
+    INPUT_LIST.cart.innerHTML = "";
+    getCartItems().reverse().forEach(cartItem =>
+        getArtworkMetadata(cartItem.objectID)
+            .then(function(apiResponse){
+                let cartItemHTML = createCartItem(apiResponse, cartItem);
+                INPUT_LIST.cart.insertBefore(cartItemHTML,INPUT_LIST.cartTotal);
+            }));
+    INPUT_LIST.cart.appendChild(cartTotal);
+}
+
+function generateConfigHref(cartItem) {
+    return "config.html?objectID="+cartItem.objectID+"&printSize="+cartItem.printSize+"&frameStyle="+cartItem.frameStyle
+        +"&frameWidth="+cartItem.frameWidth+"&matColor="+cartItem.matColor+"&matWidth="+cartItem.matWidth;
+}
+
+function updateCartView() {
+    updateCartItems();
+    updateCartItemsCounter();
+    updateTotalPrice();
+    updateCheckoutButton();
+}
+
+export function createCartItem(apiResponse,cartItem) {
+    console.log(apiResponse);
+    const cartItemChild = document.createElement("div");
+    cartItemChild.className = "cart-item";
+        const cartPreviewItem = document.createElement("div");
+        cartItemChild.appendChild(cartPreviewItem);
+        cartPreviewItem.id = "preview-container-"+cartItem.objectID;
+        cartPreviewItem.className = "cart-preview";
+            const cartItemPreviewA = document.createElement("a");
+            cartPreviewItem.appendChild(cartItemPreviewA);
+            cartItemPreviewA.href = generateConfigHref(cartItem);
+                const previewImg = document.createElement("img");
+                cartItemPreviewA.appendChild(previewImg);
+                previewImg.className = "cart-thumb";
+                previewImg.id = "preview"+cartItem.objectID;
+                previewImg.alt = apiResponse.title;
+                previewImg.onload = fuckJSUselessCallbackOtherwiseItWontWork => {
+                    render(previewImg,cartPreviewItem,cartItem.printSize,cartItem.frameStyle,cartItem.frameWidth,cartItem.matColor,cartItem.matWidth);
+                };
+                previewImg.src = apiResponse.primaryImageSmall;
+    const labeldiv = document.createElement("div");
+    cartItemChild.appendChild(labeldiv);
+    labeldiv.className = "museum-label";
+        const labelGroupDiv = document.createElement("div");
+        labeldiv.appendChild(labelGroupDiv);
+            const artistSpan = document.createElement("span");
+            labelGroupDiv.appendChild(artistSpan);
+            artistSpan.className = "artist";
+            artistSpan.innerText = apiResponse.artistDisplayName;
+
+            const titleSpan = document.createElement("span");
+            labelGroupDiv.appendChild(titleSpan);
+            titleSpan.className = "title";
+            titleSpan.innerText = apiResponse.title;
+
+            const dateSpan = document.createElement("span");
+            labelGroupDiv.appendChild(dateSpan);
+            dateSpan.innerText = ", "+apiResponse.objectDate;
+            dateSpan.className = "date";
+
+            labelGroupDiv.appendChild(document.createElement("br"));
+            labelGroupDiv.appendChild(document.createElement("br"));
+
+            const frameDescSpan = document.createElement("span");
+            labelGroupDiv.appendChild(frameDescSpan);
+            frameDescSpan.innerText = getItemPrintDesc(cartItem);
+            frameDescSpan.className = "frame-description";
+
+        const labelPriceDiv = document.createElement("div");
+        labeldiv.appendChild(labelPriceDiv);
+        labelPriceDiv.className = "cart-price";
+        labelPriceDiv.innerHTML = "€ ";
+            const priceSpan = document.createElement("span");
+            labelPriceDiv.appendChild(priceSpan);
+            priceSpan.className = "price-"+cartItem.objectID;
+            priceSpan.innerText = calculatePrice(cartItem.printSize, cartItem.frameStyle,cartItem.frameWidth,
+                cartItem.matWidth).toFixed(2);
+
+        const removeItemButton = document.createElement("button");
+        labeldiv.appendChild(removeItemButton);
+        removeItemButton.className = "cart-remove";
+        removeItemButton.onclick = fuckJSUselessCallbackOtherwiseItWontWork => {
+            removeCartItem(cartItem);
+            updateCartView();
+        };
+
+    return cartItemChild;
+}
+
+function updateTotalPrice() {
+    const cartItems = getCartItems();
+    if(cartItems.length < 1)else{
+        var totalprice = 0;
+        cartItems.forEach(item => {
+            totalprice += parseFloat(calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth).toFixed(2));
+        });
+        document.getElementById("price-pretext").innerText = "Total: € ";
+        document.getElementById("price-total").innerText = totalprice;
+    }
+}
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+
+    const pricePerCm = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85
+    }
+
+    price += frameWidth * pricePerCm[frameStyle];
+    price += matWidth * 0.05;
+    if (printSize == "M") {
+        price *= 2;
+    } else if (printSize == "L") {
+        price *= 3.5;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export function getItemPrintDesc(cartItem) {
+    var sizeString = "";
+    switch (cartItem.printSize) {
+        case "S":
+            sizeString = "Small";
+            break;
+        case "M":
+            sizeString = "Medium";
+            break;
+        case "L":
+            sizeString = "Large";
+            break;
+    }
+    var resultString = sizeString+" print in a "+addSeparatorsNF(cartItem.frameWidth / 10) +" cm " + cartItem.frameStyle + " frame";
+    if(cartItem.matColor === undefined)else{
+        return resultString+" with a " + addSeparatorsNF(cartItem.matWidth/10)  + " cm " + cartItem.matColor + " mat.";
+    }
+
+    function addSeparatorsNF(nStr, inD, outD, sep){
+        nStr += '';
+        var dpos = nStr.indexOf(inD);
+        var nStrEnd = '';
+        if (dpos != -1) 
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(nStr)) 
+        return nStr + nStrEnd;
+    }
+}
+const API_URL = "https://collectionapi.metmuseum.org/public/collection/v1";//http://localhost:4445/ https://collectionapi.metmuseum.org/public/collection/v1
+/*
+for localhost test:
+
+ 1)
+run two nodejs processes in folder test with params:  "mock-server/server.js 4445" and
+"node_modules/static-server/bin/static-server.js -p 4444 ../wwwnode node_m"
+
+2)
+in browser set the localstorage item(for cart test)
+localStorage.setItem('cart',"[{\"objectID\":1,\"printSize\":\"M\",\"frameStyle\":\"shabby\",\"frameWidth\":24,\"matColor\":\"coal\",\"matWidth\":23},{\"objectID\":2,\"printSize\":\"M\",\"frameStyle\":\"natural\",\"frameWidth\":46,\"matColor\":\"indigo\",\"matWidth\":17},{\"objectID\":3,\"printSize\":\"S\",\"frameStyle\":\"elegant\",\"frameWidth\":20,\"matColor\":\"wine\",\"matWidth\":9}]");
+localStorage.setItem('cart',"[{\"objectID\":207059,\"printSize\":\"S\",\"frameStyle\":\"shabby\",\"frameWidth\":20,\"matColor\":\"coal\",\"matWidth\":23},{\"objectID\":2,\"printSize\":\"M\",\"frameStyle\":\"natural\",\"frameWidth\":46,\"matColor\":\"indigo\",\"matWidth\":17},{\"objectID\":3,\"printSize\":\"S\",\"frameStyle\":\"elegant\",\"frameWidth\":20,\"matColor\":\"wine\",\"matWidth\":9}]");
+
+[{"objectID":1,"printSize":"M","frameStyle":"shabby","frameWidth":24,"matColor":"coal","matWidth":23},{"objectID":2,"printSize":"M","frameStyle":"natural","frameWidth":46,"matColor":"indigo","matWidth":17},{"objectID":3,"printSize":"S","frameStyle":"elegant","frameWidth":20,"matColor":"wine","matWidth":9}]
+
+
+
+export function getQueryVariables() {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+
+    var parameters = {};
+    vars.forEach(element => {
+        parameters[element.split("=")[0]] = element.split("=")[1];
+    });
+    return parameters;
+}
+
+export 
+
+/* Can not be used bc of the fixed tests whichs sets the localStorage Items
+function getNextItemID() {
+    let currItemID = localStorage.getItem("currentItemID");
+    if(currItemID === undefined || currItemID == null){
+        localStorage.setItem("currentItemID","1");
+        return 1;
+    }else{
+        currItemID = parseInt(currItemID)+1;
+        localStorage.setItem("currentItemID",currItemID);
+        return currItemID;
+    }
+}*/
+
+export 
+
+export function removeCartItem(cartItem) {
+    if (localStorage.getItem("cart") === null) 
+    const cartItems = getCartItems();
+    const itemToRemove = cartItems.find(item => equalsCartItem(cartItem,item));
+    console.log("itemToRemove"+itemToRemove);
+    localStorage.setItem("cart", JSON.stringify(cartItems.filter(item => item !== itemToRemove)));
+}
+
+function equalsCartItem(itemA,itemB) {
+    if(itemA === itemB)
+    if(itemA.objectID !== itemB.objectID){
+        return false;
+    }
+    if(itemA.printSize !== itemB.printSize)
+    if(itemA.frameWidth !== itemB.frameWidth )
+    if(itemA.frameStyle !== itemB.frameStyle )
+    if(itemA.matWidth  !== itemB.matWidth )
+    if(itemA.matColor  !== itemB.matColor )
+    return true;
+}
+
+export function getCartItems() {
+    if (localStorage.getItem("cart") === null) 
+    return JSON.parse(localStorage.getItem("cart"));
+}
+
+export function getArtworkMetadata(objectID) {
+    return new Promise((resolve, reject) => {
+        if (objectID == undefined) 
+
+        if (localStorage.getItem("Cache_" + objectID) === null) {
+            const Http = new XMLHttpRequest();
+            const url = API_URL + "/objects/" + objectID;
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        localStorage.setItem("Cache_" + objectID, Http.responseText);
+                        resolve(JSON.parse(Http.responseText));
+                    }
+                }
+            }
+        } else {
+            var data = JSON.parse(localStorage.getItem("Cache_" + objectID));
+            resolve(data);
+        }
+    });
+}
+
+export 
+
+export 

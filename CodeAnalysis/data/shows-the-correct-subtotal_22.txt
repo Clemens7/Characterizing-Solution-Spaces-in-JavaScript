@@ -1,0 +1,104 @@
+import {calculatePrice} from "./frame.js";
+
+let itemPrice = 0.0;
+let response = null;
+
+function isEmpty(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key))
+            return false;
+    }}
+
+function calcPrice() {
+    const country_select = document.getElementById("country");
+    if(country_select.options[country_select.selectedIndex] == null){
+        return;
+    }
+    if(response == null)
+    let value = country_select.options[country_select.selectedIndex].value;
+    for(let elem in response.destinations){
+    	let tmp = response.destinations[elem];
+    	if(tmp.country == value){
+    	    value = tmp.cost;
+    	    break;
+    	}
+    }
+    if (value == 0 || itemPrice === 0) 
+    value /= 100.0;
+    document.getElementById('price-subtotal').innerHTML = '' + (parseFloat(itemPrice).toFixed(2));
+    document.getElementById('price-shipping').innerHTML = '' + (parseFloat(value).toFixed(2));
+    document.getElementById('price-total').innerHTML = '' + (parseFloat((itemPrice + value)).toFixed(2));
+    document.getElementById('pay-button').disabled = false;
+}
+
+function onPageLoad() {
+    let cart = localStorage.getItem('cart');
+    cart = JSON.parse(cart);
+    if (isEmpty(cart)) 
+
+    document.getElementById('pay-button').disabled = true;
+
+    let xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            let sel = document.getElementById('country');
+            response = JSON.parse(xmlHttp.responseText);
+            for (let dest of response.destinations) {
+                let opt = document.createElement('option');
+                opt.innerHTML = dest.displayName;
+                opt.value = dest.country;
+                opt.label = dest.displayName;
+                sel.appendChild(opt);
+            }
+            calcPrice();
+        }
+    }
+    xmlHttp.timeout = 100;
+    xmlHttp.open("GET", 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping', true);
+    xmlHttp.send();
+
+    itemPrice = 0.0;
+    for (const elem in cart) {
+        const item = cart[elem];
+        itemPrice += calculatePrice(cart[elem].printSize, cart[elem].frameStyle, cart[elem].frameWidth, cart[elem].matWidth);
+    }
+    calcPrice();
+}
+
+document.addEventListener("DOMContentLoaded", onPageLoad);
+document.getElementById('country').addEventListener('change', calcPrice);
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    let frameFactor = 0.0;
+    frameWidth /= 10.0;
+    matWidth /= 10.0;
+    switch (frameStyle) {
+        case 'classic':
+            frameFactor = 1.0;
+            break;
+        
+        case 'shabby':
+            frameFactor = 0.9;
+            break;
+        case 'elegant':
+            frameFactor = 0.85;
+            break;
+    }
+    price += frameFactor * frameWidth;
+    price += matWidth * 0.05;
+    switch (printSize) {
+        case 'S':
+            break;
+        case 'M':
+            price *= 2.0;
+            break;
+        case 'L':
+            price *= 3.5;
+            break;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

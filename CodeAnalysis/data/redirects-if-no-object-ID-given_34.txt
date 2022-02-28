@@ -1,0 +1,117 @@
+import * as DOM from './domHelper.js'
+import {Artwork} from './artwork.js'
+
+export export class Artwork {
+    
+}import {removeFromLocalStorage} from "./searchService.js";
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+export 
+export const cart = "cart";
+
+export function displayCartCount(){
+    let count = JSON.parse(window.localStorage[cart]).length;
+    if(count > 0)
+}const url = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export async function getOneArtworkByID(id) {
+    let obj = getFromLocalStorage(id);
+    if (obj !== null ) 
+
+    let artwork = null;
+
+    await fetch(url + 'objects' + '/' + id, {
+        method: 'GET', headers: {'Content-Type': 'application/json'}
+    })
+        .then(response => {
+            return response.json()
+        })
+        .then();}
+
+export 
+
+export 
+
+export function getFromLocalStorage(id) {
+    return JSON.parse(window.localStorage.getItem([id]))
+}
+
+export 
+import {getArtworkIDsFiltered, getOneArtworkByID} from './searchService.js'
+import {Artwork} from "./artwork.js";
+import * as artworkDom from './artworkDom.js'
+import {displayCartCount} from './main.js'
+
+
+
+const form = document.getElementById('search-form');
+form.addEventListener("submit", );
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    let searchInput = urlParams.get("q");
+
+    if (searchInput !== undefined && searchInput !== null)  else {
+        initializeHighlights()
+    }
+
+    displayCartCount();
+});
+
+function initializeHighlights() {
+    let response;
+    fetch('./highlights.json')
+        .then(response => {
+                return response.json();
+            }
+        )
+        .then(result => {
+            return result["highlights"];
+        })
+        .then(result => {
+            response = getHighlightInfo(result);
+        });
+}
+
+
+
+
+
+function getHighlightInfo(highlights) {
+    let gallery = document.getElementById('gallery');
+
+    for (let i in highlights) {
+        if (highlights.hasOwnProperty(i)) {
+            let id = highlights[i];
+            getOneArtworkByID(id).then()
+
+        }
+    }
+
+}

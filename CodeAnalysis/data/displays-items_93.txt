@@ -1,0 +1,270 @@
+export class SearchResultObject {
+    
+}
+
+export class MuseumObject {
+    constructor(objectID, primaryImageSmall, title, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.primaryImageSmall = primaryImageSmall;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}
+
+export class ShippingObject {
+    
+}
+export function get(key) {
+    if(key in localStorage) {
+        console.log(`Retrieving ${key} from local storage`);
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+export function save(key, value) {
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(value);
+}
+
+
+export 
+        import {getObject} from "./metmuseum-collection-api.js";
+        import {CartDocumentContainer, CartItemsElement} from "./dom-utils.js";
+        import {calculatePrice, render} from "./frame.js";
+        import * as LocalStorage from './cache.js';
+
+        const cartDocumentContainer = new CartDocumentContainer('cart');
+        const cartItemsElement = new CartItemsElement('cart-link');
+        let totalPrice = 0;
+        let localStorageCart = null;
+        let localStorageCartItemsIDs = [];
+        let localStorageCartItemsPrice = [];
+
+        document.addEventListener('DOMContentLoaded', event => {
+            localStorageCart = LocalStorage.get('cart');
+
+            cartItemsElement.update();
+
+            createCartItems();
+        });
+
+        document.getElementById("checkout-button").addEventListener("click", );
+
+        function addEventListenerToCloseButton() {
+            let btn = document.querySelectorAll("button");
+            for (let i = 0; i < btn.length; i++) {
+                btn[i].onclick = 
+            }
+        }
+
+        
+
+        async function createCartItems() {
+            let arrayItems;
+
+            if (localStorageCart) {
+                document.getElementById('checkout-button').disabled = false;
+                extractDataFromLocalStorageCart();
+            }
+
+            addCartTotalPrice(totalPrice);
+
+            arrayItems = await Promise.all(localStorageCartItemsIDs.map(id => getObject(id)));
+
+            cartDocumentContainer.clear();
+
+            for (let i in arrayItems) cartDocumentContainer.addCartItemToContainer(arrayItems[i], localStorageCart[i], localStorageCartItemsPrice[i], i, localStorageCart[localStorageCart.length-1-i]);
+            for (let i in arrayItems) renderImg(localStorageCart[i], localStorageCartItemsPrice[i], localStorageCart.length-1 - i);
+
+            addEventListenerToCloseButton();
+        }
+
+        function extractDataFromLocalStorageCart(){
+            totalPrice = 0;
+            localStorageCartItemsIDs = [];
+            localStorageCartItemsPrice = [];
+            if (localStorageCart) {
+                for (let cartItem of localStorageCart) {
+                    let price = parseFloat(calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth).toFixed(2));
+                    totalPrice += price;
+                    localStorageCartItemsIDs.unshift(cartItem.objectID);
+                    localStorageCartItemsPrice.unshift(price);
+                }
+            }
+        }
+
+        function renderImg(ls, p, i) {
+            const container = document.getElementById(`preview-container-${i}`);
+            const img = document.getElementById(`object-image-${i}`);
+
+            render(img, container, ls.printSize, ls.frameStyle,ls.frameWidth, ls.matColor, ls.matWidth);
+        }
+
+        function addCartTotalPrice(totalPrice) {
+            const priceTotal = document.getElementById('price-total');
+            priceTotal.innerText = totalPrice.toFixed(2);
+        }
+
+        
+
+    import * as LocalStorage from './cache.js';
+
+
+export class CartItemsElement {
+    constructor(elementId = 'cart-link') {
+        this.element = document.getElementById(elementId);
+        if (!this.element) 
+    }
+
+    update() {
+        const cart = LocalStorage.get("cart");
+        const noOfItems = cart && cart.length != 0 ? ` (${cart.length})` 
+        this.element.innerText = `Cart${noOfItems}`;
+    }
+}
+
+export class SearchDocumentContainer {
+    
+
+    
+
+    
+}
+
+export class CartDocumentContainer {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) 
+    }
+
+    clear() {
+        const elements = document.getElementsByClassName("cart-item");
+        while (elements.length > 0) 
+    }
+
+    addCartItemToContainer(cart, cartItemLocalStorage, price, counter, configItem) {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+
+        cartItem.innerHTML =
+            `<div class="cart-preview" id="preview-container-${counter}">
+          <a href="config.html?objectID=${cart.objectID}&frameWidth=${configItem.frameWidth}&frameStyle=${configItem.frameStyle}&matWidth=${configItem.matWidth}&matColor=${configItem.matColor}&printSize=${configItem.printSize}">
+            <img class="cart-thumb" src="${cart.primaryImageSmall}" alt="${cart.title}" id="object-image-${counter}">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist">${cart.artistDisplayName}</span>
+            <span class="title">${cart.title}</span>,
+            <span class="date">${cart.objectDate}</span>
+            <br><br>
+            <span class="frame-description">${configItem.printSize === 'L'  : configItem.printSize === 'M' ? 'Medium' : 'Small'} print in a 
+                                            ${parseFloat(configItem.frameWidth)/10} cm ${configItem.frameStyle} frame${parseFloat(configItem.matWidth) === 0  : ` with a 
+                                            ${parseFloat(configItem.matWidth)/10} cm ${configItem.matColor} mat`}.</span>
+          </div>
+          <div class="cart-price">€ <span id="price-0">${price}</span></div>
+          <button class="cart-remove"></button>
+        </div>`;
+
+        this.container.insertBefore(cartItem, this.container.childNodes[0]);
+        return cartItem;
+    }
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    if (frameStyle === 'classic')else if (frameStyle === 'natural'){
+        price += frameWidth/10*0.8;
+    }else if (frameStyle === 'shabby'){
+        price += frameWidth/10*0.9;
+    }else if (frameStyle === 'elegant'){
+        price += frameWidth/10*0.85;
+    }
+    price += matWidth/10*0.05;
+    if (printSize === 'M'){
+        price *=2;
+    }else if (printSize === 'L')
+    return Math.round((price + Number.EPSILON) * 100)/100;
+}
+
+export 
+import {SearchResultObject} from "./api-responses.js";
+import {MuseumObject} from "./api-responses.js";
+import * as LocalStorage from './cache.js';
+
+const baseUrl = 'https://collectionapi.metmuseum.org/public/collection'; /* base url for all endpoint calls */
+const apiVersion = 'v1'; /* version of the api to be used */
+
+export 
+
+export async function getObject(objectID) {
+    const cachedResult = LocalStorage.get(objectID);
+    if(cachedResult) 
+
+    try {
+        const response = await fetch(getApiUri('objects/' + objectID));
+        const responseObject = await response.json();
+
+
+        const museumObject = new MuseumObject(responseObject.objectID, responseObject.primaryImageSmall, responseObject.title, responseObject.artistDisplayName, responseObject.objectDate);
+
+        LocalStorage.save(objectID,museumObject);
+
+        return museumObject;
+    }}
+
+function getApiUri(resource, queryParam=undefined) {
+    return baseUrl + '/' + apiVersion + '/' + resource + (queryParam  : '');
+}

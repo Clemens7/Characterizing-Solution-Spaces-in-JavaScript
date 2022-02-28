@@ -1,0 +1,223 @@
+export function retrieve(objectID) {
+    if(localStorage.artworks) {
+        let artworks = new Map(JSON.parse(localStorage.artworks));
+        return artworks.get(objectID);
+    }        
+    else
+        return null;
+}
+
+export function store(artwork) {
+    let artworks;
+    if(localStorage.artworks) {
+        artworks = new Map(JSON.parse(localStorage.artworks));
+    }
+    else {
+        artworks = new Map();
+    }
+    artworks.set(artwork.objectID, artwork);
+    localStorage.artworks = JSON.stringify(Array.from(artworks));
+}export class Artwork {
+    constructor(objectID, title, primaryImageSmall, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.title = title;
+        this.primaryImageSmall = primaryImageSmall;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}
+        import {Artwork} from './artwork.js';
+        import * as Frame from './frame.js';
+        import * as CartHelper from './cartHelper.js';
+        import * as Cache from './artwork-cache.js';
+
+      
+
+        async function getArtwork(cartItem,i) {
+            let artwork = Cache.retrieve(cartItem.objectID);
+
+            if (!artwork) {
+                const response = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/' + cartItem.objectID);
+
+                if (response.status == 404) 
+
+                const data = await response.json();
+                artwork = new Artwork(cartItem.objectID, data.title, data.primaryImageSmall, data.artistDisplayName, data.objectDate);
+                Cache.store(artwork);
+            }
+            addCartToDocument(cartItem, artwork,i);
+        }
+
+        function addCartToDocument(cartItem, artwork,i) {
+            const cartContainer = document.getElementById('cart');
+            const price = Frame.calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth);
+            
+            let configURL = `config.html?objectID=${artwork.objectID}&printSize=${cartItem.printSize}&frameStyle=${cartItem.frameStyle}&frameWidth=${cartItem.frameWidth}`;
+            let description;
+            if (cartItem.printSize === 'S') {
+                description = "Small";
+            } else if (cartItem.printSize === 'M')  else {
+                description = "Large";
+            }
+            const frameWidthText = (+cartItem.frameWidth) / 10;
+            description += ` print in a ${frameWidthText} cm ${cartItem.frameStyle} frame`;
+            if (cartItem.matWidth > 0) {
+                let matWidthText;
+                configURL += `&matColor=${cartItem.matColor}&matWidth=${cartItem.matWidth}`;
+                matWidthText = (+cartItem.matWidth) / 10;
+                description += ` with a ${matWidthText} cm ${cartItem.matColor} mat.`
+            } else {
+                description += `.`;
+            }
+
+            cartContainer.innerHTML +=
+                `<div class="cart-item">
+                <div class="cart-preview" id="preview-container-${i}">
+                  <a href="${configURL}">
+                      <img class="cart-thumb" src="${artwork.primaryImageSmall}" id="preview-${i}" alt="">
+                  </a>
+                </div>
+                <div class="museum-label">
+                  <div>
+                    <span class="artist">${artwork.artistDisplayName}</span>
+                    <span class="title">${artwork.title}</span>,
+                    <span class="date">${artwork.objectDate}</span>
+                    <br><br>
+                    <span class="frame-description">${description}</span>
+                  </div>
+                  <div class="cart-price">€ <span id="price-${i}">${price}</span></div>
+                  <button class="cart-remove"></button>
+                </div>
+              </div>
+                `;
+               
+            const image = document.getElementById(`preview-${i}`);
+            Frame.render(image, document.getElementById(`preview-container-${i}`), cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matColor, cartItem.matWidth);
+        }
+
+        async function fillCart() {
+            const cartContainer = document.getElementById('cart');
+            if (!localStorage.getItem('cart')) 
+            let i = 0;
+            const cartItems = JSON.parse(localStorage.getItem('cart'));
+            for (let cartItem of cartItems) {
+                await getArtwork(cartItem,i);
+                i++;
+            }
+
+            cartContainer.innerHTML += `
+            <div class="cart-total">
+                <div class="price">Total: € <span id="price-total">0</span></div>
+                <button type="button" id="checkout-button" onclick="window.location.href='checkout.html';">Checkout</button>
+            </div>
+      `;
+
+            CartHelper.getCartItemNumber();
+            CartHelper.calculateTotalPrice();
+            for (let buttons of document.getElementsByClassName('cart-remove')) {
+                buttons.addEventListener("click", );
+            }
+        }
+
+        fillCart();
+
+        
+
+    import { calculatePrice } from  './frame.js';
+export function getCartItemNumber(){
+    let text;
+    let counter = 0;
+    if (!localStorage.getItem('cart'))
+    else {
+        for (let i of JSON.parse(localStorage.getItem('cart'))){
+            counter++;
+        }
+        text = `Cart (${counter})`;
+    }
+
+    document.getElementById("cart-link").innerHTML = text;
+}
+
+export function calculateTotalPrice() {
+    let price = 0;
+    if (!localStorage.getItem('cart'))
+    else {
+        for (let i of JSON.parse(localStorage.getItem('cart'))){
+            price+=calculatePrice(i.printSize, i.frameStyle, i.frameWidth, i.matWidth);
+        }
+    }
+    price = (Math.round((price + Number.EPSILON) * 100) / 100);
+    document.getElementById('price-total').innerHTML = price;
+}
+
+export export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    let frameBaseCosts = 30.0;
+    let matCostsCM = 0.05;
+    let sizeMultiplier = (printSize == 'S') ? 1 : (printSize == 'M')  : 3.5;
+    let frameCostsCM = 0.0;
+    switch(frameStyle) {
+        case 'classic':
+            frameCostsCM = 1.0;
+            break;
+        
+        case 'shabby':
+            frameCostsCM = 0.9;
+            break;
+        
+    }
+    price = (frameBaseCosts + (frameWidth/10 * frameCostsCM) + (matWidth/10 * matCostsCM)) * sizeMultiplier;
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

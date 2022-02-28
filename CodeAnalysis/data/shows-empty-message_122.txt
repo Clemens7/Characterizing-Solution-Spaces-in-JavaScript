@@ -1,0 +1,118 @@
+
+export 
+
+export 
+
+
+import * as fr from './frame.js'
+import * as ac from './artwork-cache.js'
+import * as NavigationBar from './navigation-bar.js';
+
+const itemTemplate = {
+    cartItem: '<div class="cart-item"></div>',
+    preview: '<div class="cart-preview"></div>',
+    link: '<a href=""></a>',
+    img: '<img class="cart-thumb" src="" id="preview-" alt="">',
+}
+
+export 
+
+
+
+
+
+
+
+
+window.onload = function () {
+
+    displayCart();
+
+    async function displayCart() {
+        await NavigationBar.displayCartSize();
+        let cart = await getCart();
+        if (cart.length !== 0)  else {
+            let emptyCartMessage = '<h3>There are no items in your shopping cart.</h3>';
+            let cartContainer = document.getElementById('cart');
+            let elem = document.createElement('h3');
+            elem.innerHTML = emptyCartMessage;
+            cartContainer.prepend(elem);
+            document.getElementById('checkout-button').disabled = true;
+        }
+
+        displayTotalCosts();
+    }
+};
+
+
+
+
+
+
+export 
+
+
+
+
+export async function getCart() {
+    let cart = localStorage.getItem('cart');
+    if (cart === null) {
+        return [];
+    }}
+
+
+
+/*===================================================DIANA'S CODE===================================================*/
+
+
+export async function cartSize() {
+    const cart = await getCart();
+    return cart.length;
+}
+
+/*
+async function displayCart() {
+    displayTotalCosts();
+}
+
+export async function getTotalCosts() {
+    const cart = await getCart();
+    let item;
+    let totalCosts = 0;
+    console.log('cartSIZE');
+    console.log(cart.length);
+    for (let i = 0; i < cart.length; i++) 
+    return totalCosts.toFixed(2);
+}
+
+async function displayTotalCosts() {
+    const totalCosts = await getTotalCosts();
+    let htmlTemplateElementCart = document.getElementById('price-total');
+    if (totalCosts > 0) 
+}
+
+
+
+/*===================================================DIANA'S CODE END==================================================*/
+class CartItem {
+    
+}
+
+class Artwork {
+    
+}
+
+export 
+
+export 
+
+export 
+import * as Cart from './cart.js';
+export async function displayCartSize() {
+    let htmlTemplateElement = document.getElementById('cart-link');
+    const size = await Cart.cartSize();
+    console.log('=========');
+    console.log(size);
+    if (size > 0)
+
+}

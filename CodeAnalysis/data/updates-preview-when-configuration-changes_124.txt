@@ -1,0 +1,340 @@
+import * as ElementCreator from './element-creator.js';
+import * as Frame from './frame.js';
+
+export class CartContainer {
+    
+
+    
+
+    
+}export class CartItem {
+    constructor(objectID, printSize, frameStyle, frameWidth, matColor, matWidth, price){
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+        this.price = price;
+    }
+}
+import { CartItem } from "./cart-item.js";
+import { ResultItem } from "./result-item.js";
+import { CartContainer } from "./cart-container.js";
+import * as Frame from "./frame.js";
+import * as ElementCreator from './element-creator.js';
+
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+
+    import { ResultItem } from './result-item.js'
+    import { CartItem } from './cart-item.js';
+    import { addToCart, getUrlParameter } from './cart.js';
+    import { render, getPrintSizes, calculatePrice, calculateSize } from './frame.js';
+
+    /* check if objectid exists */
+    var params = (new URL(document.location)).searchParams;
+
+
+    if (!params.get("objectID")) 
+
+    var els = initElements();
+    var allConfig = initConfig();
+
+    allConfig.config.objectID = params.get('objectID');
+
+    const item = JSON.parse(localStorage.getItem(allConfig.config.objectID));
+    if (!item) {
+      retrieveItem(allConfig.config.objectID).then(data => {
+        if (!data || !data.primaryImageSmall) 
+        allConfig.item.artistDisplayName = data.artistDisplayName;
+        allConfig.item.objectID = data.objectID;
+        allConfig.item.title = data.title;
+        allConfig.item.objectDate = data.objectDate;
+        allConfig.item.primaryImageSmall = data.primaryImageSmall;
+        els.descriptionElem.innerHTML = `<strong>${allConfig.item.artistDisplayName}</strong> <br> <i>${allConfig.item.title}, ${allConfig.item.objectDate}</i>`;
+
+        els.img.setAttribute('src', allConfig.item.primaryImageSmall);
+        els.img.setAttribute('alt', allConfig.item.title);
+        localStorage.setItem(allConfig.item.objectID, JSON.stringify(allConfig.item));
+      });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function (event) {
+      var cartObj = localStorage.getItem('cart');
+      if (cartObj) 
+
+
+    })
+
+    els.img.onload = function () {
+      var printSizes = getPrintSizes(els.img);
+      var smallSize = document.getElementById('print-size-s-label');
+      smallSize.innerHTML = "Small<br>" + printSizes.S[0] / 10 + " × " + printSizes.S[1] / 10 + " cm";
+      var mediumSize = document.getElementById('print-size-m-label');
+      mediumSize.innerHTML = "Medium<br>" + printSizes.M[0] / 10 + " × " + printSizes.M[1] / 10 + " cm";
+      var largeSize = document.getElementById('print-size-l-label');
+      largeSize.innerHTML = "Large<br>" + printSizes.L[0] / 10 + " × " + printSizes.L[1] / 10 + " cm";
+      renderConfig();
+    };
+    /*get and set default values from url*/
+    setDefaultValues(params);
+
+
+
+
+    /* functions */
+    function initElements() {
+
+      var img, imgContainer, buyButton, descriptionElem,
+        fWidthS, fWidthF, mWidthS, mWidthF, radio;
+      /*any event change to these should trigger render*/
+      img = document.getElementById('preview-image');
+      imgContainer = document.getElementById('preview-container');
+      buyButton = document.getElementById('config-form');
+      descriptionElem = document.getElementById('image-label');
+      fWidthS = document.getElementsByName('frameWidthR')[0];
+      fWidthF = document.getElementsByName('frameWidth')[0];
+      mWidthS = document.getElementsByName('matWidthR')[0];
+      mWidthF = document.getElementsByName('matWidth')[0];
+      radio = document.querySelectorAll('input[type = radio]');
+
+      return {
+        img, imgContainer, buyButton, descriptionElem,
+        fWidthS, fWidthF, mWidthS, mWidthF,
+        radio
+      };
+    }
+
+    function initConfig() {
+      return {
+        item: new ResultItem(null, null, null, null, null),
+        config: new CartItem(null, 'M', 'natural', 4, 'mint', 5.5, 30.00)
+      };
+    }
+
+    function renderConfig() {
+      var totPrice = calculatePrice(allConfig.config.printSize,
+        allConfig.config.frameStyle, allConfig.config.frameWidth, allConfig.config.matWidth);
+
+      document.getElementById('price').innerHTML = `€ ${totPrice.toFixed(2)}`;
+      allConfig.config.price = price.value;
+
+
+      var totSize = calculateSize(getPrintSizes(els.img), allConfig.config.printSize, allConfig.config.frameWidth, allConfig.config.matWidth);
+
+      document.getElementById('total-size').innerText = totSize;
+
+      render(els.img, els.imgContainer, allConfig.config.printSize, allConfig.config.frameStyle, allConfig.config.frameWidth, allConfig.config.matColor, allConfig.config.matWidth);
+    }
+
+
+
+
+
+
+
+    els.radio.forEach(element => {
+      element.addEventListener('click', event => {
+        allConfig.config[event.target.name] = event.target.value;
+        renderConfig();
+      })
+    });
+
+
+
+    function setDefaultValues() {
+
+      let actualSize = params.get('printSize');
+      switch (actualSize) {
+        
+        
+        
+        default:
+          document.getElementById('print-size-m').checked = true;
+      }
+
+      if (params.get('frameStyle')) 
+
+      let tempFWidth = params.get('frameWidth');
+      if (tempFWidth) 
+
+      if (params.get('matColor')) 
+
+      let tempMWidth = params.get('matWidth');
+      if (params.get('matWidth')) 
+
+    }
+
+    async function retrieveItem(objectID) {
+      const promise = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/' + objectID);
+
+      const item = await promise.json();
+      return item;
+    }
+
+
+    els.fWidthS.addEventListener('input', );
+
+    els.fWidthF.addEventListener('change', function (e) {
+      let val = e.target.value;
+      allConfig.config.frameWidth = val > 5  : val < 2  : (Math.round((parseFloat(val) + Number.EPSILON) * 10) / 10);;
+      els.fWidthF.value = allConfig.config.frameWidth;
+      els.fWidthS.value = allConfig.config.frameWidth;
+
+      renderConfig();
+
+    });
+
+
+
+    els.mWidthS.addEventListener('input', );
+
+    els.mWidthF.addEventListener('change', function (e) {
+      let val = e.target.value;
+      allConfig.config.matWidth = val > 10  : val < 0  : (Math.round((parseFloat(val) + Number.EPSILON) * 10) / 10);;
+      els.mWidthF.value = allConfig.config.matWidth;
+      els.mWidthS.value = allConfig.config.matWidth;
+      renderConfig();
+    });
+
+
+    els.buyButton.addEventListener("submit", );
+  export 
+
+export 
+
+export 
+
+
+
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+
+export function calculateSize(printSizes, printSize, frameWidth, matWidth) {
+    const w = printSizes[printSize][0] + 2 * frameWidth + 2 * matWidth;
+    const h = printSizes[printSize][1] + 2 * frameWidth + 2 * matWidth;
+    return `${(Math.round((w + Number.EPSILON) * 100) / 100)} × ${(Math.round((h + Number.EPSILON) * 100) / 100)} cm`;
+
+}
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+
+    function getFrameStyle(frameStyle) {
+        const wcClassic = 1.0;
+        const wcNatural = 0.80;
+        const wcShabby = 0.90;
+        const wcElegant = 0.85;
+
+        switch (frameStyle) {
+            case 'natural':
+                return wcNatural;
+            
+            case 'shabby':
+                return wcShabby;
+            case 'elegant':
+                return wcElegant;
+            
+        }
+
+    }
+
+    const baseCost = 30.0;
+    const matCost = 0.05;
+    const style = getFrameStyle(frameStyle);
+    let price = 0.0;
+    if (style) {
+        switch (printSize) {
+            case 'S':
+                price = baseCost + frameWidth * style + (matCost ? matCost * matWidth );
+                break;
+            case 'M':
+                price = 2 * (baseCost + frameWidth * style + (matCost ? matCost * matWidth ));
+                break;
+            case 'L':
+                price = 3.5 * (baseCost + frameWidth * style + (matCost ? matCost * matWidth ));
+                break;
+            
+
+        }
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export class ResultItem {
+    constructor(objectID, artistDisplayName, title, objectDate, primaryImageSmall){
+        this.objectID = objectID;
+        this.artistDisplayName = artistDisplayName;
+        this.title = title;
+        this.objectDate = objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+    }
+}

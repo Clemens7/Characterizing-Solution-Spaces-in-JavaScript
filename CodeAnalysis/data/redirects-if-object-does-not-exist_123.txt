@@ -1,0 +1,27 @@
+
+
+
+    document.addEventListener("DOMContentLoaded", event => {
+    var temp = window.localStorage.getItem("cart");
+    if(temp) 
+
+    const params = (new URL(document.location)).searchParams;
+    const searchQuery = params.get("q");
+    if(!searchQuery) {
+      highlights();
+    }
+
+  });
+
+  async function highlights() {
+
+
+    let highlightsFile = await fetch("./highlights.json");
+    var highlightsJSON = await highlightsFile.json();
+
+    for(let i = 0; i < highlightsJSON.highlights.length; i++) {
+      let currentObjectID = highlightsJSON.highlights[i];
+      let objectResponse = await fetch("https://collectionapi.metmuseum.org/public/collection/v1/objects/" + currentObjectID);}
+
+  
+  

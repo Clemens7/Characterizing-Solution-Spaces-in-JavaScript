@@ -1,0 +1,185 @@
+
+    import * as frame from './frame.js';
+
+    function getDescription(product) {
+      let string = '';
+
+      if (product.printSize == 'L') string = 'Large';
+      if (product.printSize == 'M') 
+      if (product.printSize == 'S') string = 'Small';
+
+      string += ' print in a ' + (product.frameWidth / 10) + ' cm ' + product.frameStyle + ' frame';
+      if (product.matWidth && product.matWidth > 0) {
+        string += ' with a ' + (product.matWidth / 10) + ' cm ' + product.matColor + ' mat';
+      }
+
+      return string + '.';
+    }
+
+    async function displayCart(cartData) {
+      if (cartData.length == 0)  else {
+
+        let html = '';
+        let totalPrice = 0.0;
+        for (const product of cartData) {
+          let data = await getObject(product.objectID);
+
+          let artist = data.artistDisplayName;
+          let title = data.title;
+          let date = data.objectDate;
+          let image = data.primaryImageSmall;
+          let description = getDescription(product);
+          let price = frame.calculatePrice(product.printSize, product.frameStyle, product.frameWidth, product.matWidth);
+          totalPrice += price;
+
+          html += '<div class="cart-item">';
+
+          html += '<div class="cart-preview" id="preview-container-' + product.objectID + '">';
+          html += '<a href="config.html?objectID=' + product.objectID + '&printSize=' + product.printSize + '&frameStyle=' + product.frameStyle + '&frameWidth=' + product.frameWidth + '&matColor=' + product.matColor + '&matWidth=' + product.matWidth + '">';
+          html += '<img class="cart-thumb" src="' + image + '" id="preview-' + product.objectID + '" alt="Image of ' + title + '">';
+          html += '</a>';
+          html += '</div>';
+
+          html += '<div class="museum-label">';
+          html += '<div>';
+          html += '<span class="artist">' + artist + '</span>';
+          html += '<span class="title">' + title + '</span>, ';
+          html += '<span class="date">' + date + '</span>';
+          html += '<br><br>';
+          html += '<span class="frame-description">' + description + '</span>';
+          html += '</div>';
+
+          html += '<div class="cart-price">€ <span id="price-' + product.objectID + '">' + price.toFixed(2) + '</span></div>';
+          html += '<button class="cart-remove" onclick="removeProductFromCart(' + product.objectID + ')"></button>';
+          html += '</div>';
+
+          html += '</div>';
+
+        }
+
+        html += '<div class="cart-total">';
+        html += '<label class="price"> Total: € <span id="price-total">' + totalPrice.toFixed(2) + '</span></label>';
+        html += '<a href="checkout.html"><button type="button" class="checkout-button" id="checkout-button">Checkout</button></a>';
+        html += '</div>';
+
+        document.getElementById('cart').innerHTML = html;
+
+        cartData.map(product => {
+          frame.render(
+            document.getElementById('preview-' + product.objectID),
+            document.getElementById('preview-container-' + product.objectID),
+            product.printSize, product.frameStyle, product.frameWidth, product.matColor, product.matWidth
+          );
+        });
+      }
+    }
+
+    
+    window.removeProductFromCart = removeProductFromCart;
+
+
+    let cartData = getCartData();
+    console.log(cartData);
+    updateNavigationText(cartData);
+    displayCart(cartData);
+
+  export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.00;
+
+    if (frameStyle === "classic"){
+        price += 1*frameWidth + matWidth*0.05;
+    }
+    if (frameStyle === "natural")
+    if (frameStyle === "shabby"){
+        price += 0.9*frameWidth + matWidth*0.05;
+    }
+    if (frameStyle === "elegant")
+    console.log("Price: " + price);
+
+    if (printSize === "M")
+        
+
+    if (printSize === "L")
+        price = price*3.5;
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+function getCartData() {
+  let storageData = localStorage.getItem('cart');
+  if (!storageData) 
+  return JSON.parse(storageData);
+}
+
+function updateNavigationText(cartData) {
+  if (cartData.length == 0)  else {
+    document.getElementById('cart-link').innerText = 'Cart (' + cartData.length + ')';
+
+  }
+}
+
+async function fetchProductData(objectID) {
+  let response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+  let data = await response.json();
+  return data;
+}
+
+
+async function getObject(objectID){
+  let object;
+  if(!localStorage.getItem(objectID)){
+    object = await fetchProductData(objectID);
+    localStorage.setItem(objectID, JSON.stringify(object));
+    return object;
+  }

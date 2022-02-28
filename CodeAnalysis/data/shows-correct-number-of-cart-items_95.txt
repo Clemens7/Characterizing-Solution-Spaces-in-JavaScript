@@ -1,0 +1,183 @@
+import {Object} from "./object.js"
+import * as ArtworkCache from './artwork-cache.js';
+
+export 
+
+
+export 
+
+export 
+
+
+
+
+
+
+export 
+
+export 
+    import * as Cart from './cart.js';
+    import * as Frame from './frame.js';
+    import * as API from './art-api.js';
+
+    Cart.updateCartString();
+
+    let cartElement = document.getElementById('cart');
+    let cartItemElement = document.querySelector('.cart-item');
+    let checkoutButton = document.getElementById('checkout-button');
+    let totalElement = document.getElementById('price-total');
+
+    if (Cart.getItems().length == 0) {
+      cartItemElement = document.createElement("div");
+      cartItemElement.classList.add("cart-item");
+      cartItemElement.innerText = 'There are no items in your shopping cart.';
+      cartElement.insertBefore(cartItemElement, cartElement.firstChild);
+      checkoutButton.disabled = true;
+    }
+
+    (async () => {
+      const items = Cart.getItems();
+      console.log("Items:");
+      console.log(items);
+      let totalPrice = 0;
+      for (let index = 0; index < items.length; index++) 
+      document.getElementById("price-total").innerHTML = `${totalPrice.toFixed(2)}`;
+    }) ();
+
+    window.removeItem = 
+  import * as Frame from './frame.js';
+
+export 
+
+export function getItems() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) 
+    return JSON.parse(cart);
+}
+
+export function updateCartString() {
+    let cartLink = document.getElementById('cart-link');
+    let noOfItems = getItems().length;
+    let cartString = '';
+    if (noOfItems > 0) 
+    cartLink.innerText = `Cart${cartString}`;
+}
+
+export 
+
+export 
+    import * as Frame from './frame.js';
+    import * as API from './art-api.js';
+    import * as Cart from './cart.js';
+
+    Cart.updateCartString();
+      
+    const params = new URLSearchParams(window.location.search);
+    const objectID = params.get('objectID');
+    
+    applyParams(params);
+
+    if(objectID == null)
+
+    API.retrieveObject(objectID).then(result => {
+       if(result.message)
+        document.getElementById("preview-image").src = result.primaryImageSmall;
+        updateConfig();
+        const imageLabel = document.getElementById("image-label");
+        imageLabel.innerHTML = `
+          <span class="artist">${result.artistDisplayName}</span>
+          <span class="title">${result.title}</span>,
+          <span class="date">${result.objectDate}</span>`;      
+    })
+
+    function applyParams(params){
+       const form = document.getElementById("config-form"); 
+       form["printSize"].value = params.get("printSize") || "S"; 
+       form["frameStyle"].value = params.get("frameStyle") || "classic"; 
+       form["frameWidth"].value = params.get("frameWidth") / 10 || 5; 
+       form["frameWidthR"].value = params.get("frameWdith") / 10 | 5; 
+       form["matWidth"].value = params.get("matWidth") / 10 || 3;
+       form["matWidth"].value = params.get("matWidth") / 10 || 3;  
+       form["matColor"].value = params.get("matColor") || "Mint"; 
+    }
+
+    window.updateConfig = function(){
+      const form = document.getElementById("config-form");
+      const previewImg = document.getElementById("preview-image");
+      const container = document.getElementById("preview-container");
+      const printSize = form["printSize"].value;
+      const frameStyle = form["frameStyle"].value;
+      const frameWidth = form["frameWidth"].value * 10;
+      const matColor = form["matColor"].value;
+      const matWidth = form["matWidth"].value * 10;
+
+      const printSizes = Frame.getPrintSizes(previewImg);
+      document.getElementById('print-size-s-label').innerHTML = `Small<br>${printSizes.S[0]/10} × ${printSizes.S[1]/10} cm</label>`;
+      document.getElementById('print-size-m-label').innerHTML = `Medium<br>${printSizes.M[0]/10} × ${printSizes.M[1]/10} cm</label>`;
+      document.getElementById('print-size-l-label').innerHTML = `Large<br>${printSizes.L[0]/10} × ${printSizes.L[1]/10} cm</label>`;
+      
+      Frame.render(previewImg, container, printSize, frameStyle, frameWidth, matColor, matWidth);
+
+      document.getElementById("price").innerText = `€ ${Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth).toFixed(2)}`;
+      document.getElementById('total-size').innerText = `${(printSizes[printSize][0] + 2 * frameWidth + 2 * matWidth)/10} × ${(printSizes[printSize][1] + 2 * frameWidth + 2 * matWidth)/10} cm`; 
+    }
+
+window.updateFrameWidth = 
+
+   window.updateMatWidth = 
+
+    window.addToCart = 
+  export 
+
+export 
+
+export 
+
+
+import * as ArtAPI from './art-api.js'; 
+
+export class Object{
+    
+}
+      import * as ArtAPI from './art-api.js';
+      import * as Cart from './cart.js';
+
+      Cart.updateCartString();
+
+      document.addEventListener('DOMContentLoaded', event => {
+          const params = (new URL(document.location)).searchParams;
+          const objectQuery = params.get('q');
+          if (!objectQuery) {
+              fetch('./highlights.json')
+                  .then(response => response.json())
+                  .then(objects => {
+                      for (let objectId of objects.highlights) {
+                          ArtAPI.retrieveObject(objectId)
+                              .then(object => {
+                                  display(object);
+                              });
+                      }
+                  });
+              return;
+          }});
+
+      function display(object) {
+          const gallery = document.getElementById('gallery');
+          gallery.innerHTML += `
+                      <div class="thumb">
+                          <a href="config.html?objectID=${object.objectID}" id="object-0">
+                          <img src="${object.primaryImageSmall.toString()}" alt="" id="object-image-0">
+                          <div class="museum-label">
+                          <span class="artist">${object.artistDisplayName.toString()}</span>
+                          <span class="title">${object.title.toString()}</span>,
+                          <span class="date">${object.objectDate.toString()}</span>
+                          </div>
+                          </a>
+                          </div>`;
+      }
+
+      
+
+      
+
+  

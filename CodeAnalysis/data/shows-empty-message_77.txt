@@ -1,0 +1,109 @@
+/*
+store Artworks in Cart
+
+export const CART = {
+    KEY: 'cart',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(CART.KEY);
+        if (_contents) 
+    },
+    ,
+    ,
+    ,
+    ,
+    
+};
+
+/*
+Cache responses from the Met API's Object endpoint
+export const localPictures = {
+    KEY: 'pictures',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(localPictures.KEY);
+        if (_contents) 
+    },
+    ,
+    ,
+
+    ,
+
+    ,
+};
+import * as DOM from './dom-helper.js';
+
+export class PreviewContainer {
+    
+
+    
+
+
+    
+}import * as Frame from '../frame.js';
+import {PreviewContainer} from './cart-dom.js';
+import * as SearchAPI from './search-api.js'
+import {CART} from "./artmart-cache.js";
+import {localPictures} from './artmart-cache.js ';
+
+(function () {
+    CART.init();
+    console.log(CART);
+    localPictures.init();
+    if (CART.contents.length == 0) {
+        noCartItemsHTML();
+    }
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function noCartItemsHTML() {
+    let main = document.getElementsByTagName("main")[0];
+    main.insertBefore(document.createElement("h2"), document.getElementById('cart'));
+    document.getElementsByTagName("h2")[0].innerText = "There are no items in your shopping cart.";
+    document.getElementById("checkout-button").setAttribute("disabled", "");
+}
+
+export class Picture {
+    
+}
+
+export class Artwork {
+    
+}
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+import { Picture } from './datastructures.js';
+
+export 
+
+
+
+export 

@@ -1,0 +1,93 @@
+export 
+
+export 
+
+export 
+
+export 
+
+export function retrieveCart(){
+    if("cart" in localStorage)
+}import { retrieveObject, storeObject } from "./artmart-cache.js";
+
+class ArtmartAPI {
+    constructor(){
+        this.metMuseumEndpoint = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.artmartEndpoint = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+    
+    async search(q){
+        try{
+            const response = this._basicRequest(`${this.metMuseumEndpoint}/search?q=${q}&hasImages=true`);
+            return response;
+        }}
+
+    
+
+    
+
+    
+
+    async _basicRequest(url){
+            let response = await fetch(url);}
+
+    
+
+}
+
+const artmartAPI = new ArtmartAPI();
+window.artmartAPI = artmartAPI;
+export default artmartAPI;
+ import artmartAPI from "./artmartAPI.js";
+ import {retrieveCart} from "./artmart-cache.js";
+ 
+ var template;
+ var templateContainer;
+ var highlights; // saved highlights
+
+  document.addEventListener('DOMContentLoaded', async (event) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const qParam = urlParams.get("q");
+	  template = document.getElementById('template');
+	  templateContainer = template.parentNode;
+    templateContainer.removeChild(template);
+	
+	document.getElementById('search').value = qParam;
+    searchObjects(qParam);
+	
+    const cart = retrieveCart();
+    if(!(cart===undefined) ) 
+  });
+
+  const form = document.querySelector('.search-form');
+  form.addEventListener('submit', );
+
+ async function searchObjects(q){
+    clearChildren();
+	if(!q) 
+    console.log("searching...")
+    document.getElementById('search-info').innerText = 'Searching for “' + q + '”...';
+    let result = await artmartAPI.search(q);}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+  function clearChildren() {
+    while (templateContainer.firstChild) {
+      templateContainer.removeChild(templateContainer.lastChild);
+    }
+  }
+  
+  
+
+  
+

@@ -1,0 +1,126 @@
+import { Artwork } from '../metmuseum/artwork-model.js';
+
+export 
+
+export export class Artwork {
+    
+}import * as DOM from '../helpers/dom.js';
+import {getConfigurationList} from '../cart/storage.js';
+import {calculateConfigPrice} from "../../frame.js";
+import {renderConfig} from "../../frame.js";
+import {getArtworksByIdListAsync} from "../metmuseum/museum-api.js";
+import {removeConfiguration} from "./storage.js";
+
+
+
+
+
+function calcTotalPriceOfItems(configs) {
+    return configs.reduce(, 0);
+}
+
+function updateTotalPrice() {
+    const items = getConfigurationList();
+    document.getElementById("price-total").textContent = calcTotalPriceOfItems(items).toFixed(2);
+}
+
+
+
+
+
+
+function showEmptyMessage() {
+    const emptyText = document.createElement("div");
+    emptyText.id = "emptyText";
+    emptyText.textContent = "There are no items in your shopping cart.";
+    document.getElementById("cart").insertAdjacentElement('afterbegin', emptyText);
+    document.getElementById("checkout-button").disabled = true;
+}
+
+
+
+function initCartItems() {
+    const items = getConfigurationList();
+    if (items.length === 0) {
+        showEmptyMessage();
+    }
+    updateTotalPrice();
+}
+
+function init(){
+    document.getElementById("checkout-button").onclick = ;
+    initCartItems();
+}
+DOM.onReady(init);
+export 
+
+export 
+
+export 
+
+export 
+
+export function onReady(callback) {
+    if (typeof callback === "function") {
+        document.addEventListener('DOMContentLoaded', callback)
+    }
+}
+
+export 
+
+export export 
+
+export 
+
+export 
+
+export 
+
+export 
+import { updateCartCounter } from "./cart/storage.js";
+import { onReady } from "./helpers/dom.js"
+
+onReady(updateCartCounter);
+import { Artwork } from './artwork-model.js';
+import * as CACHE from '../search/artwork-cache.js';
+
+export 
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+
+
+
+
+export function updateCartCounter() {
+  const element = document.getElementById("cart-link");
+  if (element) {
+    const items = getItems();
+    let text = "Cart";
+    if (items.length > 0) 
+
+    element.innerText = text;
+  }
+}
+
+export 
+
+export 
+
+export function getConfigurationList() {
+  return getItems();
+}
+
+
+
+
+function getItems() {
+  return JSON.parse(localStorage.getItem("cart")) ?? [];
+}

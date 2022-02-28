@@ -1,0 +1,212 @@
+export class Artwork {
+    constructor(objectID, artist, title, date, imgUrl) {
+        this.objectID = objectID;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+        this.imgUrl = imgUrl;
+    }
+}const key = 'cart';
+
+export 
+
+export function getCartItemCount() {
+    return key in localStorage  : 0;
+}
+
+export const CONFIG_URL = 'config.html';
+
+export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}import * as Cache from "../cache/met-cache.js";
+import {Artwork} from "./artwork.js";
+import {retrieveObject} from "../cache/met-cache.js";
+
+export 
+
+export async function getHighlightSearchResult(objectIds){
+    let cachedArtworks = Cache.retrieve(undefined);
+    if(cachedArtworks)
+    let artworks = await getArtworkByIds(objectIds);
+    Cache.store(undefined,artworks);
+    Promise.all(artworks.map(async artwork => {
+        return Cache.storeObject(artwork);
+    }));
+    return artworks;
+}
+
+
+
+
+async function getArtworkByIds(objIds) {
+    return await Promise.all(objIds.map(async id => {
+        return getArtwork(id);
+    }))
+}
+
+
+export async function getArtwork(id) {
+    let artwork = retrieveObject(id);
+    if (artwork)
+        
+
+    const url = objectApiUrl(id);
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const responseArtwork = await rawData.valueOf();
+
+        if (responseArtwork.message === 'ObjectID not found') 
+
+        console.log(`Retrieving artwork with id ${id} from API:`);
+        console.log(responseArtwork);
+
+        artwork = new Artwork(
+            responseArtwork.objectID,
+            responseArtwork.artistDisplayName.trim(),
+            responseArtwork.title.trim(),
+            responseArtwork.objectDate.trim(),
+            responseArtwork.primaryImageSmall.trim()
+        );
+        Cache.storeObject(artwork);
+
+        return artwork;
+    }}
+
+
+function objectApiUrl(artworkId) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${artworkId}`;
+}
+
+export function retrieve(searchTerm) {
+    let lowerCaseSearch = searchTerm :undefined;
+    if (lowerCaseSearch in localStorage) 
+}
+
+export function store(searchTerm, artworks) {
+    const key = searchTerm : undefined;
+    console.log(`Storing artwork with id ${searchTerm} in local storage`);
+    localStorage[key] = JSON.stringify(artworks);
+}
+
+export function retrieveObject(objectId) {
+    if(objectId in localStorage)
+}
+
+export function storeObject(artwork) {
+    localStorage[artwork.objectID] = JSON.stringify(artwork);
+}
+    import * as MetAPI from './met/met-api.js';
+    import { SearchDocumentContainer } from './dom-manipulator/search.js';
+    import {getCartItemCount} from "./cache/cart-cache.js";
+
+    /*
+    
+
+     synchronized url and search bar input
+    document.addEventListener('DOMContentLoaded', event => {
+      const cartItemCount = getCartItemCount();
+      const cartItemsString = cartItemCount === 0 ? '' ;
+      document.getElementById('cart-link').innerText = `Cart${cartItemsString}`;
+
+      const params = (new URL(document.location)).searchParams;
+      const query = params.get('q');
+      if(!query) {
+        highlightedSearch();
+        return;
+      }});
+
+    async function highlightedSearch() {
+      const highlights = await fetch('highlights.json');
+      const data = await highlights.json();
+      const highlightedArtworks = await MetAPI.getHighlightSearchResult(data.highlights);
+      if(!highlightedArtworks) 
+      const searchDocumentContainer = new SearchDocumentContainer();
+      searchDocumentContainer.clear();
+      for(let artwork of highlightedArtworks) {
+        searchDocumentContainer.addArtworkToDocument(artwork);
+      }
+    }
+
+
+    const form = document.querySelector('main');
+    form.addEventListener('submit', );
+
+  import * as DOM from './dom-helper.js';
+
+export class SearchDocumentContainer {
+    constructor(containerID = 'gallery') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addArtworkToDocument(artwork) {
+        this.container.appendChild(createArtworkElements(artwork));
+
+        function createArtworkElements(artwork) {
+            let elem = DOM.container([createAContainer(artwork)], 'div');
+            elem.className = 'thumb';
+            return elem;
+        }
+
+        function createAContainer(artwork) {
+            let a = DOM.container([
+                createImgContainer(artwork),
+                createLabelContainer(artwork)
+            ], 'a');
+
+            DOM.setAttributes(a, {href: `${DOM.CONFIG_URL}?objectID=${artwork.objectID}`});
+            DOM.setAttributes(a, {id: artwork.objectID});
+            return a;
+        }
+
+        function createImgContainer(artwork) {
+            let img = document.createElement('img');
+            DOM.setAttributes(img, {src: artwork.imgUrl});
+            DOM.setAttributes(img, {alt: artwork.title});
+            DOM.setAttributes(img, {id: artwork.objectID});
+            return img;
+        }
+
+        function createLabelContainer(artwork) {
+            let artist = DOM.textElement('span', artwork.artist);
+            artist.className = 'artist';
+
+            let title = DOM.textElement('span', `${artwork.title},`);
+            title.className = 'title';
+
+            let date = DOM.textElement('span', ` ${artwork.date}`);
+            date.className = 'date';
+
+            let label = DOM.container([artist, title, date], 'div');
+            label.className = 'museum-label';
+
+            return label;
+        }
+    }
+}

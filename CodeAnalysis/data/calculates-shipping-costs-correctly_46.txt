@@ -1,0 +1,78 @@
+import {calculatePrice} from "./frame.js";
+
+let acPrize = 0; // actual calculated prize of the shopping cart
+const shippingURI = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+let shippingCountries = [];
+document.addEventListener('DOMContentLoaded', () => {
+    if (!localStorage.getItem('cart'))  else {
+        const cart = JSON.parse(localStorage.getItem('cart'));
+        for (const item of cart) {
+            acPrize += parseFloat(calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth).toFixed(2));
+        }
+        showCosts();
+    }
+    showShippingCountries();
+});
+
+const select = document.getElementById('country');
+select.addEventListener('change', event => {
+    let selectedCountry = (select.value);
+    for (let country of shippingCountries) {
+        console.log(country);
+        if (country.country === selectedCountry) {
+            selectedCountry = country;
+            break;
+        }
+    }
+    showCosts(selectedCountry['cost']);
+});
+
+function showCosts(shippingCosts = 1500) {
+    const subtotals = document.getElementById('price-subtotal');
+    const total = document.getElementById('price-total');
+    const shipping = document.getElementById('price-shipping');
+    subtotals.innerHTML = `${acPrize.toFixed(2)}`;
+    total.innerHTML = `${(acPrize + (shippingCosts / 100)).toFixed(2)}`;
+    shipping.innerHTML = `${(shippingCosts / 100).toFixed(2)}`;
+}
+
+async function showShippingCountries() {
+    let data = await loadShippingData();
+    shippingCountries = data;
+    const countriesEl = document.getElementById('country');
+    for (const country of data) {
+        let htmlCountry = document.createElement('option');
+        htmlCountry.innerText = country['displayName'];
+        htmlCountry.value = country.country;
+        countriesEl.appendChild(htmlCountry);
+    }
+}
+
+async function loadShippingData() {
+    let response = await fetch(shippingURI)
+        .catch();
+    const jsonResponse = await response.json()
+        .catch();
+    return jsonResponse['destinations'];
+}
+
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    price += 0.05 * matWidth/10;
+    if(frameStyle === 'classic'){
+        price += frameWidth/10;
+    } else if (frameStyle === 'natural'){
+        price += 0.8 * frameWidth/10;
+    }
+    if(printSize === 'M'){
+        price *= 2;
+    } else if(printSize === 'L'){
+        price *= 3.5;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

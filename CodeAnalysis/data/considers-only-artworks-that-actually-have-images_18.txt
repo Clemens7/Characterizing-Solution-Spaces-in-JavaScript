@@ -1,0 +1,88 @@
+export function setCartItemsInHeader() {
+  const cartInHeaderElement = document.getElementById('cart-link');
+  const cart = JSON.parse(localStorage.getItem('cart'));
+  if (cart )  else {
+    cartInHeaderElement.innerText = 'Cart';
+  }
+}
+export class Painting {
+  
+}
+
+export class PaintingithFrameConfig extends Painting {
+  
+}
+export 
+
+export 
+export class PictureDocumentContainer {
+    
+
+    
+
+    
+}
+
+        import * as SearchAPI from './search.js';
+        import {retrieve, store} from './search-cache.js';
+        import {PictureDocumentContainer} from './search-dom.js';
+        import {setCartItemsInHeader} from './header-cart.js';
+
+        document.addEventListener('DOMContentLoaded', event => {
+
+            setCartItemsInHeader();
+            const params = (new URL(document.location)).searchParams;
+            const pictureQuery = params.get('q');
+
+            try {
+                pictureSearch(pictureQuery);
+            } 
+
+        });
+
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('click', );
+
+        const form = document.getElementById('form-search');
+
+        async function pictureSearch(pictureQuery) {
+            try {
+
+                if (pictureQuery == null)  else {
+                    document.getElementById('search-info').innerText = `Searching for “${pictureQuery}”...`;
+                }
+
+
+
+                var numberPictureTotal;
+                var listOfPicture;
+                var pictureCacheQuery = `search-cache-${pictureQuery}`;
+
+                if (!pictureQuery)  else if (pictureCacheQuery in localStorage)  else {
+                    const pictureIDRaw = await SearchAPI.getIDResultFromSearch(pictureQuery);
+                }}
+
+
+    
+/*
+import {
+    Painting
+} from './picture.js';
+
+export async function getIDResultFromSearch() {
+    const params = (new URL(document.location)).searchParams;
+    const pictureQuery = params.get('q');
+
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${pictureQuery}`;
+
+    try {
+        const response = await fetch(API_URL);}
+
+
+export 
+
+
+export 
+
+
+export 

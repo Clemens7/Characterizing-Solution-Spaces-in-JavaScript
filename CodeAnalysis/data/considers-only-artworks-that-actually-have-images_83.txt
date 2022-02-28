@@ -1,0 +1,115 @@
+
+
+
+
+export 
+
+export 
+
+export 
+function updateHeader(){
+    const cartLink = document.querySelector("a#cart-link");
+
+    let items = localStorage.getItem("cart");
+    if(items === null){
+        items = [];
+    }
+
+    cartLink.textContent = "Cart (" + items.length +")";
+}
+
+updateHeader();
+const SEARCH_RESULT_KEY = "searchResult/";
+const SEARCH_OBJECT_KEY = "searchObject/";
+
+export 
+
+export 
+
+export 
+
+export function getSearchResult(searchQuery) {
+    const localStoreItem = localStorage.getItem(SEARCH_RESULT_KEY + searchQuery);
+    if (localStoreItem !== null)  else {
+        return null;
+    }
+}
+import * as DomHelper from "../domHelpers.js";
+
+export 
+export class SearchObject {
+    
+
+    
+}
+
+export 
+const MAX_RESULTS = 100;
+const API_URL = "https://collectionapi.metmuseum.org/";
+const SEARCH_ENDPOINT = "public/collection/v1/search";
+const OBJECT_ENDPOINT = "public/collection/v1/objects/";
+
+export async function getObjectIds(searchQuery) {
+    try {
+        const searchRequestUrl = new URL(SEARCH_ENDPOINT, API_URL);
+        searchRequestUrl.searchParams.set("hasImages", "true");
+        searchRequestUrl.searchParams.set("q", searchQuery);
+
+        const searchResponse = await fetch(searchRequestUrl.toString());}
+
+export 
+import * as Remote from "./searchRemote.js";
+import * as Cache from "./seachCache.js"
+import {parseSearchObject} from "./searchObject.js";
+
+export async function loadWithQuery(searchQuery) {
+    return await fillCacheAndRemoteSearch(searchQuery);
+}
+
+export 
+
+async function fillCacheAndRemoteSearch(searchQuery) {
+    console.log("Loading search from cache and remote.");
+    let finalObjects;
+
+    const localResult = Cache.getSearchResult(searchQuery);
+    if (localResult === null) {
+        const remoteIds = await Remote.getObjectIds(searchQuery);}
+
+
+
+
+import * as Dom from "./searchDom.js"
+import * as Repo from "./searchRepo.js";
+
+const container = document.getElementById("gallery");
+
+document.addEventListener("DOMContentLoaded", evt => {
+    const urlSearchParams = new URL(document.location).searchParams;
+    let currentSearchQuery = "";
+    if (urlSearchParams.has("q")) {
+        currentSearchQuery = urlSearchParams.get("q");
+    }
+
+    const searchInput = document.getElementById("search");
+    searchInput.value = currentSearchQuery;
+
+    executeSearch(currentSearchQuery).then()
+});
+
+document.getElementById("search-form").addEventListener("submit", );
+
+async function executeSearch(searchQuery) {
+    if (searchQuery === "") 
+
+    console.log(`Staring search with query: ${searchQuery}.`);
+    setIndicator(`Searching for “${searchQuery}”...`);
+
+    const searchResult = await Repo.loadWithQuery(searchQuery);)} for “${searchQuery}”`);
+    Dom.loadElements(container, searchResult);
+}
+
+function setIndicator(indicator) {
+    const searchInfo = document.getElementById("search-info");
+    searchInfo.innerText = indicator;
+}

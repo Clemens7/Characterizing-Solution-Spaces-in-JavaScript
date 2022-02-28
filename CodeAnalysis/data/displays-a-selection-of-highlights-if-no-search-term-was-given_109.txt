@@ -1,0 +1,113 @@
+export function retrieve(objectID) {
+    if(localStorage.artworks) {
+        let artworks = new Map(JSON.parse(localStorage.artworks));
+        return artworks.get(objectID);
+    }        
+    else
+        return null;
+}
+
+export function store(artwork) {
+    let artworks;
+    if(localStorage.artworks) {
+        artworks = new Map(JSON.parse(localStorage.artworks));
+    }
+    else {
+        artworks = new Map();
+    }
+    artworks.set(artwork.objectID, artwork);
+    localStorage.artworks = JSON.stringify(Array.from(artworks));
+}export class Artwork {
+    constructor(objectID, title, primaryImageSmall, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.title = title;
+        this.primaryImageSmall = primaryImageSmall;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}import { calculatePrice } from  './frame.js';
+export function getCartItemNumber(){
+    let text;
+    let counter = 0;
+    if (!localStorage.getItem('cart')){
+    text = "Cart";
+    }
+
+    document.getElementById("cart-link").innerHTML = text;
+}
+
+export 
+
+export export 
+
+export 
+
+export 
+
+    import * as Cache from './artwork-cache.js';
+    import { Artwork } from './artwork.js';
+    import * as CartHelper from './cartHelper.js';
+
+    CartHelper.getCartItemNumber();
+
+
+    const searchInput = document.getElementById(`search`);
+    searchInput.addEventListener(`click`, )
+
+    document.addEventListener(`DOMContentLoaded`, event => {
+        const params = (new URL(document.location)).searchParams;
+        const keyword = params.get(`q`);
+        searchArtworks(keyword);
+    });
+
+    const form = document.querySelector(`#search-section form`);
+    form.addEventListener(`submit`, );
+
+    async function searchArtworks(keyword) {
+        var objectIDs;
+        if (!keyword) {
+            const responseRaw = await fetch('./highlights.json');
+            const response = await responseRaw.json();
+            objectIDs = response.highlights;
+            document.getElementById("search-info").innerHTML = 'Search our collection of more than 400,000 artworks.';
+        }
+        buildGallery(objectIDs);
+
+    }
+
+    async function buildGallery(objectIDs) {
+        var gallery = document.getElementById("gallery");
+        gallery.innerHTML = '';
+
+        for (const objectID of objectIDs) {
+            const artwork = await getArtwork(objectID);
+            gallery.innerHTML +=
+                `<div class="thumb">
+                  <a href="config.html?objectID=${objectID}" id="object-${objectID}">
+                    <img src="${artwork.primaryImageSmall}" alt="${artwork.title} by ${artwork.artistDisplayName}" id="object-image-${objectID}">
+                    <div class="museum-label">
+                      <span class="artist">${artwork.artistDisplayName}</span>
+                      <span class="title">${artwork.title}</span>,
+                      <span class="date">${artwork.objectDate}</span>
+                    </div>
+                  </a>
+                </div>`;
+        }
+    }
+
+    async function getArtwork(objectID) {
+        var artwork = Cache.retrieve(objectID);
+
+        if(!artwork) {
+            const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/`+objectID);
+
+            if(response.status == 404) 
+
+            const data = await response.json();
+            artwork = new Artwork(objectID, data.title, data.primaryImageSmall, data.artistDisplayName, data.objectDate);
+            Cache.store(artwork);
+        }
+        return artwork;
+    }
+
+  

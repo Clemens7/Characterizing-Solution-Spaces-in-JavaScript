@@ -1,0 +1,120 @@
+const BASE_URL = 'https://collectionapi.metmuseum.org';
+
+export async function getObject(id) {
+  let artwork = JSON.parse(localStorage.getItem(id));
+  if (!artwork) {
+    const response = await object(id);
+    if (response.status === 400 || response.status === 404) 
+    artwork = await response.json();
+    localStorage.setItem(artwork.objectID, JSON.stringify(artwork));
+  }
+  return artwork;
+}
+
+export 
+
+export async function highlights(){
+  const idObject= await fetch('highlights.json').then(ids => ids.json());
+  return idObject.highlights;
+}
+
+export async function object(objectID) {
+  return fetch(`${BASE_URL}/public/collection/v1/objects/${objectID}`);
+}
+
+export 
+
+export 
+import {getAllProducts, add, CObject, remove} from './cart.js';
+import {getObject} from "./api.js";
+import {calculatePrice, render} from "./frame.js";
+
+
+
+export 
+
+
+
+
+
+export function cartElements(){
+    let cartn = document.getElementById("cart-link");
+   if(getAllProducts().length !== 0)else{
+   cartn.innerHTML = "Cart";
+   }
+}
+
+
+export function getAllProducts() {
+  var cart = JSON.parse(localStorage.getItem('cart'));
+  if (!cart) {
+    cart = [];
+  }
+  return cart;
+}
+
+export class CObject{
+  
+}
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+import {search, highlights, getObject} from "./api.js";
+import {cartElements} from "./cart-display.js";
+
+cartElements();
+
+let params = (new URL(document.location)).searchParams.get('q');
+if (!params) params = '';
+artworkSearch(params);
+
+async function artworkSearch(q) {
+  document.getElementById("search").value = q;
+  document.getElementById('gallery').innerText = '';
+  const searchInfo = document.getElementById('search-info');
+  let ids = [];
+  if (q!='')  else {
+    ids = await highlights();
+  }
+  ids.map(objectID => getObject(objectID).then(appendArtworkElement));
+}
+
+function appendArtworkElement(artwork) {
+  const outerDiv = document.createElement('div');
+  outerDiv.setAttribute('class', 'thumb');
+  const ref = document.createElement('a');
+  ref.setAttribute('href', 'config.html?objectID=' + artwork.objectID);
+  ref.setAttribute('id', 'object-' + artwork.objectID);
+  const img = document.createElement('img');
+  img.setAttribute('src', artwork.primaryImageSmall);
+  img.setAttribute('alt', artwork.title);
+  img.setAttribute('id', 'object-image' + artwork.objectId);
+  const innerDiv = document.createElement('div');
+  innerDiv.setAttribute('class', 'museum-label');
+  const artistSpan = document.createElement('span');
+  artistSpan.setAttribute('class', 'artist');
+  artistSpan.innerText = artwork.artistDisplayName;
+  const titleSpan = document.createElement('span');
+  titleSpan.setAttribute('class', 'title');
+  titleSpan.innerText = artwork.title + ', ';
+  const dateSpan = document.createElement('span');
+  dateSpan.setAttribute('class', 'date');
+  dateSpan.innerText = artwork.objectDate;
+  ref.appendChild(img);
+  innerDiv.appendChild(artistSpan);
+  innerDiv.appendChild(titleSpan);
+  innerDiv.appendChild(dateSpan);
+  ref.appendChild(innerDiv);
+  outerDiv.appendChild(ref);
+  document.getElementById("gallery").appendChild(outerDiv);
+}
+
+

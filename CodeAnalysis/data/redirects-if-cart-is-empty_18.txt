@@ -1,0 +1,93 @@
+import { render, calculatePrice } from './frame.js';
+import { setCartItemsInHeader } from './header-cart.js';
+export 
+
+
+
+
+export function calcTotal() {
+  let price = 0;
+  const totalCostDisplay = document.querySelector('#price-total');
+
+  const shoppingCart = JSON.parse(localStorage.getItem('cart'));
+
+  for (let i = 0; i < shoppingCart.length; i++) 
+}
+
+
+
+
+
+export function renderEmptyCart() {
+    const emptyCartText = document.createElement('div');
+    emptyCartText.style.paddingBottom = '20px';
+    emptyCartText.innerText = 'There are no items in your shopping cart.';
+    document
+      .getElementById('cart')
+      .prepend(emptyCartText);
+    document.getElementById('checkout-button').disabled = true;
+}
+import { addPictureToDom, calcTotal, renderEmptyCart} from './cart-dom.js';
+import { setCartItemsInHeader } from './header-cart.js';
+import { PaintingithFrameConfig } from './picture.js';
+import retrievePicture from './picture-cache.js';
+
+let paintings;
+
+async function retrieveArtworkInformation() {
+  try {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    let paintings = await getObjectsFromCart(cart);catch (error) {
+    console.log(error);
+  }
+}
+
+function renderCartItems(shoppingCartPaintings) {
+  if (!shoppingCartPaintings ) {
+    renderEmptyCart();
+  }
+
+  calcTotal();
+}
+
+retrieveArtworkInformation().then((result) => {
+  paintings = result;
+  console.log({ paintings });
+  renderCartItems(paintings);
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  setCartItemsInHeader();
+  document.getElementById('checkout-button').onclick = ;
+});
+
+export async function getObjectsFromCart(shoppingCart) {
+  try {
+    let listOfImages = [];
+
+    for (let shoppingCartItem of shoppingCart) catch (e) {
+    console.log(`Fetching picture went wrong with objectID: ${shoppingCart.objectID}`);
+    console.log(e);
+  }}
+export 
+
+export 
+
+export 
+
+export function setCartItemsInHeader() {
+  const cartInHeaderElement = document.getElementById('cart-link');
+  const cart = JSON.parse(localStorage.getItem('cart'));
+  if (cart )  else {
+    cartInHeaderElement.innerText = 'Cart';
+  }
+}
+export default 
+export class Painting {
+  
+}
+
+export class PaintingithFrameConfig extends Painting {
+  
+}

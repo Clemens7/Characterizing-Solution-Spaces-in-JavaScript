@@ -1,0 +1,54 @@
+
+
+
+        import {calculatePrice, render} from "./frame.js";
+
+        const wrapper = document.getElementById('cart');
+
+        let sumTotal = 0;
+
+
+        const checkoutButton = document.getElementById('checkout-button');
+        const total = document.getElementById('price-total');
+        const empty = document.createElement('h1');
+        empty.innerHTML = 'There are no items in your shopping cart. <br><br>';
+        const cartLink = document.getElementById('cart-link');
+        const objectAPI = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+
+
+
+
+        checkoutButton.addEventListener('click', );
+
+        document.addEventListener('DOMContentLoaded', event => {
+
+            if (!isEmpty()) 
+
+        });
+
+
+        function isEmpty() {
+            console.log(JSON.parse(localStorage.getItem('cart')));
+            if (localStorage.getItem('cart') == null ) {
+                wrapper.insertBefore(empty, wrapper.firstChild);
+                checkoutButton.disabled = true;
+                cartLink.innerText = "Cart";
+                localStorage.clear();
+                return true;
+            }}
+
+
+        
+
+
+        
+
+        
+
+        
+
+    export 
+
+export 
+
+export 

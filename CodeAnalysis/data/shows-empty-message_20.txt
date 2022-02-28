@@ -1,0 +1,118 @@
+import { calculatePrice, render, getPrintSizes} from './frame.js';
+
+window.onload = startFunc();
+document.addEventListener('DOMContentLoaded', showEmptyMessage);
+
+
+
+class artElement {
+	
+}
+
+function startFunc() {
+
+
+	if(checkIfShoppingCartIsEmpty()){
+		return;
+	}}
+
+
+function showEmptyMessage(){
+
+	if(checkIfShoppingCartIsEmpty()){
+
+		var emptyCartDiv = document.createElement("div");
+		emptyCartDiv.innerHTML = "There are no items in your shopping cart.";
+
+		document.getElementById("cart").insertBefore(emptyCartDiv, document.getElementById("cart-total-end-of-the-page"));
+		document.getElementById("checkout-button").disabled = true;
+		return;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function checkIfShoppingCartIsEmpty(){
+	if(getCartAsString() != 0 && getCartAsString() != null) else{
+		return true;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getCartAsString(){
+	return window.localStorage.getItem("cart");
+}
+export 
+
+export 
+
+export 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

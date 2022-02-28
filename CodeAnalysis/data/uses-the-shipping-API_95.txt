@@ -1,0 +1,130 @@
+const apiUrl = 'https://web-engineering.big.tuwien.ac.at/s20/a2';
+
+export async function fetchShippingCosts() {
+    const url = apiUrl + '/shipping';
+    try {
+        const response = await fetch(url);
+        const responseData = await response.json();
+        return await responseData.destinations;
+    }import * as Frame from './frame.js';
+
+export 
+
+export function getItems() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) 
+    return JSON.parse(cart);
+}
+
+export 
+
+export function getTotal() {
+    let items = getItems();
+    return items.reduce((current, item) => {
+      return current + Frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }, 0.0);
+}
+
+export 
+    import * as ArtmartApi from './artmart-api.js';
+    import * as Cart from './cart.js';
+
+    if(Cart.getItems().length == 0) 
+    
+    let payButton = document.getElementById('pay-button');
+    payButton.disabled = true;
+    let shippingCosts;//map - key: country, value: array [displayName, shippingCost]
+
+    let shippingCost;//shipping cost for currently selected country
+    let subtotal;
+    let total;
+    let selectElement = document.getElementById('country');
+    let subtotalElement = document.getElementById('price-subtotal');
+    let shippingCostElement = document.getElementById('price-shipping');
+    let totalElement = document.getElementById('price-total');
+    
+    document.addEventListener('DOMContentLoaded', event => {
+      updateSubtotal();//have to call that earlier than actually necessary so that test passes
+      init();
+    });
+
+    selectElement.addEventListener('change', );
+
+    async function init() {
+      try {
+        await initShippingCosts();
+      } 
+      fillSelectField();
+      updateCostsDisplayed();
+      payButton.disabled = false;
+    }
+
+    async function initShippingCosts() {
+      let response;
+      try {
+        response = await ArtmartApi.fetchShippingCosts();
+      } 
+
+      shippingCosts = response.reduce((map, obj) => {
+        map[obj.country] = [obj.displayName, obj.cost / 100];//convert cost from cents to euros
+        return map;
+      }, {});
+
+      shippingCosts = new Map(Object.entries(shippingCosts));
+    }
+
+    function fillSelectField() {
+      for (let [country, [displayName, cost]]  of shippingCosts) {
+        let option = document.createElement('option');
+        option.value = country;
+        option.text = displayName;
+        selectElement.appendChild(option);
+      }
+    }
+
+    function updateCostsDisplayed() {
+      updateSubtotal();
+      updateShippingCost();
+      totalElement.innerText = (subtotal + shippingCost).toFixed(2);
+    }
+
+    function updateShippingCost() {
+      if (!shippingCosts) 
+      shippingCost = shippingCosts.get(selectElement.value)[1];//index 0: displayName, index 1: cost
+      shippingCostElement.innerText = shippingCost.toFixed(2);
+    }
+
+    function updateSubtotal() {
+      subtotal = Cart.getTotal();
+      subtotalElement.innerText = subtotal.toFixed(2);
+    }
+
+    
+  export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    
+    let price = ((30 + getCostForFrame(frameStyle) * (frameWidth/10)) + (0.05 * (matWidth / 10)))* getMultiplier(printSize);  
+
+    return Math.round(price * 100) / 100;
+}
+function getMultiplier(size){
+     const sizes = {
+        "S" : 1, 
+        "M": 2, 
+        "L": 3.5
+    }; 
+    return sizes[size];
+}
+
+function getCostForFrame(frame){
+    const costs = {
+        "classic" : 1, 
+        "natural" : 0.8, 
+        "shabby" : 0.9, 
+        "elegant" : 0.85
+    }; 
+    return costs[frame]; 
+}

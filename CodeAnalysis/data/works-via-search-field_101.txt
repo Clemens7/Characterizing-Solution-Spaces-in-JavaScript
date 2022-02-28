@@ -1,0 +1,232 @@
+export function store(searchTerm, artworks, numberOfItems) {
+  console.log(`store: ${JSON.stringify(artworks)}`);
+  let arr = [artworks, numberOfItems];
+  localStorage.setItem(searchTerm, JSON.stringify(arr));
+  for (let artwork of artworks) {
+    console.log(`Storing artwork witch objectID: ${artwork.objectID}`);
+    localStorage.setItem(artwork.objectID, JSON.stringify(artwork));
+  }
+}
+
+export 
+
+export function retrieveArtworks(searchTerm) {
+  console.log(`Retrieving artworks from local storage with key: ${searchTerm}`);
+  if (searchTerm in localStorage) 
+}
+
+export function retrieveNumberOfArtworks(searchTerm) {
+  console.log(`Retrieving number of items from local storage with key: ${searchTerm}`);
+  if (searchTerm in localStorage) {
+    let arr = JSON.parse(localStorage[searchTerm]);
+    return arr[1];
+  }
+}
+
+
+export import * as DomBuilder from './dom-builder.js';
+export class GalleryContainer {
+  constructor(results) {
+    this.galleryContainer = document.getElementById("gallery");
+    if (!this.galleryContainer) 
+  }
+  clear() {
+    this.galleryContainer.innerHTML = '';
+  }
+
+  addArtworkToGallery(artwork) {
+    console.log(`Adding ${artwork.objectID} to gallery`);
+    const spanContainerElement = createSpanContainer(artwork);
+    const linkContainerElement = createLinkContainer(artwork, spanContainerElement);
+    const artworkContainerElement = createArtworkContainer(linkContainerElement);
+    this.galleryContainer.appendChild(artworkContainerElement);
+
+    function createArtworkContainer(linkElement) {
+      let divElement = DomBuilder.container('div', [linkElement]);
+      divElement.setAttribute("class", "thumb");
+      return divElement;
+    }
+
+    function createLinkContainer(artwork, spanContainer) {
+      let imageElement = document.createElement('img');
+      imageElement = DomBuilder.setAttributes(imageElement, {
+        src: artwork.primaryImageSmall,
+        alt: artwork.title,
+        id: `object-image-${artwork.objectID}`
+      });
+      let linkElement = DomBuilder.container('a', [imageElement, spanContainer]);
+      linkElement = DomBuilder.setAttributes(linkElement, {
+        href: `./config.html?objectID=${artwork.objectID}`,
+        id: artwork.objectID
+      });
+      return linkElement;
+    }
+
+    function createSpanContainer(artwork) {
+      let spanElement1 = DomBuilder.createTextElement("span", artwork.artistDisplayName);
+      spanElement1.setAttribute("class", "artist");
+      let spanElement2 = DomBuilder.createTextElement("span", artwork.title);
+      spanElement2.setAttribute("class", "title");
+      let spanElement3 = DomBuilder.createTextElement("span", ", " + artwork.objectDate);
+      spanElement3.setAttribute("class", "date");
+      let divElement = DomBuilder.container('div', [spanElement1, spanElement2, spanElement3]);
+      divElement.setAttribute("class", "museum-label");
+      return divElement;
+    }
+  }
+}export class Artwork {
+  constructor(objectID, primaryImageSmall, title, artistDisplayName, objectDate, isHighlight) {
+    this.objectID = objectID;
+    this.primaryImageSmall = primaryImageSmall;
+    this.title = title;
+    this.artistDisplayName = artistDisplayName;
+    this.objectDate = objectDate;
+    this.isHighlight = isHighlight;
+  }
+}
+
+export var NumberOfItems = {
+  store: ,
+  getNumber: 
+}export function setAttributes(element, attributes) {
+  for (let key in attributes) {
+    if (typeof(attributes[key]) === 'object')  else {
+      element[key] = attributes[key];
+    }
+  }
+  return element;
+}
+
+export function container(tag = 'div', elements, text = '') {
+  let container = document.createElement(tag);
+  container.innerText = text;
+  for (let element of elements) {
+    container.appendChild(element);
+  }
+  return container;
+}
+
+export function createTextElement(tag, text) {
+  const element = document.createElement(tag);
+  element.innerText = text;
+  return element;
+}import * as ArtworkCache from './artwork-cache.js';
+import {
+  Artwork,
+  NumberOfItems
+} from './artwork.js';
+
+const API_SEARCH_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+const API_OBJECT_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const HIGHLIGHTS_URL = './highlights.json';
+const SEARCH_CONDITION = 'hasImages=true';
+
+export async function retrieve(searchTerm) {
+  console.log(`Retrieving results for "${searchTerm}"`);
+  if (!searchTerm) 
+  let artworksCache = ArtworkCache.retrieveArtworks(searchTerm);
+  if (artworksCache) 
+  let url = search_url(searchTerm)
+  try {
+    let response = await fetch(url)
+    let responseJson = await response.json();
+    let artworkResponse = await retrieveArtworks(responseJson.objectIDs);
+    ArtworkCache.store(searchTerm, artworkResponse, responseJson.objectIDs.length);
+    return artworkResponse;
+  }}
+
+export 
+
+
+
+
+
+
+
+export async function retrieveArtworks(objectIDs) {
+  console.log(`Retrieving results for "${objectIDs}"`);
+  objectIDs = objectIDs.slice(0, 100);
+  console.log(objectIDs)
+  let artworks = await Promise.all(
+    objectIDs.map(async objectID => {
+      try {
+        let url = object_url(objectID);
+        let artworkResponse = await fetch(url)
+        return artworkResponse.json();
+      }})
+  )
+  artworks = artworks.map(artwork => {
+    return new Artwork(artwork.objectID,
+      artwork.primaryImageSmall,
+      artwork.title,
+      artwork.artistDisplayName,
+      artwork.objectDate,
+      artwork.isHighlight);
+  });
+  return artworks;
+}
+
+function object_url(objectID) {
+  return `${API_OBJECT_BASE_URL}${objectID}`;
+}
+
+function search_url(searchTerm) {
+  const SEARCH_URL = `${API_SEARCH_BASE_URL}?q=${searchTerm}&${SEARCH_CONDITION}`;
+  console.log('search url: ' + SEARCH_URL);
+  return SEARCH_URL;
+}import {
+    Artwork,
+    NumberOfItems
+} from './helper/artwork.js';
+import * as ArtworkAPI from './helper/met-museum-api.js';
+import {
+    GalleryContainer
+} from './helper/artwork-dom.js';
+import * as ArtworkCache from './helper/artwork-cache.js';
+import * as Storage from './helper/storage.js'
+
+const form = document.querySelector('.search-form');
+form.addEventListener('submit', );
+
+document.addEventListener('DOMContentLoaded', event => {
+    const params = (new URL(document.location)).searchParams;
+    let qQuery = params.get('q');
+    document.getElementById('search').value = qQuery;
+    const searchInfo = document.getElementById('search-info');
+    if (qQuery) {
+        searchInfo.innerHTML = `Searching for “${qQuery}”...`;
+    }
+    (async function() {
+        let artworks = await artworkSearch(qQuery);
+        if (qQuery && qQuery !== 'null' && qQuery != null && artworks !== undefined) {
+            let artworkWording = (artworks.length === 1)  : 'artworks';
+            searchInfo.innerHTML = `Found ${ArtworkCache.retrieveNumberOfArtworks(qQuery)} ${artworkWording} for “${qQuery}”`;
+        }
+    }());
+
+    updateCartItems(Storage.getCartItemCount());
+});
+
+
+
+
+async function artworkSearch(searchTerm) {
+    console.log(`Searching for ${searchTerm}`);
+    if (searchTerm === 'null') 
+    let artworks = await ArtworkAPI.retrieve(searchTerm);
+    console.log(artworks)
+    const galleryContainer = new GalleryContainer();
+    galleryContainer.clear();
+    for (let artwork of artworks) {
+        galleryContainer.addArtworkToGallery(artwork);
+    }
+    return artworks;
+}export 
+
+export 
+
+export 
+
+export function getCartItemCount() {    
+    return JSON.parse(window.localStorage.getItem('cart')).length;
+}

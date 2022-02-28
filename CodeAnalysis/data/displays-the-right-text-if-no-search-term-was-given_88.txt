@@ -1,0 +1,142 @@
+import {calculatePrice} from './frame.js';
+
+export default class CartItem {
+
+    
+
+    
+}export 
+
+export 
+
+export 
+
+    import {getShoppingCart} from "./Util.js";
+
+    let shoppingCart = getShoppingCart();
+    if((localStorage.getItem('cart') != null )) 
+    /*
+    const form = document.querySelector('form');
+    form.addEventListener('submit', );
+
+    document.addEventListener('DOMContentLoaded', event => {
+      const params = (new URL(document.location)).searchParams;
+      const actualQuery = params.get('q');
+      if(!actualQuery){
+        useHighlights(); //use highlights when no parameter is given
+        return;
+      }});
+  
+class Artwork {
+  
+}
+
+var SearchTerms = {
+  serialize : ,
+  parse : 
+}
+
+async function useHighlights(){
+  var highlights = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+  var i = 0;
+  for( i = 0; i < 12; i++){
+    addGridElement(highlights[i], i);
+  }
+}
+
+
+
+
+
+
+
+
+
+async function addGridElement(retrievedObject, nthObject){
+  var url = "https://collectionapi.metmuseum.org/public/collection/v1/objects/"+retrievedObject;
+  const response = await fetch(url);
+  const data = await response.json();
+
+  function processObjectRequest(){
+      var thumb = document.createElement("div");
+      thumb.setAttribute("class", "thumb");
+      thumb.setAttribute("id", "thumb-"+nthObject);
+
+      var aOfThumb = document.createElement("a");
+      aOfThumb.setAttribute("href", ""); //TODO
+      aOfThumb.setAttribute("id", "object-"+nthObject);
+
+      var imgOfThumb = document.createElement("img");
+      imgOfThumb.setAttribute("src", data.primaryImageSmall);
+      imgOfThumb.setAttribute("alt", data.objectName);
+      imgOfThumb.setAttribute("id", "object-image-"+nthObject);
+
+      var labelOfThumb = document.createElement("div");
+      labelOfThumb.setAttribute("class", "museum-label");
+
+      var artist = document.createElement("span");
+      artist.setAttribute("class", "artist");
+      artist.setAttribute("id", "artist"+nthObject);
+
+      artist.innerText = data.artistDisplayName;
+
+      var title = document.createElement("span");
+      title.setAttribute("class", "title");
+      title.setAttribute("id", "title"+nthObject);
+
+      title.innerText = data.title;
+
+      var comma = document.createElement("text");
+      comma.innerText = ", ";
+
+      var date = document.createElement("span");
+      date.setAttribute("class", "date");
+      date.setAttribute("id", "date"+nthObject);
+
+      date.innerText = data.objectDate;
+
+      thumb.appendChild(aOfThumb);
+      aOfThumb.appendChild(imgOfThumb);
+      labelOfThumb.appendChild(artist);
+      labelOfThumb.appendChild(title);
+      labelOfThumb.appendChild(comma);
+      labelOfThumb.appendChild(date);
+      aOfThumb.appendChild(labelOfThumb);
+
+      document.getElementById("gallery").appendChild(thumb);
+    }
+
+    processObjectRequest();
+}
+import CartItem from "./CartItem.js";
+
+export default class ShoppingCart {
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+}import CartItem from './CartItem.js';
+import ShoppingCart from './ShoppingCart.js';
+
+
+export function getShoppingCart() {
+    let objStr = localStorage.getItem("cart");
+    if (!objStr) {
+        return null;
+    }}
+
+export 
+
+
+export 
+
+

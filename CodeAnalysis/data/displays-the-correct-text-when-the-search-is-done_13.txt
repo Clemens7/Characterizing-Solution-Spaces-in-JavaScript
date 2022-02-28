@@ -1,0 +1,151 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    
+    
+    
+    
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    
+    
+    
+    
+    
+    
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null  ? "[]" ;
+        var cart = JSON.parse(json);
+        for (let item of cart) 
+    }
+}
+export class Serializable {
+    fillFromJSON(jsonObj) {
+        for (var propName in jsonObj) {
+            if (this.hasOwnProperty("_" + propName)) {
+                this["_" + propName] = jsonObj[propName];
+            }
+        }
+    }
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+export 
+export 
+export 
+import { Cart } from "./cart-service.js";
+export function updateCartCount(cart) {
+    if (cart.size == 0) {
+        document.getElementById("cart-link").innerText = "Cart";
+    }
+}
+updateCartCount(new Cart());
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export 
+
+export function searchMET(searchTerm) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let response = yield fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${searchTerm}&hasImages=true`);
+        console.log("got here");
+        let responseJson = yield response.json();
+        var metropolitanSearchResponseObject = new MetropolitanSearchResponseObject();
+        metropolitanSearchResponseObject.fillFromJSON(responseJson);
+        console.log('Search returned: ', metropolitanSearchResponseObject);
+        return yield Promise.resolve(metropolitanSearchResponseObject);
+    });
+}
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._total = null;
+        this._objectIDs = null;
+    }
+    
+    get objectIDs() {
+        return this._objectIDs;
+    }
+}
+import { searchMET, getObject } from "./metropolitan-api.js";
+initSearch();
+function initSearch() {
+    let gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+    let urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("q") && urlParams.get("q")) {
+        triggerSearch(urlParams.get("q"));
+    }
+}
+function triggerSearch(q) {
+    let infoText = document.getElementById("search-info");
+    infoText.innerText = `Searching for “${q}”...`;
+    searchMET(q).then(searchResult => {
+        var promises = [];
+        if (searchResult.objectIDs) 
+        else {
+            infoText.innerText = `Found 0 artworks for “${q}”`;
+        }
+    });
+}
+
+
+

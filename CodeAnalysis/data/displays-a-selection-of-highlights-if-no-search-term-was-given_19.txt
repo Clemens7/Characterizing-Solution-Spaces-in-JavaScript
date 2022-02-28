@@ -1,0 +1,180 @@
+import { Artwork } from './artwork.js';
+import * as ArtworkCache from './artwork-cache.js';
+
+export 
+
+export async function retrieveObject(id) {
+    const artwork = ArtworkCache.retrieve(id);
+    if (artwork) 
+
+    const url = met_api_search_object_url(id);
+    const responseObject = await fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch()
+    
+    ArtworkCache.store(responseObject);
+    return new Artwork(id, responseObject.artistDisplayName,
+        responseObject.title, responseObject.objectDate, responseObject.primaryImageSmall);
+}
+
+export async function retrieveHighlights() {
+    const response = await fetch('./highlights.json')
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        });
+    return response;
+}
+
+export 
+
+
+
+function met_api_search_object_url(id) {
+    const MET_API_SEARCH_OBJECT_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+    return MET_API_SEARCH_OBJECT_URL;
+}export function retrieve(id) {
+    if (id in localStorage) 
+}
+
+export function store(artworkObject) {
+    const key = artworkObject.objectID;
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(artworkObject);
+}import {getPrintSizes, render, calculatePrice} from "./frame.js";
+
+export class ResultContainer {
+    constructor() {
+        this.resultContainer = document.getElementById('gallery');
+    }
+
+    clear() {
+        this.resultContainer.innerHTML = '';
+    }
+
+    addArtwork(artwork) {
+        const label = document.createElement('div');
+        label.classList.add("museum-label");
+
+        const artist = document.createElement('span');
+        artist.classList.add("artist");
+        artist.innerText = artwork.artist;
+
+        const title = document.createElement('span');
+        title.classList.add("title");
+        title.innerText = artwork.title;
+       
+        const date = document.createElement('span');
+        date.classList.add("date");
+        date.innerText = artwork.date;
+        
+        label.appendChild(artist);
+        label.appendChild(title);
+        label.append(', ');
+        label.appendChild(date);
+
+        const image = document.createElement('img');
+        image.src = artwork.image;
+        image.alt = `Picture of artwork ${artwork.title}`
+        image.id = `object-image-${artwork.id}`
+
+        const link = document.createElement('a');
+        link.id = `object-${artwork.id}`;
+        link.href = `config.html?objectID=${artwork.id}`;
+        link.appendChild(image);
+        link.appendChild(label);
+
+        const thumb = document.createElement('div');
+        thumb.classList.add("thumb");
+        thumb.appendChild(link);
+        
+        this.resultContainer.appendChild(thumb);
+    }
+}
+
+export class ConfigImage{
+
+    
+
+    
+
+    
+}
+
+export class DisplayCart {
+    
+
+    
+
+    
+
+    
+}
+
+
+
+
+
+export class Artwork{
+    constructor(id, artist, title, date, image) {
+        this.id = id;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+        this.image = image;
+    }
+}
+export 
+
+export 
+
+export 
+
+
+    import { Artwork } from './artwork.js';
+    import * as ArtworkAPI from './artwork-api.js';
+    import { ResultContainer } from './artwork-dom.js';
+
+
+    /* Refactor getting cart cache */
+    if ('cart' in localStorage) 
+
+    document.addEventListener('DOMContentLoaded', event => {
+        const params = (new URL(document.location)).searchParams;
+        let searchQuery = params.get('q');
+        if (searchQuery) 
+        document.getElementById('search').value = searchQuery;
+        artworkSearch(searchQuery);
+      });
+    
+    const form = document.getElementById('search-form');
+    form.addEventListener('submit', );
+
+    async function artworkSearch(artworkName) {
+      const resultContainer = new ResultContainer();
+      resultContainer.clear();
+
+      if (!artworkName) {
+        displayHighlights(resultContainer);
+        return;
+      }}
+
+    async function displayHighlights(resultContainer) {
+      const highlightObject = await ArtworkAPI.retrieveHighlights();
+      const objectIds = highlightObject.highlights;
+      Promise.all(
+        objectIds.map(async id => {
+          const artwork = await ArtworkAPI.retrieveObject(id);
+          resultContainer.addArtwork(artwork);
+        }
+        )
+      );
+    }
+
+    
+
+
+  

@@ -1,0 +1,132 @@
+const ARTMART_API = {
+    A2: "https://web-engineering.big.tuwien.ac.at/s20/a2/"
+}
+
+ARTMART_API.SHIPPING = ARTMART_API.A2 + "shipping";
+
+export async function getShipping() {
+    return await fetch(ARTMART_API.SHIPPING)
+        .then(response => {
+            if (!response.ok) 
+            return response.json()
+        })
+        .then(data => {
+            return data;
+        })
+        .catch();
+}
+export function retrieveJson(key) {
+    if (key in localStorage) {
+        return JSON.parse(localStorage[key]);
+    }
+}
+export 
+export import * as CacheApi from "../cache-api.js"
+import * as ArtmartApi from "../artmart-api.js"
+import * as FrameConfigurator from "../../frame.js"
+import * as CONSTANTS from "../constants.js"
+
+let cartData;
+let shippingData;
+let selectedCountry;
+let subtotalPrice = 0;
+let isLoading = true;
+
+loadCart();
+loadShipping();
+
+function loadCart() {
+    cartData = CacheApi.retrieveJson(CONSTANTS.CACHE_CART);
+    if (!cartData || cartData.length <= 0) 
+    calculateSubtotal();
+}
+
+function loadShipping() {
+    ArtmartApi.getShipping()
+        .then(data => {
+            shippingData = data;
+            refreshShippingOptions();
+            isLoading = false;
+            calculatePrice();
+            document.getElementById('pay-button').disabled = false;
+        })
+        .catch();
+}
+
+function refreshShippingOptions() {
+    if (!shippingData || !shippingData.destinations) 
+
+    let sel = document.getElementById('country');
+    if (shippingData.destinations.length > 0) {
+        selectedCountry = shippingData.destinations[0].country;
+    }
+    shippingData.destinations.forEach(countryData => {
+        let opt = document.createElement('option');
+        opt.appendChild(document.createTextNode(countryData.displayName));
+        opt.value = countryData.country;
+        sel.appendChild(opt);
+    });
+    sel.addEventListener('change', function () {
+        selectedCountry = this.options[this.selectedIndex].value;
+        calculatePrice();
+    });
+}
+
+function calculateSubtotal() {
+    subtotalPrice = 0;
+    if (cartData) {
+        cartData.forEach(artwork => {
+            subtotalPrice += FrameConfigurator.calculatePrice(
+                artwork.printSize, artwork.frameStyle,
+                artwork.frameWidth, artwork.matWidth);
+        })
+    }
+    document.getElementById('price-subtotal').innerText = subtotalPrice.toFixed(2);
+}
+
+function calculatePrice() {
+    let priceShipping = document.getElementById('price-shipping');
+    let priceTotal = document.getElementById('price-total');
+    if (isLoading || !selectedCountry) 
+
+    const shippingPrice = (shippingData.destinations
+        .find(dest => dest.country === selectedCountry)
+        .cost / 100);
+    priceShipping.innerText = shippingPrice.toFixed(2);
+    const totalPrice = subtotalPrice + shippingPrice;
+    priceTotal.innerText = totalPrice.toFixed(2);
+}
+export const ARTWORK_OBJECT_ID = 'objectID';
+export const ARTWORK_PRINT_SIZE = 'printSize';
+export const ARTWORK_FRAME_STYLE = 'frameStyle';
+export const ARTWORK_FRAME_WIDTH = 'frameWidth';
+export const ARTWORK_MAT_COLOR = 'matColor';
+export const ARTWORK_MAT_WIDTH = 'matWidth';
+
+export const CACHE_CART = 'cart';
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0 + 0.005 * matWidth;
+
+    switch (frameStyle) {
+        case 'classic': price += 0.1 * frameWidth; break;
+        case 'natural': price += 0.08 * frameWidth; break;
+        
+        
+    }
+
+    switch (printSize) {
+        
+        case 'M': price *= 2; break;
+        case 'L': price *= 3.5; break;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export 
+
+export 

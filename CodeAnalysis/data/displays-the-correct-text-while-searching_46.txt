@@ -1,0 +1,115 @@
+export class ArtAPI{
+    constructor(){
+        this.url = "https://collectionapi.metmuseum.org/public/collection/v1/"
+    }
+
+   async getObjectById(id){
+        if(!id)
+        if(window.localStorage.getItem(id))
+        const response = await fetch(this.url + "objects/" + id);
+        return await response.json();
+    }
+
+    async getObjectsIdBySearchparameter(query){
+        if (!query)
+        console.log(query);
+        const response = await fetch(this.url + "search?q=" + query + "&hasImages=true");
+        return await response.json();
+    }
+}
+function node(element, elementClass, content, text, attributes) {
+    const newElement = document.createElement(element);
+    if(elementClass){
+        newElement.className = elementClass;
+    }
+    for (let i in attributes){
+        if(attributes[i][0] && attributes[i][1]){
+            newElement.setAttribute(attributes[i][0], attributes[i][1]);
+        }
+    }
+    if(content){
+        if(text){
+            newElement.innerText = content;
+        } else {
+            for (let entry of content){
+                newElement.appendChild(entry);
+            }
+        }
+    }
+
+    return newElement;
+}
+
+export function createContainer(content = [], element = "div", elementClass = "", attributes = [[]]){
+    return node(element, elementClass, content, false, attributes);
+}
+
+export function createTextNode(content = "", element = "span", elementClass = "", attributes = [[]]){
+    return node(element, elementClass, content, true, attributes);
+}
+
+export function createArtworkLabel(artwork){
+    if(!artwork) 
+    const artist = createTextNode( artwork["artistDisplayName"], "span", "artist",);
+    const title = createTextNode(artwork["title"] + ", ", "span", "title");
+    const date = createTextNode(artwork["objectDate"], "span", "date");
+    return createContainer([artist, title, date], "div", "museum-label");
+}
+
+export function createArtworkImage(artwork, index="0"){
+    if(!artwork) 
+    return createContainer("", "img", "",
+        [ ["src", artwork["primaryImageSmall"]], ["alt", artwork["objectName"]], ["id", "object-image-" + index]] );
+}import { ArtAPI } from "./artCollectionApi.js";
+import {createArtworkLabel, createArtworkImage, createContainer} from "./htmlConstructsAPI.js";
+
+document.addEventListener('DOMContentLoaded', async event => {
+    let searchQuery = (new URL(document.location)).searchParams.get('q');
+    if (!searchQuery || searchQuery.length < 1) 
+    await artSearch(searchQuery);
+});
+
+const api = new ArtAPI();
+const input = document.getElementById("search");
+const form = document.querySelector("main .search-form");
+const searchHeader = document.getElementById("search-info");
+const gallery = document.getElementById("gallery");
+form.addEventListener("submit", );
+
+updateCart();
+
+async function artSearch(queryParameter) {
+    if (queryParameter === "null") 
+    searchHeader.innerText = `Searching for “${queryParameter}”...`;
+    const response = await api.getObjectsIdBySearchparameter(queryParameter);
+    const ids = response["objectIDs"].slice(0, 100);
+    const length = ids.length;
+    await createContent(ids);
+    searchHeader.innerText = `Found ${length} artwork${length !== 1 ? "s" } for “${queryParameter}”`;
+}
+
+
+
+async function createContent(ids = []) {
+    if(ids.length < 1)
+    let index = 0, entries = [], entry;
+    for (const id of ids) {
+        entries.push(api.getObjectById(id));
+    }
+    for(const promise of entries){
+        entry = await promise;
+        if(!window.localStorage.getItem(entry["objectID"])){
+            window.localStorage.setItem(entry["objectID"], JSON.stringify(entry));
+        }
+        const image = createArtworkImage(entry, index++);
+        const label = createArtworkLabel(entry);
+        const link = createContainer([image, label], "a", "",
+            [ ["href", `config.html?objectID=${entry.objectID}`], ["id", "object-" + index] ]);
+        gallery.appendChild(createContainer([link], "div", "thumb"));
+    }
+}
+
+async function updateCart() {
+    let cart = await JSON.parse(localStorage.getItem('cart'));
+    if (cart) 
+}

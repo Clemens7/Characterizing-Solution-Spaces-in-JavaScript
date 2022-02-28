@@ -1,0 +1,159 @@
+let cartObjects = null;
+export function get() {
+    if (cartObjects != null) 
+    try {
+        cartObjects = JSON.parse(localStorage.getItem('cart')) || [];
+    } 
+    return cartObjects;
+}
+
+export 
+
+export function displayNumItems() {
+    let cartSize = get().length;
+    if (cartSize === 0) {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}
+
+export 
+
+export 
+export function searchRequest(term) {
+    return new Promise((res, rej) => {
+        request(
+            `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${term}&hasImages=true`
+        )
+            .then((data) => {
+                if (data.objectIDs !== null) {
+                    res(data);
+                }
+            })
+            .catch(rej);
+    });
+}
+
+export 
+
+export async function requestObjectInfo(objectID) {
+    try {
+        const data = JSON.parse(
+            localStorage.getItem(`cache-object-${objectID}`)
+        );
+        if (data.objectID) 
+    }catch (e) {
+        return new Promise((res, rej) => {
+            request(
+                `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`
+            )
+                .then((data) => {
+                    localStorage.setItem(
+                        `cache-object-${objectID}`,
+                        JSON.stringify(data)
+                    );
+                    res(data);
+                })
+                .catch();
+        });
+    }}
+
+export 
+
+export function request(url) {
+    return new Promise((res, rej) => {
+        fetch(url, {
+            method: 'GET',
+        })
+            .then((response) => {
+                if (!response.ok) 
+                res(response.json());
+            })
+            .catch(rej);
+    });
+}
+import {
+    searchRequest,
+    getObjectsInfo,
+    request,
+    requestObjectInfo,
+} from './request.js';
+import { displayNumItems } from './cartStore.js';
+
+window.onload = function () {
+    displayNumItems();
+
+    document.getElementById('search-button').addEventListener('click', );
+
+    let query = new URLSearchParams(window.location.search).get('q');
+
+    if (query !== null) {
+        console.log('query not null');
+        document.getElementById('search').value = query;
+        doSearch(query);
+    }
+};
+
+function doSearch(query) {
+    if (query === '')  else {
+        let urlSearchParam = new URLSearchParams(window.location.search);
+        urlSearchParam.set('q', query);
+
+        window.history.replaceState({}, '', `?${urlSearchParam.toString()}`);
+
+        updateSearchInfo(`Searching for “${query}”...`);
+        resetGallery();
+
+        searchRequest(query)
+            .then((data) => {
+                if (data.total === 1)  else {
+                    updateSearchInfo(
+                        `Found ${data.total} artworks for “${query}”`
+                    );
+                }
+
+                const objects = data.objectIDs.splice(0, 100);
+                const gallery = window.document.getElementById('gallery');
+
+                for (const object of objects) {
+                    requestObjectInfo(object)
+                        .then((data) => {
+                            renderObject(data, gallery);
+                        })
+                        .catch();
+                }
+            })
+            .catch();
+    }
+}
+
+function updateSearchInfo(content) {
+    window.document.getElementById('search-info').textContent = content;
+}
+
+
+
+
+
+function renderObject(object, gallery) {
+    gallery.appendChild(createObject(object));
+}
+
+function resetGallery() {
+    window.document.getElementById('gallery').innerHTML = '';
+}
+
+function createObject(object) {
+    let template = document.createElement('template');
+    template.innerHTML = `<div class="thumb">
+			<a href="config.html?objectID=${object.objectID}" id="object-${object.objectID}">
+				<img src="${object.primaryImageSmall}" alt="${object.title} ${object.artistDisplayName}" id="object-image-0" />
+				<div class="museum-label">
+					<span class="artist">
+						${object.artistDisplayName}
+					</span>
+					<span class="title">${object.title}</span>, <span class="date">${object.objectDate}</span>
+				</div>
+			</a>
+		</div>`.trim();
+    return template.content.firstChild;
+}

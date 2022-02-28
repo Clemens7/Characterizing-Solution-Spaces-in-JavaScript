@@ -1,0 +1,109 @@
+import { cache } from "./cache.js";
+
+class ArtService {
+
+    constructor() {
+        this.museumUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.shippingUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+
+    getShipping = 
+
+    getArtObject = 
+
+    getArtObjectPromises = 
+    
+    getArtObjects = 
+
+    search = async function (q) {
+        const endpoint = "/search";
+        const params = `?hasImages=true&q=${q}`;
+
+        try {
+            const response = await fetch(this.museumUrl + endpoint + params);;
+        }}
+
+    getHighlightObjectPromises = 
+
+    getQueryParams = function (...params) {
+        const searchParams = (new URL(document.location)).searchParams;
+        let paramObject = {};
+        for (let param of params) {
+            const queryItem = searchParams.get(param);
+            paramObject[param] = queryItem;
+        }
+        return paramObject;
+    }
+
+}
+
+export class ShippingInfo {
+    
+}
+
+export class ArtObject {
+    
+}
+
+export const artService = new ArtService();class Cache {
+
+    load = function (key) {
+        if (key in localStorage) 
+    }
+
+    store = 
+
+    addToCart = 
+
+    removeFromCart = 
+
+    clearCart = 
+
+    getCartItems = function () {
+        const cart = this.load("cart");
+
+        return cart  : [];
+    }
+
+    cartLength = 
+}
+
+export const cache = new Cache();import { cache } from "./cache.js";
+
+export function displayCartNumber(){
+    const items = cache.getCartItems();
+    const cartLink = document.getElementById("cart-link");
+
+    if(items.length > 0)
+    else{
+        cartLink.innerText = "Cart";
+    }
+}
+
+displayCartNumber();import { artService } from "./artService.js";
+
+
+
+
+
+function searchingFor(term) {
+    const searchInfo = document.getElementById("search-info");
+    searchInfo.innerText = `Searching for “${term}”...`;
+}
+
+
+
+async function searchAndDisplay(q) {
+    if (q && q.length > 0) {
+        searchingFor(q);
+        const objectIDs = await artService.search(q);}
+
+document.addEventListener('DOMContentLoaded', event => {
+    const urlParams = artService.getQueryParams("q");
+    const q = urlParams.q;
+
+    const search = document.getElementById("search");
+    search.value = q;
+
+    searchAndDisplay(q);
+});

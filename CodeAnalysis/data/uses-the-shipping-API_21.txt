@@ -1,0 +1,157 @@
+
+    import { calculateTotalCartPrice, cartIsEmpty } from './config.js';
+    import * as shippingApi from './shippingAPI.js'
+
+    const selectCountry = document.getElementById('country');
+    const priceTotal = document.getElementById('price-total');
+    const priceSubTotal = document.getElementById('price-subtotal');
+    const priceShipping = document.getElementById('price-shipping');
+    let subTotal = 0;
+    let shippingCost = undefined;
+    let shippingDict = undefined;
+    if (cartIsEmpty())
+
+    displaySubTotal();
+    displayTotal();
+    (async () => {
+      try {
+        await displayShippingChoices();
+      } 
+    })();
+
+    selectCountry.addEventListener ("change", calculateAndDisplayShippingCost);
+
+    function calculateAndDisplayShippingCost() {
+        shippingCost = (shippingDict[selectCountry.value]/ 100 ).toFixed(2);
+        priceShipping.innerHTML = `${(shippingDict[selectCountry.value]/100).toFixed(2)}`;
+        displayTotal();
+    }
+
+    function displaySubTotal(){
+      try{
+        subTotal = calculateTotalCartPrice();
+        priceSubTotal.innerText = `${subTotal.toFixed(2)}`
+      }
+    }
+
+    function displayTotal(){
+      if (subTotal !== undefined && shippingCost !== undefined){
+        const totalPrice = (parseFloat(subTotal) + parseFloat(shippingCost));
+        priceTotal.innerHTML = totalPrice.toFixed(2);
+      }
+    }
+
+    async function shippingPrices(){
+      let destinations = await shippingApi.getShippingDict();
+      return destinations
+    }
+
+    async function displayShippingChoices(){
+      shippingDict = await shippingPrices();
+      shippingDict.forEach(dest => {
+        shippingDict[dest.country] = dest.cost;
+        selectCountry.add(new Option(dest.displayName, dest.country))
+      });
+        calculateAndDisplayShippingCost()
+    }
+
+  import * as FrameHelper from './frame.js';
+import * as METAPI from './metAPI.js';
+
+frameWidth and matWidth are given in mm
+export class FrameConfiguration {
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+
+export class FramedPicture {
+  
+
+  
+
+  
+
+  static 
+
+  static 
+
+  
+
+  static 
+
+  static 
+}
+
+export function loadCartInformationFromLocalStorage(key="cart"){
+  const array = JSON.parse(localStorage.getItem(key));
+  if(!Array.isArray(array)) 
+  return array;
+}
+
+export function calculateTotalCartPrice(){
+  const data = loadCartInformationFromLocalStorage();
+  let totalPrice = 0;
+  data.forEach((item) => {
+    totalPrice += parseFloat(FrameHelper.calculatePriceForItem(item))
+  });
+  return totalPrice
+}
+
+export 
+export function cartIsEmpty(){
+  const data = loadCartInformationFromLocalStorage();
+  return !(data.length > 0)
+}
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const baseCostMultiplier = {S:1,M:2,L:3.5};
+    const frameCostPerCM = {classic:1,natural:0.8,shabby:0.9,elegant:0.85};
+    let price = 30;
+    price+=frameCostPerCM[frameStyle]*frameWidth/10;
+    price+=0.05*matWidth/10;
+    price*=baseCostMultiplier[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export function calculatePriceForItem(cartItem) {
+    return calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth)
+}
+
+import {Picture} from './Picture.js';
+import * as PictureCache from './PictureCache.js'
+export 
+
+export 
+
+
+
+
+import { Picture} from './Picture.js';
+
+export 
+
+export export class Picture {
+    
+}export async function getShippingDict() {
+    const url = shippingApiUrl();
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        return rawData.destinations;
+    }}
+function shippingApiUrl(){
+    const API_URL = `https://web-engineering.big.tuwien.ac.at/s20/a2/shipping`;
+    return API_URL;
+}

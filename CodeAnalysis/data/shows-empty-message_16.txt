@@ -1,0 +1,124 @@
+import { cache } from "./cache.js";
+
+class ArtService {
+
+    constructor() {
+        this.museumUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.shippingUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+
+    getShipping = 
+
+    getArtObject = 
+
+    getArtObjectPromises = 
+    
+    getArtObjects = 
+
+    search = 
+
+    getHighlightObjectPromises = 
+
+    getQueryParams = 
+
+}
+
+export class ShippingInfo {
+    
+}
+
+export class ArtObject {
+    
+}
+
+export const artService = new ArtService();class Cache {
+
+    load = function (key) {
+        if (key in localStorage) 
+    }
+
+    store = 
+
+    addToCart = 
+
+    removeFromCart = 
+
+    clearCart = 
+
+    getCartItems = function () {
+        const cart = this.load("cart");
+
+        return cart  : [];
+    }
+
+    cartLength = 
+}
+
+export const cache = new Cache();import { artService } from "./artService.js";
+import { cache } from "./cache.js";
+import * as domHelper from "./dom-helper.js"
+import * as frame from "./frame.js"
+import * as header from "./header.js"
+
+function loadItems() {
+    const cartItems = cache.getCartItems();
+    if(cartItems.length > 0)
+    else{
+        setEmptyCartMessage();
+    }
+}
+
+function setEmptyCartMessage(){
+    const cart = document.getElementById("cart");
+    let textNode = domHelper.textElement("div","There are no items in your shopping cart.");
+    domHelper.setAttributes(textNode,{"style":"padding: 2rem;"})
+    cart.prepend(textNode);
+
+    const button = document.getElementById("checkout-button");
+    button.disabled = true;
+}
+
+
+
+
+
+
+
+loadItems();
+
+
+export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export export 
+
+export 
+
+export 
+import { cache } from "./cache.js";
+
+export function displayCartNumber(){
+    const items = cache.getCartItems();
+    const cartLink = document.getElementById("cart-link");
+
+    if(items.length > 0)
+    else{
+        cartLink.innerText = "Cart";
+    }
+}
+
+displayCartNumber();

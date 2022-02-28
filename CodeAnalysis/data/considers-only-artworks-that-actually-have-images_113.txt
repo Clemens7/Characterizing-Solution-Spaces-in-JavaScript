@@ -1,0 +1,123 @@
+import * as API from './met-api.js';
+import {setCartQty} from './helpers.js';
+import * as DOM from "./dom-helpers.js";
+import {calculatePrice, render} from "./frame.js";
+
+export const fetchCart = () => {
+    if ('cart' in localStorage)  else {
+        return [];
+    }
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+    shoppingCart = fetchCart();
+    /* construct html */
+    cartItems(shoppingCart);
+})
+
+/* get array of items in cart */
+const printSizes = {"S": "Small", "M": "Medium", "L": "Large"};
+var priceList = [];
+let shoppingCart = fetchCart();
+
+/* add html dynamically */
+const cartItems = async (cart) => {
+    /* set number of cart items in header */
+    setCartQty();
+    shoppingCart = fetchCart();
+    const cartSection = document.getElementById("cart");
+    if (cartSection) 
+};
+
+const renderEntry = ;
+
+
+const frameDescr = ;
+
+const museumLabel = ;
+
+const cartPreview = ;
+
+const cartTotal = ;
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export export 
+
+export 
+
+export 
+import { fetchCart } from './cart.js';
+
+export const getQueryParameter = (param) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(param);
+}
+
+export const setCartQty = () => {
+  const cart = fetchCart();
+  const element = document.getElementById('cart-link');
+  element.innerText = cart.length === 0 ? 'Cart' ;
+}
+import * as MetCache from './met-cache.js';
+import { ImageObject } from './met.js';
+
+const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
+
+export const search = async (term) => {
+  const url = `${BASE_URL}/search?hasImages=true&q=${term}`;
+  try {
+    const repsonse = await fetch(url);;
+  }}
+
+export const fetchObjectData = export const storeImage = 
+
+export const fetchImage = export class ImageObject {
+  
+}import * as API from './met-api.js';
+import { getQueryParameter, setCartQty } from './helpers.js';
+import * as DOM from './dom-helpers.js';
+
+const setHeadline = (text) => {
+  const headline = document.getElementById('search-info');  
+  headline.innerText = text;
+}
+
+const searchCollection = async (term) => {
+  const CHUNKSIZE = 10;
+
+  let ids = [];
+
+  const container = document.getElementById('gallery');
+  container.innerHTML = '';
+
+  if(term){
+    setHeadline(`Searching for “${term}”...`)
+    const data = await API.search(term);} for “${term}”`)
+  }}
+
+const renderEntry = 
+
+document.addEventListener('DOMContentLoaded', event => {
+  setCartQty();
+  const term = getQueryParameter('q');
+  if(term){
+    const searchInput = document.getElementById('search');
+    searchInput.value = term;
+  }
+  searchCollection(term);
+});
+
+const form = document.querySelector('.search-form');
+form.addEventListener('submit', );

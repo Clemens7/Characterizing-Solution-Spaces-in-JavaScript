@@ -1,0 +1,121 @@
+import * as Frame from './frame.js';
+import * as Cache from './cache.js';
+
+export 
+
+export 
+
+
+export 
+
+
+
+export function showEmptyCart(container) {
+
+    let toRemove = document.getElementsByClassName('price')[0];
+    toRemove.remove();
+    const emptycart = "There are no items in your shopping cart.";
+
+    let textNode = document.createElement("h2");
+    textNode.innerText = emptycart;
+    container.insertBefore(textNode, container.childNodes[0]);
+    document.getElementById('checkout-button').disabled = true;
+}
+import { calculatePrice } from './frame.js';
+
+const searchLimit = 100;
+const cartKey = 'cart';
+
+export ;
+
+export 
+
+;
+
+
+
+
+export function calculateTotalCartPrice() {
+    let cart = getCart();
+    let cart_price = 0;
+
+    if (cart != null) 
+
+    return (Math.round((cart_price + Number.EPSILON) * 100) / 100);
+}
+
+export function getCart() {
+
+    let cart = JSON.parse(window.localStorage.getItem(cartKey));
+
+    if (cart === null ) {
+        return null;
+    }}
+
+export 
+
+
+
+
+
+
+export 
+
+
+export import * as Cache from './cache.js';
+import * as DOM from './artmart-dom.js';
+
+
+
+
+const exampleCart = [{
+    "objectID": 39799,
+    "frameStyle": "natural",
+    "printSize": 'M',
+    "frameWidth": 45,
+    "matColor": "mint",
+    "matWidth": 50
+    
+}, {
+    "objectID": 459055,
+    "frameStyle": "shabby",
+    "printSize": 'S',
+    "frameWidth": 50,
+    "matColor": "indigo",
+    "matWidth": 0
+    
+}]
+
+
+function updateView() {
+    generatePreview(Cache.getCart());
+    updateTotalPrice();
+    document.getElementById("cart-link").innerHTML = Cache.generateCartString();
+}
+
+
+
+
+function generatePreview(cart) {
+    let container = document.getElementById("cart");
+    container.innerHTML = '';
+    console.log(`Cart = ${JSON.stringify(cart)}`);
+
+    if (!cart) {
+
+        DOM.showEmptyCart(container);
+    }
+}
+
+
+
+function updateTotalPrice() {
+    document.getElementById('price-total').innerText = Cache.calculateTotalCartPrice().toFixed(2);
+}
+
+ 
+updateView();export 
+
+export 
+
+export 

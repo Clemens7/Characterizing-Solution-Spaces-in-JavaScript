@@ -1,0 +1,144 @@
+export class SearchResultObject {
+    
+}
+
+export class MuseumObject {
+    
+}
+
+export class ShippingObject {
+    
+}
+export function get(key) {
+    if(key in localStorage) 
+}
+
+export 
+
+
+export 
+        import {getObject} from "./metmuseum-collection-api.js";
+        import {CartDocumentContainer, CartItemsElement} from "./dom-utils.js";
+        import {calculatePrice, render} from "./frame.js";
+        import * as LocalStorage from './cache.js';
+
+        const cartDocumentContainer = new CartDocumentContainer('cart');
+        const cartItemsElement = new CartItemsElement('cart-link');
+        let totalPrice = 0;
+        let localStorageCart = null;
+        let localStorageCartItemsIDs = [];
+        let localStorageCartItemsPrice = [];
+
+        document.addEventListener('DOMContentLoaded', event => {
+            localStorageCart = LocalStorage.get('cart');
+
+            cartItemsElement.update();
+
+            createCartItems();
+        });
+
+        document.getElementById("checkout-button").addEventListener("click", );
+
+        function addEventListenerToCloseButton() {
+            let btn = document.querySelectorAll("button");
+            for (let i = 0; i < btn.length; i++) {
+                btn[i].onclick = 
+            }
+        }
+
+        function showMessageNoCartItems() {
+            const cartInfo = document.createElement('p');
+            cartInfo.innerHTML = 'There are no items in your shopping cart.';
+            cartInfo.style.marginBottom = '50px';
+            const cartItemContainer = document.getElementById('cart');
+            cartItemContainer.insertBefore(cartInfo, cartItemContainer.childNodes[0]);
+        }
+
+        async function createCartItems() {
+            let arrayItems;
+
+            if (localStorageCart)  else {
+                document.getElementById('checkout-button').disabled = true;
+
+                showMessageNoCartItems();
+            }
+
+            addCartTotalPrice(totalPrice);
+
+            arrayItems = await Promise.all(localStorageCartItemsIDs.map());
+
+            cartDocumentContainer.clear();
+
+            for (let i in arrayItems) 
+            for (let i in arrayItems) 
+
+            addEventListenerToCloseButton();
+        }
+
+        
+
+        
+
+        function addCartTotalPrice(totalPrice) {
+            const priceTotal = document.getElementById('price-total');
+            priceTotal.innerText = totalPrice.toFixed(2);
+        }
+
+        
+
+    import * as LocalStorage from './cache.js';
+
+
+export class CartItemsElement {
+    constructor(elementId = 'cart-link') {
+        this.element = document.getElementById(elementId);
+        if (!this.element) 
+    }
+
+    update() {
+        const cart = LocalStorage.get("cart");
+        const noOfItems = cart  : ''
+        this.element.innerText = `Cart${noOfItems}`;
+    }
+}
+
+export class SearchDocumentContainer {
+    
+
+    
+
+    
+}
+
+export class CartDocumentContainer {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) 
+    }
+
+    clear() {
+        const elements = document.getElementsByClassName("cart-item");
+        while (elements.length > 0) 
+    }
+
+    
+}
+export 
+
+export 
+
+export 
+
+export 
+import {SearchResultObject} from "./api-responses.js";
+import {MuseumObject} from "./api-responses.js";
+import * as LocalStorage from './cache.js';
+
+const baseUrl = 'https://collectionapi.metmuseum.org/public/collection'; /* base url for all endpoint calls */
+const apiVersion = 'v1'; /* version of the api to be used */
+
+export 
+
+export 
+
+

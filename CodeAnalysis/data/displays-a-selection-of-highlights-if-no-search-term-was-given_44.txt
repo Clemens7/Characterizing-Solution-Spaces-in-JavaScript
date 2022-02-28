@@ -1,0 +1,123 @@
+export 
+
+export export class Artwork{
+    constructor(id,artist,title,date,image){
+        this.id=id;
+        this.artist=artist;
+        this.title=title;
+        this.date=date;
+        this.image=image;
+    }
+}
+
+
+
+export function showNumItems() {
+    let artworks = JSON.parse(localStorage.getItem("cart"));
+    let counter = 0;
+    for (let artwork in artworks){
+        return "";
+    }
+}export class GalleryDocumentContainer {
+    constructor(containerID = "gallery") {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addArtworkToDocument(artwork) {
+        function parseLabel() {
+            let div_museum_label = document.createElement('div');
+            div_museum_label.setAttribute('class','museum-label');
+
+            let artist_span=document.createElement('span');
+            artist_span.setAttribute('class','artist');
+            artist_span.innerText=artwork.artist;
+            let title_span=document.createElement('span');
+            title_span.setAttribute('class','title');
+            title_span.innerText=artwork.title + ', ';
+            let date_span=document.createElement('span');
+            date_span.setAttribute('class','date');
+            date_span.innerText=artwork.date;
+
+            div_museum_label.appendChild(artist_span);
+            div_museum_label.appendChild(title_span);
+            div_museum_label.appendChild(date_span);
+
+            return div_museum_label;
+        }
+
+        function parseImage() {
+            let image = document.createElement('img');
+            image.setAttribute('alt','');
+            image.setAttribute('id','object-image-0');
+            image.setAttribute('src',artwork.image)
+            return image;
+        }
+
+        let thumb_div = document.createElement('div');
+        thumb_div.setAttribute('class','thumb');
+        thumb_div.onclick = ;
+        let link = document.createElement('a');
+        link.setAttribute('id','object-0');
+        link.setAttribute('href', 'config.html');
+        link.appendChild(parseImage());
+        link.appendChild(parseLabel());
+        thumb_div.appendChild(link);
+        this.container.appendChild(thumb_div);
+    }
+
+}
+
+        import {GalleryDocumentContainer} from "./GalleryDocumentContainer.js";
+        import * as GalleryAPI from "./searchAPI.js";
+        import * as GalleryCache from "./artwork-cache.js"
+        import {showNumItems} from "./common.js";
+
+        document.getElementById('cart-link').innerHTML = 'Cart' + showNumItems();
+
+        let searchForm = document.getElementById("search-form");
+        searchForm.addEventListener("submit", );
+
+        
+
+        async function displayHighlights() {
+            console.log("fetching highlights");
+            let container = new GalleryDocumentContainer();
+            container.clear();
+            let highlights = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+            for (let i = 0; i < highlights.length; i++) {
+                let artwork = await GalleryAPI.getSearchResult(highlights[i]);
+                container.addArtworkToDocument(artwork);
+
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', event => {
+            const params = (new URL(document.location)).searchParams;
+            const searchTerm = params.get('q');
+            if (!searchTerm ) {
+                displayHighlights();
+                return;
+            }})
+    import {Artwork} from "./artwork.js";
+
+export async function getSearchResult(id) {
+    const url = "https://collectionapi.metmuseum.org/public/collection/v1/objects/"+id;
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        const artwork =new Artwork(result.objectID,
+            result.artistDisplayName,
+            result.title,
+            result.objectDate,
+            result.primaryImageSmall);
+        return artwork;
+    }}
+
+
+export 
+

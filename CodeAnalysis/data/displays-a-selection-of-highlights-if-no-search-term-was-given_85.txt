@@ -1,0 +1,195 @@
+import * as Frame from './frame.js'
+import {getArtworkById} from "./metArtwork.js";
+import * as DOM from "./domElementHelper.js"
+
+export 
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export function getCart() {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    if (!cart){
+        cart = [];
+    }
+    return cart;
+}
+
+export export function getTextElement(tag = "div", text = "", classList = "", id = "") {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    element.classList.add(...classList.split(" "));
+    element.id = id;
+    return element;
+}
+
+export function getContainer(contents, tag = "div", classList = "") {
+    const container = document.createElement(tag);
+    for (let content of contents) {
+        if (typeof content === "string") content = document.createTextNode(content);
+        container.appendChild(content);
+    }
+    if (classList.length === 0) {
+    } else if (classList.includes(" "))  else {
+        container.classList.add(classList);
+    }
+    return container;
+}
+
+
+
+
+
+export 
+
+
+export 
+
+
+export 
+
+export 
+
+export 
+import {getCart} from "./cart.js";
+
+updateCartCount();
+
+function updateCartCount() {
+    let count = getCart().length;
+    const CART_LINK = document.getElementById("cart-link");
+    CART_LINK.innerText = count === 0 ? "Cart" 
+}
+const MET_API_ROOT = "https://collectionapi.metmuseum.org/public/collection/v1";
+const MET_API_OBJECT_LOCATION = `${MET_API_ROOT}/objects`;
+const MET_API_SEARCH_LOCATION = `${MET_API_ROOT}/search`;
+
+
+export class MetArtwork {
+    constructor(id, image, artist, title, date) {
+        this.id = id;
+        this.image = image;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+    }
+}
+
+export async function getArtworkById(id) {
+    let cache = localStorage.getItem(`artmartMetObjCache-${id}`);
+    if (cache) 
+    let response = await fetch(`${MET_API_OBJECT_LOCATION}/${id}`);
+    if (response.status >= 400) 
+    let data = await response.json();
+    let artwork = new MetArtwork(id, data.primaryImageSmall, data.artistDisplayName, data.title, data.objectDate);
+    localStorage.setItem(`artmartMetObjCache-${id}`, JSON.stringify(artwork));
+    return artwork;
+}
+
+export 
+
+import {getArtworkById, search} from "./metArtwork.js";
+import * as DOM from "./domElementHelper.js"
+
+const HIGHLIGHTS_LOCATION = "highlights.json";
+const CONFIG_LOCATION = "config.html";
+
+const query = window.location.search;
+const params = new URLSearchParams(query);
+let searchTerm = params.get("q");
+if (!searchTerm) {
+    loadDefault();
+}
+
+function load(ids) {
+    ids = ids.slice(0, 100);
+    let promises = ids.map(id => getArtworkById(id).then(artwork => {
+        return artwork;
+    }));
+    Promise.all(promises).then(artworks => populateGallery(
+        artworks.map((artwork) => generateThumb(artwork))
+    ));
+}
+
+function loadDefault() {
+    document.getElementById("search-info").innerText = "Search our collection of more than 400,000 artworks.";
+    loadHighlightIds().then(results => {
+        clearGallery();
+        let artworks = results["highlights"];
+        load(artworks);
+    })
+}
+
+async function loadHighlightIds() {
+    let response = await fetch(HIGHLIGHTS_LOCATION);
+    return await response.json();
+}
+
+function generateThumb(artwork) {
+
+    const img = document.createElement("img");
+    img.setAttribute("src", artwork.image);
+    img.setAttribute("alt", "");
+    img.setAttribute("id", `object-image-${artwork.id}`);
+
+    const artistSpan = DOM.getTextElement("span", artwork.artist, "artist");
+    const titleSpan = DOM.getTextElement("span", artwork.title, "title");
+    const dateSpan = DOM.getTextElement("span", artwork.date, "date");
+
+    const museumLabelDiv =
+        DOM.getContainer([artistSpan, titleSpan, ", ", dateSpan], "div", "museum-label");
+
+    const a = DOM.getContainer([img, museumLabelDiv], "a");
+    a.setAttribute("href", `${CONFIG_LOCATION}?objectID=${artwork.id}&printSize=L&frameWidth=40&frameWidthR=40&frameStyle=shabby&matWidth=55&matWidthR=55&matColor=mint`);
+    a.setAttribute("id", `object-${artwork.id}`);
+
+    return DOM.getContainer([a], "div", "thumb");
+}
+
+function populateGallery(thumbs) {
+    let gallery = document.getElementById("gallery");
+    for (let thumb of thumbs) {
+        gallery.appendChild(thumb);
+    }
+}
+
+function clearGallery() {
+    document.getElementById("gallery").innerHTML = "";
+}
+
+

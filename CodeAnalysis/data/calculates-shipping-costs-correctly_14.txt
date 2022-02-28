@@ -1,0 +1,36 @@
+calculatePrices(cartData, shippingData)export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.00;
+
+    if (frameStyle === "classic"){
+        price += 1*frameWidth + matWidth*0.05;
+    }
+    if (frameStyle === "natural"){
+        price += 0.8*frameWidth + matWidth*0.05;
+    }
+    if (frameStyle === "shabby")
+    if (frameStyle === "elegant")
+    console.log("Price: " + price);
+
+    if (printSize === "M")
+        price = price*2;
+
+    if (printSize === "L")
+        price = price*3.5;
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+function getCartData() {
+  let storageData = localStorage.getItem('cart');
+  if (!storageData) 
+  return JSON.parse(storageData);
+}
+
+
+
+
+
+

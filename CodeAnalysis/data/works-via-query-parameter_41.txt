@@ -1,0 +1,242 @@
+export /*
+export function retrieveAll() {
+    console.log(`Retrieving all cart objects from local storage`);
+    const key = "cart";
+
+    if(key in localStorage) 
+}
+
+/*
+export 
+
+
+export 
+
+import * as CartCache from './cartCache.js';
+export async function updateCartLink() {
+    const items = await CartCache.retrieveAll();
+    if (!items ) {
+        document.getElementById("cart-link").innerText = `Cart`;
+    }
+}/*
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+/*
+export 
+
+/*
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+
+/*
+export function containerWithAttributes(elements, attributes, tag='div') {
+    return setAttributes(container(elements, tag), attributes);
+}
+export 
+
+export 
+
+export 
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import { retrieveObj } from './metCache.js';
+
+export class ItemDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addSearchitem(item) {
+        this.container.appendChild(createThumbItem(item));
+
+        function createThumbItem(item) {
+            return DOM.containerWithAttributes([
+                DOM.containerWithAttributes([
+                    createImgItem(item), 
+                    createLabelItem(item)
+                ], {href: "/config.html?objectID="+item.objectID, id: "object-" + item.objectID}, "a")
+            ], {className: "thumb"}, "div");
+        }
+        
+        function createImgItem(item) {
+            let img
+            return DOM.containerWithAttributes([], {
+                src: item.primaryImage == ''  : item.primaryImage,
+                alt: item.title,
+                id: "object-image-" + item.objectID
+            }, "img");
+        }
+
+        function createLabelItem(item) {
+            return DOM.containerWithAttributes([
+                createSpanItem("artist", item.artistDisplayName),
+                createSpanItem("title", item.title + ", "),
+                createSpanItem("date", item.objectDate)
+            ], {className: "museum-label"});
+        }
+
+        function createSpanItem(className, innerText) {
+            let container = DOM.containerWithAttributes([], {className: className}, "span");
+            container.innerText = innerText;
+            return container;
+        }
+    }
+
+    
+
+/*
+      <div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€
+            <span id="price-0">0</span>
+          </div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>
+    
+
+    /*
+      <div class="cart-total">
+        <div class="price">Total: €
+            <span id="price-total">0</span>
+        </div>
+        <button type="button" id="checkout-button">Checkout</button>
+      </div>
+    
+
+
+}
+
+import { MetObject } from './met.js';
+import * as MetCache from './metCache.js';
+
+const API_OBJ_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search?q=";
+
+export async function retrieveObj(objectID) {
+	let url = API_OBJ_URL + objectID;
+	let obj = MetCache.retrieveObj(objectID);
+
+	if (obj) 
+
+	try {
+		const response = await fetch(url);
+		console.log("got response");
+		const rawData = await response.json();
+		console.log("got json");
+		obj = new MetObject(rawData.objectID, rawData.primaryImageSmall, rawData.title, rawData.artistDisplayName, rawData.objectDate);
+		MetCache.storeObj(obj);
+		return obj;
+	}}
+
+export async function search(query) {
+	const url = API_SEARCH_URL + query + "&hasImages=true";
+	try {
+		const response = await fetch(url);
+		const rawData = await response.json();
+		const ids = await rawData.objectIDs;
+		return ids;
+	}}
+
+import { MetObject } from './met.js';
+
+export function retrieveObj(objectID) {
+    if(objectID in localStorage) 
+}
+
+export function storeObj(metObject) {
+    const key = metObject.objectID;
+    console.log(`Storing met object with ID ${key} in local storage`);
+    localStorage[key] = JSON.stringify(metObject);
+}export class MetObject {
+    constructor(objectID, primaryImage, title, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.primaryImage = primaryImage;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}
+
+		import * as MetAPI from './metAPI.js';
+		import { ItemDocumentContainer } from './met-dom.js';
+		import * as jsonHelper from './jsonHelper.js';
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+		let container = new ItemDocumentContainer("gallery");
+
+		
+
+		async function loadObjects(ids) {
+			container.clear();
+			if (ids !== null) {
+				let i = 0;
+				while (i < ids.length && i < 100) {
+					addMetObjToDom(await MetAPI.retrieveObj(ids[i]));
+					i++;
+				}
+				return ids.length;
+			}}
+
+		async function updateHeader(text) {
+			document.getElementById("search-info").innerText = text;
+		}
+
+		async function search(query) {
+			updateHeader('Searching for “' + query + '”...')
+			let count = await loadObjects(await MetAPI.search(query));
+			if (count === undefined) 
+			let artworksText = "artworks"
+			if (count === 1) 
+			updateHeader('Found ' + count + ' ' + artworksText + ' for “' + query + '”')
+		}
+
+		async function addMetObjToDom(obj) {
+			container.addSearchitem(obj);
+		}
+
+		document.addEventListener('DOMContentLoaded', event => {
+			const params = (new URL(document.location)).searchParams;
+			const searchquery = params.get('q');
+			if (!searchquery)  else {
+				document.getElementById('search').value = searchquery;
+				search(searchquery);
+			}
+		});
+
+
+		const form = document.querySelector('.search-form');
+		form.addEventListener('submit', );
+
+		cartLinkHelper.updateCartLink();
+	

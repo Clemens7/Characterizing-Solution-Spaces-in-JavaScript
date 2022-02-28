@@ -1,0 +1,301 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { Artwork } from "./model/artwork.js";
+import * as ArtworkCache from "./repository/artwork-cache.js";
+const searchUrl = "https://collectionapi.metmuseum.org/public/collection/v1/search";
+const objectUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+export 
+export function getArtwork(artworkId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = `${objectUrl}${artworkId}`;
+        const artwork = ArtworkCache.retrieve(artworkId);
+        if (artwork) 
+        try {
+            const response = yield fetch(url);
+            const data = yield response.json();
+            if (data) {
+                if (!data.primaryImageSmall) 
+                const newArtwork = new Artwork(data);
+                ArtworkCache.store(newArtwork);
+                return newArtwork;
+            }});
+}
+import { Artwork } from "../model/artwork.js";
+import { LocalStorageUtil } from "../util/LocalStorageUtil.js";
+export function retrieve(objectID) {
+    let key = objectID;
+    let stored = LocalStorageUtil.retrieve(key);
+    if (stored !== null) 
+    return null;
+}
+export function store(artwork) {
+    console.log(`Artwork ${artwork.objectID} stored in cache`);
+    LocalStorageUtil.store(artwork.objectID, artwork);
+}
+export class Artwork {
+    constructor(json) {
+        this.objectID = "";
+        this.imageSrc = "";
+        this.artist = "";
+        this.title = "";
+        this.date = "";
+        if (json) {
+            this.objectID = json.objectID;
+            this.imageSrc = json.primaryImageSmall;
+            this.artist = json.artistDisplayName;
+            this.title = json.title;
+            this.date = json.objectDate;
+        }
+    }
+}
+import { ConfiguredFrameRepository } from "./repository/ConfiguredFrameRepository.js";
+const ID_CARTLINK = 'cart-link';
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCounter();
+});
+export function updateCartCounter() {
+    const configuredFrameRepository = new ConfiguredFrameRepository();
+    const cartLink = document.getElementById(ID_CARTLINK);
+    if (cartLink !== null) {
+        const itemsInCart = configuredFrameRepository.getAllFrames().length;
+        if (itemsInCart > 0) 
+        else {
+            cartLink.innerText = 'Cart';
+        }
+    }
+}
+import { LocalStorageUtil } from "../util/LocalStorageUtil.js";
+import { ConfiguredFrame } from "../model/ConfiguredFrame.js";
+export class ConfiguredFrameRepository {
+    getAllFrames() {
+        let allFrames = [];
+        let allFramesFromStorage = LocalStorageUtil.retrieve(ConfiguredFrameRepository.LOCALSTORAGE_KEY);
+        if (allFramesFromStorage !== null) 
+        return allFrames;
+    }
+    
+    
+    
+    
+}
+ConfiguredFrameRepository.LOCALSTORAGE_KEY = 'cart';
+export class ConfiguredFrame {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    static 
+    
+    
+    
+    
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { getArtwork } from "./artwork-api.js";
+import { updateCartCounter } from "./cart-counter.js";
+import { calculatePrice, getPrintSizes, render } from "./frame.js";
+import { ConfiguredFrameRepository } from "./repository/ConfiguredFrameRepository.js";
+import { ConfiguredFrame } from "./model/ConfiguredFrame.js";
+let objectID;
+let id;
+let printSizeValue;
+let frameStyleValue;
+let frameWidthValue;
+let matWidthValue;
+let matColorValue;
+const form = document.getElementById("config-form");
+const previewContainer = document.getElementById("preview-container");
+const previewImage = document.getElementById("preview-image");
+const printSize = form.elements.namedItem("printSize");
+const frameWidthR = document.getElementById("frameWidthR");
+const frameWidth = document.getElementById("frameWidth");
+const frameStyle = form.elements.namedItem("frameStyle");
+const matWidthR = document.getElementById("matWidthR");
+const matWidth = document.getElementById("matWidth");
+const matColor = form.elements.namedItem("matColor");
+form.addEventListener("submit", );
+document.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e;
+    updateCartCounter();
+    const params = (new URL(document.location.href)).searchParams;
+    objectID = params.get('objectID');
+    if (!objectID) 
+    else {
+        id = params.get("id");
+        printSizeValue = (_a = params.get('printSize')) !== null  : "L";
+        frameStyleValue = (_b = params.get('frameStyle')) !== null  : "shabby";
+        frameWidthValue = mmToCm(Math.max(20, Math.min(50, (_c = Number(params.get('frameWidth'))) !== null && _c !== void 0 ? _c )));
+        matColorValue = (_d = params.get('matColor')) !== null  : "mint";
+        matWidthValue = mmToCm(Math.max(0, Math.min(100, Number((_e = params.get('matWidth')) !== null  : 55))));
+        printSize.value = printSizeValue;
+        frameWidthR.value = String(frameWidthValue);
+        frameWidth.value = String(frameWidthValue);
+        frameStyle.value = frameStyleValue;
+        matColor.value = matColorValue;
+        matWidthR.value = String(matWidthValue);
+        matWidth.value = String(matWidthValue);
+        const artwork = yield getArtwork(Number(objectID));
+        if (!artwork) 
+        previewImage.alt = `Artwork of ${artwork.artist}, Title: ${artwork.title}, Date: ${artwork.date}`;
+        previewImage.src = String(artwork.imageSrc);
+        refresh();
+        let label = document.getElementById("image-label");
+        let artist = document.createElement("span");
+        artist.classList.add("artist");
+        artist.innerText = artwork.artist;
+        label.appendChild(artist);
+        let title = document.createElement("span");
+        title.classList.add("title");
+        title.innerText = artwork.title;
+        label.appendChild(title);
+        label.appendChild(document.createTextNode(", "));
+        let date = document.createElement("span");
+        date.classList.add("date");
+        date.innerText = artwork.date;
+        label.appendChild(date);
+        const printSizes = getPrintSizes(previewImage);
+        document.getElementById("print-size-s-label").innerHTML = "Small<br>" + mmToCm(printSizes["S"][0]) + " × " + mmToCm(printSizes["S"][1]) + " cm";
+        document.getElementById("print-size-m-label").innerHTML = "Medium<br>" + mmToCm(printSizes["M"][0]) + " × " + mmToCm(printSizes["M"][1]) + " cm";
+        document.getElementById("print-size-l-label").innerHTML = "Large<br>" + mmToCm(printSizes["L"][0]) + " × " + mmToCm(printSizes["L"][1]) + " cm";
+        for (let i = 0; i < printSize.length; i++) {
+            printSize[i].addEventListener("change", () => {
+                printSizeValue = printSize.value;
+                refresh();
+            });
+        }
+        for (let i = 0; i < frameStyle.length; i++) {
+            frameStyle[i].addEventListener("change", () => {
+                frameStyleValue = frameStyle.value;
+                refresh();
+            });
+        }
+        for (let i = 0; i < matColor.length; i++) {
+            matColor[i].addEventListener("change", () => {
+                matColorValue = matColor.value;
+                refresh();
+            });
+        }
+    }
+}));
+function mmToCm(value) {
+    return value / 10;
+}
+function cmToMM(value) {
+    return value * 10;
+}
+function setTotalSize(img, size, frameWidth, matWidth) {
+    let printSizes = getPrintSizes(img);
+    document.getElementById("total-size").innerText = mmToCm(printSizes[size][0] + (2 * frameWidth) + (2 * matWidth)) + " × " + mmToCm(printSizes[size][1] + (2 * frameWidth) + (2 * matWidth)) + " cm";
+}
+function setTotalPrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+    document.getElementById("price").innerText = "€ " + price.toFixed(2);
+}
+function refresh() {
+    setTotalPrice(printSizeValue, frameStyleValue, cmToMM(Number(frameWidthValue)), cmToMM(Number(matWidthValue)));
+    setTotalSize(previewImage, printSizeValue, cmToMM(Number(frameWidthValue)), cmToMM(Number(matWidthValue)));
+    render(previewImage, previewContainer, printSizeValue, frameStyleValue, cmToMM(Number(frameWidthValue)), matColorValue, cmToMM(Number(matWidthValue)));
+}
+frameWidthR.addEventListener("input", );
+frameWidth.addEventListener("change", event => {
+    let clipped = String(Math.round(Math.max(2.0, Math.min(5.0, Number(frameWidth.value))) * 10) / 10);
+    frameWidthR.value = clipped;
+    let fw = Math.round(Number(frameWidthR.value) * 10) / 10;
+    frameWidth.value = String(fw);
+    frameWidthValue = fw;
+    refresh();
+});
+matWidthR.addEventListener("input", );
+matWidth.addEventListener("change", event => {
+    let clipped = String(Math.round(Math.max(0.0, Math.min(10.0, Number(matWidth.value))) * 10) / 10);
+    matWidthR.value = clipped;
+    let mw = Math.round(Number(matWidthR.value) * 10) / 10;
+    matWidth.value = String(mw);
+    matWidthValue = mw;
+    refresh();
+});
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    }
+    else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+    return { S: S, M: M, L: L };
+}
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+    let x;
+    if (w > h) 
+    else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 3000; // base price for small prints
+    const framePricePerCentimeter = { classic: 100, natural: 80, shabby: 90, elegant: 85 };
+    const pricePerSize = { S: 1, M: 2, L: 3.5 };
+    return (Math.round(pricePerSize[printSize] * (price + (framePricePerCentimeter[frameStyle] * (frameWidth / 10)) + (5 * (matWidth / 10)))) / 100);
+}
+export class LocalStorageUtil {
+    static retrieve(localStorageKey) {
+        if (!(localStorageKey in localStorage)) {
+            return null;
+        }
+    }
+    static store(key, value) {
+        localStorage[key] = JSON.stringify(value);
+    }
+}

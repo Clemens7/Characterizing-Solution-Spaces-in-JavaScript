@@ -1,0 +1,119 @@
+import {SearchItem} from "./search-item.js";
+
+export 
+
+
+
+
+import {cart, Frame} from "./cart_objects.js";
+import {calculatePrice, render} from "../frame.js";
+import {retrieve} from "./cache.js";
+
+async function displayCartItems() {
+    const cartTotal = document.getElementsByClassName("cart-total")[0];
+    const cartSection = document.getElementById("cart");
+    const cartItems = cart.cartItems;
+
+    removeGeneratedDom();
+
+    let totalPrice = 0;
+    for (let itemIndex in cartItems) 
+
+    if (cartItems.length === 0) {
+        document.getElementById("checkout-button").disabled = true;
+        let p = document.createElement("p");
+        p.setAttribute("id", "cart-empty");
+        p.innerText = "There are no items in your shopping cart.";
+        cartSection.insertBefore(p, cartTotal);
+    }
+
+    document.getElementById("price-total").innerText = totalPrice.toFixed(2);
+    console.log("Displayed Cart");
+}
+
+
+
+function removeGeneratedDom() {
+    document.getElementById("checkout-button").disabled = false;
+
+    let items = document.getElementsByClassName("cart-item");
+    while(items[0]) 
+
+    let p = document.getElementById("cart-empty");
+    if (p !== null) 
+    console.log("removed existing generated DOM");
+}
+
+
+
+function addLinkToCheckout() {
+    let checkout = document.getElementById("checkout-button");
+    checkout.onclick = ;
+}
+
+addLinkToCheckout();
+displayCartItems().then(() => cart.addOnChangeEvent(displayCartItems));import {cart} from "./cart_objects.js";
+
+function displayCartCount() {
+    const count = cart.count();
+    let text = "Cart";
+    if (count > 0) 
+    document.getElementById("cart-link").innerText = text;
+    console.log("refreshed Cart Count");
+}
+
+displayCartCount();
+cart.addOnChangeEvent(displayCartCount);export class Frame {
+    
+}
+
+class Cart {
+
+    constructor() {
+        this._onChangeEvents = [];
+        this._load();
+        window.addEventListener('storage', );
+    }
+
+    addOnChangeEvent(event) {
+        this._onChangeEvents.push(event);
+    }
+
+    
+
+    _load() {
+        let cart = window.localStorage.getItem("cart");
+        if (cart !== null) 
+        if (!Array.isArray(this._frames)) {
+            this._frames = [];
+        }
+    }
+
+    
+
+    
+
+    
+
+    count() {
+        return this._frames.length;
+    }
+
+    get cartItems() {
+        return [...this._frames];
+    }
+}
+
+export const cart = new Cart();export 
+
+export 
+
+export 
+export class SearchItem {
+    
+}
+
+export var SearchParser = {
+    serialize : ,
+    parse : 
+};

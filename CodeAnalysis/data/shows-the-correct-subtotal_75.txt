@@ -1,0 +1,84 @@
+const api_url = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+let countryArray = [];
+let shipping = 0;
+let getOptions = '';
+let artworks = JSON.parse(localStorage.getItem('cart'));
+let subtotal = 0;
+
+
+if (artworks === null || artworks.length === 0) 
+
+async function getDest() {
+    getOptions = document.getElementById("country"); //get Options from dropdown
+    const response = await fetch(api_url);
+    const data = await response.json();
+
+    const dest = data.destinations;
+    countryArray = dest;
+
+    Object.keys(dest).forEach(elem => {
+        let select = document.getElementById('country');
+        const opt = document.createElement('option');
+        opt.value = dest[elem].country;
+        opt.innerHTML = dest[elem].displayName;
+        select.appendChild(opt);
+    })
+
+
+
+    shipping = countryArray[getOptions.selectedIndex].cost / 100;
+    document.getElementById("price-shipping").innerText = shipping.toFixed(2);
+
+    document.getElementById("price-total").innerText = "" + (subtotal + shipping).toFixed(2);
+
+    document.getElementById("pay-button").disabled = false;
+}
+
+getDest();
+
+artworks = JSON.parse(localStorage.getItem('cart'));
+let sum = 0;
+for (let i of artworks) {
+    sum += calculatePrice(i.printSize, i.frameStyle, i.frameWidth, i.matWidth);
+}
+subtotal = sum;
+
+if (subtotal != null && subtotal !== 0) {
+    document.getElementById("price-subtotal").innerText = "" + subtotal.toFixed(2);
+}
+
+
+
+let getCountryCost = 0;
+
+let onchange = document.getElementById("country");
+
+onchange.addEventListener("change", );
+
+function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    price += 30.0;
+
+    let framePrice;
+    if (frameStyle === "classic") {
+        framePrice = 1.0;
+    } else if (frameStyle === "natural")  else if (frameStyle === "shabby") {
+        framePrice = 0.9;
+    } else if (frameStyle === "elegant") {
+        framePrice = 0.85;
+    }
+    framePrice = framePrice * frameWidth;
+
+    let matPrice = matWidth * 0.05;
+
+    price = price + framePrice + matPrice;
+
+    if (printSize === "M") {
+        price = price * 2;
+    }
+    if (printSize === "L") {
+        price = price * 3.5;
+    }
+
+    return parseFloat((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}

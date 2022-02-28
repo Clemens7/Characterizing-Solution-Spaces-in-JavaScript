@@ -1,0 +1,122 @@
+
+import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+const collectionapi = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+export 
+
+export async function get_objects(objectIDs){
+	let cache_result = Cache.retrieve(objectIDs);
+
+	let promises = cache_result.misses.map(id => fetch(objects_api(id))
+		.then());
+	
+	let results = await Promise.all(promises);}
+
+export async function load_local(file){
+	try{
+		const response 	= await fetch(file);
+		const json 		=  await response.json();
+		return json;
+	}}
+
+function objects_api(id){
+	return `${collectionapi}/objects/${id}`;
+}
+
+
+
+
+
+export function retrieve(keys){
+
+	var hits = new Array();
+	var misses = new Array();
+	for (var i = 0; i < keys.length; i++){
+		if(keys[i] in localStorage) else {
+			misses.push(keys[i]);
+		}
+	}
+	return {hits, misses};
+}
+
+export import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+export class ArtworkContainer{
+	constructor(){
+		this.container = document.getElementById("gallery");
+	}
+
+	
+
+	
+}export class Artwork {
+	
+}const cartKey = "cart";
+
+export class CartItem {
+    
+} 
+
+export function getCartItems() {
+    ensureCartInitialized();
+    return getLocalStorageItem(cartKey);
+}
+
+export function showNumCartItems(){
+    let cart = document.getElementById("cart-link");
+    let cart_items = getCartItems().length;
+    if (cart_items > 0) else {
+        cart.innerHTML = "Cart";
+    }
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+function ensureCartInitialized() {
+    const item = localStorage.getItem(cartKey);
+    if (item === null) 
+    const parsed = JSON.parse(item);
+    if (!Array.isArray(parsed)) 
+}
+
+
+
+function getLocalStorageItem(key) {
+    const value = localStorage[key];
+    return JSON.parse(value);
+}import * as API from './art-api.js';
+import {ArtworkContainer} from './art-dom.js';
+import * as Cart from './cart-api.js';
+
+const form = document.querySelector(".search-form");
+const searchInput = document.getElementById("search");
+let artworkContainer = new ArtworkContainer();
+
+
+
+async function load_highlights(){
+  const highlights  = await API.load_local('./highlights.json');
+  const data        = await API.get_objects(highlights.highlights);}
+
+form.addEventListener('submit', );
+
+document.addEventListener('DOMContentLoaded', event => {
+  const params = (new URL(document.location)).searchParams;
+  var searchInfo = document.getElementById("search-info");
+
+  Cart.showNumCartItems();
+
+  var searchTerm = params.get('q');
+  if(searchTerm) else {
+    load_highlights();
+  }
+});

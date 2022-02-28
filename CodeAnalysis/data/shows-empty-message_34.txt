@@ -1,0 +1,115 @@
+export class Artwork {
+    
+}import * as DOM from './domHelper.js'
+import {calculatePrice, render} from "./frame.js";
+import {getOneArtworkByID} from "./searchService.js";
+import {Artwork} from "./artwork.js";
+import {displayCartCount} from "./main.js";
+
+
+const cart = "cart";
+
+document.addEventListener("DOMContentLoaded", () => {
+    let items = JSON.parse(window.localStorage.getItem(cart));
+
+    let sCart = document.getElementById(cart);
+    pageLoad(items, sCart);
+    displayCartCount();
+});
+
+async function pageLoad(items, sCart) {
+
+    if (items == null) {
+
+        sCart.appendChild(createCheckoutBtnDom(true, items))
+
+    }
+}
+
+
+
+function createCheckoutBtnDom(state, items) {
+    if (state) {
+        return DOM.container([
+            DOM.container([
+                DOM.textElementWithoutclass('There are no items in your shopping cart.', 'span', 'price-total')
+            ], 'div', 'price'),
+            DOM.btnCheckout('button', 'button', 'checkout-button', state)
+        ], 'div', 'cart-total')
+    }
+}
+
+
+
+
+
+import {removeFromLocalStorage} from "./searchService.js";
+
+export function container(elements, tag='div', theClass) {
+    const container = document.createElement(tag);
+    container.setAttribute('class', theClass);
+    for (let element of elements){
+        container.appendChild(element);
+    }
+    return container;
+}
+
+export 
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+export function textElementWithoutclass(text, tag,id) {
+    const element = document.createElement(tag);
+    element.setAttribute('id',id);
+    element.innerText = text;
+    return element;
+}
+
+export function btnCheckout(tag,type,id,state) {
+    const container = document.createElement(tag);
+    container.setAttribute('type', type);
+    container.setAttribute('id',id);
+    if(state) {
+        container.setAttribute('disabled',true);
+    }
+    container.innerHTML="Checkout";
+    container.addEventListener('click',)
+    return container;
+}
+
+export 
+export export 
+
+export 
+
+export 
+const cart = "cart";
+
+export function displayCartCount(){
+    let count = JSON.parse(window.localStorage[cart]).length;
+    if(count > 0)
+}const url = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 

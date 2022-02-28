@@ -1,0 +1,338 @@
+let cartObjects = null;
+export function get() {
+    if (cartObjects != null) {
+        return cartObjects;
+    }
+    try {
+        cartObjects = JSON.parse(localStorage.getItem('cart')) ;
+    } 
+    return cartObjects;
+}
+
+export 
+
+export function displayNumItems() {
+    let cartSize = get().length;
+    if (cartSize === 0) {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}
+
+export 
+
+export 
+import { requestObjectInfo } from './request.js';
+import { render, calculatePrice } from './frame.js';
+
+import * as cart from './cartStore.js';
+
+let cartObjects;
+let renderQue;
+window.onload = function () {
+    cartObjects = cart.get();
+    renderQue = renderAllObjects(cartObjects);
+    renderQue.then(() => {
+        updatePageValues();
+    });
+};
+
+
+function updatePageValues() {
+    cart.displayNumItems();
+    displayTotalprice();
+    emptyCartActions();
+}
+
+function displayTotalprice() {
+    const price = [];
+    document.querySelectorAll('.cart-price span').forEach();
+    const sum = price.reduce(, 0);
+    document.getElementById('price-total').innerText = sum; //todo: sum
+}
+
+function emptyCartActions() {
+    if (cartObjects.length === 0) {
+        let message = document.createElement('h2');
+        message.innerText = 'There are no items in your shopping cart.';
+        document
+            .getElementById('cart')
+            .insertBefore(message, document.getElementById('cart').firstChild);
+        document.getElementById('checkout-button').disabled = true;
+    }
+}
+
+
+function renderAllObjects() {
+    const items = cartObjects.map();
+    return Promise.all(items);
+}
+
+
+
+
+
+import { calculatePrice, render, getPrintSizes } from './frame.js';
+import { requestObjectInfo } from './request.js';
+import * as store from './cartStore.js';
+let matcolorpicker,
+    framestylepicker,
+    printsizepicker,
+    addtocartbutton,
+    framewidthslider,
+    matslider,
+    framewidthtext,
+    mattext,
+    configForm,
+    image,
+    imagecontainer;
+
+let url = new URL(window.location);
+let objectid = url.searchParams.get('objectID') ;
+let printSize = url.searchParams.get('printSize') || 'M';
+let frameStyle = url.searchParams.get('frameStyle') || 'classic';
+let frameWidth = parseFloat(url.searchParams.get('frameWidth') / 10 || 4.0);
+let matColor = url.searchParams.get('matColor') || 'mint';
+let matWidth = parseFloat(url.searchParams.get('matWidth') / 10 || 5.5);
+let oldVariables = JSON.parse(
+    JSON.stringify({
+        objectID: objectid,
+        printSize,
+        frameStyle,
+        frameWidth: frameWidth * 10,
+        matColor,
+        matWidth: matWidth * 10,
+    })
+);
+
+let objectinfoRequest = requestObjectInfo(objectid);
+if (null == objectid) 
+window.onload = function () {
+    objectinfoRequest
+        .then((objectinfo) => {
+            document.getElementById('title-lable').innerHTML = objectinfo.title;
+            document.getElementById('artist-lable').innerHTML =
+                objectinfo.artistDisplayName + ', ';
+            document.getElementById('date-lable').innerHTML =
+                objectinfo.objectDate;
+            let previewContainer = document.getElementById('preview-container');
+
+            image = document.getElementById('preview-image');
+            if (image !== null) 
+            let template = document.createElement('template');
+            template.innerHTML = `<img src="${objectinfo.primaryImageSmall}" alt="" id="preview-image">`;
+            previewContainer.insertBefore(
+                template.content.firstChild,
+                previewContainer.firstChild
+            );
+            image = document.getElementById('preview-image');
+            updatepreview();
+        })
+        .catch();
+    store.displayNumItems();
+
+    imagecontainer = document.getElementById('preview-container');
+    updatepreview();
+
+    framewidthslider = document.getElementById('framewidthslider');
+    matslider = document.getElementById('matslider');
+    framewidthtext = document.getElementById('framewidthtext');
+    mattext = document.getElementById('mattext');
+    addtocartbutton = document.getElementById('addtocartbutton');
+    matcolorpicker = document.getElementsByName('matColor');
+    framestylepicker = document.getElementsByName('frameStyle');
+    printsizepicker = document.getElementsByName('printSize');
+    configForm = document.getElementById('config-form');
+
+    configForm.onsubmit = ;
+
+    for (let element of matcolorpicker) {
+        element.onchange = ;
+    }
+
+    for (let element of framestylepicker) {
+        element.onchange = ;
+    }
+
+    for (let element of printsizepicker) {
+        element.onchange = ;
+    }
+
+    framewidthslider.onchange = ;
+
+    framewidthtext.onchange = ;
+
+    matslider.onchange = ;
+    mattext.onchange = ;
+    adjustcontrols();
+    updatepreview();
+};
+
+function updatepreview() {
+    if (!image) {
+        return;
+    }
+    const printSizes = getPrintSizes(image);
+    updateprintsizes(printSizes);
+    render(
+        image,
+        imagecontainer,
+        printSize,
+        frameStyle.toLocaleLowerCase(),
+        frameWidth,
+        matColor.toLocaleLowerCase(),
+        matWidth
+    );
+
+    let price = calculatePrice(
+        printSize,
+        frameStyle.toLocaleLowerCase(),
+        frameWidth * 10,
+        matWidth * 10
+    );
+    if (isNaN(price)) 
+    let tmpp = `${price}`.split('.');
+
+    if (tmpp.length > 1 && tmpp[1].length < 2) 
+    document.getElementById('price').innerHTML = '&euro; ' + price;
+}
+
+function updateprintsizes(printSizes) {
+    const printSizeDesc = {
+        S: 'Small',
+        M: 'Medium',
+        L: 'Large',
+    };
+    let sizePicker = document.getElementsByName('printSize');
+    for (let element of sizePicker) {
+        element.nextElementSibling.innerHTML =
+            printSizeDesc[element.value] +
+            '<br>' +
+            printSizes[element.value][0] +
+            ' x ' +
+            printSizes[element.value][1] +
+            ' cm';
+        if (element.value === printSize) {
+            document.getElementById('total-size').innerHTML =
+                Math.round(
+                    (printSizes[element.value][0] +
+                        parseFloat(frameWidth) +
+                        parseFloat(matWidth) +
+                        Number.EPSILON) *
+                        100
+                ) /
+                    100 +
+                ' x ' +
+                Math.round(
+                    (printSizes[element.value][1] +
+                        parseFloat(frameWidth) +
+                        parseFloat(matWidth) +
+                        Number.EPSILON) *
+                        100
+                ) /
+                    100 +
+                ' cm';
+        }
+    }
+}
+
+function adjustcontrols() {
+    matslider.value = matWidth;
+    framewidthslider.value = frameWidth;
+    framewidthtext.value = frameWidth;
+    mattext.value = matWidth;
+    document.getElementById(
+        'mat-color-' + matColor.toLocaleLowerCase()
+    ).checked = true;
+    document.getElementById(
+        'print-size-' + printSize.toLocaleLowerCase()
+    ).checked = true;
+    document.getElementById(
+        'frame-style-' + frameStyle.toLocaleLowerCase()
+    ).checked = true;
+}
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+import {
+    searchRequest,
+    getObjectsInfo,
+    request,
+    requestObjectInfo,
+} from './request.js';
+import { displayNumItems } from './cartStore.js';
+
+window.onload = function () {
+    displayNumItems();
+
+    document.getElementById('search-button').addEventListener('click', );
+
+    let query = new URLSearchParams(window.location.search).get('q');
+
+    if (query !== null)  else {
+        showHighlights();
+    }
+};
+
+
+
+function updateSearchInfo(content) {
+    window.document.getElementById('search-info').textContent = content;
+}
+
+function showHighlights() {
+    updateSearchInfo('Search our collection of more than 400,000 artworks.');
+    resetGallery();
+    request('highlights.json')
+        .then((data) => {
+            getObjectsInfo(data.highlights, data.highlights.length)
+                .then((data) => {
+                    renderObjects(data.objects);
+                })
+                .catch();
+        })
+        .catch();
+}
+
+function renderObjects(objects) {
+    const gallery = window.document.getElementById('gallery');
+
+    for (const object of objects) {
+        renderObject(object, gallery);
+    }
+}
+
+function renderObject(object, gallery) {
+    gallery.appendChild(createObject(object));
+}
+
+function resetGallery() {
+    window.document.getElementById('gallery').innerHTML = '';
+}
+
+function createObject(object) {
+    let template = document.createElement('template');
+    template.innerHTML = `<div class="thumb">
+			<a href="config.html?objectID=${object.objectID}" id="object-${object.objectID}">
+				<img src="${object.primaryImageSmall}" alt="${object.title} ${object.artistDisplayName}" id="object-image-0" />
+				<div class="museum-label">
+					<span class="artist">
+						${object.artistDisplayName}
+					</span>
+					<span class="title">${object.title}</span>, <span class="date">${object.objectDate}</span>
+				</div>
+			</a>
+		</div>`.trim();
+    return template.content.firstChild;
+}

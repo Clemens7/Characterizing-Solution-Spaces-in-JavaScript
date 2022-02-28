@@ -1,0 +1,216 @@
+/*
+store Artworks in Cart
+
+export const CART = {
+    KEY: 'cart',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(CART.KEY);
+        if (_contents) 
+    },
+    ,
+    ,
+    ,
+    isEmpty() {
+        if (CART.contents.length == 0) {
+            return true;
+        }
+    },
+    
+};
+
+/*
+Cache responses from the Met API's Object endpoint
+export const localPictures = {
+    KEY: 'pictures',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(localPictures.KEY);
+        if (_contents) {
+            localPictures.contents = JSON.parse(_contents);
+        }
+    },
+    async sync() {
+        let _pictures = JSON.stringify(localPictures.contents);
+        await localStorage.setItem(localPictures.KEY, _pictures);
+    },
+    store(pictures) {
+        let _noDoublePictures = pictures.filter(item1 =>
+            !this.contents.some(item2 =>
+                item2.id == item1.id
+            )
+        )
+        localPictures.contents = localPictures.contents.concat(_noDoublePictures);
+        localPictures.sync();
+    },
+
+    retrieve(searchedID) {
+        return localPictures.contents.filter(el => el.id == searchedID);
+    },
+
+    ,
+};
+import { CART } from './artmart-cache.js';
+
+CART.init();
+
+export function setCartCount() {
+    if (CART.isEmpty()) {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}export class Picture {
+    constructor(id, title, artist, image, image_small, date, link) {
+        this.id = id;
+        this.title = title;
+        this.artist = artist;
+        this.image = image;
+        this.image_small = image_small;
+        this.date = date;
+        this.link = link;
+    }
+}
+
+export class Artwork {
+    
+}
+export function setAttributes(element, attributes) {
+    for (let key in attributes) {
+        if (typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text, classe = false) {
+    const element = document.createElement(tag);
+    if (classe) {
+        element.setAttribute('class', classe);
+    }
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag = 'div', classe = false) {
+    const container = document.createElement(tag);
+    if (classe) {
+        container.setAttribute('class', classe);
+    }
+    for (let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+import { Picture } from './datastructures.js';
+
+export async function retrieve_id(id) {
+    const url = api_url_id(id);
+    try {
+        const response = await fetch(url);
+        const responsePicture = await response.json();
+        const picture = new Picture(responsePicture.objectID,
+            responsePicture.title,
+            responsePicture.artistDisplayName,
+            responsePicture.primaryImage,
+            responsePicture.primaryImageSmall,
+            responsePicture.objectDate,
+            responsePicture.objectURL);
+        return picture;
+    }}
+
+function api_url_id(id) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+    return API_URL;
+}
+
+export function api_url_search(parameter) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${parameter}`;
+    return API_URL;
+}
+import { Picture } from './datastructures.js';
+import * as DOM from './dom-helper.js';
+
+export class ResultDocumentContainer {
+    constructor(containerID = 'gallery') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addResultToDocument(result) {
+        this.container.appendChild(createResultElement(result));
+
+        function createResultElement(result) {
+            return DOM.container([
+                DOM.setAttributes(DOM.container([
+                    DOM.setAttributes(document.createElement('img'), { src: result.image_small }),
+                    DOM.container([
+                        DOM.textElement('span', result.artist, 'artist'),
+                        DOM.textElement('span', `${result.title}, `, 'title'),
+                        DOM.textElement('span', result.date, 'date')
+                    ], 'div', 'museum-label'),
+                ], 'a'), { id: `object-${result.id}`, href: `./config.html?objectID=${result.id}` })
+            ], 'div', 'thumb');
+        }
+    }
+}
+    import { Picture } from './datastructures.js';
+    import { ResultDocumentContainer } from './search-result-dom.js';
+    import * as SearchAPI from './search-api.js';
+    import { localPictures } from './artmart-cache.js ';
+    import { setCartCount } from './cart-number.js';
+
+    localPictures.init();
+
+    async function pictureSearch(parameter) {
+        const resultContainer = new ResultDocumentContainer();
+        const searchTitle = document.getElementById('search-info');
+        resultContainer.clear();
+
+        searchTitle.innerHTML = `Searching for “${parameter}”...`;
+
+        const url = SearchAPI.api_url_search(parameter);
+        let pictures = [];
+        try {
+            const response = await fetch(url);
+            const rawData = await response.json();
+            const responsePicturesIDs = await rawData.objectIDs;
+
+            if (!responsePicturesIDs) 
+
+            if (responsePicturesIDs.length == 1)  else {
+                searchTitle.innerHTML = `Found ${responsePicturesIDs.length} artworks for “${parameter}”`;
+            }
+
+            for (let i = 0; i < 100 && i < responsePicturesIDs.length; i++) {
+                let picture = localPictures.retrieve(responsePicturesIDs[i])[0];
+                if (typeof picture == 'undefined') {
+                    SearchAPI.retrieve_id(responsePicturesIDs[i]).then(picture => {
+                        pictures.push(picture);
+                        resultContainer.addResultToDocument(picture);
+                        localPictures.store([picture]);
+                    });
+                }
+            }
+        } 
+    }
+
+    
+
+
+    document.addEventListener('DOMContentLoaded', event => {
+        const param = (new URL(document.location)).searchParams;
+        const searchQuery = param.get('q');
+
+        setCartCount();
+
+        if (!searchQuery) 
+        document.getElementById('search').value = searchQuery;
+        pictureSearch(searchQuery);
+    })
+
+    const form = document.querySelector('.search-form');
+    form.addEventListener('submit', 

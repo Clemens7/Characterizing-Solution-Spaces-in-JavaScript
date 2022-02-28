@@ -1,0 +1,1 @@
+updateMatSlider(this.value)

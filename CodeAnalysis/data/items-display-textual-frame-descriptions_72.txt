@@ -1,0 +1,296 @@
+import { calculatePrice, render } from './frame.js'
+
+function pageLoad() {
+    storeConfiguration();
+    setCartNumber();
+    addItemsFromCart();
+    const prices = calculateItemPrices(getCartStorage());
+    setTotalCartPrice(prices);
+    addOnclickEventHandlerToCheckout();
+}
+
+function storeConfiguration() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const objectID = urlParams.get('object-id');
+    const matWidth = urlParams.get('matWidth');
+    const frameWidth = urlParams.get('frameWidth');
+    const frameStyle = urlParams.get('frameStyle');
+    const matColor = urlParams.get('matColor');
+    const printSize = urlParams.get('printSize');
+
+    window.history.replaceState(
+        {},
+        '',
+        `${window.location.pathname}${window.location.hash}`,
+    );
+    
+    if (!objectID ) return;
+}
+
+function addItemsFromCart() {
+    let cartStorage = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    let cart = JSON.parse(cartStorage);
+
+    if (cart == null || cart.length === 0)  else {
+        createCartItems(cart);
+    }
+}
+
+async function createCartItems(cart) {
+    let section = document.getElementById('cart');
+    let lastNode = document.getElementById('cart-total');
+    let newNode;
+
+    const prices = calculateItemPrices(cart);
+
+    for (let item of cart) {
+        newNode = await createCartItemNode(item);
+        section.insertBefore(newNode, lastNode);
+        lastNode = newNode;
+        setItemPrice(prices, item.objectID);
+        addRemoveEventHandler(cart, item.objectID);
+    }
+}
+
+async function createCartItemNode(item) {
+    let objectData = await getObjectData(item.objectID);
+
+    let cartItem = createElementNodeWithAttributes('div', {'class': 'cart-item'});
+    let cartPreview = createElementNodeWithAttributes('div',
+        {'class': 'cart-preview', 'id': `preview-container-${item.objectID}`}
+    );
+    let anchor = createElementNodeWithAttributes('a', {'href': `${createLinkToConfigurator(item)}`});
+    let image = createElementNodeWithAttributes(
+        'img',
+        {'class': 'cart-thumb', 'src': `${objectData['primaryImageSmall']}`, 'id': `preview-${item.objectID}`, 'alt': `Image: ${objectData['title']}`}
+    );
+
+    image.addEventListener('load', () => {
+        renderItemImage(item);
+    });
+
+    anchor.appendChild(image);
+    cartPreview.appendChild(anchor);
+
+    let museumLabel = createElementNodeWithAttributes('div', {'class': 'museum-label'});
+    let infoDiv = createElementNodeWithAttributes('div');
+    let artistSpan =  createElementNodeWithAttributes('span', {'class': 'artist'});
+    artistSpan.innerHTML = `${objectData['artistDisplayName']}`;
+    let titleSpan = createElementNodeWithAttributes('span', {'class': 'title'});
+    titleSpan.innerHTML = `${objectData['title']}, `;
+    let dateSpan = createElementNodeWithAttributes('span', {'class': 'date'});
+    dateSpan.innerHTML = `${objectData['objectDate']}`;
+    let br1 = createElementNodeWithAttributes('br');
+    let br2 = createElementNodeWithAttributes('br');
+    let descriptionSpan = createElementNodeWithAttributes('span', {'class': 'frame-description'});
+    descriptionSpan.innerHTML = createDescription(item);
+
+    infoDiv = appendChildNodes(infoDiv, [artistSpan, titleSpan, dateSpan, br1,  br2, descriptionSpan]);
+
+    let cartPrice = createElementNodeWithAttributes('div', {'class': 'cart-price'});
+    let priceSpan = createElementNodeWithAttributes('span', {'id': `price-${item.objectID}`});
+    priceSpan.innerHTML = '0';
+    let euroSign = document.createTextNode('€ ');
+    cartPrice = appendChildNodes(cartPrice, [euroSign, priceSpan]);
+
+    let cartRemoveButton = createElementNodeWithAttributes('button', {'class': 'cart-remove', 'name': 'cart-remove', 'id': item.objectID});
+
+    museumLabel = appendChildNodes(museumLabel, [infoDiv, cartPrice, cartRemoveButton]);
+    cartItem = appendChildNodes(cartItem, [cartPreview, museumLabel]);
+
+    return Promise.resolve(cartItem);
+}
+
+
+function getObjectData(objectID) {
+    let objectData;
+
+    const fetchObject = async () => {
+        const response = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/' + objectID);
+        if (response['status'] !== 200) 
+        return await response.json();
+    };
+
+    const cachedJson = localStorage.getItem(`object-${objectID}`);
+    if (cachedJson != null)  else {
+        objectData = fetchObject().then(json => {
+            localStorage.setItem(`object-${objectID}`, JSON.stringify(json));
+            return json;
+        }).catch();
+    }
+    return objectData;
+}
+
+
+function createDescription(item) {
+    let size = {'S': 'Small', 'M': 'Medium', 'L':'Large'};
+    let description = `${size[item.printSize]} print in a ${item.frameWidth / 10} cm ${item.frameStyle} frame`;
+
+    if (item.matWidth != 0) {
+        description += ` with a ${item.matWidth / 10} cm ${item.matColor} mat.`;
+    } else {
+        description += '.';
+    }
+
+    return description;
+}
+
+function createLinkToConfigurator(item) {
+    return `./config.html?` +
+        `objectID=${item.objectID}&printSize=${item.printSize}&` +
+        `frameStyle=${item.frameStyle}&frameWidth=${item.frameWidth}&` +
+        `matColor=${item.matColor}&matWidth=${item.matWidth}`;
+}
+function appendChildNodes(parentNode, childNodes) {
+    childNodes.forEach(child => parentNode.appendChild(child));
+    return parentNode;
+}
+
+function createElementNodeWithAttributes(tagName, attributesObject = {}) {
+    let node = document.createElement(tagName);
+
+    Object.getOwnPropertyNames(attributesObject).forEach(attribute => {
+        node.setAttribute(`${attribute}`, `${attributesObject[attribute]}`)
+    });
+
+    return node;
+}
+
+
+
+
+
+
+
+function addRemoveEventHandler(cart, objectID) {
+    const removeButton = document.getElementById(objectID);
+
+    removeButton.addEventListener('click', );
+}
+
+function setItemPrice(prices, objectID) {
+    document.getElementById(`price-${objectID}`).innerHTML = prices[objectID];
+}
+
+function calculateItemPrices(cart) {
+    if (cart == null) 
+
+    let prices = {};
+    for (let item of cart)  {
+        const itemPrice = calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+        prices[item.objectID] = itemPrice;
+    }
+
+    return prices;
+}
+
+function setTotalCartPrice(prices) {
+    let totalPrice = 0;
+    for (let id in prices) {
+        totalPrice += prices[id];
+    }
+    document.getElementById('price-total').innerHTML = totalPrice.toFixed(2);
+}
+
+function getCartStorage() {
+    const cartStorage = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (cartStorage == null) 
+    const cart = JSON.parse(cartStorage);
+    if (cart.length == 0) 
+    return cart;
+}
+
+function renderItemImage(item) {
+    const imgContainer = document.getElementById(`preview-container-${item.objectID}`);
+    const img = document.getElementById(`preview-${item.objectID}`);
+    render(img, imgContainer, item.printSize, item.frameStyle, item.frameWidth, item.matColor, item.matWidth);
+}
+
+function addOnclickEventHandlerToCheckout() {
+    const checkoutButton = document.getElementById('checkout-button');
+
+    checkoutButton.addEventListener('click', );
+}
+
+
+pageLoad();export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    const multi = {'S': 1, 'M': 2, 'L': 3.5};
+    const framePrices = {'classic': 0.1, 'natural': 0.08, 'shabby': 0.09, 'elegant': 0.085};
+    const matPrice = 0.005;
+    price += framePrices[frameStyle] * frameWidth;
+    price += matPrice * matWidth;
+    price *= multi[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+const LOCAL_STORAGE_KEY = 'cart';
+
+function setCartNumber() {
+    let cartLink = document.getElementById('cart-link');
+    let cartStorage = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+
+    if (cartStorage != null) {
+        let cart = JSON.parse(cartStorage);
+        if (cart.length != 0) {
+            cartLink.innerText = `Cart (${cart.length})`;
+        }
+    }
+}

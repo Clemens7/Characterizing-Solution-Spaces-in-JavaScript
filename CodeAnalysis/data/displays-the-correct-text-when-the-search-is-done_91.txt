@@ -1,0 +1,57 @@
+const CACHE_PREFIX = 'artworkCache_'
+
+export 
+
+export 
+export class Artwork {
+    
+}window.addEventListener('load', () => {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    document.getElementById('cart-link').innerHTML = `Cart (${cart.length})`;
+});
+import { Artwork } from "./artwork.js";
+import * as ArtworkCache from "./artwork-cache.js";
+
+const BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+const HIGHLIGHTS_SRC = "./highlights.json";
+
+const SEARCH_BOX = document.getElementById("search");
+SEARCH_BOX.addEventListener('input', )
+
+document.addEventListener('DOMContentLoaded', event => {
+    if ((window.location.href).includes("?q=")) {
+        const temp = window.location.href.split("?q=");
+        var searchString = temp[temp.length - 1].split("+").join(" ");
+        search(searchString);
+    }
+});
+
+
+
+export async function search(searchString) {
+    const searchBar = document.getElementById("search");
+    const searchInfo = document.getElementById("search-info");
+    if (searchString.length === 0) 
+
+    searchBar.style = '';
+    document.getElementById("gallery").innerHTML = "";
+    searchInfo.innerText = "Searching for “" + searchString + "”...";
+
+    console.log('Searching for ' + searchString + "...");
+    try {
+        const response = await fetch(BASE_URL + "search?q=" + searchString + "&hasImages=true");
+        let { total, objectIDs } = await response.json();
+
+        if (total !== 0)  else {
+            console.log("Search returned no results");
+            searchInfo.innerText = "Found 0 artworks for “" + searchString + "”";
+        }
+        console.log("Search completed")
+    } 
+}
+
+
+
+
+
+

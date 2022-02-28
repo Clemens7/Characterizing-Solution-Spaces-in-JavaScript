@@ -1,0 +1,72 @@
+import * as PictureCache from './pictureCache.js'
+
+
+export 
+
+export async function getPictures(searchString)
+{
+    
+    const API_OBJECT_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+    const API_SEARCH_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&`;
+
+    var erg = PictureCache.retrieve(searchString);
+    var objects = [];
+    if(erg)
+    
+
+    var ids;
+    if(searchString == "highlights")
+    
+    else{
+        await fetch(API_SEARCH_URL+'q='+ searchString)	
+		.then()	
+        .then();}
+
+export function retrieve(searchString)
+{
+    if(searchString in localStorage)
+    
+}
+
+export 
+import * as DAL from './DAL.js';
+
+document.addEventListener('DOMContentLoaded', event => {
+  document.getElementById("cart-link").innerText = `Cart${getNumOfItems()}`;
+  const params = (new URL(document.location)).searchParams;
+  const helpquery = params.get('q');
+  if(!helpquery) 
+  else{
+    var query= helpquery.replace(/%2B/g, " ");
+    document.getElementById('search').value = query;
+    search(query);
+  }
+});
+
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('click', );
+
+const form = document.getElementById("search-form");
+form.addEventListener('submit', );
+
+
+
+
+  function search(queryString)
+  {
+    var text= `Searching for “${queryString}”...`;
+    document.getElementById("search-info").innerHTML = text;
+    DAL.getPictures(queryString).then(); 
+  }
+
+
+
+
+
+  function getNumOfItems() {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    if(cart)
+    
+   return '';
+  }
+

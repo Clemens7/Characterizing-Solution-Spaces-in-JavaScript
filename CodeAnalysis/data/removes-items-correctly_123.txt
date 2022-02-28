@@ -1,0 +1,193 @@
+
+import * as frame from "./frame.js";
+
+
+/*
+let arrayOfObjects = [{
+  "objectID":"1",
+  "printSize":"5",
+  "frameStyle":"wood",
+  "frameWidth":"500",
+  "matColor":"red",
+  "matWidth":"200"
+  },
+  {
+  "objectID":"2",
+  "printSize":"5",
+  "frameStyle":"wood",
+  "frameWidth":"500",
+  "matColor":"red",
+  "matWidth":"200"
+}];
+
+localStorage.setItem("cart", JSON.stringify(arrayOfObjects));
+let totalArtworks = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+
+let retrievedData = localStorage.getItem("cart");
+let arrayOfObjects = JSON.parse(retrievedData);
+
+var temp = window.localStorage.getItem("cart");
+if(temp) {
+  var cartItems = JSON.parse(temp).length;
+  document.getElementById("cart-link").innerHTML = "Cart" + " (" + cartItems + ")";
+}
+
+
+if(localStorage.getItem("cart") === null)  else {
+  drawPreviews();
+  document.getElementById("checkout-button").onclick = ;
+  
+}
+
+async function drawPreviews() {
+    let totalSum = 0;
+
+    for(var i = 0; i < arrayOfObjects.length; i++) {
+      var currentObject = arrayOfObjects[i];
+      let currentObjectID = currentObject.objectID;
+      let objectToTheID = totalArtworks + currentObjectID;
+      let artwork = await fetch(objectToTheID).then(response => response.json());
+      let price = frame.calculatePrice(currentObject.printSize, currentObject.frameStyle, currentObject.frameWidth, currentObject.matWidth);
+      let priceInt = parseFloat(price.substring(2,price.length));
+      totalSum = parseFloat(totalSum+priceInt);
+
+      let textualDescription = text(currentObject.printSize, currentObject.frameStyle, currentObject.frameWidth, currentObject.matColor, currentObject.matWidth);
+      function text(printSize, frameStyle, frameWidth, matColor, matWidth){
+        let myPrintSize = "";
+        if(printSize == 'S') {
+          myPrintSize = "Small";
+        } else if (printSize == 'M') {
+          myPrintSize = "Medium";
+        } else if (printSize == 'L') {
+          myPrintSize = "Large";
+        }
+        let myFrameWidth = parseFloat(frameWidth/10);
+        let myMatWidth = parseFloat(matWidth/10);
+        if(myMatWidth === 0) 
+
+        return `${myPrintSize} print in a ${myFrameWidth} cm ${frameStyle} frame with a ${myMatWidth} cm ${matColor} mat.`;
+      };
+      console.log(artwork);
+      let html = `<div class="cart-item">
+        <div class="cart-preview" id="preview-container-${i}">
+          <a href="config.html?objectID=${currentObjectID}&printSize=${currentObject.printSize}&frameStyle=${currentObject.frameStyle}&frameWidth=${currentObject.frameWidth}&matColor=${currentObject.matColor}&matWidth=${currentObject.matWidth}">
+            <img class="cart-thumb" src="" id="preview-${i}" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist">${artwork.artistDisplayName}</span>
+            <span class="title">${artwork.title}</span>,
+            <span class="date">${artwork.objectDate}</span>
+            <br><br>
+            <span class="frame-description">${textualDescription}</span>
+          </div>
+          <div class="cart-price"><span id="price-0">${price}</span></div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>`;
+      cart.insertAdjacentHTML("afterbegin", html);
+
+      let img = document.getElementById(`preview-${i}`);
+      img.src = artwork.primaryImageSmall;
+      let container = document.getElementById(`preview-container-${i}`);
+
+      img.addEventListener("load", function() {frame.render(img, container, currentObject.printSize, currentObject.frameStyle, currentObject.frameWidth, currentObject.matColor, currentObject.matWidth);});
+    }
+
+      Array.from(document.querySelectorAll(".cart-remove")).forEach((item, i) => {
+        item.addEventListener("click",function(event){
+          let cartItem = event.target.closest(".cart-item");
+          console.log(cartItem);
+          let index;
+          Array.from(document.querySelectorAll(".cart-item")).forEach((item, i) => {
+            if(item === cartItem) {
+              index = i;
+            }
+          });
+          cartItem.parentElement.removeChild(cartItem);
+          arrayOfObjects.splice(index,1);
+          localStorage.setItem("cart", JSON.stringify(arrayOfObjects));
+
+        });
+      });
+
+    totalSum = parseFloat(totalSum).toFixed(2);
+    document.getElementById("price-total").innerHTML = totalSum;
+}
+
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+
+	frameWidth = parseFloat(frameWidth);
+
+	matWidth = parseFloat(matWidth);
+	
+    let price = 30.0;
+	
+	if(frameStyle == "classic")  else if(frameStyle == "natural")  else if (frameStyle == "shabby")  else if(frameStyle == "elegant") {
+		price = price + 0.85*frameWidth;
+	}
+	
+	price = price + 0.05*matWidth;
+	
+	if (printSize == "M") {
+		price = price*2;
+	} else if(printSize == "L"){
+		price = price*3.5;
+	}
+	
+    return "€ " + (Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2);
+}

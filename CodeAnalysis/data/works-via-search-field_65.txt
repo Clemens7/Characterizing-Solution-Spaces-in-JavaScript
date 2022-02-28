@@ -1,0 +1,213 @@
+import * as ArtworkCache from './artwork-cache.js'
+import { Artwork, SearchValues } from "./Artwork.js";
+
+export async function retrieve(query) {
+    try {
+        const rawData = await searchCached(query)
+        let n = Math.min(100, rawData.objectIDs.length)
+
+        return rawData.objectIDs.slice(0, n).map(getObjectCached)
+    }}
+
+export 
+
+async function searchCached(query) {
+    return ArtworkCache.retrieve('search-' + query) ?? await search(query)
+}
+
+async function search(query) {
+    const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}&hasImages=true`;
+    const response = await fetch(searchUrl+query)
+    if(response.status != 200) 
+    const search = await response.json()
+    ArtworkCache.store('search-' + query, search)
+    return search
+}
+
+export async function getObjectCached(id) {
+    return ArtworkCache.retrieve('object-' + id) ?? await getObject(id)
+}
+
+async function getObject(id) {
+    const objectUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+    const response = await fetch(objectUrl+id)
+    if(response.status != 200) 
+    const object = await response.json()
+    ArtworkCache.store('object-' + id, object)
+    return object
+}import { Artwork, SearchValues } from "./Artwork.js";
+
+export function retrieve(key) {
+    if(key in localStorage) 
+}
+
+export function store(key, artworks) {
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(artworks);
+}import { Artwork } from './Artwork.js';
+import * as DOM from './dom-helpers.js';
+import {setAttributes} from "./dom-helpers.js";
+import {setAttributeClass} from "./dom-helpers.js";
+import {cartItemDescription} from "./cart.js";
+import {calculatePrice, render} from "./frame.js";
+
+export class ArtworkDocumentContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+    }
+
+}
+
+export function createArtworkElement(artwork) {
+    const img = createArtworkImage(artwork)
+    const description = appendDescription(document.createElement('div'), artwork.artistDisplayName, artwork.title, artwork.objectDate)
+    description.classList.add('museum-label')
+
+    const artworkEl = document.createElement('a')
+    artworkEl.href = `/config.html?objectID=${artwork.objectID}`
+    artworkEl.append(img, description)
+    artworkEl.classList.add("thumb")
+
+    return artworkEl;
+}
+
+export function createArtworkImage(artwork) {
+    const img = new Image()
+    img.src = artwork.primaryImageSmall
+    img.alt = artwork.title
+    return img
+}
+
+export 
+
+export function appendDescription(el, artist, title, date) {
+    console.log(artist)
+
+    const aritstNameEl = document.createElement('b')
+    const titleEl = document.createElement('i')
+    const objectDateEl = document.createElement('span')
+
+    aritstNameEl.textContent = artist
+    titleEl.textContent = title + ", "
+    objectDateEl.textContent = date
+
+    el.append(
+        aritstNameEl, 
+        document.createElement('br'), 
+        titleEl, 
+        objectDateEl
+    )
+    return el
+}
+
+export class SearchTextContainer {
+    constructor(containerID = 'search-info') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+    createSearchTextSearching(term) {
+        this.container.innerText = "Searching for “" + term + "”...";
+    }
+
+    createSearchTextDone(term, numberResults) {
+        if(numberResults == 1) 
+        this.container.innerText = "Found " + numberResults + " artworks for “" + term + "”";
+    }
+
+    
+}
+
+export class CartItemContainer {
+    
+
+    
+
+    
+}export class Artwork {
+    
+}
+
+export var SearchValues = {
+    serialize : ,
+    parse : 
+}export class CartItem {
+    
+}import { CartItem } from "./CartItem.js";
+
+export 
+
+export 
+
+export 
+
+export function getAll() {
+    return JSON.parse(localStorage.getItem("cart")) ?? []
+}
+
+export 
+
+export 
+
+export function diplayCartItems() {
+    document.querySelector('#cart-link').textContent = `Cart (${getAll().length})`
+}export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export export 
+
+export 
+
+export 
+
+      import { Artwork } from "./Artwork.js";
+      import { ArtworkDocumentContainer, SearchTextContainer, createArtworkElement } from "./artwork-dom.js";
+      import * as ArtworkAPI from "./artwork-api.js";
+      import { diplayCartItems } from "./cart.js";
+
+      const form = document.querySelector('.search-form');
+
+
+      document.addEventListener('DOMContentLoaded', async (event) => {
+          diplayCartItems()
+          const params = (new URL(document.location)).searchParams;
+          const searchInputQuery = params.get('q');
+          if(!searchInputQuery) 
+          document.getElementById('search').value = searchInputQuery;
+          const searchInputs = searchInputQuery.split(',');
+          artworkSearch(searchInputs);
+      });
+
+      async function artworkSearch(searchInput) {
+          const searchContainer = new SearchTextContainer();
+          searchContainer.clear();
+          searchContainer.createSearchTextSearching(searchInput);
+
+          const artworkPromises = await ArtworkAPI.retrieve(searchInput)
+
+          if (!artworkPromises) 
+
+          searchContainer.clear();
+          searchContainer.createSearchTextDone(searchInput, artworkPromises.length);
+          const artworkContainer = new ArtworkDocumentContainer();
+          artworkContainer.clear();
+
+          const artworks = await Promise.all(artworkPromises)
+            document.querySelector('#gallery').append(...artworks.map(createArtworkElement))
+      }
+
+  

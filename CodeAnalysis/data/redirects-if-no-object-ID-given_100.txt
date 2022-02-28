@@ -1,0 +1,127 @@
+export async function fetchJsonFromAPI(id, shouldCache = true) {
+    if (shouldCache && id in window.localStorage) 
+
+    let response = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/' + id);}
+
+export 
+
+export 
+import { retrieveJson, fetchJsonFromAPI } from './cache.js';
+import { calculatePrice, render } from './frame.js';
+
+const cart = document.getElementById("cart");
+let priceTotal = 0;
+let id = 0;
+
+document.addEventListener('DOMContentLoaded', event => {
+    loadDataAndPopulateUI();
+});
+
+
+async function loadDataAndPopulateUI() {
+    priceTotal = 0;
+    try {
+        let jsonItems = localStorage.getItem('cart');
+        const elements = JSON.parse(jsonItems);
+        if (elements.length === 0) catch {
+        createPriceAndCheckout();
+        displayEmptyCart();
+    }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function createPriceAndCheckout() {
+    const cartTotal = document.createElement("div");
+    cartTotal.className = "cart-total";
+    cart.appendChild(cartTotal);
+    const price = document.createElement("div");
+    price.className = "price";
+    price.innerText = "Total: € ";
+    cartTotal.appendChild(price);
+    const checkoutPriceTotal = document.createElement("span");
+    checkoutPriceTotal.id = "price-total";
+    checkoutPriceTotal.innerText = `${parseFloat(priceTotal)}`;
+    price.appendChild(checkoutPriceTotal);
+    const checkoutButton = document.createElement("button");
+    checkoutButton.id = "checkout-button";
+    checkoutButton.innerText = "Checkout";
+    checkoutButton.addEventListener('click', );
+
+    cartTotal.appendChild(checkoutButton);
+}
+
+export function updateHeaderCartCount() {
+    let jsonItems = localStorage.getItem('cart');
+    try {
+        const elements = JSON.parse(jsonItems);
+        let count = 0;
+        elements.forEach();
+        const cartLink = document.getElementById("cart-link");
+        if (count == 0) 
+    }catch (e) {
+        return;
+    }
+}
+
+export 
+export 
+
+export 
+
+export 
+
+export 
+import { fetchJsonFromAPI } from './cache.js';
+import { updateHeaderCartCount } from './cart.js'
+
+
+const API = 'https://collectionapi.metmuseum.org/public/collection/v1';
+
+const form = document.querySelector('main form');
+
+document.addEventListener('DOMContentLoaded', event => {
+    const params = (new URL(document.location)).searchParams;
+    const queryParam = params.get('q');
+    updateHeaderCartCount();
+    if (!queryParam) {
+        displayHighlights();
+        return;
+    }});
+
+form.addEventListener('submit', );
+
+
+
+
+
+async function displayHighlights() {
+    const IDs = await fetch('./highlights.json').then(data => data.json().then(data => data.highlights));
+    const artworks = await getArtworks(IDs);}
+
+
+
+async function getArtworks(IDs) {
+    return Promise.all(IDs.map(ID =>
+        fetchJsonFromAPI(ID)
+        .then()));
+}
+
+
+
+
+class Artwork {
+    
+}
+

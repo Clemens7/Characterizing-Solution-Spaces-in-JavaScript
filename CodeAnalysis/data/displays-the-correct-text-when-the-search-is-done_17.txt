@@ -1,0 +1,88 @@
+import {updateCartNavigationItemCount} from "./common.js";
+
+export 
+
+export 
+
+export function readCart() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) {
+        return [];
+    }}
+
+export 
+
+export class CartObject {
+    
+}import {readCart} from "./cart-model.js";
+
+const BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export 
+
+export async function search(searchTerm) {
+    searchTerm = searchTerm.replace('+', ' ');
+    let response = await fetch(BASE_URL + "search?hasImages=true&q=" + encodeURIComponent(searchTerm));
+    let result = await response.json();
+
+    if (response.status != 200 || !result || result.total == 0) {
+        result.objectIDs = [];
+    }
+    result.objectIDs = result.objectIDs.slice(0, 100);
+    return result;
+}
+
+export function updateCartNavigationItemCount(items = null) {
+    let elem = document.getElementById("cart-link");
+    if (elem) {
+        let count = getCartItemCount(items);
+        let str = "Cart";
+        if (count > 0) 
+        elem.innerText = str;
+    }
+}
+
+function getCartItemCount(items = null) {
+    if (items) 
+    return readCart().length
+}
+        import {updateCartNavigationItemCount} from "./common.js";
+        import {init} from './search.js';
+
+        updateCartNavigationItemCount();
+        init();
+    import {search, getObject} from './common.js'
+
+export async function init() {
+    let searchParams = new URLSearchParams(window.location.search);
+    try {
+        await performSearch(searchParams.get('q'));
+    } 
+}
+
+function setSearchQuery(q) {
+    document.getElementById('search').setAttribute('value', q);
+}
+
+
+
+function updateSearchStatusMessage(t) {
+    document.getElementById('search-info').innerText = t
+}
+
+async function performSearch(q) {
+    let searchResult;
+    if (q) {
+        setSearchQuery(q);
+        updateSearchStatusMessage(`Searching for “${q}”...`);
+        try {
+            searchResult = await search(q);
+        } 
+    }
+    try {
+        await Promise.all(searchResult.objectIDs.map());
+    } 
+    if (q) {
+        updateSearchStatusMessage(`Found ${searchResult.total} artwork${searchResult.total === 1  : 's'} for “${q}”`);
+    }
+}

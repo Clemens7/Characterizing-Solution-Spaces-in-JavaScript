@@ -1,0 +1,112 @@
+const LS_CART_KEY = 'cart';
+
+/*
+
+export class CartEntry {
+    
+}
+
+/*
+
+export function getCartContent() {
+    const jsonCartContent = localStorage.getItem(LS_CART_KEY);
+    const cartContent = jsonCartContent ? JSON.parse(jsonCartContent) ;
+    let missingUUID = false;
+    for (const item of cartContent) {
+        if (missingUUID |= item.entryUUID == null) 
+    }
+    if (missingUUID) 
+    return cartContent;
+}
+
+export 
+
+export 
+
+export 
+
+/*
+
+export 
+import {get_shipping} from "./shipping-api.js";
+import {getCartContent} from "./cart-cache.js";
+import {calculatePrice} from "./frame.js";
+
+/*
+
+document.addEventListener('DOMContentLoaded', () => preparePageUpdate());
+document.getElementById('country').addEventListener('change', );
+
+function preparePageUpdate() {
+    const cartContent = getCartContent();
+    if (cartContent.length === 0)  else {
+        get_shipping().then(destinations => {
+            updatePage(destinations, cartContent);
+        })
+    }
+}
+
+function updatePage(destinations, cartContent) {
+    let subTotal = 0;
+    for (const item of cartContent) {
+        subTotal += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    document.getElementById('price-subtotal').innerText = subTotal;
+
+    const countrySelect = document.getElementById('country');
+    for (const destination of destinations) {
+        if (!Array.from(countrySelect.children).find(option => option.value === destination.country)) {
+            countrySelect.insertAdjacentHTML('beforeend', `<option value="${destination.country}">${destination.displayName}</option>`);
+        }
+    }
+
+    if (destinations.length > 0) {
+        const cost = destinations.find(dest => dest.country === document.getElementById('country').value).cost;
+        document.getElementById('price-shipping').innerText = (cost / 100).toFixed(2);
+        document.getElementById('price-total').innerText = (subTotal + (cost / 100));
+    }
+}
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    switch (frameStyle) {
+        
+        
+        case 'shabby':
+            price += frameWidth * 0.9;
+            break;
+        
+    }
+
+    price += matWidth * 0.05;
+
+    if (printSize === 'M') 
+    if (printSize === 'L') {
+        price *= 3.5;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+const BASE_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2';
+
+let destinations = [];
+
+/*
+
+export class Destination {
+    
+}
+
+/*
+
+export async function get_shipping() {
+    return fetch(BASE_URL + '/shipping')
+        .then(response => {
+            return response.json()
+        }).then(value => {
+            return destinations = value.destinations;
+        }).catch();
+}

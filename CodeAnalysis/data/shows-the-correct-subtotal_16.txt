@@ -1,0 +1,175 @@
+import { cache } from "./cache.js";
+
+class ArtService {
+
+    constructor() {
+        this.museumUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.shippingUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+
+    getShipping = async function () {
+        const endpoint = "/shipping";
+
+        try {
+            const response = await fetch(this.shippingUrl + endpoint);
+            const jsonData = await response.json();
+            return jsonData.destinations.map(d => new ShippingInfo(d.country, d.displayName, d.cost));
+        }}
+
+    getArtObject = 
+
+    getArtObjectPromises = 
+    
+    getArtObjects = 
+
+    search = 
+
+    getHighlightObjectPromises = 
+
+    getQueryParams = 
+
+}
+
+export class ShippingInfo {
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}
+
+export class ArtObject {
+    
+}
+
+export const artService = new ArtService();class Cache {
+
+    load = function (key) {
+        if (key in localStorage) {
+            return JSON.parse(localStorage[key]);
+        }
+    }
+
+    store = 
+
+    addToCart = 
+
+    removeFromCart = 
+
+    clearCart = 
+
+    getCartItems = function () {
+        const cart = this.load("cart");
+
+        return cart ? cart ;
+    }
+
+    cartLength = 
+}
+
+export const cache = new Cache();import { artService } from "./artService.js";
+import { cache } from "./cache.js";
+import * as domHelper from "./dom-helper.js"
+import * as frame from "./frame.js"
+
+function redirectIfEmpty() {
+    if (cache.getCartItems().length <= 0) 
+}
+
+async function setCountryDropdown() {
+    const dropdown = document.getElementById("country");
+    const shipping = await artService.getShipping();
+
+    for (let item of shipping) {
+        const option = domHelper.textElement("option", item.displayName);
+        domHelper.setAttributes(option, { "value": item.country });
+
+        dropdown.appendChild(option);
+    }
+
+    dropdown.addEventListener("change", , false);
+}
+
+async function setPrices() {
+    const cartItems = cache.getCartItems();
+    let totalPrice = 0;
+
+    for (let item of cartItems) {
+        totalPrice += frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+
+    const subtotalPriceElement = document.getElementById("price-subtotal");
+    subtotalPriceElement.innerText = (Math.round((totalPrice + Number.EPSILON) * 100) / 100);
+
+
+    const shipping = await artService.getShipping();
+    const dropdown = document.getElementById("country");
+    const selectedCountry = dropdown.options[dropdown.selectedIndex].value;
+    const shippingPriceElement = document.getElementById("price-shipping");
+    const totalPriceElement = document.getElementById("price-total");
+    const payButton = document.getElementById("pay-button");
+
+    let error = true;
+
+    for(let item of shipping){
+        if(item.country === selectedCountry){
+            shippingPriceElement.innerText = (Math.round(((item.cost/100) + Number.EPSILON) * 100) / 100).toFixed(2);
+            totalPriceElement.innerText = (Math.round(((totalPrice + item.cost/100) + Number.EPSILON) * 100) / 100);
+            payButton.disabled = false;
+            error = false;
+            break;
+        }
+    }
+
+    if(error === true)
+}
+
+redirectIfEmpty();
+setCountryDropdown();
+setPrices();
+
+
+export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+
+    const printSizeFactors = {
+        S: 1,
+        M: 2,
+        L: 3.5
+    }
+    const frameStylePrices = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85
+    }
+
+    price += frameWidth/10 * frameStylePrices[frameStyle];
+
+    price += matWidth/10 * 0.05;
+
+    price *= printSizeFactors[printSize];
+
+    return Number((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}

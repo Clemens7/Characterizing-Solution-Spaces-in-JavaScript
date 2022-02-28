@@ -1,0 +1,372 @@
+
+    import * as configUtil from './config.js';
+    import * as util from './util.js';
+
+    util.showCartNumber();
+  
+    document.addEventListener('DOMContentLoaded', event => {
+
+      const queryParams = (new URL(document.location)).searchParams;
+      const objectIDParam = queryParams.get("objectID");
+      const printSize = util.getOrDefault(queryParams, "printSize", 'M');
+      const frameStyle =  util.getOrDefault(queryParams, "frameStyle", 'natural');
+      const frameWidth =  util.getOrDefault(queryParams, "frameWidth", 40) / 10;
+      const matColor =  util.getOrDefault(queryParams, "matColor", 'mint');
+      const matWidth =  util.getOrDefault(queryParams, "matWidth", 55) / 10;
+
+      if (!objectIDParam) 
+
+      console.log("Got Query Parameters: ",objectIDParam, printSize, frameStyle, frameWidth,matColor,matWidth);
+
+      configUtil.setupConfigurator(objectIDParam, printSize, frameStyle, frameWidth, matColor, matWidth);
+    });
+
+    document.getElementById("print-size-s").addEventListener('click', );
+    document.getElementById("print-size-m").addEventListener('click', );
+    document.getElementById("print-size-l").addEventListener('click', );
+
+    document.getElementById("frame-style-classic").addEventListener('click', );
+    document.getElementById("frame-style-natural").addEventListener('click', );
+    document.getElementById("frame-style-shabby").addEventListener('click', );
+    document.getElementById("frame-style-elegant").addEventListener('click', );
+
+    document.getElementById("mat-color-ivory").addEventListener('click', );
+    document.getElementById("mat-color-mint").addEventListener('click', );
+    document.getElementById("mat-color-wine").addEventListener('click', );
+    document.getElementById("mat-color-indigo").addEventListener('click', );
+    document.getElementById("mat-color-coal").addEventListener('click', );
+
+    document.getElementsByName("matWidthR")[0].addEventListener('change', );
+    document.getElementsByName("matWidth")[0].addEventListener('change', );
+
+    document.getElementsByName("frameWidthR")[0].addEventListener('change', );
+    document.getElementsByName("frameWidth")[0].addEventListener('change', event => configUtil.onTextInputWithCorrespondingSliderChange(event.target));
+
+    document.getElementById("config-form").addEventListener('submit', );
+  import * as frameutil from './frame.js';
+import * as util from './util.js';
+import {getObject} from './metmuseumAPI.js';
+import {Item, Cart, retrieveCart} from './models.js';
+
+
+let metObjectGlob;
+
+async function getObjectFromMETApi(objectID) {
+    metObjectGlob = await getObject(objectID);
+    console.log(metObjectGlob)
+    return metObjectGlob;
+}
+
+function setupPictureLabel(labelElement, artistDisplayName, title, date) {
+    const nameElement = document.createElement("b");
+    nameElement.innerText = artistDisplayName;
+    labelElement.appendChild(nameElement);
+
+    labelElement.appendChild(document.createElement("br"));
+
+    const titleElement = document.createElement("i");
+    titleElement.innerText = title + ", ";
+    labelElement.appendChild(titleElement);
+
+    const dateElement = document.createElement("span");
+    dateElement.innerText = date;
+    labelElement.appendChild(dateElement)
+}
+
+function setupPicture(metObject, imgElement, imgContainer, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    imgElement.src = metObject.primaryImageSmall;
+    frameutil.render(imgElement, imgContainer, printSize, frameStyle, frameWidth*10, matColor, matWidth*10);
+}
+
+function setupConfigForm(printSize, frameStyle, frameWidth, matColor, matWidth) {
+    util.setRadioButtonByValue(document.getElementsByName("printSize"), printSize);
+    util.setRadioButtonByValue(document.getElementsByName("frameStyle"), frameStyle);
+
+    document.getElementsByName("frameWidth")[0].value = frameWidth;
+    document.getElementsByName("frameWidthR")[0].value = frameWidth;
+
+    util.setRadioButtonByValue(document.getElementsByName("matColor"), matColor);
+
+    document.getElementsByName("matWidth")[0].value = matWidth;
+    document.getElementsByName("matWidthR")[0].value = matWidth;
+}
+
+function setupSizes(imgElement) {
+    const printSizes = frameutil.getPrintSizes(imgElement);
+
+    const sPrintSizeLabel = document.getElementById("print-size-s-label");
+    const mPrintSizeLabel = document.getElementById("print-size-m-label");
+    const lPrintSizeLabel = document.getElementById("print-size-l-label");
+
+    sPrintSizeLabel.innerHTML = `Small<br>${printSizes['S'][0]/10}  × ${printSizes['S'][1]/10} cm`;
+    mPrintSizeLabel.innerHTML = `Medium<br>${printSizes['M'][0]/10}  × ${printSizes['M'][1]/10} cm`;
+    lPrintSizeLabel.innerHTML = `Large<br>${printSizes['L'][0]/10}  × ${printSizes['L'][1]/10} cm`;
+}
+
+function setupPrice(printSize, frameStyle, frameWidth, matWidth) {
+    updatePrice(printSize, frameStyle, frameWidth, matWidth);
+}
+
+
+export async function setupConfigurator(objectID, printSize = 'S', frameStyle = 'natural', frameWidth = 4, matColor = 'mint', matWidth = 5.5) {
+    setupConfigForm(printSize, frameStyle, frameWidth, matColor, matWidth);
+
+    let metObject;
+    try {
+        metObject =  await getObjectFromMETApi(objectID);
+        if (!metObject || !metObject.primaryImageSmall) 
+    } 
+
+
+    const labelElement = document.getElementById("image-label");
+    setupPictureLabel(labelElement, metObject.artistDisplayName, metObject.title, metObject.objectDate);
+
+    const imgContainer = document.getElementById("preview-container");
+    const imgElement = document.getElementById("preview-image");
+    setupPicture(metObject, imgElement, imgContainer, printSize, frameStyle, frameWidth, matColor, matWidth);
+    setupSizes(imgElement);
+    setupPrice(printSize, frameStyle, frameWidth, matWidth);
+}
+
+function render() {
+    const imgContainer = document.getElementById("preview-container");
+    const imgElement = document.getElementById("preview-image");
+    const printSize = util.getActiveRadioValue(document.getElementsByName("printSize"));
+    const frameStyle = util.getActiveRadioValue(document.getElementsByName("frameStyle"));
+    const frameWidth = document.getElementsByName("frameWidth")[0].value;
+    const matColor = util.getActiveRadioValue(document.getElementsByName("matColor"));
+    const matWidth = document.getElementsByName("matWidth")[0].value;
+    console.log(`Calling render with printSize=${printSize}, frameStyle=${frameStyle}, frameWidth=${frameWidth*10}, matColor=${matColor}, matWidth=${matWidth*10}`);
+    frameutil.render(imgElement, imgContainer, printSize, frameStyle, frameWidth*10, matColor, matWidth*10);
+    updatePrice(printSize, frameStyle, frameWidth, matWidth);
+}
+
+function updatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const priceField = document.getElementById("price");
+    const price = frameutil.calculatePrice(printSize, frameStyle, frameWidth*10, matWidth*10);
+    priceField.innerText = `€ ${price.toFixed(2)}`;
+    return price;
+}
+
+export 
+
+export 
+
+export function onTextInputWithCorrespondingSliderChange(textInput) {
+    textInput.value = util.round(Number(textInput.value),1);
+
+    const sliderForTextInput = document.getElementsByName(textInput.name + "R")[0];
+    if (sliderForTextInput) {
+        sliderForTextInput.value = textInput.value;
+    }
+    util.validateAndResetSliderAndTextInputForRange(sliderForTextInput, textInput);
+
+    render();
+} 
+
+export export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    /*
+
+    Implement a function in frame.js to calculate the price of a particular frame configuration. 
+    For small prints, each frame has a base cost of 30€, 
+        plus the wood cost per centimeter of width: 1€ per centimeter for a classic frame, 
+        80¢ for a natural frame, 
+        90¢ for a shabby frame and 
+        85¢ for an elegant frame. 
+        One centimeter of mat costs 5¢. 
+        Medium prints are twice the price of small prints and large prints are three-and-a-half times the price.
+    frameWidth /= 10;
+    matWidth /= 10;
+
+    switch (frameStyle) {
+        
+        case 'natural':
+            price += frameWidth * 0.8;
+            break;
+        
+        
+    }
+
+    price += matWidth * 0.05;
+
+
+    switch (printSize) {
+        
+        case 'M':
+            price *= 2;
+            break;
+        
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+export 
+
+let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+let storage = window.localStorage;
+
+export 
+
+export  
+
+export async function getObject(id) {
+    let url = baseUrl + id;
+
+    var cached = storage.getItem("objects/" + id);
+    if (cached != null) 
+
+    return fetch(url)
+        .then(res => { return res.json(); })
+        .then(res => { return store("objects/" + id, res); });
+}
+
+function store(key, value) {
+    storage.setItem(key, JSON.stringify(value));
+    return value;
+}
+export class Cart {
+    constructor(items) {
+        this.items = items;
+    }
+
+    
+
+    
+}
+
+export class Item {
+    
+}
+
+export class Destination {
+    
+}
+
+/* Only store the array to comply with tests */
+export function retrieveCart(){
+    const cachedItems = window.localStorage.getItem('cart');
+    if (cachedItems != null)  else {
+        const cart = new Cart([]);
+        store('cart', cart.items);
+        return cart;
+    }
+
+}
+
+export function store(key, value) {
+    window.localStorage.setItem(key, JSON.stringify(value));
+    return value;
+}
+import * as Model from './models.js';
+
+export function getOrDefault(queryParam, name, defaultValue=null){
+    if(queryParam.has(name))  else {
+        return defaultValue;
+    }
+}
+
+export function setRadioButtonByValue(radioButtons, value) {
+    if(Array.prototype.slice.call(radioButtons).some( btn => btn.value == value)) {
+        radioButtons.forEach(btn => {
+            if(btn.value == value) {
+                btn.setAttribute("checked", "")
+            } else {
+                btn.removeAttribute("checked")
+            }
+        });
+    }
+
+}
+
+export function getActiveRadioValue(radioButtons){
+    return Array.prototype.slice.call(radioButtons).find( btn => btn.hasAttribute("checked")).value;
+}
+
+export function validateAndResetSliderAndTextInputForRange(slider, textInput){
+
+    if(Number(slider.value) < Number(slider.min) || Number(textInput.value) < Number(slider.min)) {
+        console.log("slider or textField was set below min. resetting to min.")
+        slider.value = slider.min;
+        textInput.value = slider.min;
+    }
+
+    if(Number(slider.value) > Number(slider.max) || Number(textInput.value) > Number(slider.max)) {
+        console.log("slider or textField was set above max. resetting to max.")
+        slider.value = slider.max;
+        textInput.value = slider.max;
+    }
+}
+
+export function showCartNumber() {
+    const cart = Model.retrieveCart();
+    const cartNum = cart.items.length;
+    const cartLink = document.getElementById("cart-link");
+    if(cartNum <= 0) {
+        cartLink.innerText = "Cart";
+    }
+    console.log(cart.items.length);
+
+    
+}
+
+
+export function round(value, precision) {
+    var multiplier = Math.pow(10, precision );
+    return Math.round(value * multiplier) / multiplier;
+}

@@ -1,0 +1,176 @@
+export class ArtObject {
+    
+}import { ArtObject } from './artObject.js'
+import { retrieve, store } from './search-cache.js';
+
+export 
+
+export  
+
+
+
+export class CartObject {
+    
+}import {CartObject} from './cartObject.js';
+import {calculatePrice} from "./frame.js";
+import {getTotalSum} from "./cart.js";
+
+export 
+
+export function getObjectsFromCart() {
+    return loadFromCache('cart', []);
+}
+
+export function getNumberOfObjectsInCart() {
+    return loadFromCache('cart', []).length;
+}
+
+export 
+
+export function loadFromCache(key, defaultValue) {
+    return window.localStorage.getItem(key) ? JSON.parse(window.localStorage.getItem(key)) ;
+}
+
+
+
+import {getNumberOfObjectsInCart, getObjectsFromCart, removeObjectFromCart} from "./cartStore.js";
+import {calculatePrice, render} from "./frame.js";
+import {updateCartCountInHeader} from "./header.js";
+import {getArtObjectByID} from "./artStore.js";
+
+let totalSum = 0;
+
+export 
+
+
+
+
+
+
+
+export 
+    import * as checkout from './checkout.js';
+
+    document.addEventListener('DOMContentLoaded', _ => {
+      checkout.checkIfCartIsEmpty();
+      checkout.initDestinations().then(_ => {
+        checkout.calculateAndSetSubtotal();
+        checkout.calculateAndSetTotalPrice();
+      });
+    });
+
+    document.getElementById('country').addEventListener('change', _ => {
+      checkout.showShippingCostForSelectedDestination();
+    });
+  import * as cartStore from './cartStore.js'
+import * as frame from './frame.js'
+
+const API_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+let shippingDestCosts;
+
+export function checkIfCartIsEmpty() {
+    if (cartStore.getNumberOfObjectsInCart() === 0) 
+}
+
+export async function initDestinations() {
+    shippingDestCosts = await retrieveShippingDataFromAPI();
+
+    if (!shippingDestCosts) 
+
+    let countrySelection = document.getElementById('country');
+
+    for (let shippingDestCost of shippingDestCosts) {
+        const element = document.createElement('option');
+        element.value = shippingDestCost.country;
+        element.innerText = shippingDestCost.displayName;
+        countrySelection.appendChild(element);
+    }
+    showShippingCostForSelectedDestination();
+}
+
+export function calculateAndSetSubtotal() {
+    let subtotalPrice = calculateSubtotal()
+
+    if (subtotalPrice !== 0) {
+        document.getElementById('price-subtotal').innerHTML = subtotalPrice.toFixed(2);
+    }
+}
+
+function calculateSubtotal() {
+    let cartObjects = cartStore.getObjectsFromCart();
+    let subtotalPrice = 0;
+
+    for (let cartObject of cartObjects) {
+        subtotalPrice += frame.calculatePrice(cartObject.printSize, cartObject.frameStyle, cartObject.frameWidth, cartObject.matWidth);
+    }
+
+    return subtotalPrice;
+}
+
+export function calculateAndSetTotalPrice() {
+    let subtotalPrice = calculateSubtotal();
+    let shippingCosts = calculateShippingCosts();
+    if (subtotalPrice !== 0 && shippingCosts !== 0) {
+        let totalPrice = subtotalPrice + shippingCosts;
+
+        document.getElementById('price-total').innerText = totalPrice.toFixed(2);
+    }
+}
+
+async function retrieveShippingDataFromAPI() {
+    try {
+        const response = await fetch(API_URL);
+        const rawData = await response.json();
+        return rawData.destinations;
+    }}
+
+export function showShippingCostForSelectedDestination() {
+
+    let shippingCosts = calculateShippingCosts()
+    document.getElementById('price-shipping').innerText = shippingCosts.toFixed(2);
+}
+
+function calculateShippingCosts() {
+    let selectedValue =  document.getElementById('country').value;
+    let shippingDestCost = shippingDestCosts.filter(s => s.country === selectedValue)[0];
+
+    return shippingDestCost.cost/100;
+}
+
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    const frameWidthCm = frameWidth/10;
+
+    if (frameStyle === "classic") {
+        price += frameWidthCm;
+    } else if (frameStyle === "natural") {
+        price += frameWidthCm * 0.8;
+    } else if (frameStyle === "shabby") {
+        price += frameWidthCm * 0.9;
+    }
+
+    if (matWidth != null) {
+        price += (matWidth/10) * 0.05;
+    }
+
+    if (printSize === 'M') {
+        price *= 2;
+    } else if (printSize === 'L') 
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import {$} from './helper.js';
+import {getNumberOfObjectsInCart} from './cartStore.js';
+
+export 
+export 
+
+export 
+export 
+export 

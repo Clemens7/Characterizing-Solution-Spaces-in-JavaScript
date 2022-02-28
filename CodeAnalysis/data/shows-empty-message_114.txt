@@ -1,0 +1,82 @@
+import * as frame from './frame.js';
+
+var MET_API_OBJECTS_ENDPOINT = "https://collectionapi.metmuseum.org/public/collection/v1/objects"
+
+document.addEventListener("DOMContentLoaded", init());
+
+
+export function init() {
+	frame.updateItemAmount();
+	printTotal()
+	disableCheckout();
+	cart_show_items();
+}
+
+export function printTotal(){
+	const cart = frame.getListFromStorage();
+	let price = 0;
+	
+	for(let i=cart.length-1 ; i>=0; i--)
+	
+	const total = document.getElementById("price-total");
+	total.innerHTML = price;
+	
+}
+
+export 
+
+export 
+
+export 
+window.render = render;
+
+export 
+
+export function cart_show_items() {
+
+	const cart = frame.getListFromStorage();
+
+	for(let i=cart.length-1 ; i>=0; i--)
+}
+
+
+export 
+window.closeItem = closeItem;
+
+export function disableCheckout(){
+	if(frame.getListFromStorage().length==0){
+		document.getElementById("checkout-button").setAttribute("disabled","");
+		const newElement = document.createElement("div");
+		newElement.innerHTML = "There are no items in your shopping cart.";
+		document.getElementById("checkout-button").parentElement.insertBefore(newElement, document.getElementById("checkout-button").parentElement.firstChild);
+	}
+}
+export 
+
+export 
+
+export 
+
+export class Item {
+	
+}
+
+export function updateItemAmount(){
+	const amount = getListFromStorage().length;
+	const el = document.getElementById("cart-link");
+	if(amount!=0)
+		
+	else{
+		el.innerHTML = "Cart";
+	}
+}
+
+export function getListFromStorage() {
+	if (localStorage.getItem("cart") == null) {
+		return [];
+	}}
+
+export 
+
+export 
+

@@ -1,0 +1,84 @@
+export async function retrieveArtworkInformation(artworkID) {
+    var artwork = retrieve(artworkID)
+
+    if (!artwork) {
+        const responseInformation = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${artworkID}`);
+        const rawDataInformation = await responseInformation.json();}
+
+export 
+
+export function retrieve(artworkID) {
+    if (artworkID in localStorage) 
+}
+
+export class Artwork {
+    
+}/*
+run on import
+if (!location.href.split('\/').includes("checkout.html")) {
+    updateCartCount();
+}
+
+export 
+
+export 
+
+export 
+
+export function getCart() {
+    return JSON.parse(localStorage.getItem('cart'))
+}
+
+export function updateCartCount() {
+    if (getCart() != null) 
+}
+
+export 
+
+
+    import { retrieveArtworkInformation } from "./artwork.js"
+    import "./cart.js"
+
+    const form = document.getElementById('searchForm');
+    form.addEventListener('submit', );
+    document.addEventListener('DOMContentLoaded', event => searchViaURLQuery(event));
+
+    
+
+    function searchViaURLQuery() {
+      const params = new URLSearchParams(location.search);
+      if (!params.has('q')) {
+        highlights();
+        return;
+      }}
+
+    
+
+    
+
+    
+
+    function highlights() {
+      loadJSON(response => {
+        var highlightsIDs = JSON.parse(response);
+        const results = document.getElementById('gallery');
+        results.innerHTML = '';
+        for (let highlight of highlightsIDs.highlights) {
+          retrieveArtworkInformation(highlight).then();
+        }
+      });
+    }
+
+    function loadJSON(callback) {
+      var xobj = new XMLHttpRequest();
+      xobj.overrideMimeType("application/json");
+      xobj.open('GET', 'highlights.json', true);
+      xobj.onreadystatechange = function () {
+        if (xobj.readyState == 4 && xobj.status == '200') {
+          callback(xobj.responseText);
+        }
+      };
+      xobj.send(null);
+    }
+
+  

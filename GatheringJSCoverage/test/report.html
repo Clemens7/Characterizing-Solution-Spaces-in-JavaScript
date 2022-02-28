@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>A2 Test Report</title>
+    <style>
+        body {
+            font-family: system-ui;
+            margin: 4rem;
+        }
+
+        table {
+            width: 100%;
+            border-spacing: 0;
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+        td {
+            border-top: 1px solid black;
+            padding: 0.5em 0;
+        }
+
+        .passed {
+            background-color: lightgreen;
+        }
+
+        .passed>td:first-child::before {
+            content: '✓';
+            padding: 0.5em;
+        }
+
+        .failed {
+            background-color: lightcoral;
+        }
+
+        .failed>td:first-child::before {
+            content: '✘';
+            padding: 0.5em;
+        }
+
+        .pending {
+            background-color: gainsboro;
+        }
+
+        .pending>td:first-child::before {
+            content: '?';
+            padding: 0.5em;
+        }
+
+        .error>td {
+            padding: 1em;
+            white-space: pre-wrap;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+
+        .screenshots>td {
+            padding: 1em;
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .screenshots>td>div {
+            display: flex;            
+        }
+
+        figure {
+            white-space: initial;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0.5em;
+        }
+
+        figcaption {
+            font-size: small;
+            margin-top: 0.5em;
+        }
+
+        img {
+            border: 1px solid blue;
+            width: 100%;
+        }
+
+        .points {
+            text-align: right;
+            padding-right: 1em;
+            font-weight: bold;
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>A2 Test Report<span style="float: right;">0 points </span></h1>
+    2021-06-12 01:31:10 UTC<br>
+    40 tests &mdash; 5 passed / 35 failed<br>
+    <br>
+    25 points<br>
+    &minus;35 points for failed tests<br>
+    = 0 points total<br>
+    <br>
+    Random seed: 1234567890<br>
+
+    <h2>cart.test.js</h2>
+    <table>
+        <tr class="passed">
+            <td>Shopping Cart has valid HTML</td>
+            <td class="points"></td>
+        </tr>
+
+
+
+        <tr class="failed">
+            <td>Shopping Cart shows empty message</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart displays items</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart items display textual frame descriptions</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart items link to configurator</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart displays correct total price</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart removes items correctly</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart caches Met objects</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Shopping Cart shows correct number of cart items</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+    </table>
+    <h2>checkout.test.js</h2>
+    <table>
+        <tr class="passed">
+            <td>Checkout has valid HTML</td>
+            <td class="points"></td>
+        </tr>
+
+
+
+        <tr class="failed">
+            <td>Checkout redirects if cart is empty</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Checkout uses the shipping API</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Checkout shows the correct subtotal</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Checkout calculates shipping costs correctly</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Checkout shows the correct total</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="passed">
+            <td>Checkout gracefully handles shipping API errors</td>
+            <td class="points"></td>
+        </tr>
+
+
+
+    </table>
+    <h2>config.test.js</h2>
+    <table>
+        <tr class="passed">
+            <td>Frame Configurator has valid HTML</td>
+            <td class="points"></td>
+        </tr>
+
+
+
+        <tr class="failed">
+            <td>Frame Configurator loads the correct artwork</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>TimeoutError: Text not found &quot;Vincent van Gogh&quot;
+waiting for function failed: timeout 500ms exceeded</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator redirects if no object ID given</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>TimeoutError: waiting for function failed: timeout 1000ms exceeded
+    at new WaitTask (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\DOMWorld.js:549:28)
+    at DOMWorld.waitForFunction (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\DOMWorld.js:454:12)
+    at Frame.waitForFunction (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\FrameManager.js:657:28)
+    at Frame.waitFor (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\FrameManager.js:617:19)
+    at Page.waitFor (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\Page.js:1113:29)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:76:20)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator redirects if object does not exist</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>TimeoutError: waiting for function failed: timeout 1000ms exceeded
+    at new WaitTask (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\DOMWorld.js:549:28)
+    at DOMWorld.waitForFunction (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\DOMWorld.js:454:12)
+    at Frame.waitForFunction (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\FrameManager.js:657:28)
+    at Frame.waitFor (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\FrameManager.js:617:19)
+    at Page.waitFor (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\puppeteer\lib\Page.js:1113:29)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:84:20)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator accepts query parameters to set values</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).resolves.toEqual(expected) &#x2F;&#x2F; deep equality
+
+Expected: &quot;classic&quot;
+Received: &quot;natural&quot;
+    at Object.toEqual (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\expect\build\index.js:234:20)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:100:72)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator frame width field is connected to slider</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).resolves.toEqual(expected) &#x2F;&#x2F; deep equality
+
+Expected: &quot;3.3&quot;
+Received: &quot;4&quot;
+    at Object.toEqual (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\expect\build\index.js:234:20)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:113:65)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator frame width stays within range</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).resolves.toEqual(expected) &#x2F;&#x2F; deep equality
+
+Expected: &quot;2&quot;
+Received: &quot;0&quot;
+    at Object.toEqual (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\expect\build\index.js:234:20)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:123:64)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator updates preview when configuration changes</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toEqual(expected) &#x2F;&#x2F; deep equality
+
+Expected: StringContaining &quot;natural&quot;
+Received: &quot;none&quot;
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:147:45)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator mat width field is connected to slider</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).resolves.toEqual(expected) &#x2F;&#x2F; deep equality
+
+Expected: &quot;5.4&quot;
+Received: &quot;5.5&quot;
+    at Object.toEqual (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\expect\build\index.js:234:20)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:158:63)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator mat width stays within range</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).resolves.toEqual(expected) &#x2F;&#x2F; deep equality
+
+Expected: &quot;0&quot;
+Received: &quot;-1&quot;
+    at Object.toEqual (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\node_modules\expect\build\index.js:234:20)
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:168:62)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator calculates price correctly</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toBe(expected) &#x2F;&#x2F; Object.is equality
+
+Expected: &quot;€ 34.30&quot;
+Received: &quot;€ 0&quot;
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:199:27)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator caches Met objects</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toEqual(expected) &#x2F;&#x2F; deep equality
+
+- Expected  - 3
++ Received  + 1
+
+- Set {
+-   207059,
+- }
++ Set {}
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\config.test.js:214:34)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Frame Configurator shows correct number of cart items</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+    </table>
+    <h2>search.test.js</h2>
+    <table>
+        <tr class="passed">
+            <td>Search has valid HTML</td>
+            <td class="points"></td>
+        </tr>
+
+
+
+        <tr class="failed">
+            <td>Search works via query parameter</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>TimeoutError: Text not found &quot;Madame Roulin and Her Baby, 1888&quot;
+waiting for function failed: timeout 500ms exceeded</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search works via search field</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>TimeoutError: Text not found &quot;Madame Roulin and Her Baby, 1888&quot;
+waiting for function failed: timeout 500ms exceeded</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search displays the correct text while searching</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toBe(expected) &#x2F;&#x2F; Object.is equality
+
+Expected: &quot;Searching for “foobar”...&quot;
+Received: null
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\search.test.js:87:32)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search displays the correct text when the search is done</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>TimeoutError: Text not found &quot;Found 3 artworks for “van gogh”&quot;
+waiting for function failed: timeout 500ms exceeded</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search considers only artworks that actually have images</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toBe(expected) &#x2F;&#x2F; Object.is equality
+
+Expected: true
+Received: false
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\search.test.js:109:31)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search displays no more than 100 results</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toBe(expected) &#x2F;&#x2F; Object.is equality
+
+Expected: 100
+Received: 0
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\search.test.js:117:37)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search displays a selection of highlights if no search term was given</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toEqual(expected) &#x2F;&#x2F; deep equality
+
+- Expected  - 14
++ Received  +  1
+
+- Set {
+-   271890,
+-   360018,
+-   39799,
+-   435809,
+-   435882,
+-   436105,
+-   436535,
+-   437853,
+-   459054,
+-   459055,
+-   459080,
+-   634108,
+- }
++ Set {}
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\search.test.js:130:34)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search displays the right text if no search term was given</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search caches Met objects</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>Error: expect(received).toEqual(expected) &#x2F;&#x2F; deep equality
+
+- Expected  - 5
++ Received  + 1
+
+- Set {
+-   1,
+-   2,
+-   3,
+- }
++ Set {}
+    at Object.&lt;anonymous&gt; (D:\Programmieren\Bachelorarbeit\CloningAndInjecting\GatheringJSCoverage\test\search.test.js:150:34)
+    at runMicrotasks (&lt;anonymous&gt;)
+    at processTicksAndRejections (internal&#x2F;process&#x2F;task_queues.js:97:5)</td>
+        </tr>
+
+
+        <tr class="failed">
+            <td>Search shows correct number of cart items</td>
+            <td class="points">&minus;1</td>
+        </tr>
+
+        <tr class="error">
+            <td colspan=2>File not found</td>
+        </tr>
+
+
+    </table>
+</body>
+
+</html>

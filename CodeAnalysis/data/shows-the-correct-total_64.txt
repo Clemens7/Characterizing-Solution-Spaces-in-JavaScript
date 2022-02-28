@@ -1,0 +1,121 @@
+export function retrieve(key) {
+    if(key in localStorage) {
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+export import {calculatePrice} from "../frame.js";
+
+export 
+
+export function calculateTotal() {
+    let cart;
+    try {
+        const cartString = localStorage.cart ;
+        cart = JSON.parse(cartString);
+    } 
+    let total = 0.00;
+    for (let item of cart) {
+        let n = parseFloat(calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth).toFixed(2));
+        if (!Number.isNaN(n)) {
+            total += n;
+        }
+    }
+    return total.toFixed(2).toString();
+}import * as ArtworkCache from './artwork-cache.js';
+import {calculateTotal} from "./cart-common.js";
+
+document.addEventListener('DOMContentLoaded', initCheckout);
+
+async function initCheckout() {
+    let cart;
+    try {
+        const cartString = localStorage.cart ;
+        cart = JSON.parse(cartString);
+    } 
+    let response = ArtworkCache.retrieve('countries');
+    if (!response) 
+    insertIntoSelection(response);
+    if (cart.length === 0)  else {
+        document.getElementById('pay-button').disabled = true;
+        displayCosts();
+    }
+}
+
+function displayCosts() {
+    let subtotal = document.getElementById('price-subtotal');
+    subtotal.innerText = calculateSubtotal();
+    let shipping = document.getElementById('price-shipping');
+    shipping.innerText = calculateShipping();
+    let total = document.getElementById('price-total');
+    total.innerText = calculatePriceWithShipping();
+    document.getElementById('pay-button').disabled = false;
+}
+
+function calculateSubtotal() {
+    return calculateTotal();
+}
+
+function calculateShipping() {
+    const selection = document.getElementById('country');
+    const selectedOption = selection.options[selection.selectedIndex].text;
+    let shippingCosts;
+    let response = ArtworkCache.retrieve('countries');
+    for (let dest of response) {
+        if (dest.displayName === selectedOption) {
+            shippingCosts = (dest.cost / 100).toFixed(2);
+        }
+    }
+    return shippingCosts;
+}
+
+function calculatePriceWithShipping() {
+    return (parseFloat(calculateSubtotal()) + parseFloat(calculateShipping())).toFixed(2);
+}
+
+function insertIntoSelection(results) {
+    const selectionOfCountries = document.getElementById('country');
+    selectionOfCountries.innerHtml = '';
+    results.map(r => createOption(r)).forEach(e => selectionOfCountries.appendChild(e));
+    const responses = ArtworkCache.retrieve('countries')
+    selectionOfCountries.addEventListener("change", displayCosts);
+}
+
+function createOption(r) {
+    const country = document.createElement('option');
+    country.value = r.country;
+    country.innerText = r.displayName;
+    return country;
+}export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    const frameWidthCm = frameWidth / 10;
+    switch (frameStyle) {
+        case 'classic':
+            price += frameWidthCm;
+            break;
+        case 'natural':
+            price += 0.8 * frameWidthCm;
+            break;
+        case 'shabby':
+            price += 0.9 * frameWidthCm;
+            break;
+        
+    }
+
+    const matWidthCm = matWidth / 10;
+    price += 0.05 * matWidthCm;
+
+    switch (printSize) {
+        case 'M':
+            price *= 2;
+            break;
+        
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

@@ -1,0 +1,170 @@
+const API_BASE = 'https://collectionapi.metmuseum.org';
+
+export async function loadObject(objId) {
+    let obj = JSON.parse(localStorage.getItem(objId));
+    if(obj) 
+
+    obj = await fetch(`${API_BASE}/public/collection/v1/objects/${objId}`).then(res => res.json());
+    if(!obj || !obj.objectID) 
+    localStorage.setItem(objId, JSON.stringify(obj));
+    return obj;
+}
+
+export 
+    import * as Cart from './cart.js';
+    Cart.initCart();
+  import { loadObject } from "./artworkApi.js";
+import { render, calculatePrice } from "./frame.js"
+
+export function getItems() {
+    return JSON.parse(localStorage.getItem('cart')) ;
+}
+
+export 
+
+export 
+
+export function renderCart() {
+    document.getElementById('cart-link').innerText = `Cart (${getItems().length})`;
+}
+
+function isEmpty() {
+    return getItems().length < 1;
+}
+
+export async function initCart() {
+    renderCart()
+
+    const cart_items = document.getElementById('cart');
+  
+    if (isEmpty())  else {
+      document.getElementById('checkout-button').disabled = false;
+    }
+
+    let price_total = 0;
+    const items = getItems();
+
+    for(let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        const artwork = await loadObject(item.objectID);
+
+        const price = calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth).toFixed(2);
+        price_total += parseFloat(price);
+
+        const cart_item = document.createElement('div');
+        cart_item.classList.add('cart-item');
+        cart_item.innerHTML = `
+            <div class="cart-preview" id="preview-container-${i}">
+                <a href="config.html?${new URLSearchParams(item)}">
+                    <img class="cart-thumb" src="${artwork.primaryImageSmall}" id="preview-${i}" alt="${artwork.title}">
+                </a>
+            </div>
+            <div class="museum-label">
+                <div>
+                    <span class="artist">${artwork.artistDisplayName}</span>
+                    <span class="title">${artwork.title}</span>,
+                    <span class="date">${artwork.objectDate}</span>
+                    <br><br>
+                    <span class="frame-description">${getFrameDesc(item)}</span>
+                </div>
+                <div class="cart-price">€ <span id="price-${i}">${price}</span></div>
+                <button class="cart-remove" onclick="remove(${i});"></button>
+            </div>`;
+        cart_items.insertBefore(cart_item, cart_items.firstChild);
+
+        const preview = document.getElementById('preview-'+i);
+        const preview_container = document.getElementById('preview-container-'+i);
+        render(preview, preview_container, item.printSize,item.frameStyle, item.frameWidth, item.matColor, item.matWidth);
+    }
+    document.getElementById('price-total').innerHTML = price_total.toFixed(2);
+
+    window.remove = 
+}
+
+function getFrameDesc(item) {
+    let size = null;
+    if (item.printSize == 'S') {
+        size = 'Small';
+    } else if(item.printSize == 'M') {
+        size = 'Medium';
+    } else if (item.printSize == 'L') {
+        size = 'Large'
+    }
+
+    let mat_desc = null;
+    if (item.matWidth == 0)  else {
+        mat_desc = ` with a ${item.matWidth/10} cm ${item.matColor} mat.`
+    }
+    return `${size} print in a ${item.frameWidth/10} cm ${item.frameStyle} frame${mat_desc}`;
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const frameCost = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85,
+    }
+
+    const sizeFactor = {
+        S: 1,
+        M: 2,
+        L: 3.5,
+    }
+
+    let price = 30.0 + frameWidth/10 * frameCost[frameStyle] + matWidth/10 * 0.05;
+    price = price * sizeFactor[printSize];
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

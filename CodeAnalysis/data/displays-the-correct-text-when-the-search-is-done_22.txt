@@ -1,0 +1,84 @@
+export class Artwork {
+    
+}
+
+export class ArtworkContainer {
+    
+
+    
+
+    
+
+}export 
+
+import {Artwork, ArtworkContainer} from './artwork.js';
+import { refreshNumberOfCartItems } from './shopping_cart.js';
+import {retrieveArtworkInformation} from "./museum-endpoint.js";
+
+async function retrieveObjectIDs(query) {
+    const url = apiSearchUrl(query);
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        console.log(JSON.stringify(rawData));
+        return rawData;
+
+    }}
+
+function apiSearchUrl(query) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}`;
+}
+
+async function imageSearch(query) {
+    let searchtext = document.getElementById('search-info');
+    searchtext.innerText = `Searching for “${query}”...`;
+    const img = await retrieveObjectIDs(query);
+    let text = document.getElementById('search-info');
+    text.innerText = `Found ${img.total} artwork${img.total === 1  : 's'} for “${query}”`;
+    if (!img || img.total === 0) {
+        console.log("No artworks found");
+        return;
+    }}
+
+
+
+
+
+function cleanQueryParam(query) {
+    return query.replace(/\+/g, ' ');
+}
+
+
+window.onload = function () {
+    const form = document.querySelector('#search-form');
+    form.addEventListener('submit', );
+
+    refreshNumberOfCartItems();
+    let param = new URLSearchParams(document.location.search).get("q");
+    if (!param)  else {
+        param = cleanQueryParam(param);
+        imageSearch(param);
+    }
+};const CART_STORAGE_KEY = 'cart';
+
+export function getCartItems() {
+    if (localStorage[CART_STORAGE_KEY])  else {
+        return [];
+    }
+}
+
+export 
+
+export 
+
+export function refreshNumberOfCartItems() {
+    const count = getNumberOfCartItems();
+    const cartText = count > 0  : 'Cart';
+    document.getElementById('cart-link').innerText = cartText;
+}
+
+export 
+
+function getNumberOfCartItems() {
+    return getCartItems().length;
+}

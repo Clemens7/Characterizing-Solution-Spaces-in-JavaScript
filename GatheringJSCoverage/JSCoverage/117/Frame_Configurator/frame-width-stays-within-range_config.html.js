@@ -1,0 +1,1 @@
+updateFrameWidth(this.value);

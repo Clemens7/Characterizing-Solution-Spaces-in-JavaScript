@@ -1,0 +1,29 @@
+
+
+
+    document.addEventListener("DOMContentLoaded", event => {
+    var temp = window.localStorage.getItem("cart");
+    if(temp) 
+
+    const params = (new URL(document.location)).searchParams;
+    const searchQuery = params.get("q");
+    if(!searchQuery)  else {
+      qSearch(searchQuery);
+    }
+
+  });
+
+  
+
+  async function qSearch(searchQuery) {
+    let link = "https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q="
+    link = link + searchQuery;
+
+    document.getElementById("search-info").textContent = 'Searching for ' + '“' + searchQuery + '”' +"...";
+
+    let response = null;
+    let artworks = null;
+    if(window.localStorage.getItem(searchQuery) != null)  else {
+      response = await fetch(link)
+      artworks = await response.json();}
+  

@@ -1,0 +1,118 @@
+
+ 
+const baseUrl =  "https://collectionapi.metmuseum.org/public/collection/v1"
+const countryUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2"
+const searchParams = "hasImages=true"
+
+class APIRequests {
+
+    async cachedFetch(query) {
+        try {
+            const cached = localStorage[query]
+            if (cached) 
+                
+            const data = await fetch(query)}
+
+
+    async getObject(id) {
+        return this.cachedFetch(baseUrl + "/objects/" + id)
+    }
+
+    
+
+    
+
+    async getLocalJSON(fileName) {
+        try {
+            const data = await fetch(fileName)
+            const json = await data.json()
+            return json
+        }}
+}
+
+const req = new APIRequests()
+export default reqexport 
+
+export 
+
+export 
+import API from "./APIRequests.js"
+import Cart from "./ShoppingCart.js"
+
+
+class Search {
+
+    constructor() {
+        this.cart = new Cart()
+        this.cart.updateHeader()
+        var urlParams = new URLSearchParams(window.location.search)
+        var queryVal = urlParams.get("q")
+        if (queryVal != null )  else {
+            this.handleLocalHightlights()
+        }
+    }
+
+    
+
+    async handleLocalHightlights() {
+        const resJSON = await API.getLocalJSON("./highlights.json")
+        this.processObjectIDs(resJSON.highlights)
+    }
+
+    async processObjectIDs(objectIDs) {
+        for (var i = 0; i < objectIDs.length && i < 100; i++) {
+            this.updateGallery(await this.getObjectInfo(objectIDs[i])}
+    async getObjectInfo(objectID) {
+        const objectInfoJSON = await API.getObject(objectID)}
+
+    
+
+    
+}
+
+class SearchObject {
+    
+
+    
+
+        <a href="" id="object-0">
+          <img src="" alt="" id="object-image-0">
+          <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+          </div>
+        </a>
+      </div>
+
+    
+}
+
+new Search();import API from './APIRequests.js'
+import * as Frame from './frame.js';
+
+
+export default class ShoppingCart {
+
+   constructor() {
+   }
+
+    
+
+
+    
+    
+    
+
+    
+
+    
+
+   
+    updateHeader() {
+        if (localStorage.getItem('cart')) 
+            
+    }
+
+}
+

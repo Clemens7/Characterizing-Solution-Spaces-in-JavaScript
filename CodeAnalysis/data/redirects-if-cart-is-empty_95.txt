@@ -1,0 +1,77 @@
+import {Object} from "./object.js"
+import * as ArtworkCache from './artwork-cache.js';
+
+export 
+
+
+export 
+
+export 
+
+
+
+
+
+
+export 
+
+export 
+    import * as Cart from './cart.js';
+    import * as Frame from './frame.js';
+    import * as API from './art-api.js';
+
+    Cart.updateCartString();
+
+    let cartElement = document.getElementById('cart');
+    let cartItemElement = document.querySelector('.cart-item');
+    let checkoutButton = document.getElementById('checkout-button');
+    let totalElement = document.getElementById('price-total');
+
+    if (Cart.getItems().length == 0) {
+      cartItemElement = document.createElement("div");
+      cartItemElement.classList.add("cart-item");
+      cartItemElement.innerText = 'There are no items in your shopping cart.';
+      cartElement.insertBefore(cartItemElement, cartElement.firstChild);
+      checkoutButton.disabled = true;
+    }
+
+    (async () => {
+      const items = Cart.getItems();
+      console.log("Items:");
+      console.log(items);
+      let totalPrice = 0;
+      for (let index = 0; index < items.length; index++) 
+      document.getElementById("price-total").innerHTML = `${totalPrice.toFixed(2)}`;
+    }) ();
+
+    window.removeItem = 
+  import * as Frame from './frame.js';
+
+export 
+
+export function getItems() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) return [];}
+
+export function updateCartString() {
+    let cartLink = document.getElementById('cart-link');
+    let noOfItems = getItems().length;
+    let cartString = '';
+    if (noOfItems > 0) 
+    cartLink.innerText = `Cart${cartString}`;
+}
+
+export 
+
+export export 
+
+export 
+
+export 
+
+
+import * as ArtAPI from './art-api.js'; 
+
+export class Object{
+    
+}

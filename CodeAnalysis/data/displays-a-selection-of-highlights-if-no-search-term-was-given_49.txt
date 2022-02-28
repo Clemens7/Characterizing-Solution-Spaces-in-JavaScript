@@ -1,0 +1,140 @@
+export class ArtObject {
+    constructor(apiObject) {
+        this.artObjectID = apiObject.objectID;
+        this.title = apiObject.title;
+        this.artist = apiObject.artistDisplayName;
+        this.year = apiObject.objectDate;
+        this.previewImage = apiObject.primaryImageSmall;
+    }
+}import { ArtObject } from './artObject.js'
+import { retrieve, store } from './search-cache.js';
+
+export async function getArtObjectByID(artObjectID) {
+    try {
+        let artworkCache = retrieve("artObjects") || {};
+        if (artworkCache[artObjectID]) 
+        const resp = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${artObjectID}`);
+        if (resp.status != 200) 
+        const data = await resp.json();
+        let artwork = new ArtObject(data);
+        artworkCache[artObjectID] = artwork;
+        store("artObjects",artworkCache);
+        return artwork;
+    }}
+
+export  
+
+
+
+export class CartObject {
+    
+}import {CartObject} from './cartObject.js';
+import {calculatePrice} from "./frame.js";
+import {getTotalSum} from "./cart.js";
+
+export 
+
+export 
+
+export function getNumberOfObjectsInCart() {
+    return loadFromCache('cart', []).length;
+}
+
+export 
+
+export function loadFromCache(key, defaultValue) {
+    return window.localStorage.getItem(key)  : defaultValue;
+}
+
+
+
+import {getNumberOfObjectsInCart, getObjectsFromCart, removeObjectFromCart} from "./cartStore.js";
+import {calculatePrice, render} from "./frame.js";
+import {updateCartCountInHeader} from "./header.js";
+import {getArtObjectByID} from "./artStore.js";
+
+let totalSum = 0;
+
+export 
+
+
+
+
+
+
+
+export export 
+
+export 
+
+export 
+import {$} from './helper.js';
+import {getNumberOfObjectsInCart} from './cartStore.js';
+
+export function updateCartCountInHeader() {
+    let text = 'Cart';
+    let numberOfObjects = getNumberOfObjectsInCart();
+    if (numberOfObjects > 0) 
+    $('#cart-link').textContent = text;
+}
+export function $(selector) {
+    return document.querySelector(selector);
+}
+
+export 
+export function retrieve(search){
+    if(search in localStorage)
+}
+export function store(search, artworks){
+    localStorage[search] = JSON.stringify(artworks);
+}
+
+    import {createCart} from "./cart.js";
+    import{updateCartCountInHeader} from "./header.js";
+    updateCartCountInHeader();
+  import * as artStore from './artStore.js';
+import * as searchCache from './search-cache.js';
+
+document.addEventListener('DOMContentLoaded', event =>
+{
+  let q = (new URLSearchParams(location.search)).get("q");
+  if (q)  else {
+    noSearchArtworks();
+  }
+});
+
+
+
+async function noSearchArtworks(){
+    let highlights = searchCache.retrieve("highlights");
+
+    if (!highlights) {
+      const resp = await fetch('./highlights.json');
+      const data = await resp.json();
+      highlights = await Promise.all(data["highlights"].map(artStore.getArtObjectByID));
+      searchCache.store("highlights", highlights);
+    }
+
+    const section = document.getElementById('gallery');
+    section.innerHTML="";
+    for(let artwork of highlights){
+        section.appendChild(createArtworkElement(artwork));
+    }
+   
+}
+
+function createArtworkElement(artwork){
+    const article = document.createElement('article');
+    article.innerHTML=
+    `<div class="thumb">
+    <a href="config.html">
+      <img src="${artwork.previewImage}" alt="${artwork.artObjectID}" id="object-image-0">
+      <div class="museum-label">
+        <span class="artist">${artwork.artist}</span>
+        <span class="title">${artwork.title}</span>,
+        <span class="date">${artwork.year}</span>
+      </div>
+    </a>
+  </div>`;
+  return article;
+}

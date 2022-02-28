@@ -1,0 +1,355 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._objectID = null;
+        this._configuration = new FrameConfiguration;
+    }
+    fillFromJSON(jsonObj) {
+        super.fillFromJSON(jsonObj);
+        this.configuration.fillFromJSON(jsonObj);
+    }
+    get objectID() {
+        return this._objectID;
+    }
+    get configuration() {
+        return this._configuration;
+    }
+    get artworkInformation() {
+        return getObject(this._objectID);
+    }
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    get isEmpty() {
+        return this._items.length == 0;
+    }
+    add(item) {
+        this._items.push(item);
+        this.updateSession();
+    }
+    
+    getCartItem(index) {
+        return this._items[index];
+    }
+    updateSession() {
+        localStorage.setItem('cart', (((JSON.stringify(this._items, function (key, value) { return key == 'printSizes' || value == null ? undefined : value; }).split(",\"_").join(",\"")).split("{\"_").join("{\"")).split("\"configuration\":{").join(""))
+            .split("}}").join("}"));
+    }
+    get getTotalPrice() {
+        let total = 0;
+        this._items.forEach(cartItem => {
+            total = +(total + cartItem.configuration.price).toFixed(2);
+        });
+        return total;
+    }
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null || storage.length == 0  : storage;
+        var cart = JSON.parse(json);
+        for (let item of cart) {
+            var cartItem = new CartItem();
+            cartItem.fillFromJSON(item);
+            this.add(cartItem);
+        }
+    }
+}
+import { Cart } from "./cart-service.js";
+import { updateCartCount } from "./header.js";
+var cart = new Cart;
+initCart();
+function initCart() {
+    let cartNode = document.getElementById("cart");
+    for (var i = 0; i < cart.size; i++) {
+        cartNode.insertBefore(createHTMLCartItem(i), cartNode.firstChild);
+    }
+    document.getElementById("price-total").innerText = `${Number(cart.getTotalPrice).toFixed(2)}`;
+    updateCheckoutButton();
+}
+/*
+display the usual artwork information (title, artist, date) and a textual description of the configuration.
+function createHTMLCartItem(index) {
+    var item = cart.getCartItem(index);
+    let cartitem = createHTMLElement("div", "cart-item");
+    item.artworkInformation.then(object => {
+        let divpreview = createHTMLElement("div", "cart-preview", undefined, `preview-container-${index}`);
+        let link = createHTMLElement("a");
+        link.href = `/config.html?objectID=${item.objectID}&printSize=${item.configuration.printSize}&frameStyle=${item.configuration.frameStyle}&frameWidth=${item.configuration.frameWidth}&matColor=${item.configuration.matColor}&matWidth=${item.configuration.matWidth}`;
+        let image = createHTMLElement("img", "cart-thumb", undefined, `preview-${index}`);
+        image.alt = "";
+        image.src = object.image;
+        link.appendChild(image);
+        divpreview.appendChild(link);
+        cartitem.appendChild(divpreview);
+        let divmuseum = createHTMLElement("div", "museum-label");
+        let divdescription = createHTMLElement("div");
+        divdescription.appendChild(createHTMLElement("span", "artist", object.artist));
+        divdescription.appendChild(createHTMLElement("span", "title", object.title));
+        divdescription.appendChild(document.createTextNode(", "));
+        divdescription.appendChild(createHTMLElement("span", "date", object.date));
+        divdescription.appendChild(createHTMLElement("br"));
+        divdescription.appendChild(createHTMLElement("br"));
+        divdescription.appendChild(createHTMLElement("span", "frame-description", generateCartItemDescription(item.configuration)));
+        divmuseum.appendChild(divdescription);
+        let divprice = createHTMLElement("div", "cart-price", "€ ");
+        divprice.appendChild(createHTMLElement("span", undefined, `${Number(item.configuration.price).toFixed(2)}`, `price-${index}`));
+        divmuseum.appendChild(divprice);
+        let buttonremove = createHTMLElement("button", "cart-remove");
+        buttonremove.type = "button";
+        buttonremove.addEventListener("click", updateCart);
+        divmuseum.appendChild(buttonremove);
+        cartitem.appendChild(divmuseum);
+        cart.getCartItem(index).configuration.loadImage(document.getElementById(`preview-${index}`), document.getElementById(`preview-container-${index}`));
+    });
+    return cartitem;
+}
+
+function updateCheckoutButton() {
+    var checkoutbutton = document.getElementById("checkout-button");
+    if (cart.isEmpty) 
+    else {
+        checkoutbutton.disabled = false;
+        checkoutbutton.addEventListener("click", );
+        document.getElementById("empty").remove();
+    }
+}
+function createHTMLElement(elementName, className, inputText, id) {
+    let element = document.createElement(elementName);
+    if (className)
+        element.className = className;
+    if (id)
+        element.id = id;
+    if (inputText && inputText != null)
+        element.innerText = inputText;
+    return element;
+}
+function generateCartItemDescription(fd) {
+    if (fd.matWidth == 0) 
+    else {
+        return `${fd.printSizeasString} print in a ${fd.frameWidth / 10} cm ${fd.frameStyle} frame with a ${fd.matWidth / 10} cm ${fd.matColor} mat.`;
+    }
+}
+
+export class Serializable {
+    fillFromJSON(jsonObj) {
+        for (var propName in jsonObj) {
+            if (this.hasOwnProperty("_" + propName)) {
+                this["_" + propName] = jsonObj[propName];
+            }
+        }
+    }
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._printSize = null;
+        this._frameWidth = null;
+        this._frameStyle = null;
+        this._matWidth = null;
+        this._matColor = null;
+        this.printSizes = { "S": "Small", "M": "Medium", "L": "Large" };
+        /*get toJSON(): string{
+          return JSON.stringify(this);
+        }*/
+    }
+    get printSize() {
+        return this._printSize;
+    }
+    get printSizeasString() {
+        return this.printSizes[this._printSize];
+    }
+    get frameWidth() {
+        return this._frameWidth;
+    }
+    get frameStyle() {
+        return this._frameStyle;
+    }
+    get matWidth() {
+        return this._matWidth;
+    }
+    get matColor() {
+        return this._matColor;
+    }
+    get price() {
+        return calculatePrice(this._printSize, this._frameStyle, this._frameWidth, this._matWidth);
+    }
+    loadImage(img, container) {
+        render(img, container, this._printSize, this._frameStyle, this._frameWidth, this._matColor, this._matWidth);
+    }
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    if (h > w) 
+    else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+    return { S: S, M: M, L: L };
+}
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+    let x;
+    if (w > h) 
+    else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle].toString();
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    frameWidth /= 10;
+    matWidth /= 10;
+    let price = 30.0;
+    switch (frameStyle) {
+        
+        case FrameStyle.natural:
+            price += frameWidth * 0.8;
+            break;
+        case FrameStyle.shabby:
+            price += frameWidth * 0.9;
+            break;
+        case FrameStyle.elegant:
+            price += frameWidth * 0.85;
+            break;
+    }
+    price += matWidth * 0.05;
+    if (printSize === PrintSize.S) {
+        return (Math.round(price * 100) / 100);
+    }
+    else if (printSize === PrintSize.M) 
+    else if (printSize === PrintSize.L) {
+        return (Math.round((price * 3.5) * 100) / 100);
+    }}
+import { Cart } from "./cart-service.js";
+export function updateCartCount(cart) {
+    if (cart.size == 0) 
+    else {
+        document.getElementById("cart-link").innerText = `Cart (${cart.size})`;
+    }
+}
+updateCartCount(new Cart());
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export function getObject(objectID) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let object = checkObject(objectID);
+        if (object) 
+        else {
+            let metropolitanResponse = yield fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+            let responseJson = yield metropolitanResponse.json();
+            var metropolitanObject = new MetropolitanObject();
+            metropolitanObject.fillFromJSON(responseJson);
+            let storage = localStorage.getItem('objects');
+            var json = storage == null || storage.length == 0 ? "[]" : storage;
+            var objects = JSON.parse(json);
+            objects.push(metropolitanObject);
+            localStorage.setItem('objects', (JSON.stringify(objects).split(",\"_").join(",\"")).split("{\"_").join("{\""));
+            return yield Promise.resolve(metropolitanObject);
+        }
+    });
+}
+function checkObject(objectID) {
+    let storage = localStorage.getItem('objects');
+    var json = storage == null  ? "[]" ;
+    var objects = JSON.parse(json);
+    let index = objects.findIndex();
+    if (index == -1) {
+        return undefined;
+    }
+}
+export 
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._objectID = null;
+        this._title = null;
+        this._artistDisplayName = null;
+        this._objectDate = null;
+        this._primaryImageSmall = null;
+        this._message = null;
+    }
+    
+    get title() {
+        return this._title;
+    }
+    get artist() {
+        return this._artistDisplayName;
+    }
+    get date() {
+        return this._objectDate;
+    }
+    get image() {
+        return this._primaryImageSmall;
+    }
+    
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    
+    
+    
+}

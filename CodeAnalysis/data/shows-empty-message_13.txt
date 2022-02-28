@@ -1,0 +1,132 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    
+    
+    
+    
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    get isEmpty() {
+        return this._items.length == 0;
+    }
+    
+    
+    
+    
+    get getTotalPrice() {
+        let total = 0;
+        this._items.forEach();
+        return total;
+    }
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null  ? "[]" ;
+        var cart = JSON.parse(json);
+        for (let item of cart) 
+    }
+}
+import { Cart } from "./cart-service.js";
+import { updateCartCount } from "./header.js";
+var cart = new Cart;
+initCart();
+function initCart() {
+    let cartNode = document.getElementById("cart");
+    for (var i = 0; i < cart.size; i++) 
+    document.getElementById("price-total").innerText = `${Number(cart.getTotalPrice).toFixed(2)}`;
+    updateCheckoutButton();
+}
+/*
+display the usual artwork information (title, artist, date) and a textual description of the configuration.
+
+
+function updateCheckoutButton() {
+    var checkoutbutton = document.getElementById("checkout-button");
+    if (cart.isEmpty) {
+        checkoutbutton.disabled = true;
+        generateEmptyCartText();
+    }
+}
+
+
+function generateEmptyCartText() {
+    document.getElementsByClassName("price")[0].remove();
+    let cartNode = document.getElementById("cart");
+    if (document.getElementById("empty") == undefined)
+        
+}
+export class Serializable {
+    
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+export 
+export 
+export 
+import { Cart } from "./cart-service.js";
+export function updateCartCount(cart) {
+    if (cart.size == 0) {
+        document.getElementById("cart-link").innerText = "Cart";
+    }
+}
+updateCartCount(new Cart());
+var __awaiter = (this ) || ;
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export 
+
+export 
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    
+    
+    
+}

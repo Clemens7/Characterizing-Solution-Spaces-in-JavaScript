@@ -1,0 +1,215 @@
+const baseURI = "https://collectionapi.metmuseum.org/public/collection/v1/";
+export const API = {
+    SEARCH: baseURI + "search?q=",
+    OBJECTS: baseURI + 'objects/',
+    HIGHLIGHTS: 'highlights.json'
+}
+import StorageHandler from './storage-handler.js';
+import {getPrintSizes, calculatePrice, render} from "./frame.js";
+import {} from "./config.js";
+import {API} from "./api.js";
+let IDs = [];
+
+window.onload = ;
+
+
+
+
+
+
+
+export function showItemsDynamically() {
+    const cart = document.getElementById("cart-link");
+
+    cart.innerText = "Cart (" + StorageHandler.getCartSize() + ")";
+
+    return cart;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+import StorageHandler from './storage-handler.js';
+import {calculatePrice} from './frame.js';
+import {showItemsDynamically} from "./cart.js";
+
+window.onload = function () {
+    showItemsDynamically();
+}
+
+const x = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+let calculate_price = 0;
+const subtotal = document.getElementById("price-subtotal");
+const total_sum = document.getElementById("price-total");
+const shipping_cost = document.getElementById("price-shipping");
+const country = document.getElementById("country");
+
+async function getData() {
+    const response = await fetch (x);
+    const data = await response.json();
+    return data;
+}
+
+if(StorageHandler.getCartSize() === 0)else{
+        const cart_array = JSON.parse(localStorage.getItem("cart"));
+        console.log(Number.EPSILON);
+        for (let i = 0; i < cart_array.length; i++) {
+            calculate_price = calculate_price + calculatePrice(cart_array[i].printSize, cart_array[i].frameStyle,
+                cart_array[i].frameWidth, cart_array[i].matWidth);
+
+        }
+        subtotal.innerHTML = "" + calculate_price;
+}
+
+getData().then(function(response){
+    for(let i = 0; i < response.destinations.length; i++){
+        const option = document.createElement("OPTION");
+        option.value = response.destinations[i].country;
+        option.innerHTML = response.destinations[i].displayName;
+        country.appendChild(option);
+    }
+}).catch();
+
+country.addEventListener("change", );
+
+
+
+
+
+
+
+
+
+import StorageHandler from './storage-handler.js';
+import {render, getPrintSizes, calculatePrice} from "./frame.js";
+import {searchByObjectIDs} from "./search.js";
+import {showItemsDynamically} from "./cart.js";
+
+window.onload = ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let printCost = 30;
+    let printCostMultiplier;
+    let frameCost = frameWidth / 10;
+    let matCost = 0.05 * (matWidth / 10);
+    switch (printSize) {
+        
+        
+        case 'L':
+            printCostMultiplier = 3.50;
+            break;
+    }
+    switch (frameStyle) {
+        
+        
+        case 'shabby':
+            frameCost *= 0.90;
+            break;
+        
+    }
+    const price = (printCost + frameCost + matCost) *printCostMultiplier;
+    return parseFloat((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}
+
+import StorageHandler from './storage-handler.js';
+import {API} from './api.js';
+import {showItemsDynamically} from "./cart.js";
+
+window.onload = ;
+
+
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+
+export default class StorageHandler {
+    static STORAGE_KEYS = {
+        cart: 'cart',
+        cache: 'cache'
+
+    }
+
+    static 
+
+
+    static 
+
+    static 
+
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static getCartSize() {
+        const items = localStorage.getItem(this.STORAGE_KEYS.cart);
+        if (items === null)  else {
+            return JSON.parse(localStorage.getItem(this.STORAGE_KEYS.cart)).length;
+        }
+    }
+    static 
+}

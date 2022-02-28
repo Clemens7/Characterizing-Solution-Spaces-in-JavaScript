@@ -1,0 +1,124 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    
+    return new (P || (P = Promise))(function (resolve, reject) {
+        
+        
+        function step(result) { result.done ? resolve(result.value) ; }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export function setCurrentCartCount() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let storage = localStorage.getItem("cart");
+        if (storage !== null) 
+    });
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export function getObject(objectId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const cachedObject = localStorage.getItem(objectId);
+        if (cachedObject) 
+        else {
+            const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`;
+            const response = yield fetch(API_URL);
+            if (response.status != 200)
+                
+            const artObject = yield response.json();
+            localStorage.setItem(objectId, JSON.stringify(artObject));
+            return artObject;
+        }
+    });
+}
+export function search(searchTerm, hasImages) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${searchTerm}&hasImages=${hasImages}`;
+        return yield fetch(API_URL);
+    });
+}
+export function fetchResults(searchResponse, resultLimit) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let result = [];
+        if (searchResponse.objectIDs !== null) {
+            for (let objId of searchResponse.objectIDs) {
+                if (result.length === resultLimit) {
+                    break;
+                }
+                const artObject = yield getObject(objId.toString());
+                if (artObject != null)
+                    result.push(artObject);
+            }
+        }
+        return result;
+    });
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { fetchResults, search } from "./met-api.js";
+import { setCurrentCartCount } from "./cart-count.js";
+const RESULT_LIMIT = 100;
+performSearch("q");
+setCurrentCartCount();
+function performSearch(queryParam) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const searchQuery = (new URL(document.location.toString())).searchParams.get(queryParam);
+        const searchInfo = document.getElementById("search-info");
+        const gallery = document.getElementById("gallery");
+        let resultNumber = 0;
+        if (searchQuery === null || searchQuery.length === 0) 
+        else {
+            searchInfo.innerText = `Searching for “${searchQuery}”...`;
+            let response = yield search(searchQuery, true);
+            let searchResponse = yield response.json();
+            let connectedResults = yield fetchResults(searchResponse, RESULT_LIMIT);
+            displayResults(connectedResults, gallery);
+            searchInfo.innerText = `Found ${searchResponse.total} ${searchResponse.total === 1  : "artworks"} for “${searchQuery}”`;
+        }
+    });
+}
+function displayResults(connectedSearchResults, gallery) {
+    connectedSearchResults.forEach(obj => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = "thumb";
+        const resultLink = document.createElement('a');
+        resultLink.href = `config.html?objectID=${obj.objectID}`;
+        resultLink.id = `object-${obj.objectID}`;
+        const imageElement = document.createElement('img');
+        imageElement.src = obj.primaryImageSmall;
+        imageElement.alt = "";
+        imageElement.id = `object-image-${obj.objectID}`;
+        const objectLabel = document.createElement('div');
+        objectLabel.className = "museum-label";
+        const artistSpan = document.createElement('span');
+        artistSpan.className = "artist";
+        artistSpan.textContent = obj.artistDisplayName;
+        const titleSpan = document.createElement('span');
+        titleSpan.className = "title";
+        titleSpan.textContent = obj.title;
+        const dateSpan = document.createElement('span');
+        dateSpan.className = "date";
+        dateSpan.textContent = obj.objectDate;
+        objectLabel.appendChild(artistSpan);
+        objectLabel.appendChild(titleSpan);
+        objectLabel.append(", ");
+        objectLabel.appendChild(dateSpan);
+        resultLink.appendChild(imageElement);
+        resultLink.appendChild(objectLabel);
+        resultDiv.appendChild(resultLink);
+        gallery.appendChild(resultDiv);
+    });
+}

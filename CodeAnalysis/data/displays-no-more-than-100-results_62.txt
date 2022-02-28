@@ -1,0 +1,128 @@
+import * as PictureCache from './pictureCache.js'
+
+
+export 
+
+export async function getPictures(searchString)
+{
+    
+    const API_OBJECT_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+    const API_SEARCH_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&`;
+
+    var erg = PictureCache.retrieve(searchString);
+    var objects = [];
+    if(erg)
+    
+
+    var ids;
+    if(searchString == "highlights")
+    
+    else{
+        await fetch(API_SEARCH_URL+'q='+ searchString)	
+		.then(response	=>	response.json())	
+        .then(data	=> ids =data.objectIDs);
+    }
+    var count =0;
+    if(!ids)
+    
+    for(var id of ids)
+    {
+        console.log(id);
+        try{
+            const response= await fetch(API_OBJECT_URL + id);
+            const rawData = await response.json();
+            objects.push(rawData);
+            count++;
+            if(count == 100)
+            {
+                    break;
+            }
+        }
+    }
+
+    PictureCache.store(searchString, objects);
+    return objects;
+    
+}
+
+export function retrieve(searchString)
+{
+    if(searchString in localStorage)
+    
+}
+
+export function store(searchString, pictures)
+{
+    console.log(`Storing data in localStorage with key ${searchString}`);
+    localStorage[searchString]= JSON.stringify(pictures);
+}
+import * as DAL from './DAL.js';
+
+document.addEventListener('DOMContentLoaded', event => {
+  document.getElementById("cart-link").innerText = `Cart${getNumOfItems()}`;
+  const params = (new URL(document.location)).searchParams;
+  const helpquery = params.get('q');
+  if(!helpquery) 
+  else{
+    var query= helpquery.replace(/%2B/g, " ");
+    document.getElementById('search').value = query;
+    search(query);
+  }
+});
+
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('click', );
+
+const form = document.getElementById("search-form");
+form.addEventListener('submit', );
+
+
+
+
+  function search(queryString)
+  {
+    var text= `Searching for “${queryString}”...`;
+    document.getElementById("search-info").innerHTML = text;
+    DAL.getPictures(queryString).then(objects =>
+      {
+        var html="";
+        for(var object of objects)
+        {
+          html += makeHtml(object);
+        }
+        if(objects.length==1)
+        
+        else
+        {
+          document.getElementById("search-info").innerHTML= `Found ${objects.length} artworks for “${queryString}”`; 
+        }
+                      
+        document.getElementById("gallery").innerHTML = html;
+      }); 
+  }
+
+
+
+function makeHtml(pic)
+{
+    var erg=  `<div class="thumb">
+    <a href="./config.html?objectID=${pic.objectID}" id="object-${pic.objectID}">
+      <img src="`+pic.primaryImageSmall+`" alt="" id="object-image-${pic.objectID}">
+      <div class="museum-label">
+        <span class="artist">`+pic.artistDisplayName+`</span>
+        <span class="title">`+pic.title+`</span>,
+        <span class="date">`+pic.objectDate+`</span>
+      </div>
+    </a>
+  </div>`;
+    
+  return erg;
+}
+
+  function getNumOfItems() {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    if(cart)
+    
+   return '';
+  }
+

@@ -1,0 +1,101 @@
+import * as Frame from "./frame.js"
+
+const shippingAPI = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+var subTotalPrice;
+
+goCheckout();
+
+function goCheckout(){
+    if(JSON.parse(window.localStorage.getItem('cart')) == null)
+    let cache = window.localStorage.getItem('checkoutCache');
+    let countryList;
+    subTotalPrice = calculateSubTotal();
+    document.getElementById('price-subtotal').innerHTML = subTotalPrice;
+    try{
+      window.onload = fetchAPI(countryList,cache);
+    }
+    
+    document.getElementById('pay-button').disabled =  false;
+
+}
+
+async function fetchAPI(countryList,cache){
+    if(cache == null)
+    else{
+      countryList = JSON.parse(cache);
+      await setCountry(countryList);
+      document.getElementById('country').addEventListener('change',getShippingCost,false);
+    }
+
+}
+
+function setCountry(countryList){
+    for(let i = 0;i<countryList.destinations.length;i++){
+      let opt = document.createElement('option');
+      opt.appendChild(document.createTextNode(countryList.destinations[i].displayName));
+      opt.value = countryList.destinations[i].country;
+      document.getElementById('country').appendChild(opt);
+    }
+    let shippingCost = (countryList.destinations[document.getElementById('country').selectedIndex].cost / 100).toFixed(2);
+    document.getElementById('price-shipping').innerHTML = shippingCost;
+    document.getElementById('price-total').innerHTML = subTotalPrice + parseInt(shippingCost);
+
+}
+
+function calculateSubTotal(){
+  let count = 0;
+  let cart = JSON.parse(window.localStorage.getItem('cart'));
+  for(let i in cart){
+    count += Frame.calculatePrice(cart[i].printSize, cart[i].frameStyle, cart[i].frameWidth, cart[i].matWidth);
+  }
+  return count;
+}
+
+
+
+function getShippingCost(e){
+    let countryList = JSON.parse(window.localStorage.getItem('checkoutCache'));
+    let index = getSelected(e.target.value,countryList);
+    let shippingCost = (countryList.destinations[index].cost / 100);
+    let shipping = (countryList.destinations[index].cost / 100).toFixed(2);
+    document.getElementById('price-shipping').innerHTML = shipping;
+    document.getElementById('price-total').innerHTML = subTotalPrice + shippingCost;
+
+}
+
+function getSelected(country,countryList){
+  for(let i = 0;i < countryList.destinations.length;i++){
+    if(country === countryList.destinations[i].country){
+      return i;
+    }
+  }}
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    frameWidth /= 10;
+    matWidth /= 10;
+
+    let price = 30;
+    let matPrice = 0.05;
+    let framePrice;
+
+    let printSizeFactor = printSize == 'S' ? 1 : printSize == 'M'  : printSize == 'L' ? 3.5 
+
+    switch(frameStyle){
+        case "classic":
+            framePrice = 1;
+            break;
+        case "natural":
+            framePrice = 0.8;
+            break;
+        
+        case "elegant":
+            framePrice = 0.85;
+            break;
+    }
+
+    price = (price + ((framePrice * frameWidth) + (matPrice * matWidth))) * printSizeFactor;
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+export 
+
+export 

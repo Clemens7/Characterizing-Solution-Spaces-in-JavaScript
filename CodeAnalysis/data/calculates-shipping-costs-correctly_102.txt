@@ -1,0 +1,98 @@
+
+  function cartStorageIsEmpty () {
+  let cart = JSON.parse(localStorage.getItem('cart'));
+  if (cart == null) 
+  return (cart.length == 0);
+  }
+
+  if (cartStorageIsEmpty())  else {
+}
+  
+import * as FrameJS from './frame.js'
+
+async function findCountries () {
+fetch(('https://web-engineering.big.tuwien.ac.at/s20/a2/shipping'))
+.then(res => res.json())
+.then(data => updateCountries(data));
+}
+
+findCountries();
+updatePrice();
+
+var helpMap = new Map();
+
+function updateCountries(data) {
+  let countryList = document.getElementById('country');
+  for (let i = 0; i < data.destinations.length; i++) {
+    let content = document.createElement('option');
+    content.appendChild(document.createTextNode(data.destinations[i].displayName));
+    content.value = data.destinations[i].country;
+    let shippingCosts2Dec = (data.destinations[i].cost/100).toFixed(2);
+    helpMap.set(data.destinations[i].country, shippingCosts2Dec);
+    countryList.appendChild(content);
+  }
+  loaded();
+}
+
+function loaded() {
+
+  let x = document.getElementById('country');
+  x.addEventListener('change', updateShippingCosts);
+
+  function updateShippingCosts(event) {
+    let costs = helpMap.get(event.target.value);
+    document.getElementById('price-shipping').innerHTML = costs;
+    document.getElementById('pay-button').disabled = true;
+    updatePrice();
+  }
+}
+
+function updatePrice() {
+  let cart = JSON.parse(localStorage.getItem('cart'));
+  let subTot = 0;
+
+  for (let c of cart) {
+      subTot += FrameJS.calculatePrice(c.printSize, c.frameStyle, c.frameWidth, c.matWidth)
+  }
+
+  let total = Number(document.getElementById('price-shipping').innerHTML);
+  total += subTot;
+
+  if (isNaN(total)) {
+    total = '&mdash;';
+  }
+  if (isNaN(document.getElementById('price-shipping').innerHTML)) {
+    document.getElementById('price-shipping').innerHTML = '&mdash;';
+  }
+
+  document.getElementById('price-subtotal').innerHTML = subTot;
+  document.getElementById('price-total').innerHTML = total;
+
+  if (!isNaN(total) && !isNaN(document.getElementById('price-shipping').innerHTML) && !isNaN(subTot)) {
+    document.getElementById('pay-button').disabled = false;
+    }
+}
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.00; //base price for small prints
+
+    let frameBasePrice = 0.00;
+
+    switch (frameStyle) {
+        case "classic":
+            frameBasePrice = 1.00;
+            break;
+        case "natural":
+            frameBasePrice = 0.80;
+            break;
+        
+        
+    }
+
+    price = price + (frameBasePrice * frameWidth/10.00) + (matWidth/10.00 * 0.05);
+    price = printSize === "M" ? price * 2.00 : (printSize === "L" ? price * 3.50 );
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

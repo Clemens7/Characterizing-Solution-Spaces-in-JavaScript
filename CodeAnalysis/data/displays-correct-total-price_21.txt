@@ -1,0 +1,303 @@
+
+    import { CartDocumentContainer } from './dom-helpers.js';
+    import { FramedPicture } from './config.js';
+    const cartDocumentContainer = new CartDocumentContainer();
+    (async () => {
+      try {
+        await cartDocumentContainer.displayCartItems();
+        await getNumberOfCartItems();
+        const removeButtons = document.querySelectorAll('.cart-remove');
+        removeButtons.forEach(function (b){
+          b.addEventListener('click', )
+        });
+      } 
+    })();
+
+
+    async function getNumberOfCartItems() {
+       let items = await FramedPicture.loadFromLocalStorage();
+       if (items.length>0){
+       document.getElementById('cart-link').innerText = "Cart (" + await items.length +")";
+       }
+
+    }
+    document.getElementById('checkout-button').onclick = ;
+  import * as FrameHelper from './frame.js';
+import * as METAPI from './metAPI.js';
+
+frameWidth and matWidth are given in mm
+export class FrameConfiguration {
+  constructor(printSize='S',frameStyle="classic",frameWidth=30,matColor="mint",matWidth=10) {
+    this.printSize = printSize;
+    this.frameStyle = frameStyle;
+    this.frameWidth = frameWidth;
+    this.matColor = matColor;
+    this.matWidth = matWidth;
+  }
+
+  get price() {
+    return FrameHelper.calculatePrice(this.printSize, this.frameStyle, this.frameWidth, this.matWidth);
+  }
+
+  
+
+  
+
+  
+
+  
+}
+
+export class FramedPicture {
+  constructor(picture,config,imgElement=null) {
+    this.picture = picture;
+    this.config = config;
+
+    if(imgElement)
+    else {
+      this.imgElement = document.createElement('img');
+    }
+
+    this.imgElement.src = picture.primaryImageSmall;
+  }
+
+  
+
+  
+
+  static async fromJsonString(json,imgElement=null) {
+    var data = json;
+    var picture = await METAPI.api_getObject(data.objectID);
+    return new FramedPicture(picture,new FrameConfiguration(data.printSize,data.frameStyle,data.frameWidth, data.matColor,data.matWidth),imgElement);
+  }
+
+  static 
+
+  
+
+  static 
+
+  static async loadFromLocalStorage(key="cart") {
+    const array = JSON.parse(localStorage.getItem(key));
+    if(!Array.isArray(array)) 
+    const loadingImages = array.map(jsonString=>this.fromJsonString(jsonString));
+    const pictures = await Promise.all(loadingImages);
+    return pictures;
+  }
+}
+
+export 
+
+export 
+
+export 
+export 
+import * as DOM from './dom-helpers.js';
+import { FramedPicture, calculateTotalCartPrice, cartIsEmpty } from './config.js';
+import { FrameConfiguration } from './config.js';
+import { render } from './frame.js';
+
+export 
+
+export class CartDocumentContainer {
+    constructor(containerID='cart', priceTag='price-total', checkoutButton='checkout-button') {
+        this.container = document.getElementById(containerID);
+        this.priceTag = document.getElementById(priceTag);
+        this.emptyCartMessage = document.createElement('h1');
+        this.emptyCartMessage.innerText = "There are no items in your shopping cart.";
+        this.checkoutButton = document.getElementById(checkoutButton);
+        if(!this.container) 
+    }
+
+    
+    
+
+    
+
+    async displayCartItems() {
+        const itemsTemp = await FramedPicture.loadFromLocalStorage();
+        const items = itemsTemp.reverse();
+        let totalPrice = 0.0;
+        if (Object.keys(items).length === 0) 
+        else {
+            this.checkoutButton.disabled = false;
+            let i = items.length-1;
+            for (let item of items) {
+                this.container.prepend(createCartItem(item, i));
+                window.addEventListener('onload',
+                render(document.getElementById(`preview-${item.picture.objectID}`),
+                    document.getElementById(`container-${item.picture.objectID}`),
+                    item.config.printSize, item.config.frameStyle, item.config.frameWidth, item.config.matColor, item.config.matWidth)
+                );
+                totalPrice += item.config.price;
+                i--;
+            }
+        this.priceTag.innerText = totalPrice.toFixed(2);
+        }
+
+
+
+
+        function createCartItem(item, i) {
+            const cartItem = document.createElement('div');
+            const configLink = `./config.html?objectID=${item.picture.objectID}&printSize=${item.config.printSize}&frameStyle=${item.config.frameStyle}&frameWidth=${item.config.frameWidth}&matColor=${item.config.matColor}&matWidth=${item.config.matWidth}`;
+            cartItem.setAttribute('class', 'cart-item');
+            cartItem.innerHTML =   `<div class="cart-preview" id="preview-container-${item.picture.objectID}">
+                                    <a href="${configLink}" id="container-${item.picture.objectID}">
+                                        <img class="cart-thumb" src="${item.picture.primaryImageSmall}" id="preview-${item.picture.objectID}" alt="${item.picture.title}">
+                                    </a>
+                                </div>
+                                <div class="museum-label">
+                                    <div>
+                                        <span class="artist">${item.picture.artistDisplayName}</span>
+                                        <span class="title">${item.picture.title}</span>,
+                                        <span class="date">${item.picture.objectDate}</span>
+                                        <br><br>
+                                        <span class="frame-description">${createFrameDescription(item.config)}</span>
+                                    </div>
+                                    <div class="cart-price">€ <span id="price-0">${item.config.price.toFixed(2)}</span></div>
+                                    <button class="cart-remove" id="remove-${i}"></button>
+                                </div>`;
+            return cartItem;
+        }
+
+        function createFrameDescription(config) {
+            const sizes = {'S': 'Small', 'M': 'Medium', 'L': 'Large'}
+
+            let desc =`${sizes[config.printSize]} print in a ${config.frameWidth / 10}&nbsp;cm ${config.frameStyle} frame`;
+            if (config.matWidth > 0) {
+                desc += ` with a ${config.matWidth / 10}&nbsp;cm ${config.matColor} mat.`
+            }
+            return desc;
+        }
+    }
+}
+
+export class SearchResultDocumentContainer {
+    
+
+    
+
+    
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const baseCostMultiplier = {S:1,M:2,L:3.5};
+    const frameCostPerCM = {classic:1,natural:0.8,shabby:0.9,elegant:0.85};
+    let price = 30;
+    price+=frameCostPerCM[frameStyle]*frameWidth/10;
+    price+=0.05*matWidth/10;
+    price*=baseCostMultiplier[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export 
+
+import {Picture} from './Picture.js';
+import * as PictureCache from './PictureCache.js'
+export 
+
+export async function api_getObject(objectID) {
+    let picture = PictureCache.retrieve(objectID);
+    if(picture) {
+        return picture;
+    }
+
+
+    const url = api_url_getObject(objectID);
+
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        if(rawData.message)
+        picture = new Picture(
+                rawData.objectID,
+                rawData.objectDate,
+                rawData.primaryImageSmall,
+                rawData.title,
+                rawData.artistDisplayName
+                );
+        PictureCache.store(objectID, picture);
+        return picture;
+    }}
+
+
+
+function api_url_getObject(objectID){
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    return API_URL;
+}
+import { Picture} from './Picture.js';
+
+export function retrieve(objectID) {
+    const key = objectID;
+    if(key in localStorage) {
+        console.log(`Retrieving ${key} from local storage`);
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+export function store(objectID, picture) {
+    const key = objectID;
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(picture);
+}export class Picture {
+    constructor(objectID, objectDate, primaryImageSmall, title, artistDisplayName, classification) {
+        this.objectID = objectID;
+        this.objectDate=objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+        this.title = title;
+        this.artistDisplayName= artistDisplayName;
+    }
+}

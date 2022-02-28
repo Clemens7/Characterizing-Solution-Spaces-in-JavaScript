@@ -1,0 +1,110 @@
+import * as DOM from './domHelper.js'
+import {Artwork} from './artwork.js'
+
+export export class Artwork {
+    
+}import {removeFromLocalStorage} from "./searchService.js";
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+export 
+
+export 
+
+export 
+export const cart = "cart";
+
+export function displayCartCount(){
+    let count = JSON.parse(window.localStorage[cart]).length;
+    if(count > 0)
+}const url = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export 
+
+export async function getArtworkIDsFiltered(q) {
+
+    let artworkIDs = null;
+
+    await fetch(url + 'search?hasImages=true&q=' + q, {
+        method: 'GET', headers: {'Content-Type': 'application/json'}
+    })
+        .then(response => {
+                return response.json()
+        })
+        .then(response => {
+            artworkIDs = (response);
+        });
+    return artworkIDs;
+}
+
+export 
+
+export 
+
+export 
+import {getArtworkIDsFiltered, getOneArtworkByID} from './searchService.js'
+import {Artwork} from "./artwork.js";
+import * as artworkDom from './artworkDom.js'
+import {displayCartCount} from './main.js'
+
+
+
+const form = document.getElementById('search-form');
+form.addEventListener("submit", );
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    let searchInput = urlParams.get("q");
+
+    if (searchInput !== undefined && searchInput !== null) {
+        searchInput = searchInput.replace("+", " ");
+        fetchArtworks(searchInput)
+    }
+
+    displayCartCount();
+});
+
+
+
+function fetchArtworks(searchparam) {
+    let searchTextHeader = document.getElementById("search-info");
+    searchTextHeader.innerText = `Searching for “${searchparam}”...`;
+
+    getArtworkIDsFiltered(searchparam)
+        .then(result => {
+            return result.objectIDs
+        })
+        .then(result => {
+            if (result === null) {
+                setSearchHeaderText(0, searchparam);
+                return;
+            }})
+}
+
+function setSearchHeaderText(amountOfArtworks, searchparam) {
+    let searchTextHeader = document.getElementById("search-info");
+    searchTextHeader.innerText = `Found ${amountOfArtworks} ` + (amountOfArtworks === 1  : "artworks") + ` for “${searchparam}”`;
+}
+
+

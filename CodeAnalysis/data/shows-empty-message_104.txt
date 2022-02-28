@@ -1,0 +1,83 @@
+export function retrieve(key) {
+    
+    if(key in localStorage) 
+}
+
+export 
+
+export 
+    import * as Cache from './cache.js'
+    import * as Cart from './cart.js'
+    import * as Frame from './frame.js'
+    import * as Common from './common.js'
+
+
+    let shoppingCart = Cache.retrieve('cart');
+    let sp2 = document.getElementById("cart-total");
+    let cart = document.getElementById('cart');
+
+    showShoppingCart();
+
+    async function showShoppingCart() {
+
+      if (Common.getNumberOfObjectsInCart() == 0) {
+        const emptyElem = document.createElement('div');
+        document.getElementById('checkout-button').disabled = true;
+        emptyElem.innerHTML = '<span>There are no items in your shopping cart.</span>';
+        cart.insertBefore(emptyElem, sp2);
+        return;
+      }}
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    document.getElementById("cart-link").innerHTML =
+      "Cart (" + Common.getNumberOfObjectsInCart() + ")";
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  class Product {
+    
+}
+
+export 
+
+export 
+
+const MET_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export 
+
+export function getNumberOfObjectsInCart () {
+    if (!localStorage.getItem('cart')) {
+        return 0;
+    }export 
+
+export 
+
+const price_classic = 100;
+const price_natural = 80;
+const price_shabby = 90;
+const price_elegant = 85;
+const price_mat = 5;
+
+const base_small = 3000;
+const base_medium = 2 * base_small;
+const base_large = 3.5 * base_small;
+
+export 

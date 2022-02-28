@@ -1,0 +1,71 @@
+import { Artwork } from '/artwork.js';
+
+export 
+
+export 
+
+import { Artwork } from "/artwork.js";
+
+export class ArtworkDocumentContainer {
+
+	
+
+	
+
+
+	
+}export class Artwork {
+	
+}let cart = [];
+
+
+export function retrieve() {
+    if(!localStorage['cart']){
+        return;
+    }}
+
+
+export 
+import { Artwork } from '/artwork.js';
+import * as ArtworkCache from '/artwork-cache.js';
+import { ArtworkDocumentContainer } from '/artwork-dom.js';
+
+export ;
+
+export 
+
+
+export async function displayHighlights() {
+	let artworks = [];
+
+	const response = await fetch('/highlights.json');
+    import * as SearchAPI from '/search-api.js';
+    import { Artwork } from '/artwork.js';
+    import { ArtworkDocumentContainer } from '/artwork-dom.js';
+    import * as CartCache from '/cart-cache.js';
+
+
+
+    ;
+
+    document.addEventListener('DOMContentLoaded', event => {    
+
+      const cache = CartCache.retrieve();
+      const cart = document.getElementById('cart-link');
+      if(cache)
+      const params = (new URL(document.location)).searchParams;
+      let searchQuery = params.get('q');
+      if(searchQuery == "null")
+      else if(!searchQuery){
+        SearchAPI.displayHighlights();
+        return;
+      }
+
+
+
+      
+});
+
+    
+
+

@@ -1,0 +1,41 @@
+export 
+
+export function getCartItems(){
+    var cart = JSON.parse(localStorage.getItem('cart'));
+    if(!cart)
+    return cart;
+}
+
+export 
+
+export 
+
+export 
+
+export 
+calcTotal();export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+
+    let price1 = 0;
+
+  var size = {
+        'S' : 1,
+        'M' : 2,
+        'L' : 3.5
+    };
+
+    var frame_costs = {
+        'classic' : 1,
+        'natural' : 0.8,
+        'shabby' : 0.9,
+        'elegant' : 0.85
+    };
+
+    const price = (30 + frame_costs[frameStyle] * (frameWidth / 10) + 0.05 * (matWidth / 10)) * size[printSize];
+
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

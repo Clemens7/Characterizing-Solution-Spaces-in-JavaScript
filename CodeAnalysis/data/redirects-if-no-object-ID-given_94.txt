@@ -1,0 +1,110 @@
+export 
+
+export function retrieveObject(objectID){
+    if(objectID in localStorage) 
+}
+
+export 
+
+export 
+
+export function retrieveCart(){
+    if("cart" in localStorage)
+}import { retrieveObject, storeObject } from "./artmart-cache.js";
+
+class ArtmartAPI {
+    constructor(){
+        this.metMuseumEndpoint = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.artmartEndpoint = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+    
+    
+
+    async getObject(objectID){
+        const retrievedObject = retrieveObject(objectID);
+        
+        if(retrievedObject)
+
+        try{
+            const url = `${this.metMuseumEndpoint}/objects/${objectID}`
+            const response = await this._basicRequest(url);}
+
+    async getObjects(objectIDs){
+        const response = await Promise.all(objectIDs.map(id=>this.getObject(id)));}
+
+    
+
+    async _basicRequest(url){
+            let response = await fetch(url);}
+
+    
+
+}
+
+const artmartAPI = new ArtmartAPI();
+window.artmartAPI = artmartAPI;
+export default artmartAPI;
+ import artmartAPI from "./artmartAPI.js";
+ import {retrieveCart} from "./artmart-cache.js";
+ 
+ var template;
+ var templateContainer;
+ var highlights; // saved highlights
+
+  document.addEventListener('DOMContentLoaded', async (event) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const qParam = urlParams.get("q");
+	  template = document.getElementById('template');
+	  templateContainer = template.parentNode;
+    templateContainer.removeChild(template);
+	
+	document.getElementById('search').value = qParam;
+    searchObjects(qParam);
+	
+    const cart = retrieveCart();
+    if(!(cart===undefined) ) 
+  });
+
+  const form = document.querySelector('.search-form');
+  form.addEventListener('submit', );
+
+ async function searchObjects(q){
+    clearChildren();
+	if(!q) {
+		showHighlights();
+		return;
+	}}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ async function retrieveObjects(objectIDs){
+    const artObjects = await artmartAPI.getObjects(objectIDs);}
+
+  function clearChildren() {
+    while (templateContainer.firstChild) {
+      templateContainer.removeChild(templateContainer.lastChild);
+    }
+  }
+  
+  async function loadHighlights() {
+	if(highlights)
+		
+	console.log("loading highlights");
+    highlights = await fetch("./highlights.json");
+    highlights = await highlights.json();
+  }
+
+  async function showHighlights() {
+	await loadHighlights();
+    if(highlights) {
+      clearChildren();
+      let objects = await retrieveObjects(highlights.highlights);}
+

@@ -1,0 +1,274 @@
+import { fetchObject, retrieveCart, showCartItems } from "./common.js";
+import { calculatePrice, render } from './frame.js';
+
+/*localStorage.setItem('cart', JSON.stringify([
+  { objectID: 435844, printSize: 'S', frameStyle: 'classic', frameWidth: 22, matColor: 'ivory', matWidth: 40 },
+  { objectID: 435852, printSize: 'M', frameStyle: 'elegant', frameWidth: 33, matColor: 'indigo', matWidth: 60 },
+  { objectID: 436950, printSize: 'M', frameStyle: 'shabby', frameWidth: 44, matColor: 'wine', matWidth: 80 },
+  { objectID: 201957, printSize: 'L', frameStyle: 'natural', frameWidth: 55, matColor: 'mint', matWidth: 100 },
+]));*/
+
+const section = document.querySelector('section');
+const totalPrice = document.getElementById('price-total');
+const removeButton = document.getElementsByClassName('cart-remove');
+
+const printSizes = {
+  S: 'Small',
+  M: 'Medium',
+  L: 'Large',
+}
+
+const renderSingleItem = 
+
+const calculateAndSetCartPrice = (cart) => {
+  let subtotal = 0;
+  for (const item of cart) 
+  totalPrice.innerHTML = parseFloat(subtotal).toFixed(2);
+};
+
+window.removeCartItem = 
+
+
+const main = async () => {
+  showCartItems();
+  let cart = retrieveCart();
+
+  if (cart) {
+    let items = await Promise.all(cart.map());
+
+    items.forEach( );
+
+    calculateAndSetCartPrice(cart);
+    return;
+  }}
+
+main();
+export const searchApiUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+
+const objectsApiUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/objects';
+
+export const fetchObject = 
+
+export const retrieveCart = () => {
+  try {
+    return JSON.parse(localStorage.getItem('cart'));
+  }
+}
+
+export const showCartItems = async () => {
+  let cartLink = document.querySelector('#cart-link');
+
+  let cart = retrieveCart();
+
+  if (cart) {
+    cartLink.textContent = `Cart (${cart.length})`;
+    return;
+  }import { retrieveCart, fetchObject, showCartItems } from "./common.js";
+import { calculatePrice, getPrintSizes, render } from './frame.js';
+
+const queryParams = new URLSearchParams(window.location.search);
+
+const container = document.getElementById('preview-container');
+const preview = document.getElementById('preview-image');
+const description = document.getElementById('image-label');
+
+const objectID = queryParams.get('objectID');
+
+const params = {
+  printSize: document.querySelector(`input[name=printSize]:checked`).value,
+  frameWidth: document.querySelector(`input[name=frameWidth]`).value*10,
+  frameStyle: document.querySelector(`input[name=frameStyle]:checked`).value,
+  matWidth: document.querySelector(`input[name=matWidth]`).value*10,
+  matColor: document.querySelector(`input[name=matColor]:checked`).value,
+}
+
+const loadPicture = async (objectID) => {
+    await fetchObject(objectID)
+      .then((data) => {
+        if (data.message !== undefined) 
+        setPreview(data.primaryImageSmall);
+        setDescription(data);
+      }).catch();    
+}
+
+const setPreview = (link) => {
+  preview.setAttribute('src', link);
+  renderPrintSize(getPrintSizes(preview));
+  renderTotalSize(getSelectedPrintSize());
+  renderTotalPrice(calculatePrice(params.printSize, params.frameStyle, params.frameWidth, params.matWidth));  
+
+  preview.onload = () => {
+    render(preview, container,  params.printSize, params.frameStyle, params.frameWidth, params.matColor, params.matWidth);
+  }
+}
+
+const setDescription = (data) => {
+  let span = description.querySelectorAll('span');
+  span[0].textContent = data.artistDisplayName;
+  span[1].textContent = data.title;
+  span[2].textContent = data.objectDate;
+}
+
+const setPrintSize = 
+const setFrameWidth = 
+const setFrameStyle = 
+const setMatWidth = 
+const setMatColor = 
+
+const updateQueryParams = () => {
+  let queryPrintSize = queryParams.get('printSize');
+  let queryFrameWidth = queryParams.get('frameWidth');
+  let queryFrameStyle = queryParams.get('frameStyle');
+  let queryMatWidth = queryParams.get('matWidth');
+  let queryMatColor = queryParams.get('matColor');
+  if(queryPrintSize !== null) 
+  if(queryFrameWidth !== null) 
+  if(queryFrameStyle !== null) 
+  if(queryMatWidth !== null) 
+  if(queryMatColor !== null) 
+}
+
+window.updateRange = 
+
+window.updateNumber = 
+
+
+
+
+
+function renderPrintSize(printSizes) {
+  let small = document.getElementById('print-size-s-label');
+  small.innerHTML = `Small<br>${printSizes.S[0]/10} x ${printSizes.S[1]/10} cm`;
+  let medium = document.getElementById('print-size-m-label');
+  medium.innerHTML = `Medium<br>${printSizes.M[0]/10} x ${printSizes.M[1]/10} cm`;
+  let large = document.getElementById('print-size-l-label');
+  large.innerHTML = `Large<br>${printSizes.L[0]/10} x ${printSizes.L[1]/10} cm`;
+}
+
+function renderTotalSize(printSize) {
+  let size = document.getElementById('total-size');
+  let totalW = Number(printSize[0])*10+params.frameWidth+params.matWidth;
+  let totalH = Number(printSize[1])*10+(params.frameWidth)+(params.matWidth);
+  size.innerHTML = `${totalW/10} x ${totalH/10} cm`;
+}
+
+function getSelectedPrintSize() {
+  let id = document.querySelector(`input[name=printSize]:checked`).id;
+  let label = document.getElementById(`${id}-label`);
+  let numbers = label.textContent.replace(/^\D+|\D.-/g, "");
+  let result = numbers.match(/\d+/g);
+  if(result.length === 4)  else if(result.length === 3)  else {
+    return ([`${result[0]}`, `${result[1]}`]);
+  }
+}
+
+function renderTotalPrice(totalPrice) {
+  let price = document.getElementById('price');
+  price.innerHTML = `€ ${(totalPrice/100).toFixed(2)}`;
+}
+
+if (objectID === null || objectID === '') 
+updateQueryParams();
+showCartItems();
+loadPicture(objectID);
+
+var fieldsets = document.querySelectorAll('fieldset');
+var last = fieldsets[fieldsets.length-1];
+fieldsets.forEach(fieldset => {
+  if(fieldset !== last) {
+    fieldset.addEventListener('change', )
+  }
+})
+
+let form = document.getElementById('config-form');
+document.addEventListener('submit', );
+form.addEventListener('submit', );
+
+export 
+
+export 
+
+export 
+ import { searchApiUrl, fetchObject, showCartItems } from "./common.js";
+
+const searchInput = document.getElementById('search');
+const headlineStates = {
+  start: 'Search our collection of more than 400,000 artworks.',
+  searching: 'Searching for “*”...',
+  found: 'Found # artworks for “*”',
+  foundOne: 'Found # artwork for “*”'
+}
+
+const updateSearchQuery = async (searchTerm) => {
+  let newUrl = new URL(window.location.href);
+  newUrl.search = new URLSearchParams({ q: searchTerm }).toString();
+  window.history.replaceState( {}, document.title, newUrl);
+};
+
+const fetchObjects = async (objectIDs) => {
+  let maxSearchResults = 100;
+  let reducedObjectIDs = objectIDs.slice(0, maxSearchResults);
+  return await Promise.all(reducedObjectIDs.map(async (objectID) => {
+    return await fetchObject(objectID);
+  }));
+}
+
+const changeHeadline = async (state, term, number) => {
+  let headline = document.getElementById('search-info');
+  headline.textContent = state.replace('*', term).replace('#', number);
+}
+
+const renderSingleSearchResult = (singleSearchResult) => {
+  let template = document.querySelector('template');
+  let clone = template.content.cloneNode(true);
+
+  let link = clone.querySelector('a');
+  link.href = `./config.html?objectID=${singleSearchResult.objectID}`;
+
+  let img = clone.querySelector('img');
+  img.src = singleSearchResult.primaryImageSmall;
+
+  let description = clone.querySelectorAll('span');
+  description[0].textContent = singleSearchResult.artistDisplayName;
+  description[1].textContent = singleSearchResult.title;
+  description[2].textContent = singleSearchResult.objectDate
+
+  template.parentNode.appendChild(clone);
+}
+
+const renderSearchResult = async (searchResult) => {
+  let gallery = document.getElementById('gallery');
+  gallery.querySelectorAll('.thumb').forEach();
+  searchResult.forEach((element) => {
+    renderSingleSearchResult(element);
+  });
+}
+
+const generateSearchResult = 
+
+const generateHighlights = async (objectIDs) => {
+    let searchResult = await fetchObjects(objectIDs);
+    renderSearchResult(searchResult);
+}
+
+const search = async () => {
+  let searchTerm = searchInput.value;
+  updateSearchQuery(searchTerm);
+
+  if (searchTerm) 
+
+  await fetch('./highlights.json').then(response => response.json()).then(response => {
+    changeHeadline(headlineStates.start);
+    generateHighlights(response.highlights);
+  })
+}
+
+const queryParams = new URLSearchParams(window.location.search);
+
+let form = document.querySelector('form');
+form.addEventListener('submit', search);
+document.addEventListener('submit', );
+
+searchInput.value = queryParams.get('q');
+showCartItems();
+search();

@@ -1,0 +1,275 @@
+var __awaiter = (this ) || ;
+import { calculatePrice, render } from "./frame.js";
+import { ShoppingCart } from "./classes.js";
+document.addEventListener("DOMContentLoaded", () => {
+    /*localStorage.setItem('cart', JSON.stringify([
+        new CartItem(100, 'L', 'elegant', 28, 'wine', 75),
+        new CartItem(2, 'L', 'shabby', 3.3, 'mint', 83),
+        new CartItem(5, 'M', 'classic', 37, 'ivory', 0),
+        new CartItem(10, 'L', 'shabby', 41, 'indigo', 48),
+        new CartItem(20, 'S', 'elegant', 25, 'indigo', 61),
+    ]));*/
+    const initialShoppingCart = new ShoppingCart();
+    initialShoppingCart.setShoppingCartLinkValue();
+    const cartSection = document.getElementById('cart');
+    if (initialShoppingCart.cartItems) {
+        displayCartItems();
+        calculateTotalPrice();
+    }
+    handleCheckoutButton();
+    function handleCheckoutButton() {
+        let checkoutButton = document.querySelector("button");
+        if (initialShoppingCart.cartItems === undefined || initialShoppingCart.cartItems.length == 0) {
+            checkoutButton.disabled = true;
+            printNoContentContent();
+        }
+    }
+    function printNoContentContent() {
+        let noContentContent = document.createElement("h3");
+        noContentContent.innerHTML = `There are no items in your shopping cart.`;
+        cartSection.insertBefore(noContentContent, cartSection.firstChild);
+    }
+    function calculateTotalPrice() {
+        const totalPrice = initialShoppingCart.cartItems.reduce(, 0);
+        document.getElementById("price-total").innerHTML = totalPrice + '';
+    }
+    function displayCartItems() {
+        initialShoppingCart.cartItems.forEach();
+    }
+    
+    
+    
+});
+class CartItem {
+    
+}
+export { CartItem };
+class ShoppingCart {
+    constructor() {
+        this.loadShoppingCart();
+    }
+    loadShoppingCart() {
+        const cartItemsInStorage = JSON.parse(localStorage.getItem('cart'));
+        if (cartItemsInStorage) {
+            this.cartItems = cartItemsInStorage.map();
+        }
+    }
+    
+    setShoppingCartLinkValue() {
+        let cartLink = document.getElementById("cart-link");
+        if (this.cartItems && this.cartItems.length > 0) 
+        else {
+            cartLink.innerHTML = "Cart";
+        }
+    }
+}
+export { ShoppingCart };
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { getPrintSizes, render, calculatePrice } from './frame.js';
+import { ShoppingCart } from "./classes.js";
+class FrameConfigurator {
+    constructor() {
+        this.matWidth = 5.5;
+        this.matColor = 'mint';
+        this.frameWidth = 4;
+        this.printSize = 'M';
+        this.frameStyle = 'natural';
+    }
+    fetchObjectById() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('objectID')) {
+                let localStorageObjects = JSON.parse(localStorage.getItem('objects')) ;
+                const objectID = Number.parseInt(urlParams.get('objectID'));
+                let object = localStorageObjects.find(object => object.objectID === objectID);
+                if (!object) 
+                document.getElementById('image-label').innerHTML = `${object.title} - ${object.artistDisplayName} (${object.objectDate})`;
+                this.imgContainer = document.getElementById('preview-container');
+                this.previewImage = document.getElementById('preview-image');
+                this.previewImage.src = object.primaryImageSmall;
+                this.previewImage.style.opacity = '0';
+                this.previewImage.onload = () => {
+                    this.updateFramePreview();
+                    this.previewImage.style.opacity = '1';
+                };
+            }
+        });
+    }
+    presetFrameParametersByQueryParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('printSize')) 
+        if (urlParams.has('frameWidth')) 
+        if (urlParams.has('matColor')) 
+        if (urlParams.has('frameStyle')) 
+        if (urlParams.has('matWidth')) 
+    }
+    initHtmlElements() {
+        this.frameWidthSliderElement = document.getElementById('frame-width-slider');
+        this.frameWidthTextElement = document.getElementById('frame-width-text');
+        this.matWidthSlider = document.getElementById('mat-width-slider');
+        this.matWidthText = document.getElementById('mat-width-text');
+    }
+    initOnChangeListeners() {
+        this.frameWidthSliderElement.addEventListener('change', );
+        this.frameWidthTextElement.addEventListener('change', );
+        this.matWidthSlider.addEventListener('change', );
+        this.matWidthText.addEventListener('change', );
+        const matColorRadios = document.querySelectorAll('input[type=radio][name="matColor"]');
+        matColorRadios.forEach((radio) => {
+            radio.addEventListener('change', );
+        });
+        const printSizeRadios = document.querySelectorAll('input[type=radio][name="printSize"]');
+        printSizeRadios.forEach((radio) => {
+            radio.addEventListener('change', );
+        });
+        const frameStyleRadios = document.querySelectorAll('input[type=radio][name="frameStyle"]');
+        frameStyleRadios.forEach((radio) => {
+            radio.addEventListener('change', );
+        });
+    }
+    
+    
+    
+    
+    updateFramePreview() {
+        this.updatePrintSizesAndPrize();
+        render(this.previewImage, this.imgContainer, this.printSize, this.frameStyle, this.frameWidth, this.matColor, this.matWidth);
+    }
+    updatePrintSizesAndPrize() {
+        const printSizes = getPrintSizes(this.previewImage);
+        document.getElementById('print-size-s-label').innerHTML = `Small<br>${printSizes.S[0] / 10} x ${printSizes.S[1] / 10} cm`;
+        document.getElementById('print-size-m-label').innerHTML = `Medium<br>${printSizes.M[0] / 10} x ${printSizes.M[1] / 10} cm`;
+        document.getElementById('print-size-l-label').innerHTML = `Large<br>${printSizes.L[0] / 10} x ${printSizes.L[1] / 10} cm`;
+        const totalPrintSize = [
+            (printSizes[this.printSize][0] / 10 + this.frameWidth * 2 + this.matWidth * 2).toFixed(1),
+            (printSizes[this.printSize][1] / 10 + this.frameWidth * 2 + this.matWidth * 2).toFixed(1),
+        ];
+        document.getElementById('total-size').innerHTML = `${totalPrintSize[0]} x ${totalPrintSize[1]} cm`;
+        const totalPrice = calculatePrice(this.printSize, this.frameStyle, this.frameWidth, this.matWidth);
+        document.getElementById('price').innerHTML = `€ ${totalPrice.toFixed(2)}`;
+    }
+}
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    let frameConfigurator = new FrameConfigurator();
+    frameConfigurator.initHtmlElements();
+    frameConfigurator.presetFrameParametersByQueryParams();
+    frameConfigurator.initOnChangeListeners();
+    yield frameConfigurator.fetchObjectById();
+    frameConfigurator.updatePrintSizesAndPrize();
+    const shoppingCart = new ShoppingCart();
+    shoppingCart.setShoppingCartLinkValue();
+}))();
+export 
+export 
+export 
+
+
+import { ShoppingCart } from "./classes.js";
+const baseUrlSearchEndpoint = "https://collectionapi.metmuseum.org/public/collection/v1/search?";
+const baseUrlObjectEndpoint = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const highlightsPath = './highlights.json';
+const searchInputElement = document.getElementById('search');
+const submitButton = document.getElementById('search-button');
+const searchInfo = document.getElementById('search-info');
+const gallery = document.getElementById('gallery');
+let objectIds = [];
+let artworkGallery;
+function getSearchParam(key) {
+    return new URL(document.location.href).searchParams.get(key);
+}
+submitButton.addEventListener('click', );
+function handleSearchQuery() {
+    artworkGallery.clearGallery();
+    const searchTerm = getSearchParam("q");
+    if (searchTerm) 
+    else {
+        fetch(highlightsPath)
+            .then(res => res.json())
+            .then(data => {
+            artworkGallery.updateInfoMessage(`Search our collection of more than 400,000 artworks.`);
+            if (data.highlights.length === artworkGallery.amountArtworkCached('highlights')) 
+            else {
+                localStorage.removeItem(searchTerm);
+                artworkGallery.updateInfoMessage(`Search our collection of more than 400,000 artworks.`);
+                Promise.all(promisesObjectEndpoint(data.highlights, 'highlights')).then(() => artworkGallery.cacheGallery(searchTerm));
+            }
+        });
+    }
+}
+function promisesObjectEndpoint(objectIds, searchTerm) {
+    return objectIds.map((objectID, index) => {
+        return fetch(baseUrlObjectEndpoint + objectID)
+            .then(res => res.json())
+            .then(data => {
+            artworkGallery.addArtworkToGallery(searchTerm, new Artwork(data.objectID, data.artistDisplayName, data.title, data.objectDate, data.primaryImageSmall, index));
+        });
+    });
+}
+document.addEventListener("DOMContentLoaded", () => {
+    const shoppingCart = new ShoppingCart();
+    artworkGallery = new ArtworkGallery('gallery', 'search-info');
+    shoppingCart.setShoppingCartLinkValue();
+    handleSearchQuery();
+});
+class Artwork {
+    constructor(objectId, artist, title, date, imgLink, posId) {
+        this.objectId = objectId;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+        this.imgLink = imgLink;
+        this.posId = posId;
+    }
+}
+class ArtworkGallery {
+    constructor(galleryId, infoId) {
+        this.gallery = document.getElementById(galleryId);
+        this.infoDisplay = document.getElementById(infoId);
+        this.artworkPresent = JSON.parse(localStorage.getItem('galleryItems')) || new Array();
+    }
+    appendArtworkToGallery(artwork) {
+        gallery.innerHTML += `
+        <div class="thumb">
+            <a href="config.html?objectID=${artwork.objectId}" id="object-${artwork.posId}">
+            <img src="${artwork.imgLink}" alt="" id="object-image-${artwork.posId}">
+            <div class="museum-label">
+                <span class="artist">${artwork.artist}</span>
+                <span class="title">${artwork.title}</span>,
+                <span class="date">${artwork.date}</span>
+            </div>
+            </a>
+        </div>
+    `;
+    }
+    clearGallery() {
+        this.gallery.innerHTML = '';
+        this.artworkPresent = new Array();
+    }
+    updateInfoMessage(msg) {
+        this.infoDisplay.innerHTML = msg;
+    }
+    addArtworkToGallery(searchKey, artwork) {
+        if (!artwork)
+            
+        this.artworkPresent.push(artwork);
+        this.appendArtworkToGallery(artwork);
+    }
+    cacheGallery(searchKey) {
+        localStorage.setItem(searchKey, JSON.stringify(this.artworkPresent));
+    }
+    amountArtworkCached(searchKey) {
+        const cachedArtworks = JSON.parse(localStorage.getItem(searchKey));
+        if (cachedArtworks) 
+        return -1;
+    }
+    
+    
+}

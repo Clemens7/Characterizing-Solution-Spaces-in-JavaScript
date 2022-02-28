@@ -1,0 +1,53 @@
+const API_BASE = 'https://collectionapi.metmuseum.org';
+
+export 
+
+export async function searchObjects(q) {
+    const endpoint = `/public/collection/v1/search?hasImages=true&q=${encodeURI(q)}`;
+    let res = await fetch(API_BASE + endpoint).then();) import { loadObject } from "./artworkApi.js";
+import { render, calculatePrice } from "./frame.js"
+
+export function getItems() {
+    return JSON.parse(localStorage.getItem('cart')) || [];
+}
+
+export 
+
+export 
+
+export function renderCart() {
+    document.getElementById('cart-link').innerText = `Cart (${getItems().length})`;
+}
+
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+    import * as search from './search.js';
+    import { searchObjects } from "./artworkApi.js";
+    import { renderCart } from "./cart.js";
+
+    renderCart();
+
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+
+    if (q !== null && q !== '') {
+      document.getElementById("search-info").innerHTML = `Searching for “${q}”...`;
+      let request = searchObjects(q);
+      request.then();
+    }
+
+  import * as api from './artworkApi.js';
+
+
+
+
+
+export {api, renderResults, addResult};

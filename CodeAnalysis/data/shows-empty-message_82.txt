@@ -1,0 +1,107 @@
+let storage = window.localStorage;
+const artworkKey = 'cache';
+const cartKey = 'cart';
+
+export 
+
+export 
+export function getStorageCart() {
+
+    let cart = JSON.parse(storage.getItem(cartKey));
+    if (cart === null) {
+        return [];
+    }
+}
+
+export function getCartLength() {
+    let cart = JSON.parse(storage.getItem(cartKey));
+    if (cart === null) {
+        return 0;
+    }
+}
+
+export 
+
+import {calculatePrice, render} from "../frame.js";
+import {getStorageCart, getCartLength, getStoredObject, cacheObject} from "./cache.js";
+import {retrieveObject} from "./met.js";
+
+
+const section = document.getElementById("cart");
+
+const cartTotal = document.createElement("div");
+	cartTotal.className = "cart-total";
+	cartTotal.innerHTML = "<div class=\"price\">Total: € <span id=\"price-total\">0</span></div>\n" + "<button type=\"button\" id=\"checkout-button\" disabled=\"true\">Checkout</button>";
+
+const noItems = document.createElement("p");
+	noItems.style = "margin: 50px 0";
+	noItems.innerText = "There are no items in your shopping cart.";
+
+
+loadPage();
+
+
+function loadPage(){
+	let cacheCart = getStorageCart();
+	document.querySelector('#cart-link').innerHTML = ((getCartLength() === 0) ? "Cart" );
+	if (cacheCart.length !== 0)  else {
+		section.append(noItems);
+		section.append(cartTotal);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const ONCE = { once: true };
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+import { round } from './scripts/configutils.js';
+
+export 
+
+export 
+
+const baseCost = 30;
+const frameStyleCosts = {
+    'classic': 0.1,
+    'natural': 0.08,
+    'shabby': 0.09,
+    'elegant': 0.085,
+};
+const matCost = 0.005;
+
+export 
+const URLID = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const URLIMAGE = '"https://images.metmuseum.org/CRDImages/ep/original/';
+const URLLARGEIMAGE = 'https://images.metmuseum.org/CRDImages/ep/web-large/';
+const SEARCHURL = 'https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=';
+export 
+
+
+export 
+
+
+export 

@@ -1,0 +1,132 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const API_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+function fetchAPI() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(API_URL);
+        const data = yield response.json();
+        return data.destinations;
+    });
+}
+export function getAvailableCountries() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let data = yield fetchAPI();
+        return data.map(destination => {
+            return { code: destination.country, name: destination.displayName };
+        });
+    });
+}
+export function getShippingCost(country) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let data = yield fetchAPI();
+        let destination = data.find(destination => destination.country === country.toUpperCase());
+        return destination !== undefined ? destination.cost ;
+    });
+}
+
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { getShippingCost, getAvailableCountries } from "./artmart-api.js";
+import { calculatePrice } from "./frame.js";
+function addCountryOptions() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const countrySelect = document.getElementById('country');
+        if (countrySelect === null || !(countrySelect instanceof HTMLSelectElement)) 
+        let availableCountries = yield getAvailableCountries();
+        availableCountries.forEach(country => {
+            let option = document.createElement('option');
+            option.value = country.code;
+            option.innerText = country.name;
+            countrySelect.appendChild(option);
+        });
+    });
+}
+function getCartOrRedirect() {
+    let carts = localStorage.getItem("cart");
+    if (carts === null || carts.length === 0) 
+    else {
+        return carts;
+    }
+}
+function calculateSubtotalPrice() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let carts = getCartOrRedirect();
+        let cartList = JSON.parse(carts);
+        let subTotalPrice = 0;
+        for (let cart of cartList) {
+            subTotalPrice += calculatePrice(cart.printSize, cart.frameStyle, cart.frameWidth, cart.matWidth);
+        }
+        let subTotalHTML = document.getElementById("price-subtotal");
+        if (!subTotalHTML) 
+        subTotalHTML.innerText = subTotalPrice.toFixed(2);
+    });
+}
+function calculateTotalPrice() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const subtotalHTML = document.getElementById('price-subtotal');
+        if (!subtotalHTML || isNaN(parseFloat(subtotalHTML.innerHTML))) 
+        const subtotal = parseFloat(subtotalHTML.innerHTML);
+        const countrySelect = document.getElementById('country');
+        if (countrySelect === null || !(countrySelect instanceof HTMLSelectElement)) 
+        const selectedCountry = countrySelect[countrySelect.selectedIndex];
+        if (selectedCountry === null) 
+        const shippingCountry = selectedCountry.value;
+        let shippingHTML = document.getElementById('price-shipping');
+        let totalHTML = document.getElementById('price-total');
+        let payButton = document.getElementById('pay-button');
+        if (!shippingHTML || !totalHTML || !payButton || !(payButton instanceof HTMLButtonElement)) 
+        shippingHTML.innerHTML = '&mdash;';
+        totalHTML.innerHTML = '&mdash;';
+        payButton.disabled = true;
+        let shippingCost = yield getShippingCost(shippingCountry);
+        if (shippingCost !== undefined) {
+            shippingCost = shippingCost / 100.0;
+            shippingHTML.innerText = shippingCost.toFixed(2);
+            totalHTML.innerText = (subtotal + shippingCost).toFixed(2);
+            payButton.disabled = false;
+        }
+    });
+}
+calculateSubtotalPrice();
+addCountryOptions().then(() => {
+    calculateTotalPrice();
+    const countrySelect = document.getElementById('country');
+    if (countrySelect === null) 
+    countrySelect.addEventListener("change", () => calculateTotalPrice());
+});
+export 
+export 
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let baseCost = 30;
+    let matCost = matWidth * 0.05;
+    let sizeFactor = printSize == "S" ? 1 : printSize == "M" ? 2 ;
+    let frameCost;
+    switch (frameStyle) {
+        case 'classic':
+            frameCost = frameWidth * 1;
+            break;
+        case 'natural':
+            frameCost = frameWidth * 0.8;
+            break;
+        case 'shabby':
+            frameCost = frameWidth * 0.90;
+            break;
+        
+    }
+    const price = (baseCost + frameCost + matCost) * sizeFactor;
+    return Math.round(price * 100) / 100;
+}

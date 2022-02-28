@@ -1,0 +1,153 @@
+/*
+store Artworks in Cart
+
+export const CART = {
+    KEY: 'cart',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(CART.KEY);
+        if (_contents) {
+            CART.contents = JSON.parse(_contents);
+        }
+    },
+    ,
+    ,
+    ,
+    isEmpty() {
+        if (CART.contents.length == 0)  else return false;
+    },
+    
+};
+
+/*
+Cache responses from the Met API's Object endpoint
+export const localPictures = {
+    KEY: 'pictures',
+    contents: [],
+    ,
+    ,
+    ,
+
+    ,
+
+    ,
+};
+import { CART } from "./artmart-cache.js";
+import * as Frame from '../frame.js';
+import { Artwork } from './datastructures.js'
+
+
+CART.init();
+if (CART.isEmpty()) 
+console.log("cart has item(s):");
+console.log(CART.contents);
+
+calculateSubtotal();
+
+(async function () {
+    const countries = await loadCountries();
+    console.log(countries);
+
+    setCountrySelectBox(countries);
+
+    const countrySelectBox = document.getElementById("country");
+    countrySelectBox.addEventListener("change", function () {
+        calculateShippingCosts(event.target.value, countries);
+        document.getElementById("pay-button").disabled = false;
+    });
+})();
+
+
+async function loadCountries() {
+    const checkoutAPI_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+    try {
+        const response = await fetch(checkoutAPI_URL);
+        const responseDestinations = await response.json();
+        return responseDestinations["destinations"];
+    }}
+
+
+function setCountrySelectBox(countries) {
+    const country = document.getElementById("country");
+    for (let i = 0; i < countries.length; i++) {
+        country.options.add(new Option(countries[i].displayName, countries[i].country));
+    }
+}
+
+
+function calculateSubtotal() {
+    let subtotal = 0.00;
+    for (let item of CART.contents) {
+        subtotal += Frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    let priceSubtotal = document.getElementById("price-subtotal");
+    priceSubtotal.innerHTML = subtotal.toFixed(2);
+    return subtotal;
+}
+
+
+function calculateShippingCosts(selectedCountry, allCountries) {
+    const selectedCountryCost = allCountries.find(x => x.country === selectedCountry).cost;
+
+    const shippingCosts = selectedCountryCost / 100;
+    const priceShipping = document.getElementById("price-shipping");
+    priceShipping.innerHTML = shippingCosts.toFixed(2);
+
+    calculateTotalCosts(shippingCosts);
+}
+
+function calculateTotalCosts(shippingCosts) {
+    const totalCosts = calculateSubtotal() + shippingCosts;
+    const priceTotalCosts = document.getElementById("price-total");
+    priceTotalCosts.innerHTML = totalCosts.toFixed(2);
+}
+
+export class Picture {
+    
+}
+
+export class Artwork {
+    
+}
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {  
+    const frameBaseCost = 30;
+
+    const frameCostPerCm_classic    = 1.00;
+    const frameCostPerCm_natural    = 0.80;
+    const frameCostPerCm_shabby     = 0.90;
+    const frameCostPerCm_elegant    = 0.85;
+
+    const matCostPerCm = 0.05;
+
+    const frameMuliplier_S = 1;
+    const frameMuliplier_M = 2;
+    const frameMuliplier_L = 3.5;
+
+    let frameCostperCm;
+    switch(frameStyle) {
+        case "classic": frameCostperCm = frameCostPerCm_classic; break;
+        case "natural": frameCostperCm = frameCostPerCm_natural; break;
+        case "shabby":  frameCostperCm = frameCostPerCm_shabby;  break;
+        
+        
+    }
+
+    let costMultiplier;
+    switch(printSize) {
+        case "S": costMultiplier = frameMuliplier_S; break;
+        case "M": costMultiplier = frameMuliplier_M; break;
+        
+    }
+
+    let price = 0.0;
+    price += frameBaseCost;
+    price += frameCostperCm * (frameWidth/10);
+    price += matCostPerCm * (matWidth/10)
+    price *= costMultiplier;
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

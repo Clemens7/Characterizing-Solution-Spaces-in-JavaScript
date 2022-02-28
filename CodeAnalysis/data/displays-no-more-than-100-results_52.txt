@@ -1,0 +1,170 @@
+
+
+export class CartItemsContainer{
+    constructor(){
+        this.container = document.getElementById('cart-link');
+        this.defaultValue = "Cart";
+        this.refresh();
+    }
+
+    refresh(){
+        if(!localStorage['cart'] ){
+            this.container.innertText = this.defaultValue;
+            return;
+        }}
+
+
+
+
+}import { CartItemsContainer } from "./header-dom.js";
+
+document.addEventListener("DOMContentLoaded", async (event) => {
+    console.log("header js loaded");
+    let test = new CartItemsContainer();
+    test.refresh();
+
+});export class Artwork {
+  constructor(id, title, artist, date, img) {
+    this.id = id;
+    this.artist = artist;
+    this.title = title;
+    this.date = date;
+    this.img = img;
+  }
+}
+
+
+export class FrameConfig {
+
+  
+}
+import * as CACHE from './search-cache.js';
+import { Artwork } from '../models.js';
+const API_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
+export async function search(q){
+    if (!q)
+    let searchResponse = await fetch(searchAPI(q));
+    let searchRawData = await searchResponse.json();
+
+    return (searchRawData.total > 0) ? searchRawData.objectIDs ;
+}
+export async function retrieveArtworkDetails(objectID){
+    let artwork = CACHE.retrieveResult(objectID);
+    if(artwork) 
+
+    console.log("searching online");
+    let artworkResponse = await fetch(objectsAPI(objectID))
+    let rawArtworkData = await artworkResponse.json();
+
+    artwork = new Artwork(
+        rawArtworkData.objectID,
+        rawArtworkData.title,
+        rawArtworkData.artistDisplayName,
+        rawArtworkData.objectDate,
+        rawArtworkData.primaryImageSmall);
+
+    CACHE.storeResult(artwork);
+    return artwork;
+}
+function searchAPI(q){
+    return `${API_URL}/search?hasImages=true&q=${q}`
+}
+function objectsAPI(objectID){
+    return `${API_URL}/objects/${objectID}`;
+}
+import { Artwork } from '../models.js';
+
+export function storeResult(artwork){
+    console.log(`Storing ${artwork.id} in local storage`);
+    localStorage[artwork.id] = JSON.stringify(artwork);
+}
+export function retrieveResult(id){
+    if (!(id in localStorage)){
+        console.log(`Object with id ${id} not cached`);
+        return null;
+    }}
+let currentCount = 0;
+import { MAX_ARTWORKS } from "./search.js";
+import { Artwork } from '../models.js';
+export class SearchResultContainer{
+    constructor(){
+        this.container = document.getElementById("gallery");
+        this.limit = 100;
+    }
+    render(artwork) {
+        this.container.appendChild(createHTMLElement("div", {"class": "thumb"}, [
+            createHTMLElement("a", {
+                "href": `./config.html?objectID=${artwork.id}`,
+                "id": `object-${currentCount}`
+            }, [
+                createHTMLElement("img", {
+                    "src":`${artwork.img}`,
+                    "alt": `${artwork.title}`,
+                    "id":`object-image-${currentCount}`
+                }),
+                createHTMLElement("div", {"class":"museum-label"},[
+                    createHTMLElement("span", {"class": "artist"},artwork.artist),
+                    createHTMLElement("span", {"class": "title"},artwork.title),
+                    createHTMLElement("span", {"class": "date"},`, ${artwork.date}`),
+                ])
+            ])
+        ]));
+        currentCount++;
+    }
+    clear(){
+        currentCount++;
+        this.container.innerHTML = '';
+    }
+
+}
+export class SearchInfo{
+    constructor(){
+        this.element = document.getElementById('search-info');
+    }
+    startSearch(query){
+        if(!query)
+        this.element.innerHTML = `Searching for “${query}”...`;
+    }
+    searchFinished(query, amount){
+        if(!query)
+        this.element.innerHTML = `Found ${(amount > MAX_ARTWORKS) ? MAX_ARTWORKS } artwork${(amount == 1)  : "s"} for “${query}”`;
+    }
+
+}
+function createHTMLElement(tag, attributes, content = null){
+    const element = document.createElement(tag);
+    for (const key in attributes) {
+        element.setAttribute(key, attributes[key]);
+    }
+
+    if (Array.isArray(content)){
+        content.forEach(child => {
+            element.appendChild(child);
+        });
+    }
+    else if (content != ""){
+        element.innerHTML = content;
+    }
+
+    return element;
+}
+import {SearchResultContainer, SearchInfo} from './search-dom.js';
+import * as API from './search-api.js';
+document.addEventListener("DOMContentLoaded", async (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    await search(urlParams.get('q'));});
+async function search(q){
+    const container = new SearchResultContainer();
+    container.clear();
+
+    const info = new SearchInfo();
+    info.startSearch(q);
+    const ids = await API.search(q);
+    info.searchFinished(q, ids.length);
+
+    const length = (ids.length > MAX_ARTWORKS) ? MAX_ARTWORKS ;
+    for(let i = 0; i < length; i++){
+        let artwork = await API.retrieveArtworkDetails(ids[i]);
+        container.render(artwork);
+    }}
+export const MAX_ARTWORKS = 100;

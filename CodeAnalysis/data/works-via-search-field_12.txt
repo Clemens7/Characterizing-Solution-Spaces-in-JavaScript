@@ -1,0 +1,102 @@
+export const MET_API = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+
+export const fetchObject = async id => {
+  console.log(`Fetch object with id ${id} from API`)
+  const request = await fetch(`${MET_API}objects/${id}`)
+  const response = await request.json()
+
+  if (response.message)  else {
+    return response
+  }}
+
+export const getObject = async (id, cache) => {
+  return cache.getById(id) || await fetchObject(id)
+}
+
+export const getSearchResults = async term => {
+  const request = await fetch(`${MET_API}search?hasImages=true&q=${term}`)
+  const response = await request.json()
+  let ids = response.objectIDs 
+  return ids.splice(0, 100) // return only first 100 results
+}
+
+class Cache {
+  constructor() {
+    this.objects = JSON.parse(localStorage.getItem('cache') || '[]')
+  }
+
+  getById(id) {
+    return this.objects.find(object => object.objectID == id)
+  }
+
+  add(items) {
+    this.objects = Array.from(new Set([...this.objects, ...items]))
+    localStorage.setItem('cache', JSON.stringify(this.objects))
+  }
+}
+
+export const cache = new Cache()
+
+    import { getSearchResults, getObject, cache } from '/met-api.js'
+
+    const search = async term => {
+      const info = document.getElementById('search-info')
+      info.innerText = `Searching for “${term}”...`
+      renderArtworks([])
+
+      const ids = await getSearchResults(term)
+      const results = ids.map(async id => getObject(id, cache))
+
+      Promise.all(results).then(objects => {
+        info.innerText = `Found ${objects.length} artwork${objects.length !== 1 && 's' } for “${term}”`
+        renderArtworks(objects)
+        cache.add(objects)
+      })
+    }
+
+    const showHighlights = async () => {
+      const request = await fetch(`/highlights.json`)
+      const { highlights: ids } = await request.json()
+      const results = ids.map(async id => getObject(id, cache))
+
+      Promise.all(results).then(objects => {
+        renderArtworks(objects)
+        cache.add(objects)
+      })
+    }
+
+    const renderArtworks = objects => {
+      document.getElementById('gallery').innerHTML = objects.map(item => `
+          <div class="thumb">
+            <a href="/config.html?objectID=${item.objectID}" id="object-0">
+              <img src="${item.primaryImageSmall}" alt="${item.title}" id="object-image-0">
+              <div class="museum-label">
+                <span class="artist">${item.artistDisplayName}</span>
+                <span class="title">${item.title}</span>,
+                <span class="date">${item.objectDate}</span>
+              </div>
+            </a>
+          </div>
+        `).join('')
+    }
+
+    document.querySelector('.search-form').addEventListener('submit', event => {
+      event.preventDefault()
+      const term = new FormData(event.target).get('q')
+      const url = new URL(window.location)
+      url.searchParams.set('q', term)
+      history.pushState({}, '', url)
+      search(term)
+    })
+
+    const term = new URL(window.location).searchParams.get('q')
+    if (term)  else {
+      showHighlights()
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart'));
+
+    if(cart != null 
+
+
+  

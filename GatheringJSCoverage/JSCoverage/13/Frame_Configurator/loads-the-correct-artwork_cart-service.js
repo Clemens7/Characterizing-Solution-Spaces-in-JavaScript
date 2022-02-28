@@ -1,0 +1,30 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    
+    
+    
+    
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    
+    
+    
+    
+    
+    
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null  ? "[]" ;
+        var cart = JSON.parse(json);
+        for (let item of cart) 
+    }
+}

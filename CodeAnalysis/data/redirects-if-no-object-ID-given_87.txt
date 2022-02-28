@@ -1,0 +1,131 @@
+export 
+
+let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+let storage = window.localStorage;
+
+export 
+
+export async function getObjects(ids) {
+    let array = new Array;
+    var fetches = [];
+    for (let i = 0; i < ids.length; i++) {
+
+        let id = ids[i];
+        fetches.push(
+            getObject(id)
+                .then(res => array.push(res))
+        );
+    }
+
+    console.log(`waiting for ${fetches.length} objects`);
+    await Promise.all(fetches);} 
+
+export async function getObject(id) {
+    let url = baseUrl + id;
+
+    var cached = storage.getItem("objects/" + id);
+    if (cached != null) 
+
+    return fetch(url)
+        .then(res => { return res.json(); })
+        .then(res => { return store("objects/" + id, res); });
+}
+
+function store(key, value) {
+    storage.setItem(key, JSON.stringify(value));
+    return value;
+}
+export class Cart {
+    constructor(items) {
+        this.items = items;
+    }
+
+    
+
+    
+}
+
+export class Item {
+    
+}
+
+export class Destination {
+    
+}
+
+/* Only store the array to comply with tests */
+export function retrieveCart(){
+    const cachedItems = window.localStorage.getItem('cart');
+    if (cachedItems != null) {
+        return new Cart(JSON.parse(cachedItems));
+    }
+
+}
+
+export 
+import * as api from './metmuseumAPI.js';
+import * as util from './util.js';
+
+const urlParams = new URLSearchParams(window.location.search);
+const queryParam = urlParams.get('q');
+
+var gallery = document.getElementById("gallery");
+var template = createTemplate(gallery, ".thumb");
+var searchInfo = document.getElementById("search-info");
+
+util.showCartNumber();
+
+if (queryParam) 
+else {
+    doHighlights();
+}
+
+
+
+function doHighlights() {
+    fetch("./highlights.json")
+       .then(response => response.json())
+       .then(data => show(data["highlights"]));
+}
+
+
+
+function createTemplate(parent, query) {
+    var template = parent.querySelector(query);
+    template.remove();
+
+    return template;
+}
+
+function show(ids) {
+    api.getObjects(ids)
+        .then();
+}
+
+
+
+
+import * as Model from './models.js';
+
+export 
+
+export 
+
+export 
+
+export 
+
+export function showCartNumber() {
+    const cart = Model.retrieveCart();
+    const cartNum = cart.items.length;
+    const cartLink = document.getElementById("cart-link");
+    if(cartNum <= 0) {
+        cartLink.innerText = "Cart";
+    }
+    console.log(cart.items.length);
+
+    
+}
+
+
+export 

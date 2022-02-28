@@ -1,0 +1,255 @@
+export 
+
+export export class Artwork{
+    
+}
+    import {calculatePrice} from "./frame.js";
+    import * as GalleryAPI from "./searchAPI.js";
+    import {showNumItems} from "./common.js";
+    import {render} from "./frame.js";
+    import * as GalleryCache from "./artwork-cache.js"
+
+    /*let cart = [{objectID: 823328, printSize: 'L', frameWidth: 27, frameStyle: 'classic', matWidth: 31, matColor: 'indigo'},
+      {objectID: 436529, printSize: 'S', frameWidth: 20, frameStyle: 'shabby', matWidth: 0},];
+    localStorage.setItem("cart", JSON.stringify(cart));*/
+
+    let artworks = JSON.parse(localStorage.getItem("cart"));
+
+    setUp();
+
+    function setUp(){
+      document.getElementById('cart-link').innerHTML = 'Cart' + showNumItems();
+      showArtworks();
+      setTotalPrice();
+
+      const form = document.getElementById('cart');
+      form.addEventListener("submit", removeElement, false)
+    }
+
+    async function showArtworks() {
+      const results = document.getElementById('cart');
+      results.innerHTML = '';
+      if (artworks == null || artworks.length == 0){
+        results.innerHTML = `<p> There are no items in your shopping cart.</p>`;
+        document.getElementById('checkout-button').disabled = true;
+      }
+    }
+
+    
+
+    
+
+    function setTotalPrice() {
+      let total = 0;
+      for (let artwork in artworks)
+      document.getElementById('price-total').innerHTML = total.toString();
+    }
+
+    
+
+  
+
+
+
+export function showNumItems() {
+    let artworks = JSON.parse(localStorage.getItem("cart"));
+    let counter = 0;
+    for (let artwork in artworks)
+    if (counter == 0){
+        return "";
+    }
+}
+    import {GalleryDocumentContainer} from "./GalleryDocumentContainer.js";
+    import * as GalleryAPI from "./searchAPI.js";
+    import * as GalleryCache from "./artwork-cache.js"
+    import {showNumItems} from "./common.js";
+    import * as frame from './frame.js';
+
+
+    document.getElementById('cart-link').innerHTML = 'Cart' + showNumItems();
+
+
+    let frameSlider = document.getElementsByName('frameWidthR');
+    let frameWidth = frameSlider[0].value;
+    frameSlider[0].addEventListener('change', );
+    let frameText = document.getElementsByName('frameWidth');
+    frameText[0].addEventListener('change', );
+
+    let matSlider = document.getElementsByName('matWidthR');
+    let matWidth = matSlider[0].value;
+    matSlider[0].addEventListener('change', );
+    let matText = document.getElementsByName('matWidth');
+    matText[0].addEventListener('change', );
+
+    function getRadioValue(name){
+      let radios = document.getElementsByName(name);
+      for (let radio of radios){
+        if(radio.checked){
+          return radio.value;
+        }
+      }}
+
+    let printSize = getRadioValue('printSize');
+    let frameStyle = getRadioValue('frameStyle');
+    let matColor = getRadioValue('matColor');
+
+
+
+
+
+
+    const selectedArtwork = GalleryCache.retrieve('configArtwork');
+      let div_museum_label = document.createElement('div');
+      div_museum_label.setAttribute('class','museum-label');
+      let artist_span=document.createElement('span');
+      artist_span.setAttribute('class','artist');
+      artist_span.innerText=selectedArtwork.artist;
+      let title_span=document.createElement('span');
+      title_span.setAttribute('class','title');
+      title_span.innerText=selectedArtwork.title + ', ';
+      let date_span=document.createElement('span');
+      date_span.setAttribute('class','date');
+      date_span.innerText=selectedArtwork.date;
+
+      div_museum_label.appendChild(artist_span);
+      div_museum_label.appendChild(title_span);
+      div_museum_label.appendChild(date_span);
+
+      let prImage = selectedArtwork.image;
+      let img = document.createElement('img');
+      img.src = prImage;
+      img.id = 'preview-image'
+      let container = document.getElementById('preview-container');
+      container.appendChild(img);
+      container.appendChild(div_museum_label);
+      frame.render(img, container, getRadioValue('printSize'), getRadioValue('frameStyle'), frameWidth, getRadioValue('matColor'), matWidth);
+      document.getElementById("price").innerText = "€ " + frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+
+
+
+      let configForm = document.getElementById("config-form");
+
+      configForm.addEventListener("change", );
+
+
+
+
+      configForm.addEventListener("submit", );
+
+
+
+
+
+        const params = (new URL(window.location)).searchParams;
+        const ps = params.get('printSize');
+        if (!ps ) ) ) ) ) 
+
+
+    /*document.addEventListener('DOMContentLoaded', event => {
+        const params = (new URL(document.location)).searchParams;
+        setValue(printSize);
+        setValue(frameStyle);
+        setValue(frameWidth);
+        setValue(matColor);
+        setValue(matWidth);
+
+    })*/
+
+
+  export 
+
+export 
+
+export 
+export class GalleryDocumentContainer {
+    constructor(containerID = "gallery") {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addArtworkToDocument(artwork) {
+        function parseLabel() {
+            let div_museum_label = document.createElement('div');
+            div_museum_label.setAttribute('class','museum-label');
+
+            let artist_span=document.createElement('span');
+            artist_span.setAttribute('class','artist');
+            artist_span.innerText=artwork.artist;
+            let title_span=document.createElement('span');
+            title_span.setAttribute('class','title');
+            title_span.innerText=artwork.title + ', ';
+            let date_span=document.createElement('span');
+            date_span.setAttribute('class','date');
+            date_span.innerText=artwork.date;
+
+            div_museum_label.appendChild(artist_span);
+            div_museum_label.appendChild(title_span);
+            div_museum_label.appendChild(date_span);
+
+            return div_museum_label;
+        }
+
+        function parseImage() {
+            let image = document.createElement('img');
+            image.setAttribute('alt','');
+            image.setAttribute('id','object-image-0');
+            image.setAttribute('src',artwork.image)
+            return image;
+        }
+
+        let thumb_div = document.createElement('div');
+        thumb_div.setAttribute('class','thumb');
+        thumb_div.onclick = ;
+        let link = document.createElement('a');
+        link.setAttribute('id','object-0');
+        link.setAttribute('href', 'config.html');
+        link.appendChild(parseImage());
+        link.appendChild(parseLabel());
+        thumb_div.appendChild(link);
+        this.container.appendChild(thumb_div);
+    }
+
+}
+
+        import {GalleryDocumentContainer} from "./GalleryDocumentContainer.js";
+        import * as GalleryAPI from "./searchAPI.js";
+        import * as GalleryCache from "./artwork-cache.js"
+        import {showNumItems} from "./common.js";
+
+        document.getElementById('cart-link').innerHTML = 'Cart' + showNumItems();
+
+        let searchForm = document.getElementById("search-form");
+        searchForm.addEventListener("submit", );
+
+        
+
+        async function displayHighlights() {
+            console.log("fetching highlights");
+            let container = new GalleryDocumentContainer();
+            container.clear();
+            let highlights = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+            for (let i = 0; i < highlights.length; i++) {
+                let artwork = await GalleryAPI.getSearchResult(highlights[i]);
+                container.addArtworkToDocument(artwork);
+
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', event => {
+            const params = (new URL(document.location)).searchParams;
+            const searchTerm = params.get('q');
+            if (!searchTerm ) {
+                displayHighlights();
+                return;
+            }})
+    import {Artwork} from "./artwork.js";
+
+export 
+
+
+export 
+

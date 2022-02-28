@@ -1,0 +1,145 @@
+export /*
+export function retrieveAll() {
+    console.log(`Retrieving all cart objects from local storage`);
+    const key = "cart";
+
+    if(key in localStorage) 
+}
+
+/*
+export 
+
+
+export 
+
+import * as CartCache from './cartCache.js';
+export async function updateCartLink() {
+    const items = await CartCache.retrieveAll();
+    if (!items ) {
+        document.getElementById("cart-link").innerText = `Cart`;
+    }
+}/*
+export 
+
+/*
+export 
+
+/*
+export 
+
+/*
+export 
+export 
+
+export 
+
+export 
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import { retrieveObj } from './metCache.js';
+
+export class ItemDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    
+
+    
+
+    
+
+/*
+      <div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€
+            <span id="price-0">0</span>
+          </div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>
+    
+
+    /*
+      <div class="cart-total">
+        <div class="price">Total: €
+            <span id="price-total">0</span>
+        </div>
+        <button type="button" id="checkout-button">Checkout</button>
+      </div>
+    
+
+
+}
+
+import { MetObject } from './met.js';
+import * as MetCache from './metCache.js';
+
+const API_OBJ_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search?q=";
+
+export 
+
+export async function search(query) {
+	const url = API_SEARCH_URL + query + "&hasImages=true";
+	try {
+		const response = await fetch(url);}
+
+import { MetObject } from './met.js';
+
+export 
+
+export export class MetObject {
+    
+}
+
+		import * as MetAPI from './metAPI.js';
+		import { ItemDocumentContainer } from './met-dom.js';
+		import * as jsonHelper from './jsonHelper.js';
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+		let container = new ItemDocumentContainer("gallery");
+
+		
+
+		
+
+		async function updateHeader(text) {
+			document.getElementById("search-info").innerText = text;
+		}
+
+		async function search(query) {
+			updateHeader('Searching for “' + query + '”...')
+			let count = await loadObjects(await MetAPI.search(query)}
+
+		
+
+		document.addEventListener('DOMContentLoaded', event => {
+			const params = (new URL(document.location)).searchParams;
+			const searchquery = params.get('q');
+			if (!searchquery)  else {
+				document.getElementById('search').value = searchquery;
+				search(searchquery);
+			}
+		});
+
+
+		const form = document.querySelector('.search-form');
+		form.addEventListener('submit', );
+
+		cartLinkHelper.updateCartLink();
+	

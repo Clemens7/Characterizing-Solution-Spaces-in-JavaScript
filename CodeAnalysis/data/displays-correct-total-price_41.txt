@@ -1,0 +1,390 @@
+
+    import * as CartCache from './cartCache.js';
+    import { ItemDocumentContainer } from './met-dom.js';
+    import * as MetAPI from './metAPI.js';
+    import * as Frame from './frame.js';
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+    let itemContainer = new ItemDocumentContainer("cart");
+
+    
+
+    async function retrieveCart() {
+      const items = await CartCache.retrieveAll();
+      if (!items || items.length < 1) 
+
+      /* items now is a list of the items in the cart
+      itemContainer.clear();
+
+      let i = 0;
+      let totalPrice = 0;
+      for (let item of items) {
+        let img = await MetAPI.retrieveObj(item.objectID);
+        totalPrice = totalPrice + itemContainer.addCartItemToDocument(item, img, i);
+
+        Frame.render(document.getElementById("object-image-" + i),
+          document.getElementById("preview-container-" + i),
+          item.printSize,
+          item.frameStyle,
+          item.frameWidth,
+          item.matColor,
+          item.matWidth);
+
+        document.getElementById("" + i).addEventListener("click", );
+
+        i = i + 1;
+      }
+      itemContainer.addCartCheckout(totalPrice);
+
+    }
+
+    document.addEventListener('DOMContentLoaded', event => {
+      retrieveCart();
+    });
+
+		cartLinkHelper.updateCartLink();
+  /*
+export function retrieveAll() {
+    console.log(`Retrieving all cart objects from local storage`);
+    const key = "cart";
+
+    if(key in localStorage) {
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+/*
+export 
+
+
+export 
+
+import * as CartCache from './cartCache.js';
+export async function updateCartLink() {
+    const items = await CartCache.retrieveAll();
+    if (!items || items.length < 1)  else {
+        document.getElementById("cart-link").innerText = `Cart (${items.length})`;
+    }
+}/*
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+/*
+export 
+
+/*
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+
+/*
+export function containerWithAttributes(elements, attributes, tag='div') {
+    return setAttributes(container(elements, tag), attributes);
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    let cmFramePrice;
+    let multiplicator
+
+    switch(frameStyle) {
+      
+      case 'natural':
+        cmFramePrice = 0.8;
+        break;
+      case 'shabby':
+        cmFramePrice = 0.9;
+        break;
+      case 'elegant':
+        cmFramePrice = 0.85;
+        break;
+      
+    }
+
+    switch(printSize) {
+      case 'S':
+        multiplicator = 1;
+        break;
+      
+      case 'L':
+        multiplicator = 3.5;
+        break;
+      
+    }
+
+    price = multiplicator * (30 + (cmFramePrice * frameWidth) + (0.05 * matWidth));
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import { retrieveObj } from './metCache.js';
+
+export class ItemDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+
+    
+
+/*
+      <div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€
+            <span id="price-0">0</span>
+          </div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>
+    addCartItemToDocument(item, img, i) {
+        let price = 0;
+        this.container.appendChild(createCartItem(item, img, i));
+
+        function createCartItem(item, img, i) {
+            return DOM.containerWithAttributes([
+                DOM.containerWithAttributes([
+                    DOM.containerWithAttributes([
+                        createImgItem(item),
+                    ], {href: "/config.html?objectID="+item.objectID+"&printSize="+item.printSize+"&frameStyle="+item.frameStyle+"&frameWidth="+item.frameWidth+"&matColor="+item.matColor+"&matWidth="+item.matWidth}, "a")
+                ], {className: "cart-preview", id: "preview-container-" + i}, "div"),
+                DOM.containerWithAttributes([
+                    createCartLabelDivItems(),
+                    createPriceElem(),
+                    DOM.containerWithAttributes([], {className: "cart-remove", id: i}, "button")
+                ], {className: "museum-label"}, "div"),
+            ], {className: "cart-item"}, "div");
+        }
+
+        function createPriceElem() {
+            price = Frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+
+            let p = document.createElement("div");
+            p.setAttribute("class", "cart-price");
+            p.innerHTML = "\u20AC ";
+
+            let t = document.createElement("span");
+            t.setAttribute("id", "price-" + i);
+            t.innerHTML = price.toFixed(2);
+            p.appendChild(t);
+
+            return p;
+        }
+
+        function createImgItem() {
+            let image = DOM.containerWithAttributes([], {
+                src: img.primaryImage,
+                alt: img.title,
+                id: "object-image-" + i
+            }, "img");
+
+            return image;
+        }
+
+        function createCartLabelDivItems() {
+            return DOM.container([
+                createSpanItem("artist", img.artistDisplayName),
+                createSpanItem("title", img.title + ", "),
+                createSpanItem("date", img.objectDate),
+                DOM.container([], "br"),
+                DOM.container([], "br"),
+                createSpanItem("frame-description", "")
+            ]);
+        }
+
+        function createSpanItem(className, innerText) {
+            let container = DOM.containerWithAttributes([], {className: className}, "span");
+            if (className === "frame-description") {
+                let size = "";
+                if (item.printSize === "S") {
+                    size = "Small";
+                } else if (item.printSize === "M")  else if (item.printSize === "L") {
+                    size = "Large";
+                }
+
+                if (item.matWidth == "0")  else {
+                    container.innerText = `${size} print in a ${item.frameWidth/10} cm ${item.frameStyle} frame with a ${item.matWidth/10} cm ${item.matColor} mat.`;
+                }
+            } else {
+                container.innerText = innerText;
+            }
+            return container;
+        }
+
+        return price;
+    }
+
+    /*
+      <div class="cart-total">
+        <div class="price">Total: €
+            <span id="price-total">0</span>
+        </div>
+        <button type="button" id="checkout-button">Checkout</button>
+      </div>
+    addCartCheckout(totalPrice) {
+        this.container.appendChild(createCheckout());
+
+        function createCheckout() {
+            return DOM.containerWithAttributes([
+                createPriceElem(),
+                createButtonElem(),
+            ], {className: "cart-total"}, "div");
+        }
+
+            function createButtonElem() {
+                let container = DOM.containerWithAttributes([], {type: "button", id: "checkout-button"}, "button");
+                container.innerText = "Checkout";
+                return container;
+            }
+
+            function createPriceElem() {
+            /*
+                let container = DOM.containerWithAttributes([
+                    createPrice(totalPrice)
+                ], {className: "price"}, "div");
+                container.innerText = "Total: \u20AC";
+                return container;
+
+                function createPrice(innerText) {
+                    let container = DOM.containerWithAttributes([], {id: "price-total"}, "span");
+                    container.innerText = innerText;
+                    return container;
+                }
+                let p = document.createElement("div");
+                p.setAttribute("class", "price");
+                p.innerHTML = "Total: \u20AC ";
+
+                let t = document.createElement("span");
+                t.setAttribute("id", "price-total");
+                t.innerHTML = totalPrice.toFixed(2);
+                p.appendChild(t);
+
+                return p;
+            }
+    }
+
+
+}
+
+import { MetObject } from './met.js';
+import * as MetCache from './metCache.js';
+
+const API_OBJ_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search?q=";
+
+export async function retrieveObj(objectID) {
+	let url = API_OBJ_URL + objectID;
+	let obj = MetCache.retrieveObj(objectID);
+
+	if (obj) 
+
+	try {
+		const response = await fetch(url);
+		console.log("got response");
+		const rawData = await response.json();
+		console.log("got json");
+		obj = new MetObject(rawData.objectID, rawData.primaryImageSmall, rawData.title, rawData.artistDisplayName, rawData.objectDate);
+		MetCache.storeObj(obj);
+		return obj;
+	}}
+
+export 
+
+import { MetObject } from './met.js';
+
+export function retrieveObj(objectID) {
+    if(objectID in localStorage) 
+}
+
+export function storeObj(metObject) {
+    const key = metObject.objectID;
+    console.log(`Storing met object with ID ${key} in local storage`);
+    localStorage[key] = JSON.stringify(metObject);
+}export class MetObject {
+    constructor(objectID, primaryImage, title, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.primaryImage = primaryImage;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}

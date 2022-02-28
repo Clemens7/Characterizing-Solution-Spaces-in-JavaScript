@@ -1,0 +1,137 @@
+function createAndAppendResult(result) {
+    var container = document.getElementById('gallery');
+    console.log(container)
+    if (!container) 
+    var divNode = document.createElement("div")
+    divNode.setAttribute('class', 'thumb')
+    container.appendChild(divNode)
+    divNode.setAttribute('class', 'thumb')
+    var aNode = document.createElement("a");
+    aNode.setAttribute('id', 'object-' + result.objectID);
+    divNode.appendChild(aNode);
+    var imgNode = document.createElement("img");
+    imgNode.setAttribute('src', result.primaryImageSmall);
+    imgNode.setAttribute('id', 'object-img-' + result.objectID);
+    var linkNode = document.createElement("a");
+    linkNode.setAttribute("href", 'config.html?object-id=' + result.objectID);
+    linkNode.appendChild(imgNode);
+    aNode.appendChild(linkNode);
+    var innerDivNode = document.createElement("div");
+    innerDivNode.setAttribute('class', 'museum-label');
+    aNode.appendChild(innerDivNode);
+    var span_1 = document.createElement("span");
+    span_1.className = "artist";
+    span_1.innerHTML = result.artistDisplayName;
+    innerDivNode.appendChild(span_1)
+    var span_2 = document.createElement("span");
+    span_2.className = "title";
+    span_2.innerHTML = result.title + ', ';
+    innerDivNode.appendChild(span_2)
+    var span_3 = document.createElement("span");
+    span_3.className = "date";
+    span_3.innerHTML = result.objectDate;
+    innerDivNode.appendChild(span_3)
+
+
+}
+
+function modifySearchBar(text) {
+    var bar = document.getElementById('search-info');
+    bar.innerHTML = text;
+}
+
+function clear() {
+    var container = document.getElementById('gallery');
+    container.innerHTML = '';
+}
+
+function addCart(num){
+    document.getElementById("cart-link").innerHTML="Cart ("+num+")";
+
+}
+document.addEventListener('DOMContentLoaded', event => {
+    if(retrieveFromLocal("cart"))else{
+        addCart(0)
+    }
+    const params = (new URL(document.location)).searchParams;
+    const termQuery = params.get('q');
+    if (!termQuery) 
+    document.getElementById('search').value = termQuery;
+    console.log(termQuery)
+    retrieve(termQuery);
+});
+
+const form = document.querySelector('form');
+console.log(form)
+form.addEventListener('submit', );
+
+
+
+async function retrieve(term) {
+    modifySearchBar("Searching for “" + term + "”...")
+    clear();
+    let resultFromCache = retrieveFromLocal(term);
+    if(resultFromCache)
+    const url = api_url_search(term);
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const responseIds = await rawData.objectIDs;
+       
+        if (!responseIds) 
+        var ids = responseIds;
+        if (responseIds.length > 100) 
+        retrieveDetails(term,ids);
+
+    }
+    
+
+}
+
+function retrieveDetails(term,ids){
+    var objects = [];
+    const promises = ids.map(word => new Promise(resolve => {
+        var url_obj = api_url_object(word);
+        fetch(url_obj).then(response => response.json())
+            .then(result => {
+                createAndAppendResult(result)
+                resolve(result)})
+
+
+    }));
+
+    Promise.all(promises).then(results => {
+        objects = results
+        console.log(objects)
+        if(term) storeInLocal(term,objects);
+            if(term){
+        if (objects.length > 1 ) {
+
+            modifySearchBar("Found " + objects.length + " artworks for “" + term + "”")
+        }
+    }
+
+
+    })
+}
+
+
+function api_url_search(term) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${term}`;
+    return (API_URL);
+}
+function api_url_object(term) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${term}`;
+    return (API_URL);
+}
+
+function storeInLocal(key,value){
+    localStorage[key]=JSON.stringify(value);
+}
+
+function retrieveFromLocal(key){
+    if(key in localStorage)
+}
+
+
+

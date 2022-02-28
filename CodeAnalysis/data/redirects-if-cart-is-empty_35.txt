@@ -1,0 +1,114 @@
+import { readArtworkFromCache, writeArtworkToCache } from './cache.js';
+import { Artwork } from './classes.js';
+import { createThumb } from './dom-helper.js';
+
+export 
+
+export 
+
+function memoize(f) {
+  const cache = new Map();
+  return ;
+}
+
+export const retrieveArtworkById = memoize();
+
+export 
+
+import { Artwork, Configuration } from './classes.js';
+
+export 
+
+export 
+
+export function readCartFromCache() {
+    if ('cart' in localStorage)  else {
+        return [];
+    }
+}
+
+export function readCartSizeFromCache() {
+    if ('cart' in localStorage)  else {
+        return 0;
+    }
+}
+
+export 
+
+  import { retrieveArtworkById } from './artworks.js';
+  import { writeCartToCache, readCartFromCache } from './cache.js';
+  import { createCartItem, updateCartLink } from './dom-helper.js';
+  import { calculatePrice } from './frame.js';
+
+  let isRendering = false;
+  let dispatchedRenderDuringRender = false;
+
+  function dispatchRenderCart() {
+    if (isRendering)  else {
+      isRendering = true;
+      renderCart().catch().finally(() => {
+        isRendering = false;
+        if (dispatchedRenderDuringRender) 
+      });
+    }
+  }
+
+  async function renderCart() {
+    updateCartLink();
+    const items = await Promise.all(readCartFromCache().map());
+    console.log(items);
+
+    document.querySelectorAll('.cart-item').forEach();
+
+    let totalPrice = 0;
+    const cart = document.getElementById('cart');
+    for (let i = 0; i < items.length; i++) {
+      document.getElementById('cart-empty').hidden = false;
+      document.getElementById('checkout-button').disabled = true;
+    }
+  }
+
+  document.getElementById('checkout-button').addEventListener('click', );
+
+  dispatchRenderCart();
+export class Artwork {
+    
+}
+
+export class Configuration {
+    
+}
+import { readCartSizeFromCache } from './cache.js';
+import { Artwork, Configuration } from './classes.js';
+import { calculatePrice, render } from './frame.js';
+
+
+
+const h = createHtmlNode;
+
+export 
+
+const printSizeLabels = {
+  'S': 'Small',
+  'M': 'Medium',
+  'L': 'Large',
+};
+
+
+
+export 
+
+export function updateCartLink() {
+  const element = document.getElementById('cart-link');
+  if (element) {
+    const numCartItems = readCartSizeFromCache();
+    element.innerText = numCartItems > 0  : 'Cart';
+  }
+}
+export 
+
+export 
+
+export 
+
+export 

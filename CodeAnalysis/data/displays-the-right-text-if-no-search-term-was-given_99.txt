@@ -1,0 +1,68 @@
+export function read(objectID) {
+    const key = objectID;
+    if(key in localStorage) 
+}
+
+export export class Artwork {
+    
+}import { Artwork } from './artwork.js';
+import * as ArtworkCache from './artwork-cache.js';
+
+export async function getArtwork(objectID) {
+    let artwork = ArtworkCache.read(objectID);
+    if(artwork) 
+
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    try {
+        const response = await fetch(url);
+        if(response.status !== 200) 
+
+        const object = await response.json();
+    let storage = localStorage.getItem("cart");
+    if(storage == null){
+  
+    }
+  
+  import { getArtwork } from './met-api.js';
+const baseURI = 'https://collectionapi.metmuseum.org';
+const form = document.querySelector('.search-form');
+
+let urlParams = new URLSearchParams(window.location.search);
+let q = urlParams.get('q');
+
+window.onload= () => {
+    cartSize();
+
+    if(q != null)  else {
+        loadHighlights();
+    }
+
+
+    
+}
+
+function loadHighlights() {
+    let hl = fetch('./highlights.json').then(hl => hl.json());
+    hl.then(x => getObjectsData({objectIDs: x.highlights}))
+}
+
+form.addEventListener('submit', )
+
+
+
+
+
+function getObjectsData(data) {
+    let objectIds = data.objectIDs.slice(0,100);
+    let promises = objectIds.map(x => getArtwork(x));
+    Promise.all(promises).then()
+}
+
+
+
+
+
+function cartSize(){
+    let storage = localStorage.getItem("cart");
+    if(storage != null)
+}

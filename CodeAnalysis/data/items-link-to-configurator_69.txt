@@ -1,0 +1,213 @@
+const STORAGE_KEY = 'object_';
+const metApiEndpoint = 'https://collectionapi.metmuseum.org';
+
+class ArtCollectionService {
+
+    fetchObject = (oID) => {
+        let cachedObject = window.localStorage.getItem(STORAGE_KEY + oID);
+        if (cachedObject === null) {
+            return fetch(metApiEndpoint + '/public/collection/v1/objects/' + oID)
+                    .then(response => response.json())
+                    .then(data => {
+                        window.localStorage.setItem(STORAGE_KEY + oID, JSON.stringify(data));
+                        return data;
+                    });
+        }
+    };
+
+    search = ;
+}
+export default new ArtCollectionService();
+import cartService from './services/cart_service.js';
+import artCollectionService from "./services/art_collection_service.js";
+import {calculatePrice, render} from './frame.js';
+
+document.getElementById('checkout-button').onclick = ;
+
+if (cartService.isEmpty)  else {
+    document.getElementById('empty-text').style.display = 'none';
+    const cartTemplate = document.getElementById('cart-template');
+
+    let totalPrice = 0;
+
+    Promise.all(cartService.cart.map(value => artCollectionService.fetchObject(value.objectID).then(content => Object.assign(value, content))))
+        .then(value => value.forEach((value, index) => {
+            const templateNode = cartTemplate.content.cloneNode(true);
+            templateNode.querySelector('.cart-item').id = `cart-template-${index}`;
+
+            const cartPreview = templateNode.querySelector('.cart-preview');
+            cartPreview.id = `preview-container-${index}`;
+            cartPreview.querySelector('a').href = `config.html?objectID=${value.objectID}&printSize=${value.printSize}&frameStyle=${value.frameStyle}&frameWidth=${value.frameWidth}&matColor=${value.matColor}&matWidth=${value.matWidth}`;
+
+            const cartThumb = templateNode.querySelector('.cart-thumb');
+            cartThumb.id = `preview-${index}`;
+            cartThumb.src = value.primaryImageSmall;
+            cartThumb.alt = value.title;
+            cartThumb.onload = () => {
+                render(cartThumb, cartPreview, value.printSize, value.frameStyle, value.frameWidth, value.matColor, value.matWidth);
+            };
+
+            templateNode.querySelector('.artist').innerText = value.artistDisplayName;
+            templateNode.querySelector('.title').innerText = value.title;
+            templateNode.querySelector('.date').innerText = value.objectDate;
+
+            let size = {
+                'S': 'Small',
+                'M': 'Medium',
+                'L': 'Large'
+            };
+
+            if (value.matWidth === 0)  else {
+                templateNode.querySelector('.frame-description').innerText = `${size[value.printSize]} print in a ${value.frameWidth / 10} cm ${value.frameStyle} frame with a ${value.matWidth / 10} cm ${value.matColor} mat.`;
+            }
+
+            const price = calculatePrice(value.printSize, value.frameStyle, value.frameWidth, value.matWidth);
+            const cartPrice = templateNode.querySelector('#price-0');
+            cartPrice.id = `price-${index}`;
+            cartPrice.innerText = price.toFixed(2);
+            totalPrice += price;
+
+            templateNode.querySelector('.cart-remove').onclick = ;
+
+            cartTemplate.parentNode.insertBefore(templateNode, cartTemplate); // insertAfter
+        })).then(() => document.getElementById('price-total').innerText = totalPrice.toFixed(2));
+}
+
+const cartLinkCallback = (cart) => {
+    const cartLink = document.getElementById('cart-link');
+    if (cart.isEmpty)  else {
+        cartLink.innerText = `Cart (${cart.length})`;
+    }
+};
+
+cartService.addCallback(cartLinkCallback);
+const STORAGE_KEY = 'cart';
+
+class CartService {
+
+    _cart;
+    _callbacks = {};
+    _lastCallbackId = 0;
+
+    constructor() {
+        const cart = this.fetchCart();
+        if (cart === null)  else {
+            this._cart = cart;
+        }
+    }
+
+    get cart() {
+        return JSON.parse(JSON.stringify(this._cart)); // since we already read it this way from local storage, we can use this to deep copy cart objects to avoid side effects
+    }
+
+    get length() {
+        return this._cart.length;
+    }
+
+    get isEmpty() {
+        return this._cart.length === 0;
+    }
+
+    contains = ;
+
+    add = ;
+
+    remove = ;
+
+    addCallback = (callback) => {
+        const id = ++this._lastCallbackId;
+        this._callbacks[id] = callback;
+        callback(this);
+        return id;
+    };
+
+    removeCallback = ;
+
+    fetchCart = () => {
+        return JSON.parse(window.localStorage.getItem(STORAGE_KEY));
+    };
+
+    writeCart = ;
+
+    indexOf = ;
+}
+
+export default new CartService();
+
+export class CartItem {
+    
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const baseCost = 30;
+    const matPerCm = 0.05;
+
+    const sizeMultiplier = {
+        'S': 1,
+        'M': 2,
+        'L': 3.5
+    };
+
+    const framePerCm = {
+        'classic': 1,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85
+    };
+
+    price = (baseCost + matPerCm * (matWidth/10) + framePerCm[frameStyle] * (frameWidth/10)) * sizeMultiplier[printSize];
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

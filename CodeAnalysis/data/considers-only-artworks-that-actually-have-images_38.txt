@@ -1,0 +1,33 @@
+
+export 
+
+
+export async function search(query){
+    let results;
+    let term = escape(query);
+    console.log(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${term}`);
+    await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${term}`)
+        .then()
+        .then()
+        .catch();
+    document.getElementById("cart-link").innerHTML = "Cart (" + JSON.parse(localStorage.getItem('cart')).length  +")";
+  import { requestById } from './museumAPI.js';
+import { search } from './museumAPI.js';
+
+document.addEventListener('DOMContentLoaded', async event => {
+    let params = (new URL(document.location)).searchParams;
+    let query = params.get("q");
+    var searchInfo = document.getElementById("search-info");
+
+    if (query != null) {
+        searchInfo.innerHTML = "Searching for “" + query + "”..."
+
+        let results = await search(query);) 
+    }});
+
+
+
+
+
+
+

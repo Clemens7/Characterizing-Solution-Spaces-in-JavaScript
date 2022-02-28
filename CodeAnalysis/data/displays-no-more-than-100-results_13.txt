@@ -1,0 +1,238 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    
+    
+    
+    
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    
+    
+    
+    
+    
+    
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null  ? "[]" ;
+        var cart = JSON.parse(json);
+        for (let item of cart) 
+    }
+}
+export class Serializable {
+    fillFromJSON(jsonObj) {
+        for (var propName in jsonObj) {
+            if (this.hasOwnProperty("_" + propName)) {
+                this["_" + propName] = jsonObj[propName];
+            }
+        }
+    }
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+export 
+export 
+export 
+import { Cart } from "./cart-service.js";
+export function updateCartCount(cart) {
+    if (cart.size == 0) {
+        document.getElementById("cart-link").innerText = "Cart";
+    }
+}
+updateCartCount(new Cart());
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export function getObject(objectID) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let object = checkObject(objectID);
+        if (object) 
+        else {
+            let metropolitanResponse = yield fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+            let responseJson = yield metropolitanResponse.json();
+            var metropolitanObject = new MetropolitanObject();
+            metropolitanObject.fillFromJSON(responseJson);
+            let storage = localStorage.getItem('objects');
+            var json = storage == null || storage.length == 0 ? "[]" : storage;
+            var objects = JSON.parse(json);
+            objects.push(metropolitanObject);
+            localStorage.setItem('objects', (JSON.stringify(objects).split(",\"_").join(",\"")).split("{\"_").join("{\""));
+            return yield Promise.resolve(metropolitanObject);
+        }
+    });
+}
+function checkObject(objectID) {
+    let storage = localStorage.getItem('objects');
+    var json = storage == null  ? "[]" ;
+    var objects = JSON.parse(json);
+    let index = objects.findIndex();
+    if (index == -1) {
+        return undefined;
+    }
+}
+export function searchMET(searchTerm) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let response = yield fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${searchTerm}&hasImages=true`);
+        console.log("got here");
+        let responseJson = yield response.json();
+        var metropolitanSearchResponseObject = new MetropolitanSearchResponseObject();
+        metropolitanSearchResponseObject.fillFromJSON(responseJson);
+        console.log('Search returned: ', metropolitanSearchResponseObject);
+        return yield Promise.resolve(metropolitanSearchResponseObject);
+    });
+}
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._objectID = null;
+        this._title = null;
+        this._artistDisplayName = null;
+        this._objectDate = null;
+        this._primaryImageSmall = null;
+        this._message = null;
+    }
+    get objectID() {
+        return this._objectID;
+    }
+    get title() {
+        return this._title;
+    }
+    get artist() {
+        return this._artistDisplayName;
+    }
+    get date() {
+        return this._objectDate;
+    }
+    get image() {
+        return this._primaryImageSmall;
+    }
+    
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._total = null;
+        this._objectIDs = null;
+    }
+    
+    get objectIDs() {
+        return this._objectIDs;
+    }
+}
+import { searchMET, getObject } from "./metropolitan-api.js";
+initSearch();
+function initSearch() {
+    let gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+    let urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("q") && urlParams.get("q")) {
+        triggerSearch(urlParams.get("q"));
+    }
+}
+function triggerSearch(q) {
+    let infoText = document.getElementById("search-info");
+    infoText.innerText = `Searching for “${q}”...`;
+    searchMET(q).then(searchResult => {
+        var promises = [];
+        if (searchResult.objectIDs) {
+            searchResult.objectIDs.forEach(id => {
+                promises.push(getObject(id));
+            });
+            Promise.all(promises).then(foundObjects => {
+                foundObjects = filterImages(foundObjects);
+                if (foundObjects.length === 1) 
+                else {
+                    infoText.innerText = `Found ${foundObjects.length} artworks for “${q}”`;
+                }
+                addImages(foundObjects);
+            });
+        }
+    });
+}
+function filterImages(objects) {
+    if (objects.length > 100) {
+        objects = objects.slice(0, 100);
+    }
+    return objects;
+}
+function addImages(objects) {
+    let gallery = document.getElementById("gallery");
+    for (let i = 0; i < objects.length; i++) {
+        let divElement = createHTMLElement("div", "thumb");
+        let linkElement = createHTMLElement("a", undefined, undefined, `object-${i}`);
+        linkElement.href = `/config.html?objectID=${objects[i].objectID}`;
+        let imgElement = createHTMLElement("img", undefined, undefined, `object-image-${i}`);
+        imgElement.src = objects[i].image;
+        imgElement.alt = objects[i].title;
+        let labelDiv = createHTMLElement("div", "museum-label");
+        let artist = createHTMLElement("span", "artist", objects[i].artist);
+        let title = createHTMLElement("span", "title", objects[i].title + ", ");
+        let date = createHTMLElement("span", "date", objects[i].date);
+        labelDiv.appendChild(artist);
+        labelDiv.appendChild(title);
+        labelDiv.appendChild(date);
+        linkElement.appendChild(imgElement);
+        linkElement.appendChild(labelDiv);
+        divElement.appendChild(linkElement);
+        gallery.appendChild(divElement);
+    }
+}
+function createHTMLElement(elementName, className, inputText, id) {
+    let element = document.createElement(elementName);
+    if (className)
+        element.className = className;
+    if (id)
+        element.id = id;
+    if (inputText && inputText != null)
+        element.innerText = inputText;
+    return element;
+}

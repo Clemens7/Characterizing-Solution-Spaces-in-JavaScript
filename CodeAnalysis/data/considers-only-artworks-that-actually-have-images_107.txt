@@ -1,0 +1,86 @@
+export 
+
+  export async function retrieveIDsFromAPI(queryElems) {
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${queryElems.join(' ')}`;
+
+    try {
+      const response = await fetch(url);export 
+
+
+export function retrieveFromStorage(queryElems) {
+    const key = queryElems.join(' ');
+    if (key in localStorage) 
+}import { retrieveFromStorage } from './art-cache.js';
+
+
+export async function countCartItems(){
+    let cartItems = retrieveFromStorage(['cart']);
+    let cartCount = 0;
+    if(cartItems)
+    
+    
+}export class artDocumentContainer {
+  
+  
+
+
+
+
+
+  
+  
+
+
+  
+
+  
+}
+
+
+export import { store, retrieveFromStorage } from './art-cache.js';
+import { retrieveIDsFromAPI, retriveImagesFromAPI } from './art-api.js';
+import { artDocumentContainer, addStuffToHtml } from './html-document-container.js';
+
+export async function searchForSomeArt(queryElems) {
+    const storeImageAndTotal = retrieveFromStorage(queryElems);
+    if (storeImageAndTotal)  else {
+
+      const first100IDsandTotalNumber = await retrieveIDsFromAPI(queryElems);
+    }}
+  
+  export 
+
+   
+
+   import { searchForSomeArt, displayhighlights } from './search-and-display.js';
+   import { store, retrieveFromStorage } from './art-cache.js';
+   import { countCartItems } from './display-cart-number.js';
+    
+    document.addEventListener('DOMContentLoaded', event => {
+  
+      const params = (new URL(document.location)).searchParams;
+      const searchQuery = params.get('q');
+     
+      if (!searchQuery) 
+     
+      let headerDoc = document.getElementById('search-info');
+      headerDoc.innerText = `Searching for “${searchQuery}”...`;
+      const searchQ = searchQuery.split(' ');
+      searchForSomeArt(searchQ);
+      countCartItems();
+    });
+
+    
+
+
+
+    countCartItems();
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('click', );
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', );
+
+    
+
+  

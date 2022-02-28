@@ -1,0 +1,20 @@
+window.calculateTotalPrice();export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const sizeMultiplier = {
+        'S': 1,
+        'M': 2,
+        'L': 3.5
+    };
+    const frameCost = {
+        'classic': 1,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85,
+    };
+    price = (frameCost[frameStyle] * (frameWidth / 10) + 0.05 * (matWidth / 10) + 30) * sizeMultiplier[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

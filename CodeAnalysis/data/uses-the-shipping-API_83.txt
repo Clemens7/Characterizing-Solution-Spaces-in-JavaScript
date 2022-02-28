@@ -1,0 +1,99 @@
+import * as myStorage from './localStorage.js';
+import {calculatePrice} from './frame.js';
+
+let items = [];
+let countries = {};
+let subtotal = 0;
+
+function init(){
+    const cartContent = myStorage.getCart();
+
+    console.log(cartContent);
+
+    if(cartContent.length === 0)else{
+        items = cartContent;
+
+        items.forEach(item => {
+            const {printSize, frameStyle, frameWidth, matWidth} = item;
+            subtotal += calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+        });
+
+        document.querySelector("#price-subtotal").textContent = subtotal;
+
+    }
+}
+
+function updateShippingcost(shippingCost){
+    const shippingCostElement = document.querySelector("#price-shipping");
+    const totalCostElement = document.querySelector("#price-total");
+
+    const intCost = parseInt(shippingCost)/100;
+
+    shippingCostElement.textContent = intCost.toFixed(2);
+    totalCostElement.textContent = (subtotal + intCost).toFixed(2);
+}
+
+
+async function setShippingContries(){
+    let response = await fetch("https://web-engineering.big.tuwien.ac.at/s20/a2/shipping");
+
+    if(response.ok){
+        const json = await response.json();
+        const destinations = json.destinations;
+
+        const selectElemet = document.querySelector("select#country");
+
+        destinations.forEach( item => {
+            const option = document.createElement("option");
+            option.textContent = item.displayName;
+            option.setAttribute("value", item.country);
+            selectElemet.appendChild(option);
+            countries[item.country] = item.cost;
+        });
+
+        document.querySelector("#pay-button").disabled = false;
+        updateShippingcost(destinations[0].cost);
+    }
+
+}
+
+document.querySelector("#pay-button").disabled = true;
+init();
+setShippingContries();
+
+
+
+
+document.querySelector("select#country").addEventListener("change", handleCountrySelect);
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    console.log(frameWidth * getFrameMultiplicator(frameStyle));
+    console.log(matWidth);
+    let price = (30 + (frameWidth) * getFrameMultiplicator(frameStyle)
+        + (matWidth) * 0.05) * getFrameFrameSizeMultiplier(printSize);
+    return (Math.round((price) * 100) / 100);
+}
+
+function getFrameFrameSizeMultiplier(type) {
+    if (type.toLowerCase() == "s") 
+    if (type.toLowerCase() == "m") 
+    if (type.toLowerCase() == "l") {
+        return 3.5;
+    }}
+
+function getFrameMultiplicator(type) {
+    if (type == "classic") 
+    if (type == "shabby") {
+        return 0.9;
+    }const CART_KEY = 'cart';
+
+export function getCart(){
+    const items = localStorage.getItem(CART_KEY);
+
+    if(items === null)else{
+        return JSON.parse(items);
+    }
+}

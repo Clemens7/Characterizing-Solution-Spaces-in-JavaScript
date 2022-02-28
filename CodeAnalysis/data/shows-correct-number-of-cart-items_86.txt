@@ -1,0 +1,275 @@
+import * as Frame from './frame.js';
+import {cartCache} from "./search-cache.js"; //Shows the amount of the Cart
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+      await createCart(JSON.parse(localStorage['cart']));
+  }
+  
+  await cartCache();
+
+   let removeButton = document.getElementsByClassName("cart-remove");
+   for(let buttons = 0; buttons < removeButton.length; buttons++) })
+
+import {retrieveData} from "./search-api.js";
+
+
+async function createCart(data){
+    const div = document.getElementById('cart');
+    if (data.length < 1) {
+        div.appendChild(emptyCartHTML());
+        div.appendChild(createTotalPrice());
+        document.getElementById("checkout-button").disabled = true;
+    }
+}
+
+
+
+
+
+
+
+function createTotalPrice(data){
+    const div = document.createElement("div");
+    div.className = "cart-total";
+    div.innerHTML =
+    `<div class="price">Total: € <span id="price-total">${calcTotalPrice(data)}</span></div>
+    <button type="button" id="checkout-button">Checkout</button>`;
+    return div;
+}
+
+
+
+function calcTotalPrice(data){
+    let sum = 0;
+    if (data !== undefined) 
+    else {
+        return 0;
+    }
+}
+
+function emptyCartHTML(){
+    const div = document.createElement("div");
+    div.className = "empty-cart";
+    div.innerHTML =
+        `<p><b>There are no items in your shopping cart.</b></p><br>`;
+    return div;
+}import { retrieveData } from './search-api.js';
+import * as SearchCache from './search-cache.js' ;
+import * as Frame from './frame.js';
+
+const museumLabel = document.getElementById('image-label');
+
+let slider = document.querySelectorAll('input[type=range]');
+let numberBox = document.querySelectorAll('input[type=number]');
+let sizeSelector = document.querySelectorAll('input[name=printSize]');
+let frameSelector = document.querySelectorAll('input[name=frameStyle]');
+let matSelector = document.querySelectorAll('input[name=matColor]');
+let objectID = 39799;
+let printSize = 'M';
+let frameStyle = 'classic';
+let frameWidth = 4.0;
+let matColor = 'mint';
+let matWidth = 5.5;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  SearchCache.cartCache();
+
+  const params = (new URL(document.location)).searchParams;
+  if (params.get('objectID')) {
+    objectID = params.get('objectID');
+  }
+  if (params.get('printSize')) 
+  if (params.get('frameStyle')) 
+  if (params.get('frameWidth')) 
+  if (params.get('matColor')) 
+  if (params.get('matWidth')) 
+
+  sizeSelector.value = printSize;
+  document.getElementById('print-size-s').checked = printSize === 'S';
+  document.getElementById('print-size-m').checked = printSize === 'M';
+  document.getElementById('print-size-l').checked = printSize === 'L';
+
+  document.getElementById('frame-style-classic').checked = frameStyle === 'classic';
+  document.getElementById('frame-style-natural').checked = frameStyle === 'natural';
+  document.getElementById('frame-style-shabby').checked = frameStyle === 'shabby';
+  document.getElementById('frame-style-elegant').checked = frameStyle === 'elegant';
+
+  document.getElementById('mat-color-ivory').checked = matColor === 'ivory';
+  document.getElementById('mat-color-mint').checked = matColor === 'mint';
+  document.getElementById('mat-color-wine').checked = matColor === 'wine';
+  document.getElementById('mat-color-indigo').checked = matColor === 'indigo';
+  document.getElementById('mat-color-coal').checked = matColor === 'coal';
+
+  slider[0].value = Math.min(Math.max(frameWidth, 2), 5);
+  numberBox[0].value =  Math.min(Math.max(frameWidth, 2), 5);
+  slider[1].value = Math.min(Math.max(matWidth, 0), 10);
+  numberBox[1].value = Math.min(Math.max(matWidth, 0), 10);
+
+  const artwork = await retrieveData(objectID);
+  if (!artwork || !artwork['primaryImageSmall']) 
+  domCreate(artwork);
+
+  const previewImage = document.getElementById('preview-image');
+  previewImage.addEventListener('load', () => {
+    const printSizes = Frame.getPrintSizes(previewImage);
+    document.getElementById('print-size-s-label').innerHTML = `Small<br>${printSizes['S'][0]/10} × ${printSizes['S'][1]/10} cm`;
+    document.getElementById('print-size-m-label').innerHTML = `Medium<br>${printSizes['M'][0]/10} × ${printSizes['M'][1]/10} cm`;
+    document.getElementById('print-size-l-label').innerHTML = `Large<br>${printSizes['L'][0]/10} × ${printSizes['L'][1]/10} cm`;
+  });
+
+  Frame.render(document.getElementById('preview-image'), document.getElementById('preview-container'), printSize, frameStyle, frameWidth, matColor, matWidth);
+  setPrice();
+});
+
+for (let i=0; i<sizeSelector.length; i++) {
+  sizeSelector[i].addEventListener('input', );
+}
+
+for (let i=0; i<frameSelector.length; i++) {
+  frameSelector[i].addEventListener('input', );
+}
+
+for (let i=0; i<matSelector.length; i++) {
+  matSelector[i].addEventListener('input', );
+}
+
+numberBox[0].addEventListener('input', );
+
+numberBox[1].addEventListener('input', );
+
+slider[0].addEventListener('input', );
+
+slider[1].addEventListener('input', );
+
+
+
+
+
+addEventListener('input', );
+
+function setPrice() {
+  document.getElementById('price').innerHTML = `€ ${Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth).toFixed(2)}`;
+  let {width, height} = Frame.calculateSize(printSize, frameWidth, matWidth);
+  document.getElementById('total-size').innerHTML = `${width} × ${height} cm`;
+}
+
+const form = document.getElementById('config-form');
+form.addEventListener('keypress', );
+
+function domCreate(artwork){
+  const imageContainer = document.getElementById('preview-container');
+  const item = document.createElement('img');
+  item.src = artwork['primaryImageSmall'];
+  item.alt = artwork['title'];
+  item.id = "preview-image";
+  imageContainer.prepend(item);
+  museumLabel.innerHTML =`<span class="artist">${artwork.artistDisplayName}</span>
+  <span class="title">${artwork.title}</span>,
+  <span class="date">${artwork.objectDate}</span>`;
+}
+
+            window.updateFrameWidth = 
+            window.updateMatWidth = 
+            
+            
+          export 
+
+export 
+
+export 
+
+export 
+import * as SearchCache from './search-cache.js';
+
+
+
+
+
+;
+
+
+
+
+
+
+export { searchIdFromApi, retrieveData, retrieveHighlights };
+
+
+function retrieveFromLocal(key){
+  if(key in localStorage){
+    return JSON.parse(localStorage[key]);
+  }
+}
+
+
+
+
+
+
+function cartCache(){
+  const cartCached = retrieveFromLocal("cart");
+  if(cartCached && cartCached.length != null){
+    document.getElementById('cart-link').innerHTML = `Cart (${cartCached.length})`;
+  }
+}
+
+export { retrieveFromLocal, storeInLocal, cartCache };
+
+
+function createItem(data){
+  const items = document.createElement('div');
+  items.className = "thumb";
+  items.innerHTML =`<a href="config.html?objectID=${data.objectID}" id="object-${data.objectID}">
+  <img src="${data.primaryImageSmall}" alt ="${data.title}" id="object-image-${data.objectID}">
+  <div class="museum-label">
+    <span class="artist">${data.artistDisplayName}</span>
+    <span class="title">${data.title}</span>,
+    <span class="date">${data.objectDate}</span>
+  </div>
+  </a>`;
+  return items;
+}
+
+
+export{ createItem };
+
+import { createItem } from './search-dom.js' ;
+import * as SearchAPI from './search-api.js' ;
+import * as SearchCache from './search-cache.js' ;
+
+const container = document.getElementById('gallery');
+const displayText = document.getElementById('search-info');
+
+document.addEventListener('DOMContentLoaded',function(){
+  SearchCache.cartCache();
+
+  const params = (new URL(document.location)).searchParams;
+  const searchQuery = params.get('q');
+  if(!searchQuery){
+    showHighlights();
+    return;
+  }});
+
+
+async function showHighlights(){
+  const highlights = await SearchAPI.retrieveHighlights();
+  loadAllThenDisplay(highlights['highlights']);
+}
+
+
+
+
+
+function loadAllThenDisplay(objId){
+  var promises = objId.map(id => SearchAPI.retrieveData(id).then(result => createItem(result)));
+  return Promise.all(promises)
+  .then(newItems => {
+    for(var newItem of newItems){
+      container.appendChild(newItem);
+    }
+  })
+}
+
+
+

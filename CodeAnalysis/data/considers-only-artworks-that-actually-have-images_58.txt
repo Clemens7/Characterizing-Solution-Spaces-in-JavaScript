@@ -1,0 +1,112 @@
+
+import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+const collectionapi = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+export async function search(searchTerm){
+	try {
+		const response = await fetch(search_api(searchTerm));}
+
+export 
+
+export 
+
+
+
+function search_api(searchTerm){
+    return `${collectionapi}/search?q=${searchTerm}&hasImages=true`;
+}
+
+
+
+export 
+
+export import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+export class ArtworkContainer{
+	constructor(){
+		this.container = document.getElementById("gallery");
+	}
+
+	
+
+	
+}export class Artwork {
+	
+}const cartKey = "cart";
+
+export class CartItem {
+    
+} 
+
+export function getCartItems() {
+    ensureCartInitialized();
+    return getLocalStorageItem(cartKey);
+}
+
+export function showNumCartItems(){
+    let cart = document.getElementById("cart-link");
+    let cart_items = getCartItems().length;
+    if (cart_items > 0) else {
+        cart.innerHTML = "Cart";
+    }
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+function ensureCartInitialized() {
+    const item = localStorage.getItem(cartKey);
+    if (item === null) {
+        setLocalStorageItem(cartKey, []);
+    }
+    const parsed = JSON.parse(item);
+    if (!Array.isArray(parsed)) {
+        setLocalStorageItem(cartKey, []);
+    }
+}
+
+function setLocalStorageItem(key, object) {
+    const str = JSON.stringify(object);
+    localStorage.setItem(key, str);
+}
+
+function getLocalStorageItem(key) {
+    const value = localStorage[key];
+    return JSON.parse(value);
+}import * as API from './art-api.js';
+import {ArtworkContainer} from './art-dom.js';
+import * as Cart from './cart-api.js';
+
+const form = document.querySelector(".search-form");
+const searchInput = document.getElementById("search");
+let artworkContainer = new ArtworkContainer();
+
+async function search(term){
+  const info = document.getElementById("search-info");
+  info.innerHTML = `Searching for “${term}”...`;
+
+  const IDs = await API.search(term);}
+
+
+
+form.addEventListener('submit', );
+
+document.addEventListener('DOMContentLoaded', event => {
+  const params = (new URL(document.location)).searchParams;
+  var searchInfo = document.getElementById("search-info");
+
+  Cart.showNumCartItems();
+
+  var searchTerm = params.get('q');
+  if(searchTerm){
+    search(searchTerm);
+  }
+});

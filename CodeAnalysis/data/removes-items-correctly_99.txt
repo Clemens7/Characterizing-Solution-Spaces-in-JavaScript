@@ -1,0 +1,94 @@
+export function read(objectID) {
+    const key = objectID;
+    if(key in localStorage) 
+}
+
+export function write(objectID, artwork) {
+    const key = objectID;
+    console.log(`Writing ${key} to local storage`);
+    localStorage[key] = JSON.stringify(artwork);
+}export class Artwork {
+    constructor(objectID, artistDisplayName, title, objectDate, primaryImageSmall) {
+        this.objectID = objectID;
+        this.artistDisplayName = artistDisplayName;
+        this.title = title;
+        this.objectDate = objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+    }
+}remove(this.parentNode.parentNode.id)export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export 
+import { Artwork } from './artwork.js';
+import * as ArtworkCache from './artwork-cache.js';
+
+export async function getArtwork(objectID) {
+    let artwork = ArtworkCache.read(objectID);
+    if(artwork) 
+
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    try {
+        const response = await fetch(url);
+        if(response.status !== 200) 
+
+        const object = await response.json();
+
+        let artwork = new Artwork(
+            object.objectID,
+            object.artistDisplayName,
+            object.title,
+            object.objectDate,
+            object.primaryImageSmall);
+
+        ArtworkCache.write(objectID, artwork);
+        return artwork;
+    }

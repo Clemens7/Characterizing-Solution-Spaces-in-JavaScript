@@ -1,0 +1,210 @@
+import { fetchObject, retrieveCart, showCartItems } from "./common.js";
+import { calculatePrice, render } from './frame.js';
+
+/*localStorage.setItem('cart', JSON.stringify([
+  { objectID: 435844, printSize: 'S', frameStyle: 'classic', frameWidth: 22, matColor: 'ivory', matWidth: 40 },
+  { objectID: 435852, printSize: 'M', frameStyle: 'elegant', frameWidth: 33, matColor: 'indigo', matWidth: 60 },
+  { objectID: 436950, printSize: 'M', frameStyle: 'shabby', frameWidth: 44, matColor: 'wine', matWidth: 80 },
+  { objectID: 201957, printSize: 'L', frameStyle: 'natural', frameWidth: 55, matColor: 'mint', matWidth: 100 },
+]));*/
+
+const section = document.querySelector('section');
+const totalPrice = document.getElementById('price-total');
+const removeButton = document.getElementsByClassName('cart-remove');
+
+const printSizes = {
+  S: 'Small',
+  M: 'Medium',
+  L: 'Large',
+}
+
+const renderSingleItem = (item, index) => {
+  let templateID = Math.floor(100000 + Math.random() * 900000);
+  let template = document.querySelector('template');
+  let clone = template.content.cloneNode(true);
+
+  clone.querySelector('.cart-item').id = `${index}`;
+  clone.querySelector('#preview-container-0').id = `preview-container-${templateID}`;
+  clone.querySelector('.cart-price span').id = `${index}`;
+
+  let link = clone.querySelector('a');
+  link.href = `./config.html?objectID=${item.objectID}&printSize=${item.printSize}&frameStyle=${item.frameStyle}`+
+  `&frameWidth=${item.frameWidth}&matColor=${item.matColor}&matWidth=${item.matWidth}`;
+
+  let img = clone.querySelector('img');
+  img.src = item.primaryImageSmall;
+  img.id = `preview-${templateID}`;
+
+  img.onload = () => {
+    render(document.querySelector(`#preview-${templateID}`), document.querySelector(`#preview-container-${templateID}`),  item.printSize, item.frameStyle, item.frameWidth, item.matColor, item.matWidth);
+  }
+
+  let description = clone.querySelectorAll('span');
+  description[0].textContent = item.artistDisplayName;
+  description[1].textContent = item.title;
+  description[2].textContent = item.objectDate
+  let textDescription = `${printSizes[item.printSize]} print`;
+  if (item.frameStyle && item.frameWidth) {
+    textDescription += ` in a ${item.frameWidth/10} cm ${item.frameStyle} frame`;
+  }
+  if (item.matColor && item.matWidth) {
+    textDescription += ` with a ${item.matWidth/10} cm ${item.matColor} mat`;
+  }
+  description[3].textContent = textDescription + '.';
+
+  clone.querySelector('.cart-price span').innerHTML = calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth).toFixed(2);
+  
+  template.parentNode.insertBefore(clone, template.parentNode.firstChild);
+}
+
+const calculateAndSetCartPrice = (cart) => {
+  let subtotal = 0;
+  for (const item of cart) {
+    subtotal += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+  }
+  totalPrice.innerHTML = parseFloat(subtotal).toFixed(2);
+};
+
+window.removeCartItem = (buttonNode) => {
+  const numberOfItemsToRemove = 1;
+  let cart = retrieveCart();
+
+  const itemToRemove = buttonNode.parentNode.parentNode
+  let itemId = parseInt(itemToRemove.id);
+
+  if (cart !== null) {
+    cart.splice(itemId, numberOfItemsToRemove);
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    itemToRemove.parentNode.removeChild(itemToRemove);
+  }
+
+  cart = retrieveCart();
+}
+
+
+const main = async () => {
+  showCartItems();
+  let cart = retrieveCart();
+
+  if (cart) {
+    let items = await Promise.all(cart.map(async (item) => {
+      let object = await fetchObject(item.objectID);
+      return {...item, ...object};
+    }));
+
+    items.forEach( (item, index) => {
+      renderSingleItem(item, index);
+    });
+
+    calculateAndSetCartPrice(cart);
+    return;
+  }}
+
+main();
+export const searchApiUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+
+const objectsApiUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/objects';
+
+export const fetchObject = async (objectID) => {
+  let storedObject = localStorage.getItem(objectID);
+  if (storedObject) 
+
+  let response = await fetch(objectsApiUrl + `/${objectID}`);
+  let data = await response.json();
+  localStorage.setItem(objectID, JSON.stringify(data));
+  return data;
+}
+
+export const retrieveCart = () => {
+  try {
+    return JSON.parse(localStorage.getItem('cart'));
+  }
+}
+
+export const showCartItems = async () => {
+  let cartLink = document.querySelector('#cart-link');
+
+  let cart = retrieveCart();
+
+  if (cart) {
+    cartLink.textContent = `Cart (${cart.length})`;
+    return;
+  }export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+
+    let basic = 3000;
+    
+    const printSizePrice = { 
+        S: 1,
+        M: 2,
+        L: 3.5,
+    }
+
+    const matPerCentimeter = 5;
+
+    const woodCostFrame = {
+        classic: 100,
+        natural: 80,
+        shabby: 90,
+        elegant: 85,
+    }
+    price += basic;
+    price += Number.parseFloat(woodCostFrame[frameStyle]*(frameWidth/10));
+    price += Number.parseFloat(matPerCentimeter*(matWidth/10));
+    price *= printSizePrice[printSize];
+    return (Math.round((Math.ceil(price) + Number.EPSILON) * 100) / 100);
+}
+ 

@@ -1,0 +1,160 @@
+export function retrieveJson(key) {
+    if (key in localStorage) 
+}
+export 
+export function storeJson(key, value) {
+    localStorage[key] = JSON.stringify(value);
+}import * as CacheApi from "./cache-api.js";
+import * as CONSTANTS from "./constants.js";
+
+export function loadCartLink() {
+    const cartLinkElement = document.getElementById('cart-link');
+    const cartData = CacheApi.retrieveJson(CONSTANTS.CACHE_CART);
+    if (cartData )  else {
+        cartLinkElement.innerText = 'Cart';
+    }
+}
+
+export export const ARTWORK_OBJECT_ID = 'objectID';
+export const ARTWORK_PRINT_SIZE = 'printSize';
+export const ARTWORK_FRAME_STYLE = 'frameStyle';
+export const ARTWORK_FRAME_WIDTH = 'frameWidth';
+export const ARTWORK_MAT_COLOR = 'matColor';
+export const ARTWORK_MAT_WIDTH = 'matWidth';
+
+export const CACHE_CART = 'cart';
+export 
+export 
+
+export 
+
+export import * as MuseumCache from "../cache-api.js";
+import * as CONSTANTS from "./museum-constants.js";
+import {Thumb} from "../thumb.js";
+
+export async function retrieveByObjectId(objectId) {
+    let thumb = MuseumCache.retrieveJson(objectId)
+    if (thumb) 
+
+    const url = objects_api_url(objectId);
+
+    thumb = fetchObjects(url).then(data => {
+        const t = new Thumb(data.artistDisplayName, data.title, data.objectDate, data.primaryImageSmall, data.objectID);
+        MuseumCache.storeJson(objectId, t);
+        return t;
+    });
+    return thumb;
+}
+
+export 
+
+async function fetchObjects(url) {
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) 
+            return response.json()
+        })
+        .then(data => {
+            return data;
+        })
+        .catch();
+}
+
+function objects_api_url(oid) {
+    return CONSTANTS.METMUESUM_API.OBJECTS + oid;
+}
+
+
+export const METMUESUM_API = {
+    V1: "https://collectionapi.metmuseum.org/public/collection/v1/",
+    HAS_IMAGE: "&hasImages=true"
+}
+METMUESUM_API.OBJECTS = METMUESUM_API.V1 + "objects/";
+METMUESUM_API.SEARCH = METMUESUM_API.V1 + "search";
+
+export const MAX_RESULTS = 100;
+import * as MUSEUM_API from "../museum/museum-api.js"
+
+export async function retrieveByObjectIds(objectIDs) {
+    return await Promise.all(
+        objectIDs.map(oid => {
+            return MUSEUM_API.retrieveByObjectId(oid)
+        })
+    );
+}
+import * as CONSTANTS from "../constants.js";
+
+export const FRAME_CONFIG_URL = "/config.html?" + CONSTANTS.ARTWORK_OBJECT_ID + "=";
+import * as DOM from '../dom-helpers.js';
+
+export class ThumbDocumentContainer {
+    
+    
+    
+}
+import { ThumbDocumentContainer } from "./search-dom.js"
+import * as SearchAPI from "./search-api.js"
+import * as MuseumAPI from "../museum/museum-api.js"
+import { loadCartLink } from "../cart-service.js";
+
+String.prototype.trim = function(charlist) {
+    return this.trimLeft(charlist).trimRight(charlist);
+};
+
+const searchInfoElement = document.getElementById("search-info");
+
+function checkQueryParams() {
+    let params = (new URL(document.location)).searchParams;
+    let q = params.get("q");
+    console.log("Query params: " + q);
+    if (validateSearchString(q))  else {
+        displayHighlights();
+    }
+}
+checkQueryParams();
+
+loadCartLink();
+
+
+
+
+
+function displayHighlights() {
+    console.log("displaying highlights");
+    loadJSON().then(response => {
+        let highlightsOIDs = response.highlights;
+
+        searchAndDisplayByObjectIds(highlightsOIDs);
+    })
+}
+
+function searchAndDisplayByObjectIds(objectIds) {
+    SearchAPI.retrieveByObjectIds(objectIds)
+        .then();
+}
+
+
+
+function loadJSON() {
+    return fetch('./highlights.json', { mode: 'no-cors' })
+        .then(response => response.json())
+        .then(data => data)
+        .catch();
+}
+
+function validateSearchString(str) {
+    if (str ) 
+}import * as CONSTANTS from "./search/search-constants.js"
+
+export class Thumb {
+    constructor(artistDisplayName, title, objectDate, primaryImage, objectID) {
+        this.artistDisplayName = artistDisplayName;
+        this.title = title;
+        this.objectDate = objectDate;
+        this.primaryImage = primaryImage;
+        this.objectID = objectID;
+        this.frameConfigHref = CONSTANTS.FRAME_CONFIG_URL + objectID;
+    }
+
+    
+}

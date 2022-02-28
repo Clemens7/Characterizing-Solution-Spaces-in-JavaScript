@@ -1,0 +1,140 @@
+
+    import { CartDocumentContainer } from './dom-helpers.js';
+    import { FramedPicture } from './config.js';
+    const cartDocumentContainer = new CartDocumentContainer();
+    (async () => {
+      try {
+        await cartDocumentContainer.displayCartItems();
+        await getNumberOfCartItems();
+        const removeButtons = document.querySelectorAll('.cart-remove');
+        removeButtons.forEach();
+      } 
+    })();
+
+
+    async function getNumberOfCartItems() {
+       let items = await FramedPicture.loadFromLocalStorage();
+       if (items.length>0)else{
+         document.getElementById('cart-link').innerText = "Cart";
+       }
+
+    }
+    document.getElementById('checkout-button').onclick = ;
+  import * as FrameHelper from './frame.js';
+import * as METAPI from './metAPI.js';
+
+frameWidth and matWidth are given in mm
+export class FrameConfiguration {
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+
+export class FramedPicture {
+  
+
+  
+
+  
+
+  static 
+
+  static 
+
+  
+
+  static 
+
+  static async loadFromLocalStorage(key="cart") {
+    const array = JSON.parse(localStorage.getItem(key));
+    if(!Array.isArray(array)) {
+      return [];
+    }}
+}
+
+export 
+
+export 
+
+export 
+export 
+import * as DOM from './dom-helpers.js';
+import { FramedPicture, calculateTotalCartPrice, cartIsEmpty } from './config.js';
+import { FrameConfiguration } from './config.js';
+import { render } from './frame.js';
+
+export 
+
+export class CartDocumentContainer {
+    constructor(containerID='cart', priceTag='price-total', checkoutButton='checkout-button') {
+        this.container = document.getElementById(containerID);
+        this.priceTag = document.getElementById(priceTag);
+        this.emptyCartMessage = document.createElement('h1');
+        this.emptyCartMessage.innerText = "There are no items in your shopping cart.";
+        this.checkoutButton = document.getElementById(checkoutButton);
+        if(!this.container) 
+    }
+
+    
+    
+
+    
+
+    async displayCartItems() {
+        const itemsTemp = await FramedPicture.loadFromLocalStorage();
+        const items = itemsTemp.reverse();
+        let totalPrice = 0.0;
+        if (Object.keys(items).length === 0) {
+            this.container.prepend(this.emptyCartMessage);
+            this.priceTag.innerText = '-';
+            this.checkoutButton.disabled = true;
+        }
+
+
+
+
+        
+
+        
+    }
+}
+
+export class SearchResultDocumentContainer {
+    
+
+    
+
+    
+}
+export 
+
+export 
+
+export 
+
+export 
+
+import {Picture} from './Picture.js';
+import * as PictureCache from './PictureCache.js'
+export 
+
+export 
+
+
+
+
+import { Picture} from './Picture.js';
+
+export 
+
+export export class Picture {
+    
+}

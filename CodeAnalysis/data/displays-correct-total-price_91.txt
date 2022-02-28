@@ -1,0 +1,208 @@
+const CACHE_PREFIX = 'artworkCache_'
+
+export function retrieve(id) {
+    if(localStorage.getItem(CACHE_PREFIX + id)) 
+}
+
+export function store(id, artwork) {
+    localStorage.setItem(CACHE_PREFIX + id, JSON.stringify(artwork));
+}
+export class Artwork {
+    constructor(title, artist, date, image) {
+        this.title = title;
+        this.artist = artist;
+        this.date = date;
+        this.image = image;
+    }
+}window.addEventListener('load', () => {
+    let cart = JSON.parse(localStorage.getItem('cart')) ;
+    document.getElementById('cart-link').innerHTML = `Cart (${cart.length})`;
+});
+import { Artwork } from "./artwork.js";
+import { render, calculatePrice } from "./frame.js";
+import * as artworkCache from './artwork-cache.js';
+
+renderCart();
+
+function renderCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) ;
+
+    Promise.all(cart.map((cartItem) => {
+        return new Promise((resolve, reject) => {
+            let artworkData = artworkCache.retrieve(cartItem.objectID);
+            if (artworkData !== undefined)  else {
+                fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/' + cartItem.objectID)
+                    .then((res) => {
+                        if (!res.ok) 
+                        return res.json();
+                    })
+                    .then((data) => {
+                        let artwork = new Artwork(
+                            data.title,
+                            data.artistDisplayName,
+                            data.objectDate,
+                            data.primaryImageSmall
+                        );
+                        artworkCache.store(cartItem.objectID, artwork);
+                        resolve({ artworkData: artwork, cartData: cartItem })
+                    })
+                    .catch();
+            }
+        });
+    })).then((data) => {
+        let insertStrings = data.map(({ artworkData, cartData }, index) => {
+            let configLink = './config.html'
+                + '?objectID=' + cartData.objectID
+                + '&printSize=' + cartData.printSize
+                + '&frameStyle=' + cartData.frameStyle
+                + '&frameWidth=' + cartData.frameWidth
+                + '&matColor=' + cartData.matColor
+                + '&matWidth=' + cartData.matWidth;
+
+            let frameSizeText;
+            switch (cartData.printSize) {
+                case 'S': frameSizeText = 'Small'; break;
+                
+                case 'L': frameSizeText = 'Large'; break;
+            }
+
+            let frameDescription = `${frameSizeText} print in a ${cartData.frameWidth / 10} cm ${cartData.frameStyle} frame${cartData.matWidth != '0' ? ` with a ${cartData.matWidth / 10} cm ${cartData.matColor} mat` }.`;
+
+            let price = calculatePrice(
+                cartData.printSize,
+                cartData.frameStyle,
+                cartData.frameWidth,
+                cartData.matWidth
+            );
+
+            return `
+<div class="cart-item">
+  <div class="cart-preview" id="preview-container-${index}">
+    <a href="${configLink}">
+      <img class="cart-thumb" src="${artworkData.image}" id="preview-${index}" alt="${artworkData.title}">
+    </a>
+  </div>
+  <div class="museum-label">
+    <div>
+      <span class="artist">${artworkData.artist}</span>
+      <span class="title">${artworkData.title}</span>,
+      <span class="date">${artworkData.date}</span>
+      <br><br>
+      <span class="frame-description">${frameDescription}</span>
+    </div>
+    <div class="cart-price">€ <span id="price-${index}">${price}</span></div>
+    <button type="button" class="cart-remove" id="remove-button-${index}"></button>
+  </div>
+</div>`;
+        });
+
+        let totalPrice = 0;
+        data.forEach(({ cartData }) => {
+            totalPrice += calculatePrice(
+                cartData.printSize,
+                cartData.frameStyle,
+                cartData.frameWidth,
+                cartData.matWidth
+            );
+        });
+
+        document.getElementById('cart').innerHTML = insertStrings.join('\n') +
+        `${cart.length === 0  : ''}
+        <div class="cart-total">
+            <div class="price">Total: € <span id="price-total">${totalPrice.toFixed(2)}</span></div>
+            <button type="button" id="checkout-button" href="checkout.html" ${cart.length === 0  : ''}>Checkout</button>
+        </div>`;
+
+
+        data.forEach(({ cartData }, index) => {
+            document.getElementById('remove-button-' + index).addEventListener('click', );
+            render(
+                document.getElementById('preview-' + index),
+                document.getElementById('preview-container-' + index),
+                cartData.printSize,
+                cartData.frameStyle,
+                cartData.frameWidth,
+                cartData.matColor,
+                cartData.matWidth
+            );
+        });
+
+        document.getElementById('checkout-button').addEventListener('click', );
+    });
+}
+
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+    let frameCostPerCm = 0;
+    let matCostPerCm = 0.05;
+
+    switch (frameStyle) {
+        
+        case 'natural': frameCostPerCm = 0.8; break;
+        case 'shabby': frameCostPerCm = 0.9; break;
+        case 'elegant': frameCostPerCm = 0.85; break;
+        
+    }
+
+    price += (frameCostPerCm * frameWidth) + (matCostPerCm * matWidth);
+
+    switch (printSize) {
+        
+        case 'L': price *= 3.5; break;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

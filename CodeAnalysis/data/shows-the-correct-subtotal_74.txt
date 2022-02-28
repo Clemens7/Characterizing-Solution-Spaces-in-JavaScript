@@ -1,0 +1,155 @@
+import {calculatePrice} from './frame.js';
+const REQUEST_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2';
+const EMDASH = '—';
+
+var DESTINATIONS = new Array();
+var CART = new Array();
+var SUBTOTAL = 0; // subtotal of all cart items without shipping
+var SHIPPING_COSTS = 0;
+
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    CART = localStorage.getItem ('cart');
+
+    if (CART === null)
+         
+
+    CART = Object.values(JSON.parse(CART));
+});
+
+window.onload = function (){
+    addEventListeners ();
+    disablePayButton(true);
+    setSubtotal();
+
+    this.fetch(REQUEST_URL + '/shipping')
+        .then (function(response){
+            return response.json();
+        })
+        .then (function (data){
+            DESTINATIONS = Object.values (data)[0];
+        })
+        .then (function (){
+            setShippingDestinations ();
+        })
+        .then (function(){
+            setTotal();
+        })
+        .then (function (){
+            disablePayButton(false);
+        })
+        .catch();    
+}
+
+
+ function setTotal(){
+    var total = (parseFloat(SUBTOTAL) + parseFloat(formatCosts(SHIPPING_COSTS))).toFixed(2);
+
+    let totalElement = document.getElementById("price-total");      
+    totalElement.innerHTML = total;
+ }
+
+ function setSubtotal(){
+    SUBTOTAL = calculateSubtotal ();
+    let subtotalElement = document.getElementById("price-subtotal");
+
+    subtotalElement.innerHTML = SUBTOTAL;
+ }
+
+ function calculateSubtotal (){
+    var subtotal = 0;
+    var values = Object.values(CART);
+    var length = values.length;
+
+    for (let index = 0; index < length; index++) {
+        const element = values[index];
+        let price = calculatePrice(
+            element.printSize, 
+            element.frameStyle, 
+            element.frameWidth, 
+            element.matWidth);
+
+        subtotal += price;
+    }
+    return subtotal;
+ }
+
+ function disablePayButton (value){
+    document.getElementById('pay-button').disabled = value;
+ }
+
+function setShippingDestinations (){
+    var selectionElement = document.getElementById ('country');
+
+    for (let i = 0; i < DESTINATIONS.length; i++) {
+        const element = DESTINATIONS[i];
+
+        let optionElement = document.createElement('option');
+        optionElement.innerHTML = element.displayName;
+        optionElement.setAttribute('value', element.country);
+        selectionElement.appendChild(optionElement);       
+    }
+    setShippingCosts (DESTINATIONS[0].country);
+}
+
+function getCostsByCountryName(name){
+
+    for (let i = 0; i < DESTINATIONS.length; i++) {
+        const destination = DESTINATIONS[i];
+        if (destination.country == name)
+            return destination.cost;      
+    }}
+
+function setShippingCosts (country_name){
+    SHIPPING_COSTS = getCostsByCountryName(country_name);
+
+    const shippingCostElement = document.getElementById('price-shipping');
+    shippingCostElement.innerHTML = formatCosts(SHIPPING_COSTS);
+}
+
+function formatCosts (costs){
+    return (costs / 100).toFixed(2);
+}
+
+
+ function addEventListeners(){
+    onCountrySelectionChange();
+}
+
+function onCountrySelectionChange(){
+    const selectElement = document.getElementById('country');
+
+    selectElement.addEventListener('change', );
+}export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const basePrice = 30;
+    const matPrice = 0.05;
+    let additionalPrice;
+
+    switch (frameStyle) {
+        case 'classic':
+            additionalPrice = 1;
+            break;
+        
+        case 'shabby':
+            additionalPrice = 0.9;
+            break;
+        case 'elegant':
+            additionalPrice = 0.85;
+            break;
+    }
+
+    price = basePrice + (frameWidth / 10) * additionalPrice + (matWidth / 10) * matPrice;
+
+    if (printSize == 'M') {
+        price = price * 2;
+    } else if (printSize == 'L') {
+        price = price * 3.5;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

@@ -1,0 +1,45 @@
+
+
+  function calcTotalPrice() {
+    document.getElementById("price-shipping").textContent = (countryCosts[document.getElementById("country").value] / 100).toFixed(2);
+    document.getElementById("price-total").textContent = parseFloat(document.getElementById("price-subtotal").textContent) + parseFloat(document.getElementById("price-shipping").textContent);
+  }
+
+  
+
+function getLocalStorage(key) {
+    var items = JSON.parse(localStorage.getItem(key) );
+    return items;
+}
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    price = 30.0;
+
+    switch (frameStyle){
+        
+        
+        case 'shabby':
+            price += frameWidth * 0.9;
+            break;
+        
+    }
+
+    price += matWidth * 0.05;
+
+    if( printSize == 'M' )else if( printSize == 'L' ){
+        price *= 3.5
+    }
+    return ( Math.round((price + Number.EPSILON) * 100) / 100 );
+}

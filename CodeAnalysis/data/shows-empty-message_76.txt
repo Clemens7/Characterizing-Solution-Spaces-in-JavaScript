@@ -1,0 +1,53 @@
+import {calculatePriceFromItem, render} from "./frame.js";
+import {retrieve} from "./metrequests.js";
+
+let items = JSON.parse(localStorage.getItem("cart"));
+const sizeNames = {'L': 'Large', 'M': 'Medium', 'S': 'Small'};
+
+window.onload = populateCartHtml();
+
+function populateCartHtml() {
+    if (items === null) {
+        empty();
+        return;
+    }}
+
+function empty() {
+    document.getElementById("price-total").innerHTML = "0";
+    let empty = document.createElement("div");
+    empty.innerHTML = 'There are no items in your shopping cart.<br>';
+    document.getElementById("cart").insertBefore(empty, document.getElementsByClassName("cart-total")[0]);
+    document.getElementById("checkout-button").disabled = true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+const size_prices = {'S' : 1, 'M' : 2, 'L' : 3.5};
+const style_prices = {'classic' : 0.1, 'natural': 0.08, 'shabby' : 0.09, 'elegant' : 0.085};
+
+export 
+
+export 
+const MET_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+
+export 

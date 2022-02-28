@@ -1,0 +1,108 @@
+export 
+
+export 
+
+export function retrieveArtworks(searchTerm) {
+  console.log(`Retrieving artworks from local storage with key: ${searchTerm}`);
+  if (searchTerm in localStorage) 
+}
+
+export 
+
+
+export import * as DomBuilder from './dom-builder.js';
+export class GalleryContainer {
+  
+  
+
+  
+}export class Artwork {
+  
+}
+
+export var NumberOfItems = {
+  store: ,
+  getNumber: 
+}export 
+
+export 
+
+export import * as ArtworkCache from './artwork-cache.js';
+import {
+  Artwork,
+  NumberOfItems
+} from './artwork.js';
+
+const API_SEARCH_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+const API_OBJECT_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const HIGHLIGHTS_URL = './highlights.json';
+const SEARCH_CONDITION = 'hasImages=true';
+
+export async function retrieve(searchTerm) {
+  console.log(`Retrieving results for "${searchTerm}"`);
+  if (!searchTerm) 
+  let artworksCache = ArtworkCache.retrieveArtworks(searchTerm);
+  if (artworksCache) 
+  let url = search_url(searchTerm)
+  try {
+    let response = await fetch(url)}
+
+export 
+
+
+
+
+
+
+
+export 
+
+
+
+function search_url(searchTerm) {
+  const SEARCH_URL = `${API_SEARCH_BASE_URL}?q=${searchTerm}&${SEARCH_CONDITION}`;
+  console.log('search url: ' + SEARCH_URL);
+  return SEARCH_URL;
+}import {
+    Artwork,
+    NumberOfItems
+} from './helper/artwork.js';
+import * as ArtworkAPI from './helper/met-museum-api.js';
+import {
+    GalleryContainer
+} from './helper/artwork-dom.js';
+import * as ArtworkCache from './helper/artwork-cache.js';
+import * as Storage from './helper/storage.js'
+
+const form = document.querySelector('.search-form');
+form.addEventListener('submit', );
+
+document.addEventListener('DOMContentLoaded', event => {
+    const params = (new URL(document.location)).searchParams;
+    let qQuery = params.get('q');
+    document.getElementById('search').value = qQuery;
+    const searchInfo = document.getElementById('search-info');
+    if (qQuery) {
+        searchInfo.innerHTML = `Searching for “${qQuery}”...`;
+    }
+    (async function() {
+        let artworks = await artworkSearch(qQuery);) }());
+
+    updateCartItems(Storage.getCartItemCount());
+});
+
+
+
+
+async function artworkSearch(searchTerm) {
+    console.log(`Searching for ${searchTerm}`);
+    if (searchTerm === 'null') 
+    let artworks = await ArtworkAPI.retrieve(searchTerm);export 
+
+export 
+
+export 
+
+export function getCartItemCount() {    
+    return JSON.parse(window.localStorage.getItem('cart')).length;
+}

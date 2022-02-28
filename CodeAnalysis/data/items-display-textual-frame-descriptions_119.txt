@@ -1,0 +1,210 @@
+import { getPrintSizes, render, calculatePrice } from "./frame.js";
+
+var configContent = localStorage.getItem("cart");
+var configContentJSON = JSON.parse(configContent);
+const image = document.getElementById("preview-0");
+const container = document.getElementById("preview-container-0");
+const label = document.getElementById("museum-label-0");
+console.log(configContentJSON);
+const btn = document.querySelector("button.cart-remove");
+var priceSum = 0;
+console.log(btn);
+
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    /*
+    console.log("TEST");
+    console.log("ObjID: " + configContentJSON.objectID);
+    console.log("PrintSize: " + configContentJSON.printSize);
+    console.log("FrameStyle: " + configContentJSON.frameStyle);
+    console.log("FrameWidth: " + configContentJSON.frameWidth);
+    console.log("MatColor: " + configContentJSON.matColor);
+    console.log("MatWidth: " + configContentJSON.matWidth);
+    if(configContentJSON != null) {
+        for(var i = 0; i < configContentJSON.length; i++) {
+        retrieveArtfromId(configContentJSON[i].objectID);
+        render(image, container, configContentJSON[i].printSize, configContentJSON[i].frameStyle, (configContentJSON[i].frameWidth * 10), configContentJSON[i].matColor, (configContentJSON[i].matWidth * 10));
+        createDescription(configContentJSON[i].objectID,configContentJSON[i].printSize,configContentJSON[i].frameStyle,configContentJSON[i].frameWidth,configContentJSON[i].matColor,configContentJSON[i].matWidth)
+        }
+    }
+    
+    
+});
+
+function retrieveArtfromId(id) {
+    const url = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+    console.log(id);
+
+    const fetchPromise = fetch(url + id, {
+        method: 'GET'
+    });
+
+    fetchPromise.then(response => {
+        return response.json();
+    }).then(response => {
+        console.log(response);
+        if(response.message == "Not Found" || response.message == "ObjectID not found")
+        
+
+        var imageURL = response.primaryImageSmall;
+      
+        image.src = imageURL;
+
+        var imgLink = document.querySelector("div.cart-preview > a");
+        imgLink.href = `config.html?objectID=${id}`;
+
+});
+}
+
+function createDescription(id, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const url = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+    console.log(id);
+
+    const fetchPromise = fetch(url + id, {
+        method: 'GET'
+    });
+
+    fetchPromise.then(response => {
+        return response.json();
+    }).then(response => {
+        console.log(response);
+        if(response.message == "Not Found" || response.message == "ObjectID not found")
+        
+
+        var artist = response.artistDisplayName;
+        var title = response.title;
+        var date = response.objectDate;
+
+
+        console.log(artist);
+        console.log(title);
+        console.log(date);
+
+        var size;
+
+        switch(printSize) {
+            
+            case 'S':
+                size = "Small"
+                break;
+            case 'L':
+                size = "Large"
+                break;
+        }
+
+        var matInfo;
+
+        if(matWidth != 0) {
+            matInfo = `with a ${matWidth} cm ${matColor} mat.`
+        }
+        else {
+            matInfo = ``;
+        }
+
+        var price = calculatePrice(printSize,frameStyle,frameWidth,matWidth)
+
+        label.innerHTML = 
+        `<div>
+            <span class="artist">${artist}</span>
+            <span class="title">${title}</span>
+            <span class="date">${date}</span>
+            <br><br>
+            <span class="frame-description">${size} print in a ${frameWidth} cm ${frameStyle} frame ${matInfo}</span>
+        </div>
+        <div class="cart-price">€ <span id="price-0">${price}</span></div>
+        <button type="button" class="cart-remove"></button>
+        `
+        priceSum = priceSum - (-price);
+
+        var totalDiv = document.getElementById('price-total')
+    
+        totalDiv.innerText = `${priceSum}`
+    });
+
+    btn.onclick = ;
+
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+
+    price += 30;
+
+    switch (frameStyle) {
+        case "classic":
+            price += 1 * frameWidth;
+            break;
+        
+        case "shabby":
+            price += 0.9 * frameWidth;
+            break;
+        
+    };
+
+    price += 0.05 * matWidth;
+
+    switch (printSize) {
+        case "S":
+            price *= 1;
+            break;
+        
+        case "L":
+            price *= 3.5;
+            break;
+    };
+
+    price = (Math.round((price + Number.EPSILON) * 100) / 100);
+
+    return price.toFixed(2);
+}

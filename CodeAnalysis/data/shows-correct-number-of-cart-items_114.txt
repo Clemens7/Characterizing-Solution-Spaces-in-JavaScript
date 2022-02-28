@@ -1,0 +1,268 @@
+import * as frame from './frame.js';
+
+var MET_API_OBJECTS_ENDPOINT = "https://collectionapi.metmuseum.org/public/collection/v1/objects"
+
+document.addEventListener("DOMContentLoaded", init());
+
+
+export function init() {
+	frame.updateItemAmount();
+	printTotal()
+	disableCheckout();
+	cart_show_items();
+}
+
+export function printTotal(){
+	const cart = frame.getListFromStorage();
+	let price = 0;
+	
+	for(let i=cart.length-1 ; i>=0; i--)
+	
+	const total = document.getElementById("price-total");
+	total.innerHTML = price;
+	
+}
+
+export 
+
+export 
+
+export 
+window.render = render;
+
+export 
+
+export function cart_show_items() {
+
+	const cart = frame.getListFromStorage();
+
+	for(let i=cart.length-1 ; i>=0; i--)
+}
+
+
+export 
+window.closeItem = closeItem;
+
+export function disableCheckout(){
+	if(frame.getListFromStorage().length==0){
+		document.getElementById("checkout-button").setAttribute("disabled","");
+		const newElement = document.createElement("div");
+		newElement.innerHTML = "There are no items in your shopping cart.";
+		document.getElementById("checkout-button").parentElement.insertBefore(newElement, document.getElementById("checkout-button").parentElement.firstChild);
+	}
+}
+import * as frame from './frame.js';
+
+var MET_API_OBJECTS_ENDPOINT = "https://collectionapi.metmuseum.org/public/collection/v1/objects/"
+
+window.onload = function onloadFunction() {
+	setPreviewImage();
+	setParam();
+	frame.updateItemAmount();
+	updateSizes();
+	updatePricePreviewImg();
+};
+
+document.getElementById("config-form").addEventListener("submit", );
+
+document.getElementById('frameWidth').addEventListener("focusout", );
+document.getElementById('frameWidthR').addEventListener("focusout", );
+document.getElementById('matWidth').addEventListener("focusout", );
+document.getElementById('matWidthR').addEventListener("focusout", );
+
+var radios = document.querySelectorAll('input[type="radio"]');
+    for( let i = 0; i < radios.length; i++ ) {
+        radios[i].addEventListener("click", updatePricePreviewImg);
+    }
+
+
+
+
+
+
+function updatePricePreviewImg(){
+	let printSize=document.querySelector('input[name="printSize"]:checked').value;
+	let frameStyle=document.querySelector('input[name="frameStyle"]:checked').value;
+	let frameWidth=document.getElementById('frameWidth').value*10;
+	let matWidth=document.getElementById('matWidth').value*10;
+	let price=frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+	let matColor=document.querySelector('input[name="matColor"]:checked').value;
+	let container=document.getElementById('preview-container');
+	let img= document.getElementById("preview-image");
+
+	
+	if(price.toString().substring(price.toString().indexOf("."),price.toString().length).length ==2)
+	document.getElementById('price').innerHTML="€ "+price;
+	
+	frame.render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth);
+
+	}
+
+function updateSizes(){
+	let img = document.getElementById("preview-image");
+	let sizes=frame.getPrintSizes(img);
+	document.getElementById('print-size-s-label').innerHTML="Small<br>"+sizes['S'][0]/10+" × "+sizes['S'][1]/10+" cm";
+	document.getElementById('print-size-m-label').innerHTML="Medium<br>"+sizes['M'][0]/10+" × "+sizes['M'][1]/10+" cm";
+	document.getElementById('print-size-l-label').innerHTML="Large<br>"+sizes['L'][0]/10+" × "+sizes['L'][1]/10+" cm";
+
+
+}
+
+function setParam(){
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+
+	if(urlParams.has('printSize'))
+	
+	if(urlParams.has('frameStyle'))
+		
+	if(urlParams.has('matColor'))
+	
+	if(urlParams.has('matWidth'))
+	
+	if(urlParams.has('frameWidth'))
+}
+
+
+
+
+
+
+
+function setPreviewImage() {
+	var params = (new URL(document.location)).searchParams;
+	var objectID = params.get("objectID");
+
+	if (!objectID) 
+	if (localStorage.getItem(objectID))  else {
+		console.log("fetching from API: " + objectID);
+		fetch(MET_API_OBJECTS_ENDPOINT + objectID)
+			.then(function(response) {
+				if (response.status === 404) 
+			})
+			.then(res => res.json())
+			.then()
+			.catch(err => {
+				console.error(err);
+			});
+	}
+}
+export 
+
+export 
+
+export 
+
+export class Item {
+	
+}
+
+export function updateItemAmount(){
+	const amount = getListFromStorage().length;
+	const el = document.getElementById("cart-link");
+	if(amount!=0)
+		
+	else{
+		el.innerHTML = "Cart";
+	}
+}
+
+export function getListFromStorage() {
+	if (localStorage.getItem("cart") == null) 
+	const item = JSON.parse(localStorage.getItem("cart"));
+	return item;
+
+}
+
+export 
+
+export 
+
+import * as frame from './frame.js';
+
+var MET_API_OBJECTS_ENDPOINT = "https://collectionapi.metmuseum.org/public/collection/v1/objects/"
+var MET_API_SEARCH_ENDPOINT  = "https://collectionapi.metmuseum.org/public/collection/v1/search?q="
+
+var highlights = {"highlights": [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105]};
+
+window.onload = function onLoadFunction() {
+
+    var params = (new URL(document.location)).searchParams;
+    var q = params.get("q");
+    if (q)  else {
+        loadHighlights();
+        console.log(highlights.highlights);
+    }
+	
+	frame.updateItemAmount();
+}
+
+
+function loadHighlights() {
+    highlights.highlights.forEach(id => {
+        fetchImage(id);
+    });
+}
+
+
+
+function addImageToGallery(frameLink, imageId, imgSource, artist, title, date) {
+    var gallery = document.getElementById("gallery");
+
+    var newThumb = document.createElement("div");
+    newThumb.setAttribute("class", "thumb");
+
+    var newA = document.createElement("a");
+    newA.setAttribute("href", frameLink)
+    newA.setAttribute("id", "object-" + imageId);
+
+    var newImg = document.createElement("img");
+    newImg.setAttribute("src", imgSource);
+    newImg.setAttribute("alt", "");
+    newImg.setAttribute("id", "object-image-" + imageId);
+
+    var newLabel = document.createElement("div");
+    newLabel.setAttribute("class", "museum-label");
+
+    var newArtist = document.createElement("span");
+    var newTitle = document.createElement("span");
+    var newDate = document.createElement("span");
+    newArtist.setAttribute("class", "artist");
+    newTitle.setAttribute("class", "title");
+    newDate.setAttribute("class", "date");
+    newArtist.innerHTML = artist;
+    newTitle.innerHTML = title + ", ";
+    newDate.innerHTML = date;
+
+    gallery.appendChild(newThumb);
+    newThumb.appendChild(newA);
+    newA.appendChild(newImg);
+    newA.appendChild(newLabel);
+    newLabel.appendChild(newArtist);
+    newLabel.appendChild(newTitle);
+    newLabel.appendChild(newDate);
+}
+
+function fetchImage(imageId) {
+    var frameLink = `config.html?objectID=${imageId}`;
+    var imageId;
+    var imgSource;
+    var artist;
+    var title;
+	var hasImages;
+    var date;
+    var image;
+    if (localStorage.getItem(imageId)) {
+        console.log("fetching from localStorage: " + imageId);
+        image = JSON.parse(localStorage.getItem(imageId));
+        imageId = image.objectID;
+        imgSource = image.primaryImageSmall;
+        artist = image.artistDisplayName;
+        title = image.title;
+        date = image.objectDate;
+        addImageToGallery(frameLink, imageId, imgSource, artist, title, date);
+    }
+}
+
+
+

@@ -1,0 +1,272 @@
+
+const STORAGE_KEY = 'cart';
+
+export class CartEntry {
+    
+}
+
+export 
+
+export function getAllEntries() {
+    if (STORAGE_KEY in localStorage) {
+        const entries = localStorage.getItem(STORAGE_KEY);
+        return JSON.parse(entries);
+    }
+}
+
+export 
+
+export function numberOfEntries() {
+    return getAllEntries().length;
+}import * as Search from './search.js';
+import * as Frame from './frame.js';
+import { removeEntry, numberOfEntries, getAllEntries } from './cart-storage.js';
+
+
+
+
+class ShoppingCartItem {
+    
+}
+class ShoppingCartItem2 {
+    constructor(id, printSize, frameStyle, frameWidth, matColor, matWidth, title, artist, date, image) {
+        this.id = id;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+        this.title = title;
+        this.artist = artist;
+        this.date = date;
+        this.image = image;
+        this.price = Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth)
+    }
+}
+
+const sizeDesc = {
+    S: 'Small',
+    M: 'Medium',
+    L: 'Large'
+};
+
+document.addEventListener('DOMContentLoaded', event => {
+    const numberOfCartItems = numberOfEntries();
+    const cartLink = document.getElementById('cart-link');
+    cartLink.innerText = `Cart (${numberOfCartItems})`;
+    loadCartItems();
+});
+
+function loadCartItems() {
+    const items = getAllEntries();
+    if (!items || items.length == 0) 
+    cartSearch(items);
+}
+
+
+
+
+const button = document.getElementById('checkout-button')
+button.addEventListener('click', );
+
+export async function cartSearch(entries) {
+
+    const sciContainer = new SciDocumentContainer();
+    sciContainer.clear();
+    let totalP = 0;
+    if (entries.length === 0) 
+    for (let index in entries) {
+        const i = entries[index];
+        const artwork = await Search.getArtworkById(i.objectID);
+        const sci = new ShoppingCartItem2(i.objectID, i.printSize, i.frameStyle, i.frameWidth, i.matColor, i.matWidth, artwork.title, artwork.artist, artwork.date, artwork.image);
+        sciContainer.addSciToDocument(sci, index);
+        totalP += parseFloat(sci.price);
+    }
+    document.getElementById('price-total').innerText = totalP;
+}
+
+export class SciDocumentContainer {
+    constructor(containerID = 'cart') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addSciToDocument(sci, index) {
+        this.container.appendChild(createSciElements(sci));
+        const image = document.getElementById(`preview-${index}`)
+        const container = document.getElementById(`preview-container-${index}`)
+        image.onload = () => {
+            Frame.render(image, container, sci.printSize, sci.frameStyle, sci.frameWidth, sci.matColor, sci.matWidth)
+        }
+        document.getElementById(`cart-remove-${index}`).onclick = ;
+
+        function createSciElements(sci) {
+            const article = document.createElement('div');
+
+            let frameDescription = `${sizeDesc[sci.printSize]} print in a ${sci.frameWidth / 10} 
+            cm ${sci.frameStyle} frame`
+            if (!!sci.matWidth) {
+                frameDescription += ` with a ${sci.matWidth / 10} 
+                cm ${sci.matColor} mat`;
+            }
+            frameDescription += '.';
+
+            let searchParams = `config.html?objectID=${sci.id}&printSize=${sci.printSize}&frameStyle=${sci.frameStyle}&frameWidth=${sci.frameWidth}&matColor=${sci.matColor}&matWidth=${sci.matWidth}`
+
+            article.innerHTML =
+                `<div class="cart-item">
+        <div class="cart-preview" id="preview-container-${index}">
+          <a href="${searchParams}">
+            <img class="cart-thumb" src="${sci.image}" id="preview-${index}" alt="${sci.title}">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+          <span class="artist">${sci.artist}</span>
+          <span class="title">${sci.title}</span>,
+          <span class="date">${sci.date}</span>
+            <br><br>
+            <span class="frame-description">${frameDescription}</span>
+          </div>
+          <div class="cart-price">€ <span id="price-${index}">${sci.price}</span></div>
+          <button class="cart-remove" id="cart-remove-${index}"></button>
+        </div>
+      </div>`
+            return article;
+        }
+    }
+
+
+
+}
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const woodCost = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85
+    };
+    const scalar = {
+        S: 1,
+        M: 2,
+        L: 3.5
+    };
+
+    price = (30 + woodCost[frameStyle] * (frameWidth/10) + (matWidth/10) * 0.05) * scalar[printSize]
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+  
+import { Artwork } from './search.js';
+
+export 
+
+export 
+import * as ArtworkCache from './search-cache.js'
+
+export class Artwork {
+    constructor(id, title, artist, date, url, image) {
+        this.id = id;
+        this.title = title;
+        this.artist = artist;
+        this.date = date;
+        this.url = url;
+        this.image = image;
+    }
+}
+
+export 
+
+
+
+export async function getArtworkById(id) {
+    let cachedArtwork = JSON.parse(localStorage.getItem(id));
+    if(cachedArtwork) 
+    const response = fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+    return response
+        .then(value => {
+            if (value.ok) {
+                return value.json()
+            }
+        })
+        .then(rawData => new Artwork(
+            rawData.objectID, 
+            rawData.title,
+            rawData.artistDisplayName, 
+            rawData.objectDate,
+            `config.html?${rawData.objectID}`, 
+            rawData.primaryImageSmall
+            ))
+        .then(artwork => {
+                localStorage.setItem(id,JSON.stringify(artwork));
+                return artwork;
+            })
+}
+
+
+export class ArtworkDocumentContainer {
+    
+
+    
+
+    
+}

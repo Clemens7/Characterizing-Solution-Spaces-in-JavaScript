@@ -1,0 +1,173 @@
+export function updateCartSize() {
+    let cart  = JSON.parse(localStorage.getItem('cart'));
+
+    if (cart )  else {
+        document.getElementById("cart-link").innerHTML = "Cart";
+    }
+}import {Image} from "./image.js";
+import {store, retrieve} from "./image-cache.js";
+import {addImageToGallery,clearGallery} from "./image-dom.js";
+
+export async function retrieveIDs(query) {
+    const url = api_search_url(query);
+    try {
+        return await fetch(url).then(response => response.json()).then(data => {
+            const objectIDs = data.objectIDs;
+            if (!objectIDs)  else {
+                return objectIDs.slice(0, 100);
+            }
+        });
+    }}
+
+export async function retrieveArtworks(objectIDs) {
+    clearGallery();
+    Promise.all(objectIDs.map(objectID => {
+        getImage(objectID).then(image => {
+            if (image) {
+                addImageToGallery(image);
+            }
+        })
+    }));
+
+}
+
+export async function getImage(objectID) {
+    let image = retrieve(objectID);
+    if (image)  else {
+        try {
+            return fetch(api_object_url(objectID)).then(data => data.json()).then(data => {
+                return new Image(data.objectID, data.primaryImageSmall, data.artistDisplayName, data.title, data.objectDate)
+            }).then(image => {
+                store(image);
+                return image;
+            });
+        }
+    }}
+
+
+function api_search_url(query) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}`;
+}
+
+function api_object_url(id) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+}
+export function retrieve(objectID) {
+    if(objectID in localStorage) 
+}
+
+export function store(image) {
+    const key = image.id;
+    localStorage[key] = JSON.stringify(image);
+}export function clearGallery() {
+    const gallery = document.getElementById('gallery')
+    gallery.innerText = '';
+}
+
+export function addImageToGallery(image) {
+    const gallery = document.getElementById('gallery')
+    gallery.appendChild(createImageContainer(image));
+}
+
+function createImageContainer(image) {
+    const thumb = document.createElement('div');
+    thumb.setAttribute('class', 'thumb');
+
+    const anchor = createAnchorContainer(image);
+    thumb.appendChild(anchor);
+
+    const label = createLabelContainer(image);
+    thumb.appendChild(label);
+
+    return thumb;
+}
+
+function createAnchorContainer(image) {
+    const a = document.createElement('a');
+    a.setAttribute('href', `config.html?objectID=${image.id}`);
+    a.setAttribute('id', 'object--1');
+
+    const img = document.createElement('img');
+    img.setAttribute('src', image.url);
+    img.setAttribute('id', 'object-image--1');
+    img.setAttribute('alt', image.title);
+    a.appendChild(img);
+    return a;
+}
+
+function createLabelContainer(image) {
+    const label = document.createElement('div');
+    label.setAttribute('class', 'museum-label');
+
+    const artist = document.createElement('span');
+    artist.setAttribute('class', 'artist');
+    artist.innerText = image.artist;
+    label.appendChild(artist);
+
+    const title = document.createElement('span');
+    title.setAttribute('class', 'title');
+    title.innerText = image.title;
+    label.appendChild(title);
+
+    const date = document.createElement('span');
+    date.setAttribute('class', 'date');
+    date.innerText = `, ${image.date}`;
+    label.appendChild(date);
+
+    return label;
+}
+
+
+/*
+Template:
+
+<div class="thumb">
+    <a href="" id="object--1">
+     <img src="" alt="" id="object-image--1">
+        <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+        </div>
+    </a>
+</div>
+export class Image {
+    constructor(objectID, primaryImage, artistDisplayName, title, objectDate) {
+        this.id = objectID;
+        this.url = primaryImage;
+        this.artist = artistDisplayName;
+        this.title = title;
+        this.date = objectDate
+    }
+}
+        import {retrieveIDs, retrieveArtworks} from "./image-api.js";
+
+        import * as cart from './cart.js';
+
+        const updateHeader = (text) => document.getElementById("search-info").innerText = text;
+
+        function searchImages(search) {
+            document.getElementById("search").value = search;
+            updateHeader(`Searching for “${search}”...`)
+            retrieveIDs(search).then(objectIDs => {
+                const size = objectIDs.length;
+                updateHeader(`Found ${size} ${size === 1  : "artworks"} for “${search}”`);
+                retrieveArtworks(objectIDs);
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', event => {
+            const search = new URLSearchParams(location.search).get('q')
+            if (search && search !== '') {
+                searchImages(search);
+            }
+
+            cart.updateCartSize();
+        });
+
+        document.querySelector(".search-form").addEventListener('submit', );
+
+        
+
+        document.getElementById("search").addEventListener('keyup', )
+    

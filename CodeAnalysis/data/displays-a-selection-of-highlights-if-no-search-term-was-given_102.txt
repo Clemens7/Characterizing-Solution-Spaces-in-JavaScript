@@ -1,0 +1,116 @@
+const SPAN_CLASS = {
+    ARTIST : 'artist',
+    TITLE : 'title',
+    DATE : 'date'
+};
+const DIV_CLASS = {
+    MUSEUM_LABEL : 'museum-label',
+    THUMB : 'thumb'
+};
+const ATTRIBUTE = {
+    CLASS: 'class',
+    ID: 'id',
+    ALT: 'alt',
+    SRC: 'src',
+    HREF: 'href'
+};
+const TAG = {
+    DIV : 'div',
+    SPAN : 'span',
+    IMG : 'img',
+    A : 'a'
+};
+
+const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+const OBJECT_EP = 'objects/';
+const SEARCH_EP = 'search';
+
+const GALLERY_ID = 'gallery';
+const OBJ_IMG_ID = 'object-image-';
+const LNK_ID = 'object-';
+const CONF_LNK = './config.html';
+const SEARCH_PARAM = '?q=';
+const SEARCH_INFO = 'search-info';
+
+function create_gallery_item_from_json(met_obj, item_nr){
+    let artist_node = document.createElement(TAG.SPAN);
+    artist_node.setAttribute(ATTRIBUTE.CLASS, SPAN_CLASS.ARTIST);
+    let artist_txt = document.createTextNode(met_obj.artistDisplayName);
+    artist_node.appendChild(artist_txt);
+    let title_node = document.createElement(TAG.SPAN);
+    title_node.setAttribute(ATTRIBUTE.CLASS, SPAN_CLASS.TITLE);
+    let title_txt = document.createTextNode(met_obj.title);
+    title_node.appendChild(title_txt);
+    let date_node = document.createElement(TAG.SPAN);
+    date_node.setAttribute(ATTRIBUTE.CLASS, SPAN_CLASS.DATE);
+    let date_txt = document.createTextNode(met_obj.objectDate);
+    date_node.appendChild(date_txt);
+
+    let label_node = document.createElement(TAG.DIV);
+    label_node.setAttribute(ATTRIBUTE.CLASS,DIV_CLASS.MUSEUM_LABEL);
+    label_node.appendChild(artist_node);
+    label_node.appendChild(title_node);
+    label_node.appendChild(document.createTextNode(', '));
+    label_node.appendChild(date_node);
+
+    let img_node = document.createElement(TAG.IMG);
+    img_node.setAttribute(ATTRIBUTE.SRC, met_obj.primaryImageSmall);
+    img_node.setAttribute(ATTRIBUTE.ALT, met_obj.title);
+    img_node.setAttribute(ATTRIBUTE.ID, OBJ_IMG_ID + item_nr);
+
+    let a_node = document.createElement(TAG.A);
+    a_node.setAttribute(ATTRIBUTE.HREF,CONF_LNK + '?objectID=' + met_obj.objectID);
+    a_node.setAttribute(ATTRIBUTE.ID,LNK_ID + item_nr);
+    a_node.appendChild(img_node);
+    a_node.appendChild(label_node);
+
+    let thumb_node = document.createElement(TAG.DIV);
+    thumb_node.setAttribute(ATTRIBUTE.CLASS, DIV_CLASS.THUMB);
+    thumb_node.appendChild(a_node);
+
+    return thumb_node;
+}
+
+async function show_highlights() {
+    fetch('highlights.json')
+        .then((response) => {
+            return response.json();
+        }).then((highlights) => {
+            return highlights.highlights;
+        }).then((ids) => {
+            let gallery = document.getElementById(GALLERY_ID);
+
+            let item_nr = 0;
+            for (const id of ids) {
+              if (localStorage.getItem(id) == null) {
+                fetch(MET_API_BASE_URL + OBJECT_EP + id)
+                    .then((response) => {
+                        return response.json();
+                    }).then((data) => {
+                      let dataJSON = JSON.stringify(data);
+                      localStorage.setItem(id, dataJSON);
+
+                        gallery.appendChild(create_gallery_item_from_json(data, item_nr));
+                        item_nr++;
+                });
+              }
+            }
+        });
+}
+
+
+
+
+
+async function init(){
+    let itemsInCart = JSON.parse(localStorage.getItem('cart'));
+    if (localStorage.getItem('cart') !== null ) 
+    const href = unescape(window.location.href).replace('+', ' ');
+    const query = href.split(SEARCH_PARAM);
+
+    if(query.length === 1) {
+        await show_highlights();
+    }
+}
+
+window.addEventListener("load", init);

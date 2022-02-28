@@ -1,0 +1,122 @@
+import { Artwork } from '../metmuseum/artwork-model.js';
+
+export function retrieve(objectId) {
+    if (objectId in localStorage) 
+}
+
+export export class Artwork {
+    
+}
+export 
+
+export 
+
+export 
+
+export 
+
+export function onReady(callback) {
+    if (typeof callback === "function") {
+        document.addEventListener('DOMContentLoaded', callback)
+    }
+}
+
+export 
+
+export import { updateCartCounter } from "./cart/storage.js";
+import { onReady } from "./helpers/dom.js"
+
+onReady(updateCartCounter);
+import { Artwork } from './artwork-model.js';
+import * as CACHE from '../search/artwork-cache.js';
+
+export async function getArtworkByObjectId(objectId) {
+    let artworkCached = CACHE.retrieve(objectId);
+    if (artworkCached) 
+
+    const url = artwork_id_url(objectId);
+    const response = await fetch(url);
+    if (!response.ok) 
+    const rawData = await response.json();}
+
+export 
+
+export async function getArtworksByObjectIds(artworkIds) {
+    let artworks = [];
+
+    for (let id of artworkIds) {
+        let art = await getArtworkByObjectId(id);}
+
+
+export 
+
+export 
+
+
+function artwork_id_url(objectId) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`;
+}
+
+
+import * as MuseumAPI from '../metmuseum/museum-api.js'
+import * as DOM from '../helpers/dom.js';
+import * as UTIL from '../helpers/utils.js';
+import { Artwork } from '../metmuseum/artwork-model.js';
+
+export let q = UTIL.getSearchParam("q");
+const searchButton = document.getElementById('search-button');
+searchButton.addEventListener("click", search);
+
+
+function initCheck() {
+    if (q) 
+    else {
+        q = "";
+        artSearch(q);
+    }
+}
+
+
+
+async function artSearch(searchTerm) {
+    const artworks = await retrieveArtItems(searchTerm);}
+
+
+
+async function retrieveArtItems(searchTerm) {
+    let info = document.getElementById('search-info');
+    try {
+        if (searchTerm == "") {
+            const json = await fetch("./highlights.json").then(res => res.json());
+            const highlights = await MuseumAPI.getArtworksByObjectIds(json.highlights);
+    }}
+
+DOM.onReady(initCheck());export function updateCartCounter() {
+  const element = document.getElementById("cart-link");
+  if (element) {
+    const items = getItems();
+    let text = "Cart";
+    if (items.length > 0) 
+
+    element.innerText = text;
+  }
+}
+
+export 
+
+export 
+
+export 
+
+
+
+
+function getItems() {
+  return JSON.parse(localStorage.getItem("cart")) ?? [];
+}export function getSearchParam(param) {
+    if (param) {
+        return new URL(document.location).searchParams.get(param);
+    }
+}
+
+export 

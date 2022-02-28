@@ -1,0 +1,62 @@
+import { Artwork } from './artwork.js';
+import * as ArtworkCache from './artwork-cache.js'
+
+const MET_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+var artworks = [];
+export 
+export 
+
+export 
+
+export 
+export 
+export 
+
+import { Artwork } from './artwork.js';
+
+export 
+
+export export class Artwork {
+  
+}
+    /*
+    const cartlink = document.getElementById('cart-link');
+    var cartAmount = 0;
+    try{
+      cartAmount = JSON.parse(localStorage['cart']).length;
+    }catch(e){};
+    cartlink.innerText= 'Cart (' + cartAmount +')';
+
+    document.addEventListener('DOMContentLoaded', event => {
+      if(localStorage.getItem('cart') === null){
+        document.getElementsByClassName('cart-item')[0].innerText = 'There are no items in your shopping cart.';
+        document.getElementById('checkout-button').disabled = true;
+      }
+    })
+  
+let cart = 'cart';
+
+export function getItemsFromStorage() {
+return window.localStorage[cart]  : [];
+}
+
+export 
+
+export 
+
+export function displayCartCount() {
+    const cartLink = document.getElementById("cart-link");
+    const count = getItemsFromStorage().length;
+    if (count > 0)  else {
+        cartLink.innerHTML = "Cart";
+    }
+}export 
+
+export 
+
+export 
+
+/* My Functions */
+
+
+

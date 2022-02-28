@@ -1,0 +1,41 @@
+
+            
+          export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+
+	frameWidth = parseFloat(frameWidth);
+
+	matWidth = parseFloat(matWidth);
+	
+    let price = 30.0;
+	
+	if(frameStyle == "classic")  else if(frameStyle == "natural") {
+		price = price + 0.8*frameWidth;
+	}
+	
+	price = price + 0.05*matWidth;
+	
+	if (printSize == "M") {
+		price = price*2;
+	}
+	
+    return "€ " + (Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2);
+}

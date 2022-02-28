@@ -1,0 +1,38 @@
+import { render, calculatePrice } from "./frame.js";
+class ArtworkFull {
+  
+}
+window.onload = () => {
+  let configs = JSON.parse(localStorage.getItem('cart'));
+  base();
+  if (configs) 
+};
+function base() {
+  document.getElementById('cart').innerHTML = '<div id="empty-cart">There are no items in your shopping cart.</div>';
+  document.getElementById('cart').appendChild(createTotalPrice(false));
+  setHeader(0);
+}
+
+
+
+
+
+
+function createTotalPrice(active) {
+  let div = document.createElement('div');
+  div.className = 'cart-total';
+  div.innerHTML =
+    `<div class="price">Total: € <span id="price-total">0.00</span></div>
+             <button type="button" id="checkout-button" ${active  : 'disabled'} >Checkout</button>`;
+  div.childNodes[2].addEventListener('click', );
+  return div;
+}
+function setHeader(length) {
+  document.getElementById('cart-link').innerText = `Cart ${length > 0  : ''}`;
+}
+
+export 
+
+export 
+
+export 

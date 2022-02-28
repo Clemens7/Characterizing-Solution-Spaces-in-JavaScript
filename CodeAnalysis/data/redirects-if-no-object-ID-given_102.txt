@@ -1,0 +1,71 @@
+const SPAN_CLASS = {
+    ARTIST : 'artist',
+    TITLE : 'title',
+    DATE : 'date'
+};
+const DIV_CLASS = {
+    MUSEUM_LABEL : 'museum-label',
+    THUMB : 'thumb'
+};
+const ATTRIBUTE = {
+    CLASS: 'class',
+    ID: 'id',
+    ALT: 'alt',
+    SRC: 'src',
+    HREF: 'href'
+};
+const TAG = {
+    DIV : 'div',
+    SPAN : 'span',
+    IMG : 'img',
+    A : 'a'
+};
+
+const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+const OBJECT_EP = 'objects/';
+const SEARCH_EP = 'search';
+
+const GALLERY_ID = 'gallery';
+const OBJ_IMG_ID = 'object-image-';
+const LNK_ID = 'object-';
+const CONF_LNK = './config.html';
+const SEARCH_PARAM = '?q=';
+const SEARCH_INFO = 'search-info';
+
+
+
+async function show_highlights() {
+    fetch('highlights.json')
+        .then((response) => {
+            return response.json();
+        }).then((highlights) => {
+            return highlights.highlights;
+        }).then((ids) => {
+            let gallery = document.getElementById(GALLERY_ID);
+
+            let item_nr = 0;
+            for (const id of ids) {
+              if (localStorage.getItem(id) == null) {
+                fetch(MET_API_BASE_URL + OBJECT_EP + id)
+                    .then().then();
+              }
+            }
+        });
+}
+
+
+
+
+
+async function init(){
+    let itemsInCart = JSON.parse(localStorage.getItem('cart'));
+    if (localStorage.getItem('cart') !== null ) 
+    const href = unescape(window.location.href).replace('+', ' ');
+    const query = href.split(SEARCH_PARAM);
+
+    if(query.length === 1) {
+        await show_highlights();
+    }
+}
+
+window.addEventListener("load", init);

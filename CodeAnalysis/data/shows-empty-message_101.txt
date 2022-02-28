@@ -1,0 +1,113 @@
+export 
+
+export 
+
+export 
+
+export 
+
+
+export export class Artwork {
+  
+}
+
+export var NumberOfItems = {
+  store: ,
+  getNumber: 
+}import * as Storage from './helper/storage.js'
+import * as DomBuilder from './helper/dom-builder.js';
+import * as ArtworkCach from './helper/artwork-cache.js';
+import * as FrameConfigurator from '../frame.js';
+import * as ArtworkAPI from './helper/met-museum-api.js';
+
+
+async function updateCart() {
+  var cart = Storage.getCart();
+  const cartContainer = new CartContainer();
+  cartContainer.clear();
+
+  if (cart == null) {
+    cartContainer.displayEmptyCart();
+  }
+}
+
+window.addEventListener("load", async function() {
+  await updateCart();
+});
+
+document.getElementById("checkout-button").addEventListener("click", );
+
+
+class CartContainer {
+  constructor(results) {
+    this.cartContainer = document.getElementById("cart");
+    if (!this.cartContainer) 
+    this.cartLink = document.getElementById("cart-link");
+    if (!this.cartLink) 
+    this.priceTotal = document.getElementById("price-total");
+    if (!this.priceTotal) 
+  }
+  clear() {
+    this.cartContainer.querySelectorAll('.cart-item').forEach();
+    document.getElementById('checkout-button').disabled = false;
+  }
+
+  
+
+  
+
+  displayEmptyCart() {
+    this.cartContainer.insertBefore(
+      DomBuilder.createTextElement("b", 'There are no items in your shopping cart.'), this.cartContainer.firstChild);
+    document.getElementById('checkout-button').disabled = true;
+    this.cartLink.innerHTML = "Cart"
+    this.priceTotal.innerHTML = `0`;
+  }
+
+  
+}export 
+
+export 
+
+export function createTextElement(tag, text) {
+  const element = document.createElement(tag);
+  element.innerText = text;
+  return element;
+}export 
+
+export 
+
+export import * as ArtworkCache from './artwork-cache.js';
+import {
+  Artwork,
+  NumberOfItems
+} from './artwork.js';
+
+const API_SEARCH_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+const API_OBJECT_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const HIGHLIGHTS_URL = './highlights.json';
+const SEARCH_CONDITION = 'hasImages=true';
+
+export 
+
+export 
+
+
+
+
+
+
+
+export 
+
+
+
+export function getCart() {
+    return JSON.parse(window.localStorage.getItem('cart'));
+}
+
+export 
+
+export 
+
+export 

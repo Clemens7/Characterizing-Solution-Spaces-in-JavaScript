@@ -1,0 +1,340 @@
+export function get(key) {
+    return localStorage.getItem(key)  : null
+}
+
+export async function set(key, callback) {
+    return localStorage.setItem(key, JSON.stringify(await callback()))
+}
+
+export 
+import { MetropolitanService } from "./MetropolitanService.js";
+import { QueryString } from "./Query.js";
+import { Image } from "./Image.js";
+import { PrintSize, PrintSizes } from "./PrintSize.js";
+import { calculatePrice } from "./frame.js";
+import * as CacheService from "./CacheService.js"
+
+let printSizeControls = document.querySelectorAll(".segmented input[type=radio][name=printSize]");
+let frameStyleControls = document.querySelectorAll(".frame-style-row input[type=radio]");
+let matColorControls = document.querySelectorAll(".mat-color-row input[type=radio]");
+let addToCartButton = document.querySelector(".buy");
+let cartLabeElement = document.querySelector("#cart-link")
+
+let printSize = document.querySelector(".segmented input[type=radio][name=printSize]:checked");
+let frameStyle = document.querySelector(".frame-style-row input[type=radio]:checked");
+let frameWidth = document.querySelector(".config-row input[type=number][name=frameWidth]");
+let frameWidthR = document.querySelector("fieldset input[type=range][name=frameWidthR]");
+let matColor = document.querySelector(".mat-color-row input[type=radio]:checked");
+let matWidth = document.querySelector(".config-row input[type=number][name=matWidth]");
+let matWidthR = document.querySelector("fieldset input[type=range][name=matWidthR]");
+
+let imageElement = document.querySelector('#preview-image');
+const artist = document.querySelector('#label-author');
+const description = document.querySelector('#label-description');
+
+let image = null;
+let printSizeSmall = new PrintSize(PrintSizes.SMALL, 0, 0);
+let printSizeMedium = new PrintSize(PrintSizes.MEDIUM, 0, 0);
+let printSizeLarge = new PrintSize(PrintSizes.LARGE, 0, 0);
+
+let id = null;
+let cart = CacheService.get("cart");
+
+printSizeSmall.calculate(imageElement);
+printSizeMedium.calculate(imageElement);
+printSizeLarge.calculate(imageElement);
+
+
+(async () => {
+    id = QueryString.getParamFromUrl(document.location.search, "objectID");
+    const printSizeParam = QueryString.getParamFromUrl(document.location.search, "printSize");
+    const frameStyleParam = QueryString.getParamFromUrl(document.location.search, "frameStyle");
+    const frameWidthParam = QueryString.getParamFromUrl(document.location.search, "frameWidth");
+    const matColorParam = QueryString.getParamFromUrl(document.location.search, "matColor");
+    const matWidthParam = QueryString.getParamFromUrl(document.location.search, "matWidth");
+
+    printSize.value = printSizeParam  : printSize.value;
+    frameStyle.value = frameStyleParam  : frameStyle.value;
+    frameWidth.value = frameWidthParam  : frameWidth.value;
+    matColor.value = matColorParam  : matColor.value;
+    matWidth.value = matWidthParam  : matWidth.value;
+
+    if (!id) 
+    const metropolitanService = new MetropolitanService;
+    const object = await metropolitanService.object(id, true);
+    if (object.message === "ObjectID not found") 
+    artist.innerText = object.artistDisplayName;
+    description.innerHTML = `${object.title}, ca. ${object.objectDate}`;
+    imageElement.setAttribute("src", object.primaryImageSmall);
+
+    cartLabeElement.innerHTML = cart  : `Cart`
+})();
+
+imageElement.addEventListener('load', _ => {
+    image = new Image(imageElement, printSize.value, frameStyle.value, frameWidth.value, matColor.value, matWidth.value);
+    image.renderImage();
+    calculateTotalSize()
+    calculateTotalPrice()
+})
+
+frameWidth.addEventListener('change', event => {
+    const value = formatFloat(validateInputRange(event.srcElement.value, 2, 5));
+    image.frameWidth = value;
+    frameWidth.value = value;
+    frameWidthR.value = value;
+    calculateTotalSize()
+    calculateTotalPrice()
+});
+
+frameWidthR.addEventListener('change', );
+
+matWidth.addEventListener('change', );
+
+matWidthR.addEventListener('change', );
+
+addToCartButton.addEventListener('click', )
+
+addCallBackToControls(printSizeControls, 'change', );
+addCallBackToControls(frameStyleControls, 'change', );
+addCallBackToControls(matColorControls, 'change', );
+
+function addCallBackToControls(controls, event, callback) {
+    for (let control of controls) {
+        control.addEventListener(event, callback)
+    }
+}
+
+function calculateTotalSize() {
+    const x = document.querySelector(`.config-row div[id=total-size] span[id=size-total-x]`);
+    const y = document.querySelector(`.config-row div[id=total-size] span[id=size-total-y]`);
+    const size = [printSizeSmall, printSizeMedium, printSizeLarge].find(printSize => printSize.element.checked);
+    x.innerHTML = size.x + (matWidth.value * 2) + (frameWidth.value * 2);
+    y.innerHTML = size.y + (matWidth.value * 2) + (frameWidth.value * 2);
+}
+
+function calculateTotalPrice() {
+    const price = document.querySelector('#price');
+    const size = [printSizeSmall, printSizeMedium, printSizeLarge].find(printSize => printSize.element.checked);
+    price.innerHTML = `€ ${calculatePrice(size.size, image.frameStyle, image.frameWidth, image.matWidth).toFixed(2)}`;
+}
+
+function validateInputRange(input, min, max) {
+    if (input < min) {
+        return min;
+    }
+    if (input > max) {
+        return max;
+    }
+    return input;
+}
+
+function formatFloat(input) {
+    return parseFloat(parseFloat(input).toFixed(1))
+}
+
+
+
+export const baseUrlMetropolitan = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+export const baseUrlArtmart = 'https://web-engineering.big.tuwien.ac.at/s20/a2/'
+export const apiResultLimit = 100import { PrintSizes } from "./PrintSize.js";
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    const frameStylePrices = {
+        'classic': 1.0,
+        'natural': 0.80,
+        'shabby': 0.90,
+        'elegant': 0.85
+    }
+
+    price = price + (frameStylePrices[frameStyle] * frameWidth) + (0.05 * matWidth)
+    if (printSize === PrintSizes.MEDIUM) {
+        price = price * 2.0;
+    }
+    if (printSize === PrintSizes.LARGE) 
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { getPrintSizes, render } from "./frame.js";
+
+export class Image {
+    constructor(img, printSize, frameStyle, frameWidth, matColor, matWidth) {
+        this._img = img;
+        this._printSize = printSize;
+        this._frameStyle = frameStyle;
+        this._frameWidth = frameWidth;
+        this._matColor = matColor;
+        this._matWidth = matWidth;
+    }
+
+    
+
+    
+
+    get frameStyle() { return this._frameStyle; }
+
+    get frameWidth() { return this._frameWidth; }
+
+    
+
+    get matWidth() { return this._matWidth; }
+
+    
+
+    
+
+    
+
+    set frameWidth(value) { this._frameWidth = value; this.renderImage() }
+
+    
+
+    
+
+    renderImage() {
+        render(this._img, this._img.parentElement, this._printSize, this._frameStyle, this._frameWidth, this._matColor, this._matWidth)
+    }
+}import { RequestService } from './RequestService.js'
+import { baseUrlMetropolitan } from './environment.js'
+import { QueryString, QueryParam } from './Query.js'
+
+export class MetropolitanService {
+
+    
+
+    async object(id, shouldCache) {
+        const rs = new RequestService(baseUrlMetropolitan, shouldCache)
+        return rs.get(`objects/${id}`)
+    }
+
+}
+import { getPrintSizes } from "./frame.js";
+
+export class PrintSize {
+    constructor(size, x, y) {
+        this._size = size;
+        this._x = x;
+        this._y = y;
+        this._element = document.querySelector(`.segmented input[id=print-size-${this._size.toLowerCase()}]`);
+    }
+
+    get size() { return this._size; }
+
+    get x() { return this._x; }
+
+    get y() { return this._y; }
+
+    get element() { return this._element; }
+
+    
+
+    
+
+    
+
+    
+
+    calculate(img) {
+        const sizes = getPrintSizes(img)[this._size];
+        this._x = sizes[0];
+        this._y = sizes[1];
+        const x = document.querySelector(`.segmented label[id=print-size-${this._size.toLowerCase()}-label] span[id=size-${this._size.toLowerCase()}-x]`);
+        const y = document.querySelector(`.segmented label[id=print-size-${this._size.toLowerCase()}-label] span[id=size-${this._size.toLowerCase()}-y]`);
+        x.innerHTML = this._x;
+        y.innerHTML = this._y;
+    }
+}
+
+export const PrintSizes = Object.freeze({
+    SMALL: 'S',
+    MEDIUM: 'M',
+    LARGE: 'L'
+});export class QueryString {
+    
+
+    
+
+    static getParamFromUrl(url, param) {
+        return new URLSearchParams(url).get(param)
+    }
+}
+
+export class QueryParam {
+    
+}
+import * as CacheService from './CacheService.js';
+export class RequestService {
+
+    constructor(baseUrl, shouldCache = false) {
+        this.baseUrl = baseUrl
+        this.shouldCache = shouldCache;
+    }
+
+    async get(path) {
+        let resp = null;
+        const cachedResponse = CacheService.get(`cachedResponse-${path}`);
+
+        if (cachedResponse ) 
+        else {
+            resp = await (await fetch(this.baseUrl + path, { method: 'GET' })).json()
+            CacheService.set(`cachedResponse-${path}`, _ => resp);
+        }
+        return await resp
+    }
+}

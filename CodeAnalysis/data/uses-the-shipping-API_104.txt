@@ -1,0 +1,144 @@
+export function retrieve(key) {
+    
+    if(key in localStorage) {
+        console.log(`Retrieving ${key} from local storage`);
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+export 
+
+export class Product {
+    
+}
+
+export 
+
+export 
+    import * as Cache from './cache.js'
+    import * as Cart from './cart.js'
+    import * as Frame from './frame.js'
+
+    const ART_SHIP_API = 'https://web-engineering.big.tuwien.ac.at/s20/a2';
+
+    document.addEventListener('DOMContentLoaded', event => {
+
+      resetPrice();
+      loadCountries();
+      calculatePrice();
+      return;
+    });
+
+    async function loadCountries() {
+      document.getElementById("country").addEventListener("change", calculatePrice);
+      const url = '/shipping';
+      let response = await fetch(ART_SHIP_API+url);
+      response = await response.json();
+      appendCountryOptions('country', response.destinations);
+      calculatePrice();
+    }
+
+    function appendCountryOptions(selector, jsonCountries) {
+      console.log(jsonCountries);
+      let htmlSelector = document.getElementById(selector);
+      for (let element of jsonCountries) {
+        const displayName = element.displayName;
+        const cost = element.cost;
+        const id = element.country;
+        let child = createOption(cost, displayName, id);
+        htmlSelector.appendChild(child);
+      }
+    }
+
+    function createOption(cost, text, id=null) {
+      const element = document.createElement('option');
+      if (id) {
+        element.id = id;
+      }
+      element.value = id;
+      element.setAttribute("cost", cost);
+      element.innerText = text;
+      return element;
+    }
+
+    function calculatePrice() {
+      var shipping = 0.0;
+      var subtotal = 0.0;
+      var total = 0.0;
+
+      let countries = document.getElementById('country');
+      console.log(countries.options);
+      let selectedOption = countries.options[countries.selectedIndex];
+      console.log(selectedOption);
+
+      if (!selectedOption) {
+        console.log("waiting for shipping info");
+        shipping = -1.0
+      } else {
+        shipping = selectedOption.getAttribute("cost")/100;
+      }
+
+      const cart = Cache.retrieve('cart');
+      if (!cart || cart.length === 0) 
+      console.log(cart);
+
+      cart.forEach(item => {
+        let price = Frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+        if (price < 0.0) 
+        console.log(`add to subtotal ${item.objectID}`)
+        subtotal += price;
+      });
+
+      document.getElementById('price-subtotal').innerHTML = `${subtotal.toFixed(2)}`;
+
+      if(shipping != -1.0) {
+        total = subtotal + shipping;
+        document.getElementById('price-shipping').innerHTML = `${shipping.toFixed(2)}`;
+        document.getElementById('price-total').innerHTML = `${total.toFixed(2)}`;
+        let paybutton = document.getElementById("pay-button");
+        paybutton.disabled = false;
+      }
+    }
+
+    function resetPrice() {
+      document.getElementById('price-subtotal').innerHTML = `&mdash;`;
+      document.getElementById('price-shipping').innerHTML = `&mdash;`;
+      document.getElementById('price-total').innerHTML = `&mdash;`;
+      console.log("price reset!");
+      let paybutton = document.getElementById("pay-button");
+      paybutton.disabled = true;
+    }
+
+  export 
+
+export 
+
+const price_classic = 100;
+const price_natural = 80;
+const price_shabby = 90;
+const price_elegant = 85;
+const price_mat = 5;
+
+const base_small = 3000;
+const base_medium = 2 * base_small;
+const base_large = 3.5 * base_small;
+
+export function calculatePrice (printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.00; //price of a small print
+    let matPrice = 0.05 * (matWidth/10);
+
+    let woodPrice = 1.00; //price of a classic frame per centimeter;
+
+    if (frameStyle === "shabby") {
+        woodPrice = 0.90;
+    }
+    woodPrice *= frameWidth/10;
+
+    price += (30 + woodPrice + matPrice); //price for a small size
+
+    if (printSize === 'M')  else if (printSize === 'L') {
+        price *= 3.50;
+    }
+
+    return 1*(Math.round((price + Number.EPSILON) * 100) / 100);
+}

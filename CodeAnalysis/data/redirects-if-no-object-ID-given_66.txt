@@ -1,0 +1,74 @@
+
+
+function getLocalStorage(key) {
+    var items = JSON.parse(localStorage.getItem(key) || "[]");
+    return items;
+}
+
+
+
+
+
+
+
+
+
+
+    import * as searchAPI from './search.js';
+
+    
+
+
+    document.addEventListener('DOMContentLoaded', event => { // reacts to url with search query in it
+
+     var items = getLocalStorage("cart");
+      document.getElementById("cart-count").innerText = " (" + items.length + ")";
+
+      const params = (new URL(document.location)).searchParams;
+
+
+      const stringQuery = params.get('q');
+      if(!stringQuery) {
+        searchAPI.loadHighlights();
+        return;
+      }});
+
+
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('click', );
+
+    const form = document.querySelector('.search-form');
+
+    form.addEventListener('submit', );
+
+
+  
+export class Artwork {
+    
+}
+
+
+export 
+
+async function retrieveObject(id) {
+
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+    const response = await fetch(url);}
+
+
+export 
+
+
+
+export async function loadHighlights() {
+console.log("load highlights");
+
+    const response = await fetch("./highlights.json");         ////// get all the relevant IDs first
+    const rawData = await response.json();
+    const responseHighlights = await rawData.highlights;
+
+    let highlights = [];
+
+    for (let i = 0; i < responseHighlights.length; i++) {              /////////// then get the objects
+
+        let artwork = await retrieveObject(responseHighlights[i]);}

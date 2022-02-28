@@ -1,0 +1,363 @@
+import * as FrameMethods from './frame.js';
+
+let configList = JSON.parse(localStorage.getItem('cart'));
+var imgList = []; //list of json object form api
+let price_total = 0;
+var checkoutActive;
+const API_BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+
+
+
+async function getData() {
+    console.log("load data");
+    let configList = JSON.parse(localStorage.getItem('cart'));
+    if (configList == null || configList.length === 0) {
+        let cart = document.getElementById("cart");
+        console.log("null elements to display")
+        cart.append('<p>There are no items in your shopping cart.</p>');
+        checkoutActive = false;
+        console.log("Cart is empty.")
+    }
+    addCartTotal('cart', "div", "cart-total");
+}
+
+function addCartTotal(parentID, elementTag, itemClass) {
+    let cart = document.getElementById(parentID);
+    if (cart === null) 
+
+    let cart_total = document.createElement(elementTag);
+    cart_total.setAttribute('class', itemClass);
+
+    let price_div = document.createElement('div');
+    price_div.setAttribute("class", "price");
+    price_div.innerText = "Total: €";
+
+    let total_price = document.createElement('span');
+    total_price.setAttribute("id", "price-total");
+    total_price.innerText = "" + price_total;
+    price_div.append(total_price);
+
+    let checkout_anchor = document.createElement("a");
+    checkout_anchor.setAttribute("href", "checkout.html");
+
+    let checkout_btn = document.createElement("button");
+    checkout_btn.setAttribute("type", "button");
+    checkout_btn.setAttribute("id", "checkout-button");
+    checkout_btn.setAttribute("disabled", maybeEnableCheckout);
+    checkout_btn.innerText = "Checkout";
+    checkout_anchor.append(checkout_btn);
+
+    cart_total.append(price_div);
+    cart_total.append(checkout_anchor);
+    cart.append(cart_total);
+}
+
+window.onload = function () {
+    getData();
+}
+
+window.displayElement = displayElement;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.maybeEnableCheckout = maybeEnableCheckout;
+
+
+
+
+
+import * as FrameTools from "./frame.js";
+
+const urlParams = new URLSearchParams(window.location.search);
+const objectID = urlParams.get('objectID');
+const printSize = urlParams.get('printSize');
+const frameStyle = urlParams.get('frameStyle');
+let frameWidth = urlParams.get('frameWidth');
+const matColor = urlParams.get('matColor');
+let matWidth = urlParams.get('matWidth');
+
+if (frameWidth) 
+if (matWidth) 
+
+let previewImageContainerElement = document.getElementById('preview-container');
+let previewImageElement = document.getElementById('preview-image');
+let imageLabel = document.getElementById("image-label");
+
+
+let frameWidthRangeElement = document.getElementsByName("frameWidthR")[0];
+let frameWidthElement = document.getElementsByName("frameWidth")[0];
+let matWidthRangeElement = document.getElementsByName("matWidthR")[0];
+let matWidthElement = document.getElementsByName("matWidth")[0];
+
+let priceElement = document.getElementById("price");
+let totalSizeElement = document.getElementById("total-size");
+let sSizeLabelElement = document.getElementById("print-size-s-label");
+let mSizeLabelElement = document.getElementById("print-size-m-label");
+let lSizeLabelElement = document.getElementById("print-size-l-label");
+
+loadImage();
+
+setSize(printSize);
+setStyle(frameStyle);
+setColor(matColor);
+if (frameWidth) 
+if (matWidth) 
+updateMatWidthRangeElement();
+updateFrameWidthRangeElement();
+
+
+async function loadImage() {
+    try {
+        if (objectID == null) 
+        const url = "https://collectionapi.metmuseum.org/public/collection/v1/objects/" + objectID;
+        let data;
+        if (localStorage.getItem(objectID) == null)  else {
+            data = localStorage.getItem(objectID);
+        }
+        if (data != null) {
+            let image = data.primaryImage;
+            if (image == undefined) image = data.primaryImageSmall;
+            if (image == undefined) image = data.additionalImages[0];
+    }catch (error) {
+        console.log(error);
+    }
+}
+
+window.setSize = setSize;
+
+function setSize(size) {
+    console.log(size);
+    if (size != null) 
+    updateUI();
+}
+
+window.setStyle = setStyle;
+
+function setStyle(style) {
+    if (style != null) 
+    updateUI();
+}
+
+window.setColor = setColor;
+
+function setColor(color) {
+    if (color != null) 
+    updateUI();
+}
+
+window.updateFrameWidthElement = updateFrameWidthElement;
+
+
+
+window.updateFrameWidthRangeElement = updateFrameWidthRangeElement;
+
+function updateFrameWidthRangeElement() {
+    if (frameWidthElement.value != null && frameWidthElement.value != "") {
+        if (frameWidthElement.value < 2) 
+        if (frameWidthElement.value > 5) 
+        if (frameWidthElement.value.length > 3) 
+    }
+    frameWidthRangeElement.value = frameWidthElement.value;
+    updateUI();
+}
+
+window.updateMatWidthElement = updateMatWidthElement;
+
+
+
+window.updateMatWidthRangeElement = updateMatWidthRangeElement;
+
+function updateMatWidthRangeElement() {
+    if (matWidthElement.value != null && matWidthElement.value != "") {
+        if (matWidthElement.value < 0) 
+        if (matWidthElement.value > 10) 
+        if (matWidthElement.value.length > 3) 
+    }
+    matWidthRangeElement.value = matWidthElement.value;
+    updateUI();
+}
+
+window.updateUI = updateUI;
+
+function updateUI() {
+    FrameTools.render(previewImageElement,
+        previewImageContainerElement,
+        document.querySelector('input[name="printSize"]:checked').value,
+        document.querySelector('input[name="frameStyle"]:checked').value,
+        frameWidthElement.value,
+        document.querySelector('input[name="matColor"]:checked').value,
+        matWidthElement.value);
+    updatePrintSizes();
+    calcPrice();
+}
+
+function updatePrintSizes() {
+    const sizes = FrameTools.getPrintSizes(previewImageElement);
+    sSizeLabelElement.innerHTML = "Small<br>" + sizes['S'][0] + " x " + sizes['S'][1];
+    mSizeLabelElement.innerHTML = "Medium<br>" + sizes['M'][0] + " x " + sizes['M'][1];
+    lSizeLabelElement.innerHTML = "Large<br>" + sizes['L'][0] + " x " + sizes['L'][1];
+    updateTotalSize(sizes, document.querySelector('input[name="printSize"]:checked').value);
+}
+
+window.calcPrice = calcPrice;
+
+function calcPrice() {
+    const price = FrameTools.calculatePrice(
+        document.querySelector('input[name="printSize"]:checked').value,
+        document.querySelector('input[name="frameStyle"]:checked').value,
+        +frameWidthElement.value,
+        +matWidthElement.value);
+    priceElement.innerText = "€ " + Number.parseFloat(price).toFixed(2);
+}
+
+
+function updateTotalSize(sizes, type) {
+    let x = sizes[type.toString().toUpperCase()][0] + (+frameWidthElement.value) * 2 + (+matWidthElement.value) * 2;
+    let y = (sizes[type][1] + (+frameWidthElement.value) * 2 + (+matWidthElement.value) * 2);
+    totalSizeElement.innerHTML =
+        Math.round(x * 10) / 10 + " x " + Math.round(y * 10) / 10 + " cm";
+}
+
+
+
+document.querySelector('form').addEventListener('submit', saveMet);
+
+
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+
+
+
+function updateHeader(){
+    const cartLink = document.querySelector("a#cart-link");
+
+    let items = localStorage.getItem("cart");
+    if(items === null)else{
+        items = JSON.parse(items);
+    }
+
+    cartLink.textContent = "Cart (" + items.length +")";
+}
+
+updateHeader();
+const SEARCH_RESULT_KEY = "searchResult/";
+const SEARCH_OBJECT_KEY = "searchObject/";
+
+export 
+
+export function getObjectWithId(id) {
+    const localStoreItem = localStorage.getItem(SEARCH_OBJECT_KEY + id);
+    if (localStoreItem !== null) {
+        return JSON.parse(localStoreItem)
+    }
+}
+
+export 
+
+export 
+import * as DomHelper from "../domHelpers.js";
+
+export 
+export class SearchObject {
+    constructor(objectId, primaryImage, title, artistDisplayName, objectDate) {
+        this.objectId = objectId;
+        this.primaryImage = primaryImage;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+
+    
+}
+
+export function parseSearchObject(rawData) {
+    return new SearchObject(rawData.objectID, rawData.primaryImageSmall, rawData.title, rawData.artistDisplayName, rawData.objectDate);
+}
+const MAX_RESULTS = 100;
+const API_URL = "https://collectionapi.metmuseum.org/";
+const SEARCH_ENDPOINT = "public/collection/v1/search";
+const OBJECT_ENDPOINT = "public/collection/v1/objects/";
+
+export 
+
+export 
+import * as Remote from "./searchRemote.js";
+import * as Cache from "./seachCache.js"
+import {parseSearchObject} from "./searchObject.js";
+
+export 
+
+export async function loadHighlights() {
+    console.log("Loading highlight from cache and remote.");
+    const highlightIds = await loadHighlightsFile();
+    return await fillCacheAndRemoteIds(highlightIds);
+}
+
+
+
+async function fillCacheAndRemoteIds(objectIds) {
+    return await Promise.all(
+        objectIds
+            .map(async (objectId) => {
+                let finalObj;
+
+                const localResult = Cache.getObjectWithId(objectId);
+                if (localResult === null)  else {
+                    finalObj = parseSearchObject(localResult);
+                }
+
+                return finalObj;
+            })
+    );
+}
+
+async function loadHighlightsFile() {
+    return (await fetch('./highlights.json').then(response => response.json())).highlights;
+}
+import * as Dom from "./searchDom.js"
+import * as Repo from "./searchRepo.js";
+
+const container = document.getElementById("gallery");
+
+document.addEventListener("DOMContentLoaded", evt => {
+    const urlSearchParams = new URL(document.location).searchParams;
+    let currentSearchQuery = "";
+    if (urlSearchParams.has("q")) 
+
+    const searchInput = document.getElementById("search");
+    searchInput.value = currentSearchQuery;
+
+    executeSearch(currentSearchQuery).then()
+});
+
+document.getElementById("search-form").addEventListener("submit", );
+
+async function executeSearch(searchQuery) {
+    if (searchQuery === "") {
+        const highlights = await Repo.loadHighlights();)} for “${searchQuery}”`);
+    Dom.loadElements(container, searchResult);
+}
+
+

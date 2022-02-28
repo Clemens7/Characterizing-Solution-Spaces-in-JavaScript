@@ -1,0 +1,69 @@
+const API_BASE = 'https://collectionapi.metmuseum.org';
+
+export 
+
+export async function searchObjects(q) {
+    const endpoint = `/public/collection/v1/search?hasImages=true&q=${encodeURI(q)}`;
+    let res = await fetch(API_BASE + endpoint).then(function (data) {
+        return data.json();
+    });
+    if (!res || res.total === 0) {
+        res = { total: 0, objectIDs: [] };
+    }
+    return res;
+}import { loadObject } from "./artworkApi.js";
+import { render, calculatePrice } from "./frame.js"
+
+export function getItems() {
+    return JSON.parse(localStorage.getItem('cart')) || [];
+}
+
+export 
+
+export 
+
+export function renderCart() {
+    document.getElementById('cart-link').innerText = `Cart (${getItems().length})`;
+}
+
+
+
+export 
+
+export 
+
+export 
+
+export 
+
+    import * as search from './search.js';
+    import { searchObjects } from "./artworkApi.js";
+    import { renderCart } from "./cart.js";
+
+    renderCart();
+
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+
+    if (q !== null && q !== '') {
+      document.getElementById("search-info").innerHTML = `Searching for “${q}”...`;
+      let request = searchObjects(q);
+      request.then(function (response) {
+        const ids = response.objectIDs.slice(0, 100);
+        search.renderResults(ids);
+        const count = ids.length;
+        document.getElementById("search-info").innerHTML = `Found ${count} artwork${count === 1  : 's'} for “${q}”`;
+      });
+    }
+
+  import * as api from './artworkApi.js';
+
+function renderResults(resultObject) {
+    if(Array.isArray(resultObject)){
+        resultObject.forEach();
+    }
+}
+
+
+
+export {api, renderResults, addResult};

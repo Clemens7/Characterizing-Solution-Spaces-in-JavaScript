@@ -1,0 +1,118 @@
+export 
+
+export 
+
+export 
+
+export import{ Artwork} from './search-result.js';
+import * as SearchCache from './search-cache.js';
+export 
+ 
+
+export async function searchArtworks(searchQuery) {
+    let artworks = SearchCache.retrieve(searchQuery);
+    if(artworks)
+    
+    
+    const url = 'https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=';
+    
+    
+    
+    try{
+        const response = await  fetch(url+searchQuery);
+        const rawData = await response.json();
+        const responseArtworks = await rawData;
+        let artworks = responseArtworks.objectIDs.slice(0,100);
+        let results =[];
+        for(let a of artworks) catch(error) {
+        console.log(`An error happened when trying to retrieving artwork query from URL ${url+searchQuery}`);
+        console.log(error);
+    }
+    
+}
+
+import { Artwork} from './search-result.js';
+
+export function retrieve(searchQuery) {
+    const key = searchQuery;
+    if(key in localStorage) 
+}
+
+export 
+
+import { Artwork} from './search-result.js';
+import * as DOM from './dom-helpers.js';
+
+export class ArtworkContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+    clear() {
+        this.container.innerHTML ='';
+    }
+    
+    
+    
+    
+    
+    
+}export class Artwork {
+
+}
+    import {Artwork} from './search-result.js';
+    import {ArtworkContainer} from './search-dom.js';
+    import * as ArtworkAPI from './search-api.js'; 
+    /*
+       
+           function updateCart() {
+      let storage = window.localStorage;
+      if (storage.getItem("cart")) 
+    }
+      
+      
+      
+      
+      
+      const artworkContainer = new ArtworkContainer();
+      
+      updateCart();
+ 
+      
+        
+      
+      
+      async function artworkSearch(searchQuery) {
+          const artworkContainer = new ArtworkContainer();
+          artworkContainer.clear();
+          
+          const artworks = await ArtworkAPI.searchArtworks(searchQuery);
+          if(!artworks) {
+              document.getElementById('search-info').innerText="Found 0 artworks for “"+searchQuery+'”';    
+              return;
+          }}
+      
+      
+      
+       document.addEventListener('DOMContentLoaded', event => {
+                const params = (new URL(document.location)).searchParams;
+                const searchQuery = params.get('q');
+                if(!searchQuery) 
+                document.getElementById('search').value = searchQuery;
+                document.getElementById('search-info').innerText="Searching for “"+searchQuery+"”...";
+                artworkSearch(searchQuery);
+            });
+      
+      
+      
+      const searchInput = document.getElementById('search');
+       
+      
+      
+      
+            searchInput.addEventListener('click', );
+
+            const form = document.getElementById('main-form');
+            form.addEventListener('submit', );
+      
+  

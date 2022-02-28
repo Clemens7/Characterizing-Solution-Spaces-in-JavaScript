@@ -1,0 +1,398 @@
+
+export 
+
+export 
+
+
+import * as fr from './frame.js'
+import * as ac from './artwork-cache.js'
+import * as NavigationBar from './navigation-bar.js';
+
+const itemTemplate = {
+    cartItem: '<div class="cart-item"></div>',
+    preview: '<div class="cart-preview"></div>',
+    link: '<a href=""></a>',
+    img: '<img class="cart-thumb" src="" id="preview-" alt="">',
+}
+
+export 
+
+
+
+
+
+
+
+
+window.onload = function () {
+
+    displayCart();
+
+    async function displayCart() {
+        await NavigationBar.displayCartSize();
+        let cart = await getCart();
+        if (cart.length !== 0)  else {
+            let emptyCartMessage = '<h3>There are no items in your shopping cart.</h3>';
+            let cartContainer = document.getElementById('cart');
+            let elem = document.createElement('h3');
+            elem.innerHTML = emptyCartMessage;
+            cartContainer.prepend(elem);
+            document.getElementById('checkout-button').disabled = true;
+        }
+
+        displayTotalCosts();
+    }
+};
+
+
+
+
+
+
+export 
+
+
+
+
+export async function getCart() {
+    let cart = localStorage.getItem('cart');
+    if (cart === null) 
+    cart = await JSON.parse(cart);
+    cart = cart.map();
+    return cart;
+}
+
+
+
+/*===================================================DIANA'S CODE===================================================*/
+
+
+export async function cartSize() {
+    const cart = await getCart();
+    return cart.length;
+}
+
+/*
+async function displayCart() {
+    displayTotalCosts();
+}
+
+export async function getTotalCosts() {
+    const cart = await getCart();
+    let item;
+    let totalCosts = 0;
+    console.log('cartSIZE');
+    console.log(cart.length);
+    for (let i = 0; i < cart.length; i++) 
+    return totalCosts.toFixed(2);
+}
+
+async function displayTotalCosts() {
+    const totalCosts = await getTotalCosts();
+    let htmlTemplateElementCart = document.getElementById('price-total');
+    if (totalCosts > 0) 
+}
+
+
+
+/*===================================================DIANA'S CODE END==================================================*/
+class CartItem {
+    
+}
+
+class Artwork {
+    
+}
+
+import * as Frame from '/frame.js';
+import * as ArtworkCache from './artwork-cache.js';
+import * as Cart from './cart.js';
+import * as NavigationBar from './navigation-bar.js';
+
+
+class Art {
+  constructor(id, image, artist, title, date) {
+    this.id = id;
+    this.image = image;
+    this.artist = artist;
+    this.title = title;
+    this.date = date;
+  }
+}
+
+
+let img = document.getElementById('preview-image');
+let form = document.getElementById("config-form");
+let submitBtn = document.querySelector("button[type='submit']");
+
+let frameWidthSlider = document.querySelector("input[name='frameWidthR']");
+let frameWidthText = document.querySelector("input[name='frameWidth']");
+let matWidthSlider = document.querySelector("input[name='matWidthR']");
+let matWidthText = document.querySelector("input[name='matWidth']");
+
+let printSizeRadios = document.querySelectorAll("input[name='printSize']");
+let frameStyleRadios = document.querySelectorAll("input[name='frameStyle']");
+
+
+window.onload = function () {
+  NavigationBar.displayCartSize();
+};
+
+document.addEventListener('DOMContentLoaded', event => {
+  const params = (new URL(document.location)).searchParams;
+
+  if (params.has('objectID') && params.get('objectID').trim() !== "") {
+    const objectID = params.get('objectID');
+    retrieveImgData(objectID, params);
+  }
+})
+
+submitBtn.addEventListener('click', )
+
+form.addEventListener('submit', );
+
+img.addEventListener('load', event => {
+
+  setPrintSizeLabels();
+  updateTotalSizeLabel();
+  renderPreview();
+})
+
+
+frameWidthSlider.addEventListener("input", );
+
+
+frameWidthText.addEventListener("change", );
+
+
+matWidthSlider.addEventListener("input", );
+
+
+matWidthText.addEventListener("change", );
+
+for (var i = 0; i < printSizeRadios.length; i++) {
+  printSizeRadios[i].addEventListener('change', );
+}
+
+for (var i = 0; i < frameStyleRadios.length; i++) {
+  frameStyleRadios[i].onclick = addEventListener('change', );
+}
+
+
+
+async function retrieveImgData(imgID, params) {
+
+  if (params.has('printSize') ) 
+
+  let currentArt;
+  let cachedArt = ArtworkCache.retrieve(imgID);
+  if (cachedArt) {
+    currentArt = new Art(cachedArt.objectID, cachedArt.image, cachedArt.artist, cachedArt.title, cachedArt.date);
+  }
+
+  ArtworkCache.store("currentArt", currentArt);
+
+  document.getElementById('preview-image').src = currentArt.image;
+  document.getElementById('preview-image').alt = currentArt.title;
+  document.getElementById('image-label').innerHTML =
+      `<span class="artist">${currentArt.artist}</span>
+            <span class="title">${currentArt.title}</span>,
+            <span class="date">${currentArt.date}</span>`;
+
+}
+
+
+
+
+
+
+
+
+function setPrintSizeLabels() {
+  let defaultId = 'print-size-';
+  let options = ['s', 'm', 'l'];
+  let values = Frame.getPrintSizes(document.getElementById('preview-image'));
+
+  for (i = 0; i < options.length; i++) {
+    let optionId = defaultId + options[i];
+    let textLabel = options[i].slice(0,1).toUpperCase() + options[i].slice(1);
+    let key = options[i].slice(0,1).toUpperCase();
+    let wText = values[key][0];
+    let hText = values[key][1];
+    document.getElementById(optionId).labels[0].innerHTML = `${textLabel}<br>${wText} × ${hText} cm`;
+  }
+}
+
+
+function getCurrentConfig() {
+  let printSize = document.querySelector(`input[name=printSize]:checked`).value;
+  let frameStyle = document.querySelector(`input[name=frameStyle]:checked`).value;
+  let frameWidth = parseFloat(document.querySelector("input[name='frameWidth']").value);
+  let matWidth = parseFloat(document.querySelector("input[name='matWidth']").value);
+  let matColor = document.querySelector(`input[name=matColor]:checked`).value;
+
+  return {
+    printSize: printSize,
+    frameStyle: frameStyle,
+    frameWidth: frameWidth,
+    matColor: matColor,
+    matWidth: matWidth
+  }
+
+}
+
+
+
+function updateTotalSizeLabel() {
+  let current = getCurrentConfig();
+  let currentRadioSize = document.querySelector('input[name=printSize]:checked', '#segmented');
+  let sizes = Frame.getPrintSizes(document.getElementById('preview-image'))[currentRadioSize.value];
+  let wText = sizes[0] + current.frameWidth + current.matWidth;
+  let hText = sizes[1] + current.frameWidth + current.matWidth;
+
+  document.getElementById('total-size').innerHTML = `${wText} × ${hText} cm`;
+}
+
+function renderPreview() {
+  let current = getCurrentConfig();
+  let img = document.getElementById('preview-image');
+  let container = document.getElementById('preview-container');
+  Frame.render(img, container, current.printSize, current.frameStyle, current.frameWidth * 10, current.matColor, current.matWidth *  10);
+}
+
+
+export 
+
+export 
+
+export 
+import * as Cart from './cart.js';
+export async function displayCartSize() {
+    let htmlTemplateElement = document.getElementById('cart-link');
+    const size = await Cart.cartSize();
+    console.log('=========');
+    console.log(size);
+    if (size > 0)
+
+}
+import * as ArtworkCache from './artwork-cache.js'
+import * as NavigationBar from './navigation-bar.js';
+window.onload = function () {
+NavigationBar.displayCartSize();
+
+    function getUrlVars() {
+        var vars = [];
+        let i = 0;
+        var parts = window.location.href.replace(/([^+?=]+)=?([^+]*)/gi, function ( value) {
+           vars[i]=value;
+           i=i+1;
+        });
+        return vars;
+    }
+    const keywords = getUrlVars();
+
+    console.log(keywords);
+    if (keywords.length > 0 && keywords[0].includes("?q=")) else {
+
+        gethighlights();
+    }
+
+};
+
+
+    async function gethighlights() {
+        const highlights = await fetch('./highlights.json');
+        const hls = await highlights.json();
+
+        const artobjs = await getbyids(hls.highlights,hls.highlights.length);
+
+        for (let i = 0; i < hls.highlights.length ; i++) {
+
+            gallery.appendChild(createArtworkElem(artobjs[i]));
+        }
+    }
+
+    const form = document.querySelector('#searchsec form');
+
+    btn();
+
+    function btn() {
+        form.addEventListener("submit", );
+    }
+
+class Art{
+    constructor(id, image, artist,title, date){
+        this.id = id;
+        this.image = image;
+        this.artist= artist;
+        this.title = title ;
+        this.date=date;
+
+    }
+
+}
+
+
+
+
+function createArtworkElem(artwork){
+      const elem = document.createElement("class");
+    console.log(artwork);
+    console.log(artwork.id);
+    console.log(artwork.image);
+    console.log(artwork.artist);
+    console.log(artwork.title);
+    elem.innerHTML =`<div class="thumb">
+        <a href="./config.html?objectID=${artwork.id}" id="${artwork.id}">
+          <img src="${artwork.image}" alt="" >
+          <div class="museum-label">
+            <span class="artist">${artwork.artist}</span>
+            <span class="title">${artwork.title}</span>,
+            <span class="date">${artwork.date}</span>
+          </div>
+        </a>
+      </div>`;
+
+    return elem;
+
+}
+
+
+
+
+
+
+async function getbyids( objectids, length) {
+
+        function skip(artwork){
+            if (artwork.primaryImageSmall)
+
+        }
+
+
+    var i = 0 ;
+    var returnlist = [];
+
+    while (i<100 && i< length){
+
+        let artwork = ArtworkCache.retrieve(objectids[i]);
+        if(artwork) {
+            if (!skip(artwork)){
+                console.log('=========');
+                console.log('OBJECTID');
+                console.log(artwork.objectID);
+                console.log(artwork.id);
+                console.log('=========');
+                returnlist.push(new Art(artwork.id, artwork.image, artwork.artist, artwork.title, artwork.date));
+            }
+        }
+
+        i=i+1;
+    }
+    return returnlist;
+}
+
+
+
+
+

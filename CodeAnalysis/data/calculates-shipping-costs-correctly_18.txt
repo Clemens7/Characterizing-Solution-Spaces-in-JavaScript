@@ -1,0 +1,145 @@
+import {calculatePrice} from './frame.js';
+
+let responseData;
+
+function populateCountriesDropdown(countries) {
+  const countryDropdown = document.querySelector('select#country');
+  countries.forEach(country => {
+    const countryOption = document.createElement('option');
+    countryOption.innerText = country.displayName;
+    countryOption.setAttribute('value', country.country);
+    countryDropdown.appendChild(countryOption);
+  })
+  document.createElement('option')
+}
+
+function formatPrice(price) {
+  let euro = price;
+  euro = euro.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  return euro;
+}
+
+function updateShippingCost(country) {
+  const shippingCostDisplay = document.querySelector('#price-shipping');
+  let price;
+  if (responseData) {
+    const countryObject = responseData.find(object => object.country === country);
+    if (countryObject) {
+      price = countryObject.cost;
+    }
+  }
+  if (price) {
+    shippingCostDisplay.innerText = formatPrice(price/100);
+    const shippingPrice = price/100;
+    calc(shippingPrice);
+  }
+}
+
+const countryDropdown = document.querySelector('select#country');
+countryDropdown.addEventListener('change', (event) => {
+  console.log(event.target.value);
+  updateShippingCost(event.target.value);
+});
+
+function subTotalCost(items){
+  var sub = 0;
+  for(let i = 0; i < items.length;i++){
+    sub += calculatePrice(items[i].printSize, items[i].frameStyle, items[i].frameWidth, items[i].matWidth);
+  }
+updateSubCost(sub);
+console.log({sub});
+return sub;
+}
+
+function updateSubCost(subCost){
+  var subCostDisplay = document.querySelector('#price-subtotal');
+  if(subCost){
+    subCostDisplay.innerHTML = formatPrice(subCost);
+  }
+}
+
+function calc(shippingPrice){
+  var storedCarts = JSON.parse(localStorage.getItem('cart'));
+  const result = subTotalCost(storedCarts)+shippingPrice;
+  console.log(subTotalCost(storedCarts));
+  console.log({shippingPrice});
+  console.log({result});
+  updateTotalCost(result);
+}
+
+function updateTotalCost(total){
+  var totalCostDisplay = document.querySelector('#price-total');
+  if (total) {
+    totalCostDisplay.innerHTML = formatPrice(total);
+    document.getElementById("pay-button").disabled = false;
+  }
+}
+
+async function getDestinationData_retrieve(){
+    const url = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+    document.getElementById("pay-button").disabled = true; // paybutton disabled until totalcosts are calculated
+    try {
+        var storedCarts = JSON.parse(localStorage.getItem('cart'));
+        console.log({storedCarts});
+
+        if(localStorage.getItem('cart') === null) else{
+          console.log("cart not empty");
+        }
+        console.log({storedCarts});
+        subTotalCost(storedCarts);
+
+        const response = await fetch(url);
+        const rawData = await response.json();
+        responseData = await rawData.destinations;
+        console.log(responseData);
+
+        populateCountriesDropdown(responseData);
+
+      }
+    
+}
+
+getDestinationData_retrieve();
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+
+    var frameCMWidth = frameWidth/10;
+    var matCMWidth = matWidth/10;
+
+    let baseS = 30.00;
+
+    let small = 30.00;
+    let medium = 2;
+    let large = 3.5;
+
+    let woodPerCentimeterClassic = 1.00;
+    let woodPerCentimeterNatural = 0.80;
+    let woodPerCentimeterShabby = 0.90;
+    let woodPerCentimeterElegant= 0.85;
+
+    let matPerCentimeter = 0.05;
+
+
+    price = small+(matCMWidth*matPerCentimeter);
+        if(frameStyle === "classic"){
+            price += (frameCMWidth*woodPerCentimeterClassic);
+        }
+        else if(frameStyle === "natural"){
+            price += (frameCMWidth*woodPerCentimeterNatural);
+        }
+    
+        if(printSize === "M"){
+            price *= medium;
+        }
+        else if(printSize === "L"){
+            price *= large;
+        }
+    
+    const result =  (Math.round((price + Number.EPSILON) * 100) / 100);
+    return result;
+}
+

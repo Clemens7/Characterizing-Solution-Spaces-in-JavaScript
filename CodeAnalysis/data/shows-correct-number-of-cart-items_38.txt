@@ -1,0 +1,258 @@
+
+    document.getElementById("cart-link").innerHTML = "Cart (" + JSON.parse(localStorage.getItem('cart')).length  +")";
+  import { requestById } from './museumAPI.js';
+import * as frame from './frame.js';
+class Artwork {
+    
+}
+
+let cart;
+
+document.addEventListener('DOMContentLoaded', async event => {
+    cart = parseCart();
+
+    if (cart.length === 0){
+    }
+
+});
+
+
+function parseCart() {
+    let cartT = [];
+    for (let n of JSON.parse(localStorage.getItem("cart"))) 
+    return cartT;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+  import {requestById} from './museumAPI.js';
+import * as frame from './frame.js';
+
+let img;
+
+document.addEventListener('DOMContentLoaded', event => {
+    const params = (new URL(document.location)).searchParams;
+    const objectId = params.get('objectID');
+    if (!objectId) 
+
+    let painting = cacheLoad(objectId);
+    if (painting) {
+        handleLoadedPainting(painting);
+    }
+  
+    handleOptionalParams(params);   //maybe back to above handleLoadedPainting
+
+    document.getElementsByName('frameWidth')[0].addEventListener('change', );
+
+    document.getElementsByName('frameWidthR')[0].addEventListener('change', );
+
+    document.getElementsByName('matWidth')[0].addEventListener('change', );
+
+    document.getElementsByName('matWidthR')[0].addEventListener('change', );
+
+    setRadioListener('printSize');
+    setRadioListener('frameStyle');
+    setRadioListener('matColor');
+});
+
+
+
+function cacheLoad(key){
+    if (key in localStorage) {
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+function setRadioListener(name){
+    let elem;
+    for(elem of document.getElementsByName(name)){
+        elem.addEventListener('change',);
+    }
+}
+
+function handleLoadedPainting(painting){
+    if (painting['message'] == 'ObjectID not found') 
+
+    img = document.getElementById('preview-image');
+    img.addEventListener('load',() => {
+        renderCurrentImage();
+        handlePrintSizeElements();
+    });
+    img.src = painting['primaryImageSmall'];
+    /*
+    img = document.getElementById('preview-image');
+    loadImage(img,painting['primaryImage'])
+        .then(renderCurrentImage())
+        .catch(error => console.error(error));
+    handleLabel(painting);
+}
+
+function handlePrintSizeElements(){
+    let printSizes = frame.getPrintSizes(img);
+
+    let small = document.getElementById('print-size-s-label');
+    let medium = document.getElementById('print-size-m-label');
+    let large = document.getElementById('print-size-l-label');
+    setPrintSizeElement(printSizes['S'],'Small',small);
+    setPrintSizeElement(printSizes['M'],'Medium',medium);
+    setPrintSizeElement(printSizes['L'],'Large',large);
+}
+
+function setPrintSizeElement(sizes,string,elem){
+    elem.innerHTML = `${string}<br>${sizesToString(sizes[0],sizes[1])}`;
+}
+
+function sizesToString(w,h){
+    w /= 10;
+    h /= 10;
+    return `${w} x ${h} cm`;
+}
+
+function handleLabel(painting){
+    let label = document.getElementById('image-label');
+
+    let div = document.createElement('div');
+    let title = document.createElement('strong');
+    title.textContent = painting['artistDisplayName'];
+    label.appendChild(div);
+    div.appendChild(title);
+
+    let text = document.createElement('em');
+    text.textContent = `${painting['title']}, ${painting['objectDate']}`;
+    label.appendChild(text);
+}
+
+
+
+function handleOptionalParams(params){
+    handleOptionalParamRadio('printSize',params);
+    handleOptionalParamRadio('frameStyle',params);
+    handleOptionalParamRadio('matColor',params);
+
+    handleOptionalParamNumber('frameWidth',20,50,params);
+    handleOptionalParamNumber('matWidth',0,100,params);
+}
+
+function handleOptionalParamNumber(name,min,max,params){
+    const value = params.get(name);
+    if (value) 
+}
+
+
+
+function handleOptionalParamRadio(name,params){
+    const paramValue = params.get(name);
+    if(paramValue)
+}
+
+
+
+function getSelectedFromRadio(name) {
+    let elements = document.getElementsByName(name);
+    let elem;
+    for(elem of elements) {
+        if (elem.checked) {
+            return elem.value;
+        }
+    }
+}
+
+function renderCurrentImage(){
+    let container = document.getElementById('preview-container');
+    let printSize = getSelectedFromRadio('printSize');
+    let frameStyle = getSelectedFromRadio('frameStyle');
+    let matColor = getSelectedFromRadio('matColor');
+    let frameSize = document.getElementsByName('frameWidth')[0].value * 10;
+    let matSize = document.getElementsByName('matWidth')[0].value * 10;
+    frame.render(img,container,printSize,frameStyle,frameSize,matColor,matSize);
+
+    setPrice(printSize,frameStyle,frameSize,matSize);
+    setSize(printSize,frameSize,matSize);
+}
+
+function setPrice(printSize, frameStyle, frameWidth, matWidth){
+    let price = frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+    price = price.toFixed(2);
+    document.getElementById('price').textContent = `\u20AC ${price}`;
+}
+
+function setSize(printSize,frameWidth,matWidth){
+    let printSizes = frame.getPrintSizes(img);
+    let w = printSizes[printSize][0];
+    let h = printSizes[printSize][1];
+    w += frameWidth + matWidth;
+    h += frameWidth + matWidth;
+
+    document.getElementById('total-size').textContent = sizesToString(w,h);
+}
+export 
+
+export 
+
+export 
+
+export 
+
+
+export 
+    document.getElementById("cart-link").innerHTML = "Cart (" + JSON.parse(localStorage.getItem('cart')).length  +")";
+  import { requestById } from './museumAPI.js';
+import { search } from './museumAPI.js';
+
+document.addEventListener('DOMContentLoaded', async event => {
+    let params = (new URL(document.location)).searchParams;
+    let query = params.get("q");
+    var searchInfo = document.getElementById("search-info");
+
+    if (query != null) 
+    else {
+        let response = await fetch('./highlights.json');
+
+        if (response.ok) {
+            let json = await response.json();
+            displayImages(json.highlights);
+        }
+    }});
+
+function displayImages(images) {
+    images.forEach(id => {
+        var cached = cacheLoad(id);
+        if (cached) {
+            addPainting(cached);
+        }
+    });
+}
+
+function addPainting(painting) {
+    var thumb = document.createElement('div');
+    thumb.classList.add("thumb")
+    thumb.innerHTML = "<a href=\"./config.html?objectID=" + painting.objectID + "\" id=\"object-" + painting.objectID + "\">" +
+        "<img src=\"" + painting.primaryImageSmall + "\" alt=\"\" id=\"object-image-" + painting.objectID + "\">" +
+        "<div class=\"museum-label\">" +
+        "<span class=\"artist\">" + painting.artistDisplayName + "</span>" +
+        "<span class=\"title\">" + painting.title + "</span>, " +
+        "<span class=\"date\">" + painting.objectDate + "</span>" +
+        "</div></a>"
+    document.getElementById('gallery').appendChild(thumb);
+}
+
+
+
+function cacheLoad(key) {
+    if (key in localStorage) {
+        return JSON.parse(localStorage[key]);
+       
+    }
+}

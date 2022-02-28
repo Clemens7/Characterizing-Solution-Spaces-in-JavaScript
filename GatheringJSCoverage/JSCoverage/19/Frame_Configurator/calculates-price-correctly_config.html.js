@@ -1,0 +1,1 @@
+if(value <=10 && value>=0){matWidthR.value = this.value}

@@ -1,0 +1,89 @@
+export async function retriveImagesFromAPI(IDs, arrayLen) {
+    let urls = [];
+    for (let i = 0; i < arrayLen; i++) {
+      urls[i] = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${IDs[i]}`;
+    }
+    try {
+      var data = await Promise.all(
+        urls.map(
+          url =>
+            fetch(url).then(
+              (response) => response.json()
+            ).then(
+            )));}
+
+  export export 
+
+
+export function retrieveFromStorage(queryElems) {
+    const key = queryElems.join(' ');
+    if (key in localStorage) 
+}import { retrieveFromStorage } from './art-cache.js';
+
+
+export async function countCartItems(){
+    let cartItems = retrieveFromStorage(['cart']);
+    let cartCount = 0;
+    if(cartItems)
+    
+    
+}export class artDocumentContainer {
+  
+  
+
+
+
+
+
+  
+  
+
+
+  
+
+  
+}
+
+
+export import { store, retrieveFromStorage } from './art-cache.js';
+import { retrieveIDsFromAPI, retriveImagesFromAPI } from './art-api.js';
+import { artDocumentContainer, addStuffToHtml } from './html-document-container.js';
+
+export 
+  
+  export async function displayhighlights() {
+    const storeImageAndTotal = retrieveFromStorage(["“This key is reserved for highlights”"]);
+    if (storeImageAndTotal)  else {
+      const highlights = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+      let highlightImages = await retriveImagesFromAPI(highlights, highlights.length);}
+
+   
+
+   import { searchForSomeArt, displayhighlights } from './search-and-display.js';
+   import { store, retrieveFromStorage } from './art-cache.js';
+   import { countCartItems } from './display-cart-number.js';
+    
+    document.addEventListener('DOMContentLoaded', event => {
+  
+      const params = (new URL(document.location)).searchParams;
+      const searchQuery = params.get('q');
+     
+      if (!searchQuery) {
+        displayhighlights();
+        return;
+      }});
+
+    
+
+
+
+    countCartItems();
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('click', );
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', );
+
+    
+
+  

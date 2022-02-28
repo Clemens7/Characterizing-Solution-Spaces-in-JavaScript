@@ -1,0 +1,29 @@
+
+                
+            import {render} from "./frame.js";
+import {calculatePrice} from "./frame.js";
+
+let cart = JSON.parse(localStorage.getItem("cart"));
+let itemJSON;
+let totalP = 0;
+
+document.getElementById("cart-item-0").remove();
+
+if (cart != null) 
+
+
+
+export 
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export 

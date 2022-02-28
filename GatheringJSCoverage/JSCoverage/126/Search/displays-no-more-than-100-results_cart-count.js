@@ -1,0 +1,15 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    
+    return new (P || (P = Promise))(function (resolve, reject) {
+        
+        
+        function step(result) { result.done ? resolve(result.value) ; }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export function setCurrentCartCount() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let storage = localStorage.getItem("cart");
+        if (storage !== null) 
+    });
+}

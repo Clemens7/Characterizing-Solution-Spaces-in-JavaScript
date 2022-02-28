@@ -1,0 +1,306 @@
+export class Artwork {
+    constructor(objectID, artist, title, date, imgUrl) {
+        this.objectID = objectID;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+        this.imgUrl = imgUrl;
+    }
+}import * as DOM from './dom-helper.js';
+import {render} from "../frame.js";
+import {calculatePrice} from "../frame.js";
+import {getArtwork} from "../met/met-api.js";
+
+const container = document.getElementById('cart');
+
+document.addEventListener('DOMContentLoaded', async() => {
+    if('cart' in localStorage){
+        let cart = JSON.parse(localStorage["cart"]);
+        if (cart.length !== 0) {
+            for (let item of cart) {
+                let artwork = await getArtwork(item.objectID);
+                addArtworkToDocument(artwork, item);
+            }
+            calculateTotalPrice();
+            document.getElementById('cart-link').innerText = cart.length === 0  : `Cart (${cart.length})`;
+        }
+    }
+});
+
+document.getElementById("checkout-button").addEventListener("click", );
+
+function addArtworkToDocument(artwork, cartItem) {
+    container.insertBefore(createCartItemContainer(artwork, cartItem), container.firstChild)
+}
+
+function createCartItemContainer(artwork, cartItem) {
+    let cart_preview = DOM.container([createImageContainer(artwork, cartItem)], 'div');
+    cart_preview.className = 'cart-preview';
+    DOM.setAttributes(cart_preview, {id: 'preview-container-' + hash(cartItem)});
+
+    let cart_item = DOM.container([cart_preview, createLabelContainer(artwork, cartItem)], 'div');
+    cart_item.className = 'cart-item';
+    return cart_item;
+}
+
+function createImageContainer(artwork, cartItem) {
+    let a = document.createElement('a');
+    DOM.setAttributes(a, {href: `config.html?objectID=${cartItem.objectID}&printSize=${cartItem.printSize}&frameStyle=${cartItem.frameStyle}&frameWidth=${cartItem.frameWidth}&matColor=${cartItem.matColor}&matWidth=${cartItem.matWidth}`});
+    let img = document.createElement('img');
+    img.className = 'cart-thumb';
+    DOM.setAttributes(img, {id: 'preview-' + hash(cartItem)});
+    DOM.setAttributes(img, {src: artwork ? artwork.imgUrl });
+    DOM.setAttributes(img, {alt: artwork ? artwork.title });
+
+    a.appendChild(img);
+
+    img.onload = function () {
+        render(img, a, cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matColor, cartItem.matWidth);
+    };
+
+    return a;
+}
+
+function createLabelContainer(artwork, cartItem) {
+    let museum_label = DOM.container([createDescriptionContainer(artwork, cartItem), createCartPriceContainer(artwork, cartItem), createButton(artwork, cartItem)], 'div');
+    museum_label.className = 'museum-label';
+    return museum_label;
+}
+
+function createButton(artwork, cartItem) {
+    let button = document.createElement('button');
+    button.className = 'cart-remove';
+
+    button.addEventListener('click', );
+
+    return button;
+}
+
+function createDescriptionContainer(artwork, cartItem) {
+    let artist = DOM.textElement('span', artwork ? artwork.artist );
+    artist.className = 'artist';
+
+    let date = DOM.textElement('span', artwork ? artwork.date );
+    date.className = 'date';
+
+    let title = DOM.textElement('span', artwork ? artwork.title + (artwork.date !== "" ? ', ' ) );
+    title.className = 'title';
+
+    let text = `${printSizeToString(cartItem.printSize)} print in a ${cartItem.frameWidth / 10} cm ${cartItem.frameStyle} frame` +
+        (cartItem.matWidth > 0 ? ` with a ${cartItem.matWidth / 10} cm ${cartItem.matColor} mat.` );
+    let frame_description = DOM.textElement('span', text);
+    frame_description.className = 'frame-description';
+
+    return DOM.container([artist, title, date, document.createElement('br'), document.createElement('br'), frame_description], 'div');
+}
+
+function printSizeToString(printSize) {
+    let name = '';
+    switch (printSize) {
+        case 'S':
+            name = 'Small';
+            break;
+        case 'M':
+            name = 'Medium';
+            break;
+        
+    }
+    return name;
+}
+
+function createCartPriceContainer(artwork, cartItem) {
+    let price = document.createElement('span');
+    DOM.setAttributes(price, {id: `price-${hash(cartItem)}`});
+
+    price.innerText = "" + calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth);
+
+    let cart_price = document.createElement('div');
+    cart_price.className = 'cart-price';
+    cart_price.innerText = '€ ';
+    cart_price.appendChild(price);
+
+    return cart_price;
+}
+
+function calculateTotalPrice() {
+    let total = 0;
+    let prices = document.querySelectorAll('.cart-price');
+    for (let price of prices) {
+        total += parseFloat(price.innerText.substring(2));
+    }
+    let totalPriceElem = document.getElementById('price-total');
+    totalPriceElem.innerText = '' + total.toFixed(2);
+}
+
+
+
+function hash(toHash) {
+    let hash = 0;
+    let object = JSON.stringify(toHash);
+    for (let i = 0; i < object.length; i++) {
+        let char = object.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}export const CONFIG_URL = 'config.html';
+
+export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const framePrices = {
+        'classic': 1,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85
+    };
+    price += 30;
+    price += framePrices[frameStyle] * frameWidth / 10;
+    price += 0.05 * matWidth / 10;
+    if (printSize === 'M')
+        price *= 2;
+    else if (printSize === 'L')
+        
+
+    return parseFloat((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}
+import * as Cache from "../cache/met-cache.js";
+import {Artwork} from "./artwork.js";
+import {retrieveObject} from "../cache/met-cache.js";
+
+export 
+
+export 
+
+
+
+
+
+
+
+export async function getArtwork(id) {
+    let artwork = retrieveObject(id);
+    if (artwork)
+        
+
+    const url = objectApiUrl(id);
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const responseArtwork = await rawData.valueOf();
+
+        if (responseArtwork.message === 'ObjectID not found') 
+
+        console.log(`Retrieving artwork with id ${id} from API:`);
+        console.log(responseArtwork);
+
+        artwork = new Artwork(
+            responseArtwork.objectID,
+            responseArtwork.artistDisplayName.trim(),
+            responseArtwork.title.trim(),
+            responseArtwork.objectDate.trim(),
+            responseArtwork.primaryImageSmall.trim()
+        );
+        Cache.storeObject(artwork);
+
+        return artwork;
+    }}
+
+
+function objectApiUrl(artworkId) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${artworkId}`;
+}
+
+export 
+
+export 
+
+export function retrieveObject(objectId) {
+    if(objectId in localStorage)
+}
+
+export function storeObject(artwork) {
+    localStorage[artwork.objectID] = JSON.stringify(artwork);
+}

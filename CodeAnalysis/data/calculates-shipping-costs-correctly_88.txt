@@ -1,0 +1,158 @@
+import {calculatePrice} from './frame.js';
+
+export default class CartItem {
+
+    constructor(objectID, printSize, frameStyle, frameWidth, matColor, matWidth) {
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+    }
+
+    getPrice() {
+        return calculatePrice(this.printSize, this.frameStyle, this.frameWidth, this.matWidth);
+    }
+}
+    import {getShoppingCart, addSelectCountryOptions} from "./Util.js";
+    import Country from "./Country.js";
+
+    let shoppingCart = getShoppingCart();
+
+    if (shoppingCart) {
+        if (shoppingCart.getSize() === 0) 
+    }
+
+    const form = document.querySelector('#checkout-form');
+    form.addEventListener('submit', );
+    const selectOptionElement = document.querySelector('#country');
+    selectOptionElement.addEventListener('change', onCountrySelect);
+
+    const subTotalSpan = document.querySelector('#price-subtotal');
+    subTotalSpan.innerText = shoppingCart.getSubTotal();
+
+    let countryMap = new Map();
+
+    fetch('https://web-engineering.big.tuwien.ac.at/s20/a2/shipping')
+        .then(function (data) {
+            return data.json();
+        }).then(function (jsonData) {
+            jsonData.destinations.map(
+                country => new Country(country.country, country.displayName, country.cost))
+                    .forEach((ctry) => countryMap.set(ctry.country, ctry));
+
+            const selectCountry = document.querySelector('#country');
+            addSelectCountryOptions(selectCountry, countryMap.values());
+            onCountrySelect();
+        })
+        .catch();
+
+
+    function onCountrySelect() {
+        const shippingPriceSpan = document.querySelector('#price-shipping');
+        let counryCode = selectOptionElement.options[selectOptionElement.selectedIndex].value;
+        let countryObj = countryMap.get(counryCode);
+        if (countryObj) {
+            shippingPriceSpan.innerHTML = (countryObj.cost / 100).toFixed(2);
+            setTotalPrice(countryObj.cost / 100);
+        }
+    }
+
+    function setTotalPrice(shippingCost) {
+        const totalPriceElement = document.querySelector('#price-total');
+        let totalCost = 0.0;
+        totalCost = totalCost + shoppingCart.getSubTotal();
+        totalCost = totalCost + shippingCost;
+        totalPriceElement.innerHTML = totalCost.toFixed(2);
+    }
+
+
+export default class Country {
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+
+    let woodCostFactor;
+    if (frameStyle === 'classic') {
+        woodCostFactor = 1.0;
+    } else if (frameStyle === 'natural') {
+        woodCostFactor = 0.8;
+    }
+    price += frameWidth * woodCostFactor;
+
+    price += matWidth * 0.05;
+
+    if (printSize === 'S')  else if (printSize === 'M') {
+        price = (price+30) * 2.0;
+    } else if (printSize === 'L') {
+        price = (price + 30.0) * 3.5;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import CartItem from "./CartItem.js";
+
+export default class ShoppingCart {
+    constructor(items) {
+        this.items = items;
+    }
+
+    getSubTotal() {
+        let subTotal = 0;
+        let item;
+        for (item of this.items) {
+            subTotal += item.getPrice();
+        }
+        return subTotal;
+    }
+
+    
+
+    
+
+    
+
+    
+
+    getSize() {
+        if (this.items != null) {
+            return this.items.length;
+        }
+    }
+}import CartItem from './CartItem.js';
+import ShoppingCart from './ShoppingCart.js';
+
+
+export function getShoppingCart() {
+    let objStr = localStorage.getItem("cart");
+    if (!objStr) 
+    let itemArr = JSON.parse(objStr);
+    let cartItemArr = itemArr.map(it => new CartItem(it.objectID, it.printSize, it.frameStyle, it.frameWidth, it.matColor, it.matWidth));
+    return new ShoppingCart(cartItemArr);
+}
+
+export 
+
+
+export function addSelectCountryOptions(selectElement, countries) {
+    let country;
+    for (country of countries) {
+        addSelectOption(selectElement, country.country, country.displayName)
+    }
+}
+
+function addSelectOption(selectElement, optionValue, optionName) {
+    const option = document.createElement('option');
+    option.setAttribute('value', optionValue);
+    option.innerText = optionName;
+    selectElement.appendChild(option);
+}

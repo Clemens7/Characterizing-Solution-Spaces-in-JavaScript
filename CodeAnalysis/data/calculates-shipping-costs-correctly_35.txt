@@ -1,0 +1,152 @@
+import { Artwork, Configuration } from './classes.js';
+
+export 
+
+export 
+
+export function readCartFromCache() {
+    if ('cart' in localStorage) {
+        console.log(`Retrieving cart from local storage`);
+        try {
+            const cartItems = JSON.parse(localStorage['cart']);
+            if (!Array.isArray(cartItems)) 
+            return cartItems.map(item => new Configuration(item));
+        }
+    }
+}
+
+export function readCartSizeFromCache() {
+    if ('cart' in localStorage) {
+        console.log(`Retrieving cart size from local storage`);
+        try {
+            const cartItems = JSON.parse(localStorage['cart']);
+            if (!Array.isArray(cartItems)) 
+            return cartItems.length;
+        }
+    }
+}
+
+export 
+
+    import { readCartFromCache, readCartSizeFromCache } from './cache.js';
+    import { calculatePrice } from './frame.js';
+    import { Configuration } from './classes.js';
+
+
+    let destinations;
+    const shipping = document.getElementById('price-shipping');
+    const subTotal =  document.getElementById('price-subtotal');
+    const countryDropdown = document.getElementById('country');
+    const priceTotal = document.getElementById('price-total');
+
+    countryDropdown.addEventListener("change", updateShippingCost);
+
+    getShippingDestinationData().then(data => { 
+      destinations = data; 
+      addCountriesToSelect(data); 
+    }).catch();
+
+    loadCart();
+
+    async function loadCart() {
+      const cartSize = await readCartSizeFromCache();
+      if (cartSize === 0) 
+      const cart = await readCartFromCache();
+      calculateSubTotal(cart);
+    }
+
+    async function getShippingDestinationData() {
+      const response = await fetch(`https://web-engineering.big.tuwien.ac.at/s20/a2/shipping`);
+      const data = await response.json();
+      return data;
+    }
+
+    function addCountriesToSelect(data) {
+      const countries = data.destinations;
+      for (let i in countries) {
+        const option = new Option(countries[i].displayName);
+        option.value = countries[i].country;
+        countryDropdown.add(option);
+      }
+      shipping.innerText = (countries[0].cost / 100).toFixed(2);
+      calculateTotal();
+    }
+
+    function updateShippingCost() {
+      let selection = countryDropdown.options[countryDropdown.selectedIndex].text;
+      for (let i in destinations.destinations) {
+        if (destinations.destinations[i].displayName === selection) {
+          shipping.innerText = (destinations.destinations[i].cost / 100).toFixed(2);
+          calculateTotal();
+        }
+      }
+    }
+
+    function calculateSubTotal(cart) {
+      let sum = 0;
+      for (let i in cart) {
+        sum += calculatePrice(cart[i].printSize, cart[i].frameStyle, cart[i].frameWidth, cart[i].matWidth);
+      }
+      subTotal.innerText = sum.toFixed(2);
+    }
+
+    function calculateTotal() {
+      const price = parseFloat(subTotal.innerText);
+      const shippingPrice = parseFloat(shipping.innerText);
+      priceTotal.innerText = (price + shippingPrice);
+    }
+    
+  export class Artwork {
+    
+}
+
+export class Configuration {
+    constructor({objectID, printSize, frameStyle, frameWidth, matColor, matWidth}) {
+        if (typeof objectID !== "number") 
+        if (typeof printSize !== "string") 
+        if (typeof frameStyle !== "string") 
+        if (typeof frameWidth !== "number") 
+        if (matColor && typeof matColor !== "string") 
+        if (typeof matWidth !== "number") 
+
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+    }
+}
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    
+    switch (frameStyle) {
+        case "classic":
+            price += frameWidth / 10;
+          break;
+        case "natural":
+            price += (frameWidth * 0.8) / 10;
+          break;
+        
+        
+      }
+
+      price += (matWidth * 0.05) / 10;
+
+      switch(printSize){
+        case 'M':
+            price *= 2;
+            break;
+        case 'L':
+            price *= 3.5;
+            break;
+        
+    }
+    return Math.round((price + Number.EPSILON) * 100) / 100;
+}
+
+export 

@@ -1,0 +1,106 @@
+import * as metObjCache from './metObjCache.js';
+import {HTTP} from "./http.js";
+export class API {
+
+    
+
+    
+
+    
+
+    
+}
+import {CartObj} from './cartObj.js';
+
+const KEY = 'cart';
+let cart = [];
+
+export function retrieve() {
+    if(KEY in localStorage)  else {
+        return [];
+    }
+}
+
+/*
+export function addObjToCart(cartObj) {
+    if (cartObj===undefined || !cartObj){
+        return;
+    }
+    cart.push(cartObj);
+    store();
+}*/
+
+export 
+
+export 
+
+
+
+
+/*
+
+import * as Cart from './cartCache.js';
+
+
+Example for adding cartObj to cart:
+Cart.addToCart(123456, 'm', 'woody', 500, 'green', 500);
+Cart.addToCart(5654561, 'l', 'allen', 200, 'blue', 500);
+
+/*
+Example how to use items from Cart
+let currentCart = Cart.retrieve();
+console.log(`length of currentcart: ${currentCart.length}`);
+console.log(`response from reading cart: ${currentCart[0].objectID}`);
+console.log(`response from reading cart: ${currentCart[1].objectID}`);
+export class CartObj{
+    
+}
+import * as Cart from './cartCache.js'
+import {API} from "./api.js";
+import * as frame from './frame.js';
+
+let cartObjects = Cart.retrieve();
+const api = new API();
+
+showCartItems(cartObjects);
+showCartItemNumber(cartObjects);
+
+function showCartItems(cartObjects) {
+  if (cartObjects.length == 0) {
+    document.getElementById('cart-message').innerText = 'There are no items in your shopping cart.';
+    document.getElementById('checkout-button').disabled = true;
+  }
+}
+
+function showCartItemNumber(cartObjects) {
+  const cartHeader = document.getElementById("cart-link");
+  if (cartObjects.length !== 0)  else {
+    cartHeader.innerText = 'Cart';
+  }
+}
+
+
+
+
+
+
+
+
+
+
+document.getElementById('checkout-button').addEventListener("click", , false);
+import {API} from "./api.js";
+
+export 
+
+export 
+
+export 
+export const HTTP = Object.freeze({
+    OK: 200,
+});
+
+
+export 
+
+export 

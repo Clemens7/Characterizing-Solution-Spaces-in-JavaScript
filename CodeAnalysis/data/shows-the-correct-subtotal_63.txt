@@ -1,0 +1,114 @@
+
+    import {retrieve} from './checkout.js';
+    import {DestinationDocumentContainer} from './destinationDOM.js';
+    import {calculatePrice} from './frame.js';
+
+    let destinations;
+    let subtotal_price;
+
+    async function destinationSearch() {
+      destinations = await retrieve();
+      if(!destinations) 
+      const destinationContainer = new DestinationDocumentContainer();
+      destinationContainer.clear();
+      for(let destination of destinations) {
+        destinationContainer.addDestinationToDocument(destination);
+      }
+    }
+
+  async function loadSubtotal(){
+    if(!localStorage.getItem('cart') || localStorage.getItem('cart')==='[]')
+    else {
+      let cart = JSON.parse(localStorage.getItem('cart'));
+      let subtotal = document.getElementById('price-subtotal');
+      subtotal_price = 0;
+      for (const item of cart) {
+        subtotal_price += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+
+      }
+      if(subtotal) {
+        subtotal.innerText = subtotal_price;
+      }
+    }
+  }
+
+   country.addEventListener('change', );
+
+  async function disableCheckout(disbled=true) {
+    let paybutton=document.getElementById('pay-button');
+    paybutton.disabled=disbled;
+  }
+    document.addEventListener('DOMContentLoaded', (event) => {
+        disableCheckout(true);
+        loadSubtotal();
+        destinationSearch();
+    });
+
+  const API_URL = `https://web-engineering.big.tuwien.ac.at/s20/a2/shipping`;
+export async function retrieve() {
+    try {
+        const response = await fetch(API_URL);
+        const rawData = await response.json();
+        const responseDestinations = await rawData.destinations;
+        console.log('response is:' +responseDestinations);
+        let destinations = responseDestinations.map(
+            destination => new Destination(destination.country.trim(),destination.displayName.trim(),destination.cost)
+        );
+        console.log(destinations);
+        return destinations;
+    }}
+
+export class Destination{
+    constructor(country, displayName,cost){
+        this.country=country;
+        this.displayName=displayName;
+        this.cost=cost;
+    }
+}export class DestinationDocumentContainer {
+    constructor(containerID='country') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addDestinationToDocument(destination) {
+        this.container.appendChild(createDestinationElements(destination));
+
+        function createDestinationElements(destination) {
+            const option = document.createElement("option");
+            option.innerText = destination.displayName;
+            option.value=destination.country;
+            return option;
+        }
+    }
+    static 
+}export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    price += 30 + .05 * matWidth / 10;
+
+    switch (frameStyle) {
+        case 'classic':
+            price += 1 * frameWidth / 10;
+            break;
+        
+        case 'shabby':
+            price += .9 * frameWidth / 10;
+            break;
+        case 'elegant':
+            price += .85 * frameWidth / 10;
+            break;
+    }
+
+    if (printSize === 'M') price *= 2;
+    if (printSize === 'L') price *= 3.5;
+
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

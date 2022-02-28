@@ -1,0 +1,80 @@
+import { Artwork } from '/artwork.js';
+
+export 
+
+export 
+
+import { Artwork } from "/artwork.js";
+
+export class ArtworkDocumentContainer {
+
+	
+
+	
+
+
+	
+}export class Artwork {
+	
+}let cart = [];
+
+
+export function retrieve() {
+    if(!localStorage['cart']){
+        return;
+    }}
+
+
+export 
+
+    import * as CartCache from '/cart-cache.js';
+    import * as ArtworkCache from '/artwork-cache.js';
+    import * as SearchAPI from '/search-api.js';
+    import * as Frame from '/frame.js';
+
+    const cartCache = CartCache.retrieve();
+
+    document.addEventListener('DOMContentLoaded', event => {
+
+
+
+    
+    const cart = document.getElementById('cart-link');
+    if(cartCache)else {
+      let infoMessage = document.createElement('h2');
+      let section = document.getElementById('cart');
+      let button = document.getElementById('checkout-button');
+      button.disabled = true;
+      infoMessage.innerHTML = "There are no items in your shopping cart.";
+      section.appendChild(infoMessage);
+    }
+
+    for(let i = 0; i < cartCache.length; i++)});
+
+
+  
+
+
+
+  
+  export 
+
+export 
+
+
+
+export 
+
+
+
+export 
+import { Artwork } from '/artwork.js';
+import * as ArtworkCache from '/artwork-cache.js';
+import { ArtworkDocumentContainer } from '/artwork-dom.js';
+
+export ;
+
+export 
+
+
+export 

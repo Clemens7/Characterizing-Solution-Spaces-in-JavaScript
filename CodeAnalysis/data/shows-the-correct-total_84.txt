@@ -1,0 +1,135 @@
+
+ 
+const baseUrl =  "https://collectionapi.metmuseum.org/public/collection/v1"
+const countryUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2"
+const searchParams = "hasImages=true"
+
+class APIRequests {
+
+    async cachedFetch(query) {
+        try {
+            const cached = localStorage[query]
+            if (cached) 
+                return JSON.parse(cached)}
+
+
+    
+
+    
+
+    async getCountries() {
+        return this.cachedFetch(countryUrl + "/shipping")
+    }
+
+    
+}
+
+const req = new APIRequests()
+export default reqimport API from './APIRequests.js';
+import { calculatePrice } from './frame.js';
+
+const elements = {
+    countrySelect: document.getElementById("country"),
+    subtotal: document.getElementById("price-subtotal"),
+    shipping: document.getElementById("price-shipping"),
+    total: document.getElementById("price-total"),
+}
+
+export default class Checkout {
+
+    constructor() {
+        this.cartEmpty();
+        this.addCountries();
+
+        this.writeSubtotal();
+        this.writeShipping();
+        this.writeTotal();
+
+        elements.countrySelect.onchange = () => {
+            this.writeShipping();
+            this.writeTotal();
+        };
+    }
+
+    cartEmpty() {
+        if (localStorage['cart'] === undefined || Object.keys(localStorage['cart']) === 0) 
+    }
+
+    writeSubtotal() {
+        elements.subtotal.innerHTML = this.calcStringSubtotal();
+    }
+
+    async writeTotal() {
+        elements.total.innerHTML = await this.calcTotal();
+    }
+
+    async writeShipping() {
+        elements.shipping.innerHTML = await this.calcShipping();
+    }
+
+    calcStringSubtotal() {
+        var subtotal = 0;
+        var items = JSON.parse(localStorage['cart']);
+        Object.keys(items).forEach(id => {
+            subtotal += calculatePrice(items[id].printSize, items[id].frameStyle, items[id].frameWidth, items[id].matWidth);
+        });
+        return subtotal;
+    }
+
+    calcSubtotal() {
+        var subtotal = 0;
+        var items = JSON.parse(localStorage['cart']);
+        Object.keys(items).forEach(id => {
+            subtotal += parseFloat(calculatePrice(items[id].printSize, items[id].frameStyle, items[id].frameWidth, items[id].matWidth));
+        });
+        return subtotal;
+    }
+
+    async calcTotal() {
+        var subtotal = this.calcSubtotal();
+        var shipping = parseFloat(await this.calcShipping());
+        
+        return subtotal + shipping === NaN  : (subtotal + shipping).toFixed(2);
+    }
+
+    async calcShipping() {
+        var countryJson = await API.getCountries();
+        return (JSON.stringify(countryJson.destinations[elements.countrySelect.selectedIndex].cost) / 100).toFixed(2);
+    }
+
+    async addCountries() {
+        var countryJson = await API.getCountries();
+
+        countryJson.destinations.forEach(obj => {
+            var option = document.createElement('option');
+            option.text = obj.displayName;
+            option.value = obj.country;
+            elements.countrySelect.add(option);
+        });
+    }
+}
+
+new Checkout();export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const priceForStyle = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85
+    }[frameStyle]
+
+    let price = frameWidth / 10 * priceForStyle +  matWidth / 10 * 0.05;
+    switch(printSize) {
+        case "S":
+            price += 30
+            break
+        case "M":
+            price = (price + 30) * 2
+            break
+        
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100)
+}

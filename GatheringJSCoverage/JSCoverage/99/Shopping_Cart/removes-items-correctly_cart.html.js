@@ -1,0 +1,1 @@
+remove(this.parentNode.parentNode.id)

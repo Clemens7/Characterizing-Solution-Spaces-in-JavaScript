@@ -1,0 +1,256 @@
+
+export 
+
+export 
+
+
+import * as fr from './frame.js'
+import * as ac from './artwork-cache.js'
+import * as NavigationBar from './navigation-bar.js';
+
+const itemTemplate = {
+    cartItem: '<div class="cart-item"></div>',
+    preview: '<div class="cart-preview"></div>',
+    link: '<a href=""></a>',
+    img: '<img class="cart-thumb" src="" id="preview-" alt="">',
+}
+
+export function createNodeFromHTMLString(htmlString) {
+    let div = document.createElement('div');
+    div.innerHTML = htmlString.trim();
+
+    return div.firstChild;
+}
+
+
+
+
+
+
+
+
+window.onload = ;
+
+
+
+
+
+
+export 
+
+
+
+
+export async function getCart() {
+    let cart = localStorage.getItem('cart');
+    if (cart === null) 
+    cart = await JSON.parse(cart);
+    cart = cart.map(item => {
+        return new CartItem(item['objectID'],
+            item['printSize'],
+            item['frameStyle'],
+            item['frameWidth'],
+            item['matColor'],
+            item['matWidth']);
+    });
+    return cart;
+}
+
+
+
+/*===================================================DIANA'S CODE===================================================*/
+
+
+export async function cartSize() {
+    const cart = await getCart();
+    return cart.length;
+}
+
+/*
+async function displayCart() {
+    displayTotalCosts();
+}
+
+export async function getTotalCosts() {
+    const cart = await getCart();
+    let item;
+    let totalCosts = 0;
+    console.log('cartSIZE');
+    console.log(cart.length);
+    for (let i = 0; i < cart.length; i++) {
+        item = cart[i];
+        console.log('=========');
+        console.log('ITEM');
+        console.log(item);
+        console.log('=========');
+        console.log('ITEM costs');
+        console.log(getCost(item));
+        console.log('=========');
+        console.log('CURR TOTAL COSTS');
+        totalCosts += parseFloat(getCost(item));
+        console.log(totalCosts);
+    }
+    return totalCosts.toFixed(2);
+}
+
+
+
+function getCost(item) {
+    return fr.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+}
+
+/*===================================================DIANA'S CODE END==================================================*/
+class CartItem {
+    constructor(objectID, printSize, frameStyle,
+                frameWidth, matColor, matWidth) {
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+    }
+}
+
+class Artwork {
+    
+}
+
+import {Country} from "./country.js";
+import * as Cart from "./cart.js";
+let globalCountries;
+let subtotalCosts;
+
+window.onload = function () {
+    start();
+
+    async function start() {
+        globalCountries = await getCountries();
+        subtotalCosts = await getSubTotal();
+    }
+};
+
+
+document.getElementById('country').addEventListener('click', selectOption, false);
+
+
+document.querySelector('#country').addEventListener('change',);
+/*-----------------------------------------------REDIRECT-----------------------------------------------*/
+document.addEventListener('DOMContentLoaded', event => {
+
+    redirect();
+    displaySubTotal();
+
+});
+
+async function redirect() {
+    if (await Cart.cartSize() === 0 /*|| await Cart.getCart() === null*/) 
+
+
+}
+
+
+/*-----------------------------------------------COSTS-----------------------------------------------*/
+async function displaySubTotal() {
+    const subtotal = await getSubTotal();
+    let htmlTemplateElementCart = document.getElementById('price-subtotal');
+    if (subtotal > 0) {
+        htmlTemplateElementCart.innerHTML = subtotal;
+    }
+
+
+}
+
+async function getSubTotal() {
+    console.log('============');
+    console.log('Cart totalcosts');
+    let subtotal = await Cart.getTotalCosts();
+    console.log(subtotal);
+    return subtotal;
+
+}
+
+
+
+
+/*-----------------------------------------------COUNTRIES-----------------------------------------------*/
+
+
+async function getCountries() {
+    const url = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const countries = [];
+        let i = 0;
+        for (let rawCountry of data.destinations) {
+            countries.push(new Country(rawCountry.country,
+                rawCountry.displayName,
+                rawCountry.cost));
+            let countryName = rawCountry.displayName;
+            let countryCountry = rawCountry.country;
+            appendOption(countryCountry, countryName);
+            i++;
+
+        }
+
+        console.log('SEE TESTING STUFF');
+        console.log(document.getElementById('country').options);
+        console.log(typeof document.getElementById('country').options);
+        console.log(Array.from(document.getElementById('country').options).map(o => o.text));
+        console.log(typeof Array.from(document.getElementById('country').options).map(o => o.text));
+        console.log('got available countries');
+        return countries;
+
+    }}
+
+async function appendOption(i, countryName) {
+    let selectElement = document.getElementById('country');
+    let optionNode = Cart.createNodeFromHTMLString(
+        `<option value="${i}">${countryName}</option>`
+    );
+
+    console.log('=====================');
+    console.log('append child: ');
+    selectElement.appendChild(optionNode);
+
+}
+
+
+
+
+
+
+export class Country {
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    if (frameStyle === 'classic') {
+        price += frameWidth/10;
+    } else if (frameStyle === 'natural')  else if (frameStyle === 'shabby') {
+        price += frameWidth/10 * 0.9;
+    } else {
+        price += frameWidth/10 * 0.85;
+    }
+
+    price += matWidth/10 * 0.05;
+
+    if (printSize === 'M') {
+        price = price * 2;
+    } else if (printSize === 'L') {
+        price = price * 3.5;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import * as Cart from './cart.js';
+export 

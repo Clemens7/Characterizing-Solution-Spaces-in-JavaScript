@@ -1,0 +1,396 @@
+import * as Frame from './frame.js';
+import {cartCache} from "./search-cache.js"; //Shows the amount of the Cart
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+      await createCart(JSON.parse(localStorage['cart']));
+  }
+  
+  await cartCache();
+
+   let removeButton = document.getElementsByClassName("cart-remove");
+   for(let buttons = 0; buttons < removeButton.length; buttons++) {
+     removeButton[buttons].addEventListener("click", , false);
+   }
+
+   let checkoutButton = document.getElementById("checkout-button");
+   checkoutButton.addEventListener("click", )
+})
+
+import {retrieveData} from "./search-api.js";
+function getData(data){
+    return retrieveData(data.objectID);
+}
+
+async function createCart(data){
+    const div = document.getElementById('cart');
+    if (data.length < 1) 
+    else {
+        let apiData;
+        for (let q = data.length-1; q >= 0; q--) { //displays the most recent added on top
+            apiData = await getData(data[q]);
+            div.appendChild(await createCartItem(data[q], apiData));
+            Frame.render(document.getElementById("preview-"+data[q].objectID), document.getElementById("preview-container-"+data[q].objectID), data[q].printSize, data[q].frameStyle, data[q].frameWidth, data[q].matColor, data[q].matWidth);
+        }
+        div.appendChild(createTotalPrice(data));
+    }
+}
+
+async function createCartItem(data, apiData){
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML =
+        `<div class="cart-preview" id="preview-container-${data.objectID}">
+        <a href="${linkBuilder(data)}">
+        <img class="cart-thumb" src="${apiData.primaryImageSmall}" id="preview-${data.objectID}" alt="${apiData.title}">
+        </a>
+        </div>
+        <div class="museum-label">
+        <div>
+        <span class="artist">${apiData.artistDisplayName}</span>
+        <span class="title">${apiData.title},</span>
+        <span class="date">${apiData.objectDate}</span>
+        <br><br>
+        <span class="frame-description">${descriptionBuilder(data)}</span>
+        </div>
+        <div class="cart-price">€ <span id="price-${data.objectID}">${calcPrice(data)}</span></div>
+        <button class="cart-remove"></button>
+        </div>`;
+    return div;
+}
+
+function linkBuilder(data){
+    return "/config.html?objectID=" + data.objectID + "&printSize=" + data.printSize + "&frameStyle=" + data.frameStyle +
+        "&frameWidth=" + data.frameWidth + "&matColor=" + data.matColor + "&matWidth=" + data.matWidth;
+}
+
+function descriptionBuilder(data){
+    let size = "";
+    if (data.printSize === "S"){ size = "Small"; }
+    if (data.printSize === "M"){ size = "Medium"; }
+    if (data.printSize === "L") 
+
+    let mat = "";
+    if (parseFloat(data.matWidth) === 0) 
+    if (parseFloat(data.matWidth) > 0) { mat = " with a " + data.matWidth/10 + " cm " + data.matColor + " mat."; }
+
+    return size + " print in a " + data.frameWidth/10 + " cm " + data.frameStyle + " frame" + mat;
+}
+
+function createTotalPrice(data){
+    const div = document.createElement("div");
+    div.className = "cart-total";
+    div.innerHTML =
+    `<div class="price">Total: € <span id="price-total">${calcTotalPrice(data)}</span></div>
+    <button type="button" id="checkout-button">Checkout</button>`;
+    return div;
+}
+
+function calcPrice (data){
+    return Frame.calculatePrice(data.printSize, data.frameStyle, data.frameWidth, data.matWidth).toFixed(2);
+}
+
+function calcTotalPrice(data){
+    let sum = 0;
+    if (data !== undefined) {
+        for (let datas of data) {
+            sum += parseFloat(calcPrice(datas));
+        }
+        return sum.toFixed(2);
+    }
+}
+
+import { retrieveData } from './search-api.js';
+import * as SearchCache from './search-cache.js' ;
+import * as Frame from './frame.js';
+
+const museumLabel = document.getElementById('image-label');
+
+let slider = document.querySelectorAll('input[type=range]');
+let numberBox = document.querySelectorAll('input[type=number]');
+let sizeSelector = document.querySelectorAll('input[name=printSize]');
+let frameSelector = document.querySelectorAll('input[name=frameStyle]');
+let matSelector = document.querySelectorAll('input[name=matColor]');
+let objectID = 39799;
+let printSize = 'M';
+let frameStyle = 'classic';
+let frameWidth = 4.0;
+let matColor = 'mint';
+let matWidth = 5.5;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  SearchCache.cartCache();
+
+  const params = (new URL(document.location)).searchParams;
+  if (params.get('objectID')) {
+    objectID = params.get('objectID');
+  }
+  if (params.get('printSize')) 
+  if (params.get('frameStyle')) 
+  if (params.get('frameWidth')) 
+  if (params.get('matColor')) 
+  if (params.get('matWidth')) 
+
+  sizeSelector.value = printSize;
+  document.getElementById('print-size-s').checked = printSize === 'S';
+  document.getElementById('print-size-m').checked = printSize === 'M';
+  document.getElementById('print-size-l').checked = printSize === 'L';
+
+  document.getElementById('frame-style-classic').checked = frameStyle === 'classic';
+  document.getElementById('frame-style-natural').checked = frameStyle === 'natural';
+  document.getElementById('frame-style-shabby').checked = frameStyle === 'shabby';
+  document.getElementById('frame-style-elegant').checked = frameStyle === 'elegant';
+
+  document.getElementById('mat-color-ivory').checked = matColor === 'ivory';
+  document.getElementById('mat-color-mint').checked = matColor === 'mint';
+  document.getElementById('mat-color-wine').checked = matColor === 'wine';
+  document.getElementById('mat-color-indigo').checked = matColor === 'indigo';
+  document.getElementById('mat-color-coal').checked = matColor === 'coal';
+
+  slider[0].value = Math.min(Math.max(frameWidth, 2), 5);
+  numberBox[0].value =  Math.min(Math.max(frameWidth, 2), 5);
+  slider[1].value = Math.min(Math.max(matWidth, 0), 10);
+  numberBox[1].value = Math.min(Math.max(matWidth, 0), 10);
+
+  const artwork = await retrieveData(objectID);
+  if (!artwork || !artwork['primaryImageSmall']) 
+  domCreate(artwork);
+
+  const previewImage = document.getElementById('preview-image');
+  previewImage.addEventListener('load', () => {
+    const printSizes = Frame.getPrintSizes(previewImage);
+    document.getElementById('print-size-s-label').innerHTML = `Small<br>${printSizes['S'][0]/10} × ${printSizes['S'][1]/10} cm`;
+    document.getElementById('print-size-m-label').innerHTML = `Medium<br>${printSizes['M'][0]/10} × ${printSizes['M'][1]/10} cm`;
+    document.getElementById('print-size-l-label').innerHTML = `Large<br>${printSizes['L'][0]/10} × ${printSizes['L'][1]/10} cm`;
+  });
+
+  Frame.render(document.getElementById('preview-image'), document.getElementById('preview-container'), printSize, frameStyle, frameWidth, matColor, matWidth);
+  setPrice();
+});
+
+for (let i=0; i<sizeSelector.length; i++) {
+  sizeSelector[i].addEventListener('input', );
+}
+
+for (let i=0; i<frameSelector.length; i++) {
+  frameSelector[i].addEventListener('input', );
+}
+
+for (let i=0; i<matSelector.length; i++) {
+  matSelector[i].addEventListener('input', );
+}
+
+numberBox[0].addEventListener('input', );
+
+numberBox[1].addEventListener('input', );
+
+slider[0].addEventListener('input', );
+
+slider[1].addEventListener('input', );
+
+
+
+
+
+addEventListener('input', );
+
+function setPrice() {
+  document.getElementById('price').innerHTML = `€ ${Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth).toFixed(2)}`;
+  let {width, height} = Frame.calculateSize(printSize, frameWidth, matWidth);
+  document.getElementById('total-size').innerHTML = `${width} × ${height} cm`;
+}
+
+const form = document.getElementById('config-form');
+form.addEventListener('keypress', );
+
+function domCreate(artwork){
+  const imageContainer = document.getElementById('preview-container');
+  const item = document.createElement('img');
+  item.src = artwork['primaryImageSmall'];
+  item.alt = artwork['title'];
+  item.id = "preview-image";
+  imageContainer.prepend(item);
+  museumLabel.innerHTML =`<span class="artist">${artwork.artistDisplayName}</span>
+  <span class="title">${artwork.title}</span>,
+  <span class="date">${artwork.objectDate}</span>`;
+}
+
+            window.updateFrameWidth = 
+            window.updateMatWidth = 
+            
+            
+          export function getPrintSizes(img) {
+  let S = [297, 297]; // A4
+  let M = [420, 420]; // A3
+  let L = [594, 594]; // A2
+
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+
+  if (h > w)  else {
+    S[1] = Math.floor(h * S[0] / w);
+    M[1] = Math.floor(h * M[0] / w);
+    L[1] = Math.floor(h * L[0] / w);
+  }
+
+  return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+  const printSizes = getPrintSizes(img);
+  const w = printSizes[printSize][0];
+  const h = printSizes[printSize][1];
+
+  let x;
+  if (w > h)  else {
+    x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+  }
+
+  const frameImageSlices = {
+    classic: 115,
+    natural: 75,
+    shabby: 120,
+    elegant: 107
+  };
+
+  const matColors = {
+    ivory: '#fffff0',
+    mint: '#e0e6d4',
+    wine: '#50222d',
+    indigo: '#29434c',
+    coal: '#333a3d',
+  };
+
+  img.style.boxSizing = 'border-box';
+  img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+  img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+  img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+  img.style.borderImageSlice = frameImageSlices[frameStyle];
+  img.style.borderWidth = `${frameWidth * x}px`;
+  img.style.backgroundColor = matColors[matColor];
+  img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+  let price = 30.0;
+  switch (frameStyle) {
+    
+    case 'natural':
+    price += frameWidth * 0.8;
+    break;
+    
+    case 'elegant':
+    price += frameWidth * 0.85;
+    break;
+  }
+  price += matWidth * 0.05;
+  if (printSize === 'M') price *= 2.0;
+  if (printSize === 'L') 
+  return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export 
+import * as SearchCache from './search-cache.js';
+
+async function retrieveData(objID){
+  let artwork = SearchCache.retrieveFromLocal(objID);
+  if(artwork){
+    return artwork;
+  }}
+
+
+
+;
+
+
+
+
+
+
+export { searchIdFromApi, retrieveData, retrieveHighlights };
+
+
+function retrieveFromLocal(key){
+  if(key in localStorage){
+    return JSON.parse(localStorage[key]);
+  }
+}
+
+
+
+
+
+
+function cartCache(){
+  const cartCached = retrieveFromLocal("cart");
+  if(cartCached && cartCached.length != null){
+    document.getElementById('cart-link').innerHTML = `Cart (${cartCached.length})`;
+  }
+}
+
+export { retrieveFromLocal, storeInLocal, cartCache };
+
+
+function createItem(data){
+  const items = document.createElement('div');
+  items.className = "thumb";
+  items.innerHTML =`<a href="config.html?objectID=${data.objectID}" id="object-${data.objectID}">
+  <img src="${data.primaryImageSmall}" alt ="${data.title}" id="object-image-${data.objectID}">
+  <div class="museum-label">
+    <span class="artist">${data.artistDisplayName}</span>
+    <span class="title">${data.title}</span>,
+    <span class="date">${data.objectDate}</span>
+  </div>
+  </a>`;
+  return items;
+}
+
+
+export{ createItem };
+
+import { createItem } from './search-dom.js' ;
+import * as SearchAPI from './search-api.js' ;
+import * as SearchCache from './search-cache.js' ;
+
+const container = document.getElementById('gallery');
+const displayText = document.getElementById('search-info');
+
+document.addEventListener('DOMContentLoaded',function(){
+  SearchCache.cartCache();
+
+  const params = (new URL(document.location)).searchParams;
+  const searchQuery = params.get('q');
+  if(!searchQuery);
+  gallerySearch(searchQuery);
+});
+
+
+
+
+
+async function gallerySearch(searchTerm){
+  displayText.innerHTML = `Searching for “${searchTerm}”...`;
+  const objIdFromSearch = await SearchAPI.searchIdFromApi(searchTerm);
+  let objId = await objIdFromSearch['objectIDs'];
+
+  if(!objId)
+
+  if(parseInt(objId.length) > 100)
+
+  await loadAllThenDisplay(objId);
+  displayText.innerHTML =  `Found ${objIdFromSearch['total']} ${objId.length == 1  : "artworks"} for “${searchTerm}” `
+}
+
+
+function loadAllThenDisplay(objId){
+  var promises = objId.map(id => SearchAPI.retrieveData(id).then(result => createItem(result)));
+  return Promise.all(promises)
+  .then(newItems => {
+    for(var newItem of newItems){
+      container.appendChild(newItem);
+    }
+  })
+}
+
+
+

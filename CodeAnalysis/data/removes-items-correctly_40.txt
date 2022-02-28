@@ -1,0 +1,351 @@
+export function get(key) {
+    return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)) : null
+}
+
+export async function set(key, callback) {
+    return localStorage.setItem(key, JSON.stringify(await callback()))
+}
+
+export 
+import * as CacheService from './CacheService.js'
+import { MetropolitanService } from "./MetropolitanService.js";
+import { render } from "./frame.js";
+import { Image } from "./Image.js";
+import { calculatePrice } from "./frame.js";
+
+const metropolitanService = new MetropolitanService()
+const cartLabelElement = document.getElementById('cart-link')
+const cart = CacheService.get('cart')
+cartLabelElement.innerHTML = `Cart ${cart ? `(` + cart.length + `)` }`
+
+const shoppingCart = document.getElementById('cart')
+const checkoutButton = document.getElementById('checkout-button')
+const cartItems = document.getElementById('cart')
+
+let deleteItemButton = document.getElementsByClassName('cart-remove')
+
+let price_total = 0
+
+async function loadCartElements() {
+    console.log('Loading elements from cache')
+    cartItems.innerHTML = ''
+
+    for (let i = cart.length - 1; i >= 0; i--) {
+        const object = await metropolitanService.object(cart[i].objectID, true);
+        cartItems.innerHTML = cartItems.innerHTML + createCartItem(cart[i], object)
+    }
+
+
+    let imageElement = document.getElementsByClassName('cart-thumb');
+    let inc = 0
+
+    for (let i = cart.length - 1; i >= 0; i--) {
+        let imgElement = imageElement[inc++]
+
+        const image = new Image(imgElement, cart[i].printSize, cart[i].frameStyle, cart[i].frameWidth, cart[i].matColor, cart[i].matWidth);
+        image.renderImage();
+    }
+
+
+
+    cartItems.innerHTML = cartItems.innerHTML +
+        `<div class="cart-total">
+                    <div class="price">Total: € <span id="price-total">0</span></div>
+                    <button type="button" id="checkout-button">Checkout</button>
+                </div>`
+
+    const price = document.getElementById('price-total')
+
+    price_total = Math.round((price_total + Number.EPSILON) * 100) / 100
+    price.innerHTML = `${price_total}`
+
+
+    for (let i = 0; i < deleteItemButton.length; i++) {
+        let button = deleteItemButton[i]
+        button.addEventListener('click', function (event) {
+
+            removeFromCart(event, cart[cart.length - (1 + i)], cart.length - (1 + i))
+
+        })
+    }
+
+}
+
+
+async function removeFromCart(event, { objectID, printSize, frameStyle, frameWidth, matWidth }, index) {
+    let buttonClicked = event.target
+    buttonClicked.parentElement.parentElement.remove()
+    console.log('Deleting ' + objectID + ' from cart')
+
+    if (cart.length === 1)  else {
+
+        cart.splice(index, 1)
+        await CacheService.set("cart", _ => cart)
+
+        updatePriceTotal(printSize, frameStyle, frameWidth, matWidth)
+        updateAmountCartItems()
+    }
+}
+
+function updatePriceTotal(printSize, frameStyle, frameWidth, matWidth) {
+    const p = calculatePrice(printSize, frameStyle, frameWidth, matWidth)
+    price_total -= p
+    price_total = Math.round((price_total + Number.EPSILON) * 100) / 100
+
+    const price = document.getElementById('price-total')
+    price.innerHTML = `${price_total}`
+}
+
+function updateAmountCartItems() {
+    cartLabelElement.innerHTML = `Cart ${cart ? `(` + cart.length + `)` }`
+}
+
+function createCartItem({ objectID, printSize, frameStyle, frameWidth, matColor, matWidth }, object) {
+
+    let description = ''
+
+    if (printSize === 'S') { description += 'Small' }
+    if (printSize === 'M') { description += 'Medium' }
+    if (printSize === 'L') { description += 'Large' }
+
+    description += ' print'
+
+    if (frameWidth > 0) {
+        description += ` in a ${frameWidth} cm ${frameStyle} frame`
+    }
+
+    if (matWidth > 0) {
+        description += ` with a ${matWidth} cm ${matColor} mat`
+    }
+    description += '.'
+
+    const p = calculatePrice(printSize, frameStyle, frameWidth, matWidth)
+    price_total += p
+
+
+
+    let html = `
+       <div class="cart-item">
+        <div class="cart-preview" id="preview-container-${objectID}">
+          <a href="${createURLParamsForConfig(objectID, printSize, frameStyle, frameWidth, matColor, matWidth)}" id="object-${objectID}">
+            <img class="cart-thumb" src="${object.primaryImageSmall}" alt="${object.artistDisplayName}" id="preview-${objectID}">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist">${object.artistDisplayName}</span>
+            <span class="title">${object.title}</span>,
+            <span class="date">${object.objectDate}</span>
+            <br><br>
+            <span class="frame-description">${description}</span>
+          </div>
+          <div class="cart-price">€ <span id="price-0">${p}</span></div>
+          <button class="cart-remove" name="deleteItem" id="deleteItem-${objectID}"></button>
+        </div>
+      </div>`
+
+    return html
+}
+
+function createURLParamsForConfig(objectID, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    let param = `config.html?objectID=${objectID}&printSize=${printSize}`
+
+    param = param + `&frameStyle=${frameStyle}&frameWidth=${frameWidth}`
+    param = param + `&matColor=${matColor}&matWidth=${matWidth}`
+
+
+    return param
+}
+
+
+
+if (cart == null)  else {
+    loadCartElements()
+}
+export const baseUrlMetropolitan = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+export const baseUrlArtmart = 'https://web-engineering.big.tuwien.ac.at/s20/a2/'
+export const apiResultLimit = 100import { PrintSizes } from "./PrintSize.js";
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+
+    const frameStylePrices = {
+        'classic': 1.0,
+        'natural': 0.80,
+        'shabby': 0.90,
+        'elegant': 0.85
+    }
+
+    price = price + (frameStylePrices[frameStyle] * frameWidth) + (0.05 * matWidth)
+    if (printSize === PrintSizes.MEDIUM) {
+        price = price * 2.0;
+    }
+    if (printSize === PrintSizes.LARGE) {
+        price = price * 3.5;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { getPrintSizes, render } from "./frame.js";
+
+export class Image {
+    constructor(img, printSize, frameStyle, frameWidth, matColor, matWidth) {
+        this._img = img;
+        this._printSize = printSize;
+        this._frameStyle = frameStyle;
+        this._frameWidth = frameWidth;
+        this._matColor = matColor;
+        this._matWidth = matWidth;
+    }
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    renderImage() {
+        render(this._img, this._img.parentElement, this._printSize, this._frameStyle, this._frameWidth, this._matColor, this._matWidth)
+    }
+}import { RequestService } from './RequestService.js'
+import { baseUrlMetropolitan } from './environment.js'
+import { QueryString, QueryParam } from './Query.js'
+
+export class MetropolitanService {
+
+    
+
+    async object(id, shouldCache) {
+        const rs = new RequestService(baseUrlMetropolitan, shouldCache)
+        return rs.get(`objects/${id}`)
+    }
+
+}
+import { getPrintSizes } from "./frame.js";
+
+export class PrintSize {
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+}
+
+export const PrintSizes = Object.freeze({
+    SMALL: 'S',
+    MEDIUM: 'M',
+    LARGE: 'L'
+});export class QueryString {
+    
+
+    
+
+    static 
+}
+
+export class QueryParam {
+    
+}
+import * as CacheService from './CacheService.js';
+export class RequestService {
+
+    constructor(baseUrl, shouldCache = false) {
+        this.baseUrl = baseUrl
+        this.shouldCache = shouldCache;
+    }
+
+    async get(path) {
+        let resp = null;
+        const cachedResponse = CacheService.get(`cachedResponse-${path}`);
+
+        if (cachedResponse ) 
+        else {
+            resp = await (await fetch(this.baseUrl + path, { method: 'GET' })).json()
+            CacheService.set(`cachedResponse-${path}`, _ => resp);
+        }
+        return await resp
+    }
+}

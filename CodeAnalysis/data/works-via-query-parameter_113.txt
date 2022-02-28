@@ -1,0 +1,216 @@
+import * as API from './met-api.js';
+import {setCartQty} from './helpers.js';
+import * as DOM from "./dom-helpers.js";
+import {calculatePrice, render} from "./frame.js";
+
+export const fetchCart = () => {
+    if ('cart' in localStorage)  else {
+        return [];
+    }
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+    shoppingCart = fetchCart();
+    /* construct html */
+    cartItems(shoppingCart);
+})
+
+/* get array of items in cart */
+const printSizes = {"S": "Small", "M": "Medium", "L": "Large"};
+var priceList = [];
+let shoppingCart = fetchCart();
+
+/* add html dynamically */
+const cartItems = async (cart) => {
+    /* set number of cart items in header */
+    setCartQty();
+    shoppingCart = fetchCart();
+    const cartSection = document.getElementById("cart");
+    if (cartSection) 
+};
+
+const renderEntry = ;
+
+
+const frameDescr = ;
+
+const museumLabel = ;
+
+const cartPreview = ;
+
+const cartTotal = ;
+
+
+export 
+
+export function setAttributes(element, attributes) {
+  for(let key in attributes) {
+      if(key === 'class'){
+        setClasses(element, attributes[key]);
+        continue;
+      }
+      
+
+      if(typeof(attributes[key]) === 'object')  else {
+          element[key] = attributes[key];
+      }
+  }
+  return element;
+}
+
+export 
+
+export function textElement(tag, text) {
+  const element = document.createElement(tag);
+  element.innerText = text;
+  return element;
+}
+
+export function container(elements, tag='div') {
+  const container = document.createElement(tag);
+  for(let element of elements) {
+      container.appendChild(element);
+  }
+  return container;
+}
+
+export function img(src, alt="") {
+  const element = document.createElement('img');
+  setAttributes(element, {src, alt});
+  return element;
+}
+
+export function setClasses(element, classes){
+  return element.className = classes.join(',');
+}export 
+
+export 
+
+export 
+import { fetchCart } from './cart.js';
+
+export const getQueryParameter = (param) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(param);
+}
+
+export const setCartQty = () => {
+  const cart = fetchCart();
+  const element = document.getElementById('cart-link');
+  element.innerText = cart.length === 0 ? 'Cart' ;
+}
+import * as MetCache from './met-cache.js';
+import { ImageObject } from './met.js';
+
+const BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
+
+export const search = async (term) => {
+  const url = `${BASE_URL}/search?hasImages=true&q=${term}`;
+  try {
+    const repsonse = await fetch(url);
+    const data = await repsonse.json();
+    return data.objectIDs ;
+  }}
+
+export const fetchObjectData = async (id) => {
+  const url = `${BASE_URL}/objects/${id}`;
+
+  let image = MetCache.fetchImage(id);
+  if(image)
+
+  try {
+    const data = await fetch(url).then((response)=>{
+      console.log(`received response ${response.ok}`)
+      if(response.ok) {
+        return response.json();
+      }
+    }).catch();
+    if(!data) 
+    const img = new ImageObject(data.objectID, data.primaryImageSmall, data.artistDisplayName, data.title, data.objectDate);
+    MetCache.storeImage(img);
+    return img;
+  }export const storeImage = (image) => {
+  const key = image.id;
+  console.log(`Storing image with id ${key} in local storage.`);
+  localStorage[key] = JSON.stringify(image);
+}
+
+export const fetchImage = (id) => {
+  if(id in localStorage)
+}export class ImageObject {
+  constructor(id, url, artist, title, year){
+    this.id = id;
+    this.url = url;
+    this.artist = artist;
+    this.title = title;
+    this.year = year;
+  }
+}import * as API from './met-api.js';
+import { getQueryParameter, setCartQty } from './helpers.js';
+import * as DOM from './dom-helpers.js';
+
+const setHeadline = (text) => {
+  const headline = document.getElementById('search-info');  
+  headline.innerText = text;
+}
+
+const searchCollection = async (term) => {
+  const CHUNKSIZE = 10;
+
+  let ids = [];
+
+  const container = document.getElementById('gallery');
+  container.innerHTML = '';
+
+  if(term){
+    setHeadline(`Searching for “${term}”...`)
+    const data = await API.search(term);
+    ids = ids.concat(data.slice(0,100));
+    setHeadline(`Found ${ids.length} ${ids.length === 1  : 'artworks'} for “${term}”`)
+  }
+
+  const jobs = ids.map(id => API.fetchObjectData(id));
+
+  const chunks = jobs.reduce((chunks, job, i) => {
+    const chunkIndex = Math.floor(i/CHUNKSIZE);
+    if(!chunks[chunkIndex]){
+      chunks[chunkIndex] = [];
+    }
+
+    chunks[chunkIndex].push(job);
+    return chunks;
+  }, []);
+  
+  for (const chunk of chunks) {
+    console.log(chunk);
+    
+    const objects = await Promise.all(chunk); 
+    for (const object of objects) {
+      container.appendChild(renderEntry(object));
+    }
+  }
+}
+
+const renderEntry = (object) => {
+  const artist = DOM.setAttributes(DOM.textElement('span', object.artist),{class: ['artist']});
+  const title = DOM.setAttributes(DOM.textElement('span', `${object.title}, `),{class: ['title']});
+  const date = DOM.setAttributes(DOM.textElement('span', object.year),{class: ['date']});
+  const label = DOM.setAttributes(DOM.container([artist, title, date]),{class: ['museum-label']});
+  const img = DOM.setAttributes(DOM.img(object.url,object.title),{id: `object-image-${object.id}`})
+  const link = DOM.setAttributes(DOM.container([img, label],'a'),{href: `config.html?objectID=${object.id}`, id: `object-${object.id}`})
+
+  return DOM.setAttributes(DOM.setAttributes(DOM.container([link]), {class: ['thumb']}));
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+  setCartQty();
+  const term = getQueryParameter('q');
+  if(term){
+    const searchInput = document.getElementById('search');
+    searchInput.value = term;
+  }
+  searchCollection(term);
+});
+
+const form = document.querySelector('.search-form');
+form.addEventListener('submit', );

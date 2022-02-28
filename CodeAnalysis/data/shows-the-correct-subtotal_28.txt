@@ -1,0 +1,108 @@
+
+    import * as cache from './localStorageCahe.js';
+    import * as pictures from './localStorage.js';
+    import * as frame from "./frame.js";
+
+    var rawData;
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      let url = "https://web-engineering.big.tuwien.ac.at/s20/a2/shipping";
+      const response = await fetch(url);
+      rawData = await response.json();
+      var countries = document.getElementById("country");
+      for(let country of rawData.destinations)
+          countries.innerHTML += `<option value="${country.country}">${country.displayName}</option>`;
+      for(let country of rawData.destinations)
+        if(document.getElementById("country").value == country.country)
+      var price = (country.cost/100).toFixed(2);
+      document.getElementById("price-shipping").innerHTML = `${price}`;
+      price = parseFloat(price) + parseFloat(calculatePrice());
+      price.toFixed(2);
+      document.getElementById("price-total").innerHTML = price;
+    });
+
+    function calculatePrice() {
+      let subtotal = 0;
+      let elems = cache.retrieve("cart");
+      for (let elem of elems) {
+          subtotal = subtotal + frame.calculatePrice(elem.printSize, elem.frameStyle, elem.frameWidth, elem.matWidth);
+          
+      }
+      console.log(subtotal);
+
+      document.getElementById("price-subtotal").innerHTML = subtotal.toFixed(2);
+      return subtotal.toFixed(2);
+    }
+
+
+
+    document.getElementById("country").addEventListener('change', );
+
+    document.addEventListener('DOMContentLoaded', event => {
+          if (cache.cartSize() === 0)  
+    });
+
+
+  export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    let frameStylePrice = 0.0;
+    let matCost = 0.05;
+    switch(frameStyle) {
+        case "classic" : frameStylePrice = 1;
+        break;
+        
+        case "shabby" : frameStylePrice = 0.9;
+        break;
+        case "elegant" : frameStylePrice = 0.85;
+        break;
+    }
+    let smallPrice = 30 + (frameStylePrice*frameWidth*0.1) + (matCost * matWidth*0.1);
+    let mediumPrice = 2*smallPrice;
+    let largePrice = 3.5*smallPrice;
+    switch(printSize){
+        case "S" : price = smallPrice;
+        break;
+        case "M" : price = mediumPrice;
+        break;
+        case "L" : price = largePrice;
+        break;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { Picture } from './localStorage.js';
+
+export function retrieve(attribute) {
+   
+    if(attribute in localStorage) {
+        return JSON.parse(localStorage[attribute]);
+    }
+}
+
+export 
+
+export 
+
+export 
+
+export 
+export 
+
+export function cartSize(){
+    let existing = localStorage.getItem('cart');
+    existing = existing ? JSON.parse(existing) ;
+    return existing.length;
+}
+
+export 
+
+
+export export class Picture{
+	
+}
+export class CartPicture{
+	
+}

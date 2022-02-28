@@ -1,0 +1,332 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { Destination } from "./destination_entities.js";
+import * as DestinationCache from "./artmart-shipping-cache.js";
+const ARTMART_BASE_URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/';
+export function loadDestinations() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let url = ARTMART_BASE_URL + 'shipping';
+        let destinations = [];
+        try {
+            let responseDestinations = DestinationCache.retrieve();
+            if (responseDestinations) {
+            }
+            console.log(responseDestinations);
+            for (let i = 0; i < responseDestinations.length; i++) {
+                let destination = new Destination();
+                destination.fillFromJSON(responseDestinations[i]);
+                destinations.push(destination);
+            }
+            return yield Promise.resolve(destinations);
+        }});
+}
+export function retrieve() {
+    if ('shipping-destinations' in localStorage) {
+        console.log('Retrieving Shipping Destinations from local Storage');
+        return JSON.parse(localStorage['shipping-destinations']);
+    }
+}
+export 
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._objectID = null;
+        this._configuration = new FrameConfiguration;
+    }
+    fillFromJSON(jsonObj) {
+        super.fillFromJSON(jsonObj);
+        this.configuration.fillFromJSON(jsonObj);
+    }
+    
+    get configuration() {
+        return this._configuration;
+    }
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    get isEmpty() {
+        return this._items.length == 0;
+    }
+    add(item) {
+        this._items.push(item);
+        this.updateSession();
+    }
+    
+    getCartItem(index) {
+        return this._items[index];
+    }
+    updateSession() {
+        localStorage.setItem('cart', (((JSON.stringify(this._items, function (key, value) { return key == 'printSizes' || value == null ? undefined : value; }).split(",\"_").join(",\"")).split("{\"_").join("{\"")).split("\"configuration\":{").join(""))
+            .split("}}").join("}"));
+    }
+    
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null || storage.length == 0  : storage;
+        var cart = JSON.parse(json);
+        for (let item of cart) {
+            var cartItem = new CartItem();
+            cartItem.fillFromJSON(item);
+            this.add(cartItem);
+        }
+    }
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { Cart } from "./cart-service.js";
+import { loadDestinations } from "./artmart-shipping-api.js";
+import * as DestinationCache from "./artmart-shipping-cache.js";
+function redirectIfCartIsEmpty() {
+    console.log("Checking Shopping Cart...");
+    let cart = new Cart;
+    if (cart.isEmpty) 
+    else {
+        console.log("Shopping Cart is defined.");
+    }
+}
+let displayCosts = function displayCosts() {
+    console.log("refreshing costs");
+    /*const format = new Intl.NumberFormat("de-AT",{
+      style: "currency",
+      currency: "EUR",
+      minimumFractionDigits: 2
+    });*/
+    let subtotal = document.getElementById("price-subtotal");
+    let cart = new Cart;
+    let subtotalcost = 0;
+    for (var i = 0; i < cart.size; i++) {
+        subtotalcost += cart.getCartItem(i).configuration.price;
+    }
+    subtotal.innerText = subtotalcost.toString();
+    let shipping = document.getElementById("price-shipping");
+    let selectelement = document.getElementById("country");
+    let shippingcost = 0;
+    let countrycode = selectelement.value;
+    let responseDestinations = DestinationCache.retrieve();
+    for (let i = 0; i < responseDestinations.length; i++) {
+        if (responseDestinations[i].country === countrycode) {
+            shippingcost = (+responseDestinations[i].cost) / 100;
+            break;
+        }
+    }
+    shipping.innerHTML = shippingcost.toFixed(2);
+    let total = document.getElementById("price-total");
+    total.innerHTML = (subtotalcost + shippingcost).toFixed(2);
+};
+function enablePayBtn() {
+    console.log("Data loaded sucessfully. Going to enable Pay button");
+    let paybutton = document.getElementById("pay-button");
+    paybutton.disabled = false;
+}
+
+function displayCountries(destinations) {
+    let selectelement = document.getElementById("country");
+    let selectedindex = selectelement.selectedIndex;
+    let fragment = document.createDocumentFragment();
+    destinations.forEach(destination => {
+        let option = document.createElement("option");
+        option.innerHTML = destination.displayName;
+        option.value = destination.country;
+        fragment.appendChild(option);
+    });
+    for (let i = selectelement.length; i > 0; --i) 
+    selectelement.appendChild(fragment);
+    if (selectedindex !== -1) 
+    displayCosts();
+    enablePayBtn();
+}
+/*
+  let cartA = [
+    {
+      objectID: 919136,
+      printSize: 'L',
+      frameStyle: 'elegant',
+      frameWidth: 28,
+      matColor: 'wine',
+      matWidth: 75
+    },
+    {
+      objectID: 44433,
+      printSize: 'L',
+      frameStyle: 'shabby',
+      frameWidth: 33,
+      matColor: 'mint',
+      matWidth: 83
+    },
+    {
+      objectID: 412218,
+      printSize: 'M',
+      frameStyle: 'classic',
+      frameWidth: 37,
+      matColor: 'ivory',
+      matWidth: 73
+    },
+    {
+      objectID: 41664,
+      printSize: 'L',
+      frameStyle: 'shabby',
+      frameWidth: 41,
+      matColor: 'indigo',
+      matWidth: 48
+    },
+    {
+      objectID: 647164,
+      printSize: 'S',
+      frameStyle: 'elegant',
+      frameWidth: 25,
+      matColor: 'indigo',
+      matWidth: 61
+    }
+  ];
+    localStorage.removeItem("cart");
+    localStorage.setItem('cart', JSON.stringify(cartA));
+function initCheckout() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield loadDestinations().then(destinations => displayCountries(destinations)).catch(disablePayBtn);
+        let selectelement = document.getElementById("country");
+        selectelement.addEventListener("change", displayCosts);
+    });
+}
+initCheckout();
+redirectIfCartIsEmpty();
+import { Serializable } from "./frame.js";
+export class Destination extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._objectID = null;
+        this._country = null;
+        this._displayName = null;
+        this._cost = null;
+    }
+    
+    get country() {
+        return this._country;
+    }
+    get displayName() {
+        return this._displayName;
+    }
+    
+}
+export class Serializable {
+    fillFromJSON(jsonObj) {
+        for (var propName in jsonObj) {
+            if (this.hasOwnProperty("_" + propName)) {
+                this["_" + propName] = jsonObj[propName];
+            }
+        }
+    }
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._printSize = null;
+        this._frameWidth = null;
+        this._frameStyle = null;
+        this._matWidth = null;
+        this._matColor = null;
+        this.printSizes = { "S": "Small", "M": "Medium", "L": "Large" };
+        /*get toJSON(): string{
+          return JSON.stringify(this);
+        }*/
+    }
+    
+    
+    
+    
+    
+    
+    get price() {
+        return calculatePrice(this._printSize, this._frameStyle, this._frameWidth, this._matWidth);
+    }
+    
+}
+export 
+export 
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    frameWidth /= 10;
+    matWidth /= 10;
+    let price = 30.0;
+    switch (frameStyle) {
+        case FrameStyle.classic:
+            price += frameWidth;
+            break;
+        case FrameStyle.natural:
+            price += frameWidth * 0.8;
+            break;
+        
+        
+    }
+    price += matWidth * 0.05;
+    if (printSize === PrintSize.S) 
+    else if (printSize === PrintSize.M) {
+        return (Math.round((price * 2) * 100) / 100);
+    }
+    else if (printSize === PrintSize.L) {
+        return (Math.round((price * 3.5) * 100) / 100);
+    }}
+var __awaiter = (this ) || ;
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export 
+
+export 
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    
+    
+    
+}

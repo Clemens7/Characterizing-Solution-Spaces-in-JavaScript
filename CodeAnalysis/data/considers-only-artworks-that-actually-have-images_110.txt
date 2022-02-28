@@ -1,0 +1,109 @@
+import { Artwork } from '../metmuseum/artwork-model.js';
+
+export 
+
+export export class Artwork {
+    
+}
+export 
+
+export 
+
+export 
+
+export 
+
+export function onReady(callback) {
+    if (typeof callback === "function") {
+        document.addEventListener('DOMContentLoaded', callback)
+    }
+}
+
+export 
+
+export import { updateCartCounter } from "./cart/storage.js";
+import { onReady } from "./helpers/dom.js"
+
+onReady(updateCartCounter);
+import { Artwork } from './artwork-model.js';
+import * as CACHE from '../search/artwork-cache.js';
+
+export 
+
+export async function getArtworksWithImageBySearchTerm(searchTerm) {
+    const response = await fetch(searchTerm_hasImage_url(searchTerm));}
+
+export 
+
+
+export 
+
+export 
+
+
+
+
+function searchTerm_hasImage_url(searchTerm) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchTerm}`;
+}
+import * as MuseumAPI from '../metmuseum/museum-api.js'
+import * as DOM from '../helpers/dom.js';
+import * as UTIL from '../helpers/utils.js';
+import { Artwork } from '../metmuseum/artwork-model.js';
+
+export let q = UTIL.getSearchParam("q");
+const searchButton = document.getElementById('search-button');
+searchButton.addEventListener("click", search);
+
+
+function initCheck() {
+    if (q) {
+        let info = document.getElementById('search-info');
+        info.innerText = 'Searching for “' + q + '”...';
+        artSearch(q);
+    }
+}
+
+
+
+async function artSearch(searchTerm) {
+    const artworks = await retrieveArtItems(searchTerm);}
+
+
+
+async function retrieveArtItems(searchTerm) {
+    let info = document.getElementById('search-info');
+    try {
+        if (searchTerm == "")  else {
+            const artworks = await MuseumAPI.getArtworksWithImageBySearchTerm(searchTerm);
+    }}
+
+DOM.onReady(initCheck());export function updateCartCounter() {
+  const element = document.getElementById("cart-link");
+  if (element) {
+    const items = getItems();
+    let text = "Cart";
+    if (items.length > 0) 
+
+    element.innerText = text;
+  }
+}
+
+export 
+
+export 
+
+export 
+
+
+
+
+function getItems() {
+  return JSON.parse(localStorage.getItem("cart")) ?? [];
+}export function getSearchParam(param) {
+    if (param) {
+        return new URL(document.location).searchParams.get(param);
+    }
+}
+
+export 

@@ -1,0 +1,79 @@
+export 
+
+
+export function getCartProducts() {
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    if (!cart) {
+        cart = [];
+    }
+    return cart;
+}
+
+export function isCartEmpty() {
+    const number = getCartProducts().length;
+    console.log("cart items rn:" + number);
+    return number < 1;
+}
+
+
+export 
+
+export function countCart() {
+    const cart = document.getElementById("cart-link");
+    const count = getCartProducts().length;
+    if (count > 0)  else {
+        cart.innerHTML = `Cart`;
+    }
+}
+import {
+    findObject, setPrice
+} from "./general.js";
+import {calculatePrice, render} from "./frame.js";
+import {
+    countCart,
+    getCartProducts,
+    isCartEmpty,
+    removeFromCart
+} from "./cart-helpers.js";
+
+
+countCart();
+calcPrice().then(r => console.log(r));
+
+const cartElement = document.getElementById("cart");
+
+if (isCartEmpty()) {
+    const cartItemDiv = document.createElement("div");
+    cartItemDiv.classList.add("cart-item");
+    cartItemDiv.innerHTML =
+        `<span id="empty-message">There are no items in your shopping cart.</span>`;
+    cartElement.insertBefore(cartItemDiv, cartElement.firstChild);
+    document.getElementById('checkout-button').disabled = true;
+}
+
+async function calcPrice() {
+    let totalPrice = 0;
+    const items = getCartProducts();
+
+    for (let index = 0; index < items.length; index++) 
+    setPrice("#price-total", totalPrice);
+}
+
+window.remove = 
+export 
+
+export 
+
+export 
+const MET_BASE = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+export function setPrice(selector, price) {
+    document.querySelector(selector).innerHTML = price;
+}
+
+export 
+
+
+export 
+
+

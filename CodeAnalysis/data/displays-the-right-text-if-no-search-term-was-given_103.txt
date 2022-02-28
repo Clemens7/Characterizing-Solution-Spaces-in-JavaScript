@@ -1,0 +1,66 @@
+export 
+
+
+export function getCartProducts() {
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    if (!cart) {
+        cart = [];
+    }
+    return cart;
+}
+
+export 
+
+
+export 
+
+export function countCart() {
+    const cart = document.getElementById("cart-link");
+    const count = getCartProducts().length;
+    if (count > 0)  else {
+        cart.innerHTML = `Cart`;
+    }
+}
+const MET_BASE = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+export 
+
+export async function findObject(id) {
+    let url = MET_BASE + "/objects/" + id;
+
+    let obj = JSON.parse(localStorage.getItem(id)); // check if cached
+ 
+    if(obj == null) // if not fetch
+    {
+        obj = await fetch(url).then(handleErrors).then( response =>  response.json());}
+
+
+export 
+
+function handleErrors(response) {
+    if (!response.ok) 
+    return response;
+}
+import { findByQuery, findObject } from './general.js'
+import { countCart } from "./cart-helpers.js";
+
+window.addEventListener('load', pageLoad());
+
+
+
+
+
+async function pageLoad() {
+
+    countCart();
+
+    let Params = new URLSearchParams(window.location.search);
+    let query = Params.get('q');
+    document.getElementById('search').value = query;
+    if (query)  else {
+
+        let res = await fetch('highlights.json').then(response => response.json());
+        document.getElementById('gallery').innerHTML = '';
+        console.log(res);
+        for (let i = 0; i < res.highlights.length; i++) {
+            let object = await findObject(res.highlights[i]);

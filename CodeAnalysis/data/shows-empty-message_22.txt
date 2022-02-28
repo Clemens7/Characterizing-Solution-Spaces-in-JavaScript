@@ -1,0 +1,95 @@
+import {render} from "./frame.js";
+import {removeItem} from "./cart.js";
+
+export function CartItemContainer(id = 'cart') {
+
+    let container = document.getElementById(id);
+    if (!container) 
+
+    this.clear = ;
+
+    this.createContainer = ;
+
+    let cartPreview = ;
+
+    let museumLabel = ;
+
+    let artDiv = ;
+
+    let itemPrice = ;
+
+    let removeButton = ;
+
+    let br = ;
+
+    let createElement = ;
+
+    let makeFrameDescription = ;
+
+    let printSize = ;
+
+    this.emptyCartMessage = function () {
+        const text = document.createElement('p');
+        text.innerText = 'There are no items in your shopping cart.';
+        container.prepend(text);
+    }
+}import {refreshNumberOfCartItems, getCartItems, removeItemFromCartByIndex} from './shopping_cart.js';
+import {retrieveArtworkInformation} from "./museum-endpoint.js";
+import {CartItemContainer} from "./cart-item.js";
+import {calculatePrice} from "./frame.js";
+
+const cartItemContainer = new CartItemContainer();
+
+async function loadCartItems() {
+    const cartItems = getCartItems();
+
+    let totalPrice = 0;
+
+    if (cartItems.length === 0) {
+        cartItemContainer.emptyCartMessage();
+        document.getElementById('checkout-button').disabled = true;
+    }
+
+    document.getElementById('price-total').textContent = totalPrice.toFixed(2);
+}
+
+function onPageLoaded() {
+    refreshNumberOfCartItems();
+
+    loadCartItems();
+}
+
+export 
+
+document.addEventListener("DOMContentLoaded", () => onPageLoaded());
+document.getElementById('checkout-button') .addEventListener('click', );
+export 
+
+export 
+
+export 
+export 
+
+const CART_STORAGE_KEY = 'cart';
+
+export function getCartItems() {
+    if (localStorage[CART_STORAGE_KEY])  else {
+        return [];
+    }
+}
+
+export 
+
+export 
+
+export function refreshNumberOfCartItems() {
+    const count = getNumberOfCartItems();
+    const cartText = count > 0  : 'Cart';
+    document.getElementById('cart-link').innerText = cartText;
+}
+
+export 
+
+function getNumberOfCartItems() {
+    return getCartItems().length;
+}

@@ -1,0 +1,273 @@
+export const CacheType =
+{
+    Search: 1,
+    ObjId: 2
+};
+
+export 
+
+export 
+
+
+
+
+            import * as Config from './config.js';
+            import * as Frame from './frame.js';
+
+            document.addEventListener('DOMContentLoaded', async event => {
+                await updateData();
+            });
+
+            document.getElementById("checkout-button").onclick =
+                ;
+
+            async function updateData() {
+                const cartTag = document.getElementById('cart');
+                const checkoutElement = document.getElementsByClassName('cart-total')[0];
+
+                const cartString = localStorage.getItem('cart');
+
+                if (cartString === null || cartString === "[]") {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.className = "cart-item";
+                    messageDiv.innerText = "There are no items in your shopping cart.";
+                    cartTag.insertBefore(messageDiv, checkoutElement);
+                    const buttonTag = document.getElementById('checkout-button');
+                    
+                    buttonTag.disabled = true;
+                    document.getElementById('cart-link').innerText = "Cart";
+                    return;
+                }}
+
+            
+
+            
+
+            
+
+            
+        
+        import { Item } from './item.js';
+        import * as Config from './config.js';
+        import * as Cache from './cache.js';
+
+        const params = (new URL(document.location)).searchParams;
+        if (!params.has('objectID')) 
+
+        let currentItem = new Item(params.get('objectID'), 'M', 'natural', 4, 'mint', 5.5);
+
+        const frameWidthNumInput = document.getElementsByName('frameWidth')[0];
+        const frameWidthRangeInput = document.getElementsByName('frameWidthR')[0];
+        const matWidthNumInput = document.getElementsByName('matWidth')[0];
+        const matWidthRangeInput = document.getElementsByName('matWidthR')[0];
+        const printSizeInputs = document.getElementsByName('printSize');
+        const frameStyleInputs = document.getElementsByName('frameStyle');
+        const matColorInputs = document.getElementsByName('matColor');
+
+        frameWidthNumInput.addEventListener("change", );
+        frameWidthRangeInput.addEventListener("change", );
+        matWidthNumInput.addEventListener("change", );
+        matWidthRangeInput.addEventListener("change", );
+        printSizeInputs.forEach(element => element.addEventListener("click", ));
+        frameStyleInputs.forEach(element => element.addEventListener("click", ));
+        matColorInputs.forEach(element => element.addEventListener("click", ));
+
+        document.getElementById('config-form').addEventListener('submit', );
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Config.updateCartItems(); //calling this function in other EventListener leads to point reductions
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadImage(currentItem.objectID)
+                .then(Config.updatePage(currentItem));
+
+            setFrameParameters(
+                params.get('printSize'),
+                params.get('frameWidth'),
+                params.get('frameStyle'),
+                params.get('matWidth'),
+                params.get('matColor'));
+        });
+
+        async function loadImage(objectID) {
+
+            const responseJson = await Config.loadObject(objectID);
+
+            Cache.set(objectID, Cache.CacheType.ObjId, responseJson);
+
+            createLabel(responseJson);
+            const image = document.getElementById("preview-image");
+            image.setAttribute("alt", responseJson.title);
+            image.setAttribute("src", responseJson.primaryImageSmall);
+            Config.setPrintSizes(image);
+
+            function createLabel(responseJson) {
+                const label = document.getElementById("image-label");
+                const spanArtist = document.createElement("span");
+                const spanTitle = document.createElement("span");
+                const spanDate = document.createElement("span");
+                spanArtist.className = "artist";
+                spanArtist.innerText = responseJson.artistDisplayName;
+                spanTitle.className = "title";
+                spanTitle.innerText = responseJson.title;
+                spanDate.className = "date";
+                spanDate.innerText = responseJson.objectDate;
+                label.appendChild(spanArtist);
+                label.appendChild(spanTitle);
+                label.appendChild(document.createTextNode(", "));
+                label.appendChild(spanDate);
+            }
+
+            return image;
+        }
+
+        function setFrameParameters(printSize, frameWidth, frameStyle, matWidth, matColor) {
+            if (printSize) 
+            if (frameStyle) 
+            if (matColor) 
+            if (frameWidth) 
+            if (matWidth) 
+        }
+    import * as Frame from './frame.js';
+import * as Cache from './cache.js';
+
+const baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+export 
+
+export 
+
+export 
+
+export 
+export class Item {
+    constructor(objectID, printSize, frameStyle, frameWidth, matColor, matWidth) {
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameStyle = frameStyle;
+        this.frameWidth = frameWidth;
+        this.matColor = matColor;
+        this.matWidth = matWidth;
+    }
+}
+
+        import * as Search from './search.js';
+        import * as Config from './config.js';
+
+        async function artSearch(searchToken) {
+            const arts = await Search.retrieve(searchToken);
+            if (arts === undefined || arts === null) 
+            createTiles(arts);
+            return arts.length;
+        }
+
+        document.addEventListener('DOMContentLoaded', async event => {
+            const params = (new URL(document.location)).searchParams;
+            const searchQuery = params.get('q');
+            if (!searchQuery) {
+                await artSearch(/*undefined*/);
+                return;
+            }});
+        document.addEventListener('DOMContentLoaded', Config.updateCartItems());
+
+        function createTiles(arts) {
+
+            const gallery = document.getElementById("gallery");
+
+            for (let i = 0; i < arts.length; i++) {
+                const div1 = document.createElement("div");
+                div1.className = "thumb";
+                const a = document.createElement("a");
+                a.href = "config.html?objectID=" + arts[i].objectID;
+                a.id = "object-" + i;
+                div1.appendChild(a);
+                const img = document.createElement("img");
+                img.src = arts[i].primaryImageSmall;//primaryImage;
+                img.alt = arts[i].title;
+                img.id = "object-image-" + i;
+                a.appendChild(img);
+                const div2 = document.createElement("div");
+                div2.className = "museum-label";
+                a.appendChild(div2);
+                const spanArtist = document.createElement("span");
+                const spanTitle = document.createElement("span");
+                const spanDate = document.createElement("span");
+                spanArtist.className = "artist";
+                spanArtist.innerText = arts[i].artistDisplayName;
+                spanTitle.className = "title";
+                spanTitle.innerText = arts[i].title;
+                spanDate.className = "date";
+                spanDate.innerText = arts[i].objectDate;
+                div2.appendChild(spanArtist);
+                div2.appendChild(spanTitle);
+                div2.appendChild(document.createTextNode(", "));
+                div2.appendChild(spanDate);
+
+                gallery.appendChild(div1);
+            }
+        }
+         /*document.getElementsByClassName('search-form')[0].addEventListener('submit', event => {
+             const searchInput = document.getElementById('search');
+             if (!searchInput.value) {
+                 searchInput.style.border = "1px solid red";
+                 event.preventDefault();
+             }
+         });*/
+    import * as Cache from './cache.js';
+
+const baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export async function retrieve(searchToken) {
+
+    const cached = Cache.get(searchToken, Cache.CacheType.Search);
+    if (cached) 
+
+    try {
+        if (searchToken === undefined) {
+            const jsonContent = await getJson("highlights.json");
+            return fetchIds(jsonContent.highlights);
+        }}
+
+
+
+async function fetchIds(idList) {
+    let arrayIndex = 0;
+    const promises = [];
+    for (let i = 0; arrayIndex < 100 && i < idList.length; i++) {
+        const promise = fetchItem(idList[i]);
+        if (promise) {
+            promises.push(promise);
+            arrayIndex++;
+        }
+    }
+    const array = await Promise.all(promises);
+    return array;
+}
+
+
+
+async function fetchItem(id) {
+    return await getJson(`${baseUrl}objects/${id}`);
+}
+
+
+async function getJson(url) {
+    const response = await fetch(url);
+    return await response.json();
+}

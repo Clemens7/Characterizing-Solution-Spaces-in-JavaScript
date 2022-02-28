@@ -1,0 +1,87 @@
+import * as SearchCache from './search-cache.js';
+
+async function retrieveData(objID){
+  let artwork = SearchCache.retrieveFromLocal(objID);
+  if(artwork)
+  try{
+    const dataFromApi = await retrieveDataFromApi(objID);}
+
+async function retrieveHighlights(){
+  let highlights = SearchCache.retrieveFromLocal("highlights");
+  if(highlights)
+  const response = await fetch('./highlights.json');
+  highlights = await response.json();
+  SearchCache.storeInLocal('highlights', highlights);
+  return highlights;
+}
+
+async function retrieveDataFromApi(objectID){
+  const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);};
+
+
+
+
+
+
+export { searchIdFromApi, retrieveData, retrieveHighlights };
+
+
+function retrieveFromLocal(key){
+  if(key in localStorage)
+}
+
+
+
+function storeInLocal(key, value){
+  localStorage[key] = JSON.stringify(value);
+}
+
+
+function cartCache(){
+  const cartCached = retrieveFromLocal("cart");
+  if(cartCached 
+}
+
+export { retrieveFromLocal, storeInLocal, cartCache };
+
+
+
+
+
+export{ createItem };
+
+import { createItem } from './search-dom.js' ;
+import * as SearchAPI from './search-api.js' ;
+import * as SearchCache from './search-cache.js' ;
+
+const container = document.getElementById('gallery');
+const displayText = document.getElementById('search-info');
+
+document.addEventListener('DOMContentLoaded',function(){
+  SearchCache.cartCache();
+
+  const params = (new URL(document.location)).searchParams;
+  const searchQuery = params.get('q');
+  if(!searchQuery){
+    showHighlights();
+    return;
+  }});
+
+
+async function showHighlights(){
+  const highlights = await SearchAPI.retrieveHighlights();
+  loadAllThenDisplay(highlights['highlights']);
+}
+
+
+
+
+
+function loadAllThenDisplay(objId){
+  var promises = objId.map(id => SearchAPI.retrieveData(id).then());
+  return Promise.all(promises)
+  .then()
+}
+
+
+

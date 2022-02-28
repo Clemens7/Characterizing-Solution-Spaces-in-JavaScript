@@ -1,0 +1,332 @@
+
+    import * as Frame from './frame.js';
+
+    let total = 0;
+
+    
+
+
+    
+
+    function showArtWorks(container){
+      const key = 'cart';
+      if (key in localStorage) {
+        console.log(`Retrieving ${key} from local storage`);
+        if (localStorage[key] === "" || localStorage[key] === "[]") {
+          const emptyCart = document.createElement('h2');
+          emptyCart.innerText = "There are no items in your shopping cart.";
+          container.appendChild(emptyCart);
+          document.getElementById("checkout-button").disabled = true;
+          document.querySelector('#cart-link').innerHTML = "Cart";
+          document.getElementsByClassName('price')[0].innerHTML = '';
+          let cartTotal = container.children[0];
+          container.removeChild(cartTotal);
+          container.appendChild(cartTotal);
+        }
+      }
+
+    }
+
+    class ArtWorksContainer {
+      constructor(containerID = 'cart') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+
+        /*var jtext =  '[' +
+                '{ "objectID": 726968 , "printSize":"S",' +
+                '"frameStyle":"classic" , "frameWidth": 40,' +
+                '"matColor":"ivory" , "matWidth": 50 },' +
+                '{ "objectID": 742769 , "printSize":"S",' +
+                '"frameStyle":"classic" , "frameWidth": 40,' +
+                '"matColor":"ivory" , "matWidth": 50 } ,' +
+                '{ "objectID":  823328, "printSize":"S",' +
+                '"frameStyle":"classic" , "frameWidth": 40,' +
+                '"matColor":"ivory" , "matWidth": 50 }]';
+        var key = "cart";
+        localStorage[key] = jtext;
+
+
+        showArtWorks(this.container);
+      }
+    }
+
+    new ArtWorksContainer();
+
+
+    
+
+    document.getElementById('checkout-button').addEventListener('click', );
+
+  
+    import * as Frame from './frame.js';
+
+    let image = document.querySelector('#preview-image');
+    const label = document.querySelector('#image-label');
+
+    let params      = (new URL(document.location)).searchParams;
+    let objectID    = parseInt(params.get("objectID"));
+    let printSize   = params.get("printSize");
+    if (printSize == null) {
+      printSize = 'S';
+    }
+    let frameWidth  = parseInt(params.get("frameWidth")); 
+    if (isNaN(frameWidth)) {
+      frameWidth = 40;
+    }
+    let frameStyle  = params.get("frameStyle");
+    if (frameStyle == null) {
+      frameStyle = 'classic';
+    }
+    let matWidth    = parseInt(params.get("matWidth"));
+    if (isNaN(matWidth)) {
+      matWidth = 55;
+    }
+    let matColor    = params.get("matColor");
+    if (matColor == null) {
+      matColor = 'Ivory';
+    }
+
+    calculateTotalPrice();
+
+    if (isNaN(objectID)) 
+
+    function loadImage(input){
+
+      if (objectID in localStorage) {
+        let cachedObject = JSON.parse(localStorage[objectID]);
+        image.src = cachedObject.primaryImageSmall; 
+        label.innerHTML = '<div class="artist">' + cachedObject.artistDisplayName 
+          + '</div>' + cachedObject.title + ', ' + cachedObject.objectDate;
+      }
+
+      let key = 'cart';
+      if (key in localStorage) {
+        if (localStorage[key] === "" || localStorage[key] === "[]") {
+          document.querySelector('#cart-link').innerHTML = "Cart";
+        }
+      }
+    }
+    loadImage(objectID);
+
+    function pre_set(){
+      if(objectID == null) else {
+        document.querySelector('#object-id').value = objectID;
+      }
+
+      if(printSize != null){
+        if(printSize == "S" ){
+          var printSizeSelection = document.querySelector('#print-size-s');
+        } 
+        if(printSizeSelection != null){
+          printSizeSelection.checked = true;
+        }
+      }
+
+      if(!isNaN(frameWidth)){
+        var realFrameWidth = frameWidth / 10;
+        if (parseFloat(realFrameWidth) < 2)  else if (parseFloat(realFrameWidth) > 5) 
+        document.querySelector('input[name="frameWidth"]').value = realFrameWidth;
+        document.querySelector('input[name="frameWidthR"]').value = realFrameWidth;
+      }
+
+      if(frameStyle != null){
+        if(frameStyle == "classic"){
+          var frameStyleSelection = document.querySelector('#frame-style-classic');
+        }
+        if(frameStyleSelection != null){
+          frameStyleSelection.checked = true;
+        }
+      }
+
+      if(!isNaN(matWidth)){
+        var realMatWidth = matWidth / 10;
+        if (realMatWidth < 0)  else if (realMatWidth > 10) 
+        document.querySelector('input[name="matWidth"]').value = realMatWidth;
+        document.querySelector('input[name="matWidthR"]').value = realMatWidth;
+      }
+  
+      if(matColor != null){
+        if(matColor == "ivory") else if(matColor == "mint") else if(matColor == "wine") else if(matColor == "indigo") else if(matColor == "coal")
+        if(matColorSelection != null)
+      }
+
+    }
+    pre_set();
+
+    function linkSlider(slider){
+      var text_box = document.querySelector('#'+slider.getAttribute("link-to"));
+
+      var min = parseInt(text_box.min);
+      var max = parseInt(text_box.max);
+
+      text_box.value = slider.value;
+
+      slider.addEventListener("change", );
+
+      text_box.addEventListener("change", );
+
+    }
+    document.querySelectorAll('input[type="range"]').forEach(element => linkSlider(element));
+    
+    function calculateTotalPrice(){
+      let totalPrice = document.getElementById('price');
+      let notFixedPrice = Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+      console.log("not fixed: " + notFixedPrice);
+      totalPrice.textContent = "€ " + notFixedPrice.toFixed(2);
+    }
+
+    function renderImage() {
+      let previewContainer = document.getElementById('preview-container');
+      Frame.render(image, previewContainer, printSize, frameStyle, frameWidth, matColor, matWidth);
+    }
+
+    image.addEventListener('load', renderImage);
+
+    
+
+    let configForm = document.getElementById('config-form');
+    configForm.addEventListener('submit', addAndProceedToCart);
+
+    
+    
+    
+    
+    
+
+    document.getElementById('print-size-s').addEventListener('change', changePrintSize);
+    document.getElementById('print-size-m').addEventListener('change', changePrintSize);
+    document.getElementById('print-size-l').addEventListener('change', changePrintSize);
+
+    document.getElementsByName('frameWidthR')[0].addEventListener('change', changeFrameWidth);
+    document.getElementsByName('frameWidth')[0].addEventListener('change', changeFrameWidth);
+
+    document.getElementById('frame-style-classic').addEventListener('change', changeFrameStyle);
+    document.getElementById('frame-style-natural').addEventListener('change', changeFrameStyle);
+    document.getElementById('frame-style-shabby').addEventListener('change', changeFrameStyle);
+    document.getElementById('frame-style-elegant').addEventListener('change', changeFrameStyle);
+
+    document.getElementsByName('matWidthR')[0].addEventListener('change', changeMatWidth);
+    document.getElementsByName('matWidth')[0].addEventListener('change', changeMatWidth);
+
+    document.getElementById('mat-color-ivory').addEventListener('change', changeMatColor);
+    document.getElementById('mat-color-mint').addEventListener('change', changeMatColor);
+    document.getElementById('mat-color-wine').addEventListener('change', changeMatColor);
+    document.getElementById('mat-color-indigo').addEventListener('change', changeMatColor);
+    document.getElementById('mat-color-coal').addEventListener('change', changeMatColor);
+
+  export 
+
+export 
+
+export 
+
+
+        const urlPrefixWithSearchWord = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
+        const form = document.querySelector('#search-section form');
+
+
+        function processRequest(value) {
+            let artWorksData;
+
+            if (value == null) {
+                artWorksData = retrieveHighlights();
+            }
+
+                artWorksData.then(info => {
+                    console.log("info: " + info);
+                    removeFromHtml();
+                    loadArtWorks(info, value)
+                });
+        }
+
+
+        form.addEventListener('submit', );
+
+        document.addEventListener('DOMContentLoaded', event => {
+            if('cart' in localStorage) {
+                let objects = JSON.parse(localStorage['cart']);
+                document.querySelector('#cart-link').innerHTML = "Cart (" + objects.length + ")";
+            }
+            const params = (new URL(document.location)).searchParams;
+            const artQuery = params.get('q');
+            document.getElementById('search').value = artQuery;
+            processRequest(artQuery);
+        });
+
+        async function retrieveHighlights() {
+            let rawJson;
+
+            try {
+                const jsonResponse = await fetch('./highlights.json');
+                rawJson = await jsonResponse.json();
+            } 
+            return rawJson['highlights'];
+        }
+
+        
+
+        async function loadArtWorks(data, value) {
+            let url = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+            let fetches = [];
+            let toSave = [];
+            let counter = 0;
+            let localObjectBool;
+            let gallery = document.getElementById("gallery");
+
+            if (data != null) {
+                for (let entry of data) {
+                    let objUrl = url + entry;
+
+                    if (localStorage[entry] != null) {
+                        let obj = addObjToHtml(JSON.parse(localStorage[entry]));
+                        toSave.push({"entry": entry, "info": JSON.parse(localStorage[entry])});
+                                counter++;
+                    }
+                }
+
+                if (fetches.length !== 0) 
+
+                if (counter === 1) 
+                if (counter > 1 ) {
+                    document.getElementById("search-info").textContent = "Found " + counter + " artworks for “" + value + "”";
+                }
+
+            }
+
+            for (let save of toSave) {
+                localStorage[save.entry] = JSON.stringify(save.info);
+            }
+
+        }
+
+        function addObjToHtml(info) {
+            let objID = info['objectID'];
+            let hrefConf = "./config.html?objectID=" + objID;
+            let imageSrc = info['primaryImageSmall'];
+            let imageIDArray = imageSrc.split("/");
+            let imageID = imageIDArray[imageIDArray.length - 1];
+            let artist = info['artistDisplayName'];
+            let title = info['title'];
+            let date = info['objectDate'];
+
+
+            let gallery = document.getElementById("gallery");
+            gallery.innerHTML +=
+                "<div class=thumb" + ">" +
+                "<a href=" + hrefConf + " id=" + objID + ">" +
+                "<img src='" + imageSrc + "' alt='' id='" + imageID + "'>" +
+                "<div class='museum-label'>" +
+                "<span class='artist'>" + artist + "</span>" +
+                "<span class='title'>" + title + ', ' + "</span>" +
+                "<span class='date'>" + date + "</span>" +
+                "</div>" +
+                "</a>" +
+                "</div>";
+
+        }
+
+        function removeFromHtml() {
+            let gallery = document.getElementById("gallery");
+            gallery.innerHTML = "";
+        }
+    

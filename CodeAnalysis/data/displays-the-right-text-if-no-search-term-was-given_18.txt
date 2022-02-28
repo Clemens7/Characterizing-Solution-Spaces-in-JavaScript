@@ -1,0 +1,191 @@
+export function setCartItemsInHeader() {
+  const cartInHeaderElement = document.getElementById('cart-link');
+  const cart = JSON.parse(localStorage.getItem('cart'));
+  if (cart )  else {
+    cartInHeaderElement.innerText = 'Cart';
+  }
+}
+export class Painting {
+  constructor(
+    objectID,
+    artistDisplayName,
+    title,
+    objectDate,
+    primaryImage,
+    primaryImageSmall
+  ) {
+    this.objectID = objectID;
+    this.artistDisplayName = artistDisplayName;
+    this.title = title;
+    this.objectDate = objectDate;
+    this.primaryImage = primaryImage;
+    this.primaryImageSmall = primaryImageSmall;
+  }
+}
+
+export class PaintingithFrameConfig extends Painting {
+  
+}
+export 
+
+export function store(pictureQuery, cachePictureObject) {
+    console.log(`Storing ${pictureQuery} in local storage`);
+    localStorage[pictureQuery] = JSON.stringify(cachePictureObject);
+}
+export class PictureDocumentContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addPictureToDocument(picture) {
+        this.container.appendChild(createPictureElements(picture));
+
+        function createPictureElements(picture) {
+            const thumbObject = document.createElement('div');
+            thumbObject.setAttribute('class', 'thumb');
+
+            const aObject = document.createElement('a');
+            aObject.setAttribute('id', `object-${picture.objectID}`);
+
+            const imgObject = document.createElement('img');
+            imgObject.setAttribute('id', `object-image-${picture.objectID}`);
+
+            const museumObject = document.createElement('div');
+            museumObject.setAttribute('class', 'museum-label');
+
+            const artistObject = document.createElement('span');
+            artistObject.setAttribute('class', 'artist');
+            const titleObject = document.createElement('span');
+            titleObject.setAttribute('class', 'title');
+            const dateObject = document.createElement('span');
+            dateObject.setAttribute('class', 'date');
+
+            museumObject.appendChild(artistObject);
+            museumObject.appendChild(titleObject);
+            museumObject.appendChild(dateObject);
+
+            aObject.appendChild(imgObject);
+            aObject.appendChild(museumObject);
+
+            thumbObject.appendChild(aObject);
+
+            artistObject.innerText = `${picture.artistDisplayName}`;
+            titleObject.innerText = `${picture.title}, `;
+            dateObject.innerText = picture.objectDate;
+
+            imgObject.src = picture.primaryImageSmall;
+            imgObject.alt = `Artwork ${picture.title} of ${picture.artistDisplayName}`;
+
+            aObject.href =`config.html?objectID=${picture.objectID}`;
+
+            return thumbObject;
+
+        }    
+
+    }
+}
+
+        import * as SearchAPI from './search.js';
+        import {retrieve, store} from './search-cache.js';
+        import {PictureDocumentContainer} from './search-dom.js';
+        import {setCartItemsInHeader} from './header-cart.js';
+
+        document.addEventListener('DOMContentLoaded', event => {
+
+            setCartItemsInHeader();
+            const params = (new URL(document.location)).searchParams;
+            const pictureQuery = params.get('q');
+
+            try {
+                pictureSearch(pictureQuery);
+            } 
+
+        });
+
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('click', );
+
+        const form = document.getElementById('form-search');
+
+        async function pictureSearch(pictureQuery) {
+            try {
+
+                if (pictureQuery == null) {
+                    document.getElementById('search-info').innerText = `Selecting some highlights for you`;
+                }
+
+
+
+                var numberPictureTotal;
+                var listOfPicture;
+                var pictureCacheQuery = `search-cache-${pictureQuery}`;
+
+                if (!pictureQuery) {
+                    if ('highlights' in localStorage)  else {
+                        const finishedObject = await SearchAPI.getHighlightImages();
+                        store('highlights', finishedObject);
+                        numberPictureTotal = finishedObject[0].total;
+                        listOfPicture = finishedObject[1];
+                    }
+                    document.getElementById('search-info').innerText = 'Search our collection of more than 400,000 artworks.';
+                }
+
+                const pictureContainer = new PictureDocumentContainer();
+                pictureContainer.clear();
+                for (let picture of listOfPicture) {
+                    pictureContainer.addPictureToDocument(picture);
+                }
+            } 
+        }
+
+
+    
+/*
+import {
+    Painting
+} from './picture.js';
+
+export 
+
+
+export async function getObjectsFromSearch(ObjectIDs) {
+
+    try {
+        let listOfImages = [];
+
+        for (let id of ObjectIDs.slice(0, 100)) {
+            const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+            const temp = await fetch(API_URL);
+            const tempJson = await temp.json();
+            const tempObject = new Painting(tempJson.objectID, tempJson.artistDisplayName, tempJson.title, tempJson.objectDate, tempJson.primaryImage, tempJson.primaryImageSmall);
+            listOfImages.push(tempObject);
+        }
+
+        return listOfImages;
+    }}
+
+
+export async function getHighlightImages() {
+    try {
+        let highlightRaw = await fetch("highlights.json");
+        let highlightJson = await highlightRaw.json();
+
+        let pictureArray = await getObjectsFromSearch(highlightJson.highlights);
+
+        let objectFinished =  [{
+            'total': highlightJson.highlights.length,
+            'objectIDs': highlightJson.highlights
+        },
+            pictureArray];
+
+
+        return objectFinished;
+    }}
+
+
+export 

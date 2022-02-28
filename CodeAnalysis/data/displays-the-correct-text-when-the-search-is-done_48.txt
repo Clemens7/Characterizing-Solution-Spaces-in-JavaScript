@@ -1,0 +1,166 @@
+const baseURI = "https://collectionapi.metmuseum.org/public/collection/v1/";
+export const API = {
+    SEARCH: baseURI + "search?q=",
+    OBJECTS: baseURI + 'objects/',
+    HIGHLIGHTS: 'highlights.json'
+}
+import StorageHandler from './storage-handler.js';
+import {getPrintSizes, calculatePrice, render} from "./frame.js";
+import {} from "./config.js";
+import {API} from "./api.js";
+let IDs = [];
+
+window.onload = ;
+
+
+
+
+
+
+
+export function showItemsDynamically() {
+    const cart = document.getElementById("cart-link");
+
+    cart.innerText = "Cart (" + StorageHandler.getCartSize() + ")";
+
+    return cart;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+import StorageHandler from './storage-handler.js';
+import {render, getPrintSizes, calculatePrice} from "./frame.js";
+import {searchByObjectIDs} from "./search.js";
+import {showItemsDynamically} from "./cart.js";
+
+window.onload = ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export 
+
+import StorageHandler from './storage-handler.js';
+import {API} from './api.js';
+import {showItemsDynamically} from "./cart.js";
+
+window.onload = function () {
+    console.log('document loaded');
+    const searchForm = document.getElementsByClassName('search-form')[0];
+    search();
+    showItemsDynamically();
+};
+
+function search() {
+    let text = '';
+    if (location.search.startsWith('?q=')) {
+        text = location.search.split('?q=')[1].replace('%2B',' ').replace('+',' ');
+    }
+    const searchInfo = document.getElementById('search-info');
+    searchInfo.innerText = `Searching for “${text}”...`;
+    if (text.trim() === '')  else {
+        fetch(API.SEARCH + text + '&hasImages=true')
+            .then(response => response.json())
+            .then(res => {
+                let foundCount = res.objectIDs.length;
+                let artworkText = 'artworks';
+                if (foundCount > 100) })
+            .then()
+            .catch(() => {
+                searchInfo.innerText = `Found 0 artworks for “${text}”`;
+            });
+    }
+}
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+
+export default class StorageHandler {
+    static STORAGE_KEYS = {
+        cart: 'cart',
+        cache: 'cache'
+
+    }
+
+    static 
+
+
+    static 
+
+    static 
+
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static getCartSize() {
+        const items = localStorage.getItem(this.STORAGE_KEYS.cart);
+        if (items === null) {
+            return 0;
+        }
+    }
+    static 
+}

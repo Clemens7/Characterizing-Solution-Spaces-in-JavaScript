@@ -1,0 +1,186 @@
+export const MET_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+
+export const getArtById = async objectID => {
+    const response = await fetch(MET_BASE_URL + `objects/${objectID}`)
+    const artJson = await response.json()
+    return artJson;
+}
+
+export const searchArt = 
+    import { getArtById } from './apiCalls.js'
+    import { render, calculatePrice } from './frame.js'
+    import { store, retrieve } from './metCache.js'
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sizeString = { 'S': 'Small', 'M': 'Medium', 'L': 'Large' };
+    let price = 0;
+    let cart = [];
+
+
+    const removeItem = ;
+
+
+    const appendCartItem = async (cartItem, itemIndex) => {
+      let artObject = retrieve(cartItem.objectID);
+      if (!artObject) {
+        artObject = await getArtById(cartItem.objectID);
+        store(cartItem.objectID, artObject)
+      }
+      console.log('cartItem', cartItem);
+      const printText = sizeString[cartItem.printSize] + ' print';
+      const frameText = `in a ${cartItem.frameWidth / 10}&nbsp;cm ${cartItem.frameStyle} frame`;
+      const matText = cartItem.matWidth > 0 ? ` with a ${cartItem.matWidth / 10}&nbsp;cm ${cartItem.matColor} mat.` : '.';
+      const itemDiv = document.createElement("div");
+      itemDiv.classList.add("cart-item");
+      itemDiv.id = `cart-item-${cartItem.objectID}`;
+      itemDiv.innerHTML = `
+        <div class="cart-preview" id="preview-container-${itemIndex}">
+          <a href="config.html?${new URLSearchParams(cartItem)}">
+            <img class="cart-thumb" src="${artObject.primaryImageSmall}" id="preview-${itemIndex}" alt="${artObject.title}">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist">${artObject.artistDisplayName}</span>
+            <span class="title">${artObject.title}</span>,
+            <span class="date">${artObject.objectDate}</span>
+            <br><br>
+            <span class="frame-description">${printText} ${frameText}${matText}</span>
+          </div>
+          <div class="cart-price">€ <span id="price-${itemIndex}">${calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth).toFixed(2)}</span></div>
+          <button class="cart-remove" id="remove-btn-${itemIndex}"></button>
+        </div>`;
+      cartElem.insertBefore(itemDiv, cartElem.firstChild);
+      document.getElementById(`remove-btn-${itemIndex}`).onclick = ;
+      const artImage = document.getElementById(`preview-${itemIndex}`);
+      artImage.onload = () => {
+        render(
+                document.getElementById(`preview-${itemIndex}`),
+                document.getElementById(`preview-container-${itemIndex}`),
+                cartItem.printSize,
+                cartItem.frameStyle,
+                cartItem.frameWidth,
+                cartItem.matColor,
+                cartItem.matWidth
+        )
+      }
+    };
+
+    const cartElem = document.getElementById("cart");
+
+    document.addEventListener('DOMContentLoaded', async e => {
+      cart = JSON.parse(localStorage.getItem('cart'));
+      console.log('cart', cart);
+
+      if (!cart || !Array.isArray(cart))  else {
+        document.getElementById('cart-link').innerHTML = `Cart (${cart.length})`;
+        cart.forEach((cartItem, i) => {
+          price += calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth);
+          appendCartItem(cartItem, i);
+        });
+        document.getElementById("price-total").innerHTML = `${price}`;
+      }
+      document.getElementById('checkout-button').addEventListener('click', )
+    })
+  export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const basePrice = 30;
+
+    price += basePrice
+
+    let woodCost;
+    switch(frameStyle) {
+        
+        case 'shabby':
+            woodCost = 0.9
+            break;
+        
+        case 'classic':
+        default:
+            woodCost = 1
+            break;
+    }
+    price += woodCost * frameWidth
+
+    price += 0.05 * matWidth
+
+    switch(printSize) {
+        
+        case 'L':
+            price *= 3.5
+            break;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+export function retrieve(objectID) {
+    const key = getStorageKey(objectID)
+    if (key in localStorage) 
+}
+
+export function store(objectID, met) {
+    const key = getStorageKey(objectID)
+    localStorage[key] = JSON.stringify(met)
+}
+
+function getStorageKey(objectID) {
+    return `MET-${objectID}`
+}

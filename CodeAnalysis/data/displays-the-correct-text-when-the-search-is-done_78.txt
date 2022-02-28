@@ -1,0 +1,87 @@
+export 
+
+export 
+
+export 
+import * as Frame from './frame.js';
+
+export function cartItemsSize() {
+  var cart = JSON.parse(localStorage.getItem('cart')) || [];
+  document.getElementById("cart-link").innerText = (cart.length > 0  : "Cart");
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+/*<!-- TODO: dynamically add cart items using template below -->
+      <!--<div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€ <span id="price-0">0</span></div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>-->*/
+
+export 
+    import * as Helper from './helper.js';
+    const MET_API_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+    Helper.cartItemsSize();
+    
+    document.addEventListener('DOMContentLoaded', event => {
+      const searchQuery = new URLSearchParams(window.location.search).get("q"); // https://www.w3schools.com/jsref/prop_loc_search.asp | https://developer.mozilla.org/de/docs/Web/API/URLSearchParams
+      
+      if (searchQuery){
+        document.getElementById("search").value = searchQuery; // When searched via URL, automatically add the search querry to the search form.
+        document.getElementById("search-info").innerHTML = `Searching for &ldquo;${searchQuery}&rdquo;...`;
+        searchArtworks(searchQuery)
+          .then(results => {
+            const objectIDs = results.objectIDs.slice(0, 100); // Get only the first 100 results (ObjectIDs)
+
+            document.getElementById("search-info").innerHTML = `Found ${objectIDs.length} artwork${objectIDs.length == 1  : 's'} for &ldquo;${searchQuery}&rdquo;`;
+
+            objectIDs.map();
+          });
+      }
+      
+    });
+
+    const searchform = document.querySelector('main .search-form');
+    searchform.addEventListener('submit', );
+
+    
+
+    async function searchArtworks(searchQuery) {
+      const searchUrl = MET_API_URL + 'search?hasImages=true&q=' + encodeURI(searchQuery);
+
+      const response = await fetch(searchUrl)
+      let results = await response.json();
+
+
+      if (!results || results.total == 0) {
+        results = { total: 0, objectIDs: [] };
+      }
+      return results;
+    }
+
+    
+    
+    
+
+  

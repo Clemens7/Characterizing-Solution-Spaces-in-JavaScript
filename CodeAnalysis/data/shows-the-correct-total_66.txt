@@ -1,0 +1,42 @@
+calcTotalPrice()
+
+function getLocalStorage(key) {
+    var items = JSON.parse(localStorage.getItem(key) );
+    return items;
+}
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    price = 30.0;
+
+    switch (frameStyle){
+        case 'classic':
+            price += frameWidth * 1;
+            break;
+        case 'natural':
+            price += frameWidth * 0.8;
+            break;
+        case 'shabby':
+            price += frameWidth * 0.9;
+            break;
+        
+    }
+
+    price += matWidth * 0.05;
+
+    if( printSize == 'M' ){
+        price *= 2
+    }else if( printSize == 'L' )
+    return ( Math.round((price + Number.EPSILON) * 100) / 100 );
+}

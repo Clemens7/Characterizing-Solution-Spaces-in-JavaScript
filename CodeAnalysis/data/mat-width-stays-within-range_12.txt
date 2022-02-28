@@ -1,0 +1,242 @@
+
+  import {initConfig, renderPreview, roundWidth } from './config.js'
+
+  const config = initConfig()
+
+  document.querySelectorAll('input[type="radio"], input[type="range"]')
+    .forEach(input => input.addEventListener('change', event => {
+      config[event.target.name] = event.target.value
+    }))
+
+  document.getElementById("frame-width").addEventListener('change', )
+
+  document.getElementById('mat-width').addEventListener('change', event => {
+    let value = roundWidth(event.target.value)
+    if (value < 0) value = 0;
+    if (value > 10) value = 10;
+
+    event.target.value = value
+    document.getElementById('mat-width-r').value = value
+    config.matWidth = value
+  })
+
+  Object.entries(config).forEach(([name, value]) => {
+    const radios = document.querySelectorAll(`input[type="radio"][name="${name}"]`)
+    radios.forEach(input => input.checked = (input.value === value ))
+    const inputs =  document.querySelectorAll(`input:not([type="radio"])[name^="${name}"]`)
+    inputs.forEach(input => input.value = value / 10)
+  })
+
+  renderPreview(config);
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  if (cart != null && cart.length >= 1) 
+
+  document.querySelector('button[type="submit"]').addEventListener('click', )
+import {render, getPrintSizes, calculatePrice} from "./frame.js";
+import {getObject, cache} from './met-api.js'
+
+export const initConfig = () => {
+  const url = new URL(window.location);
+
+  const params = {
+    objectID: url.searchParams.get('objectID'),
+    printSize: url.searchParams.get('printSize') ||
+      document.querySelector('input[name="printSize"]:checked').value,
+    frameStyle: url.searchParams.get('frameStyle') ||
+      document.querySelector('input[name="frameStyle"]:checked').value,
+    frameWidth: url.searchParams.get('frameWidth') ||
+      document.querySelector('input[name="frameWidth"]').value * 10,
+    matColor: url.searchParams.get('matColor') ||
+      document.querySelector('input[name="matColor"]:checked').value,
+    matWidth: url.searchParams.get('matWidth') ||
+      document.querySelector('input[name="matWidth"]').value * 10,
+  }
+
+  const config = new Proxy(params, {
+    set(obj, prop, value, ) {
+      if (prop === 'frameWidthR' || prop === 'matWidthR') 
+
+      if (prop === 'frameWidth' || prop === 'matWidth') {
+        value *= 10
+      }
+
+      if (prop === 'printSize') {
+        const size = document.querySelector(`input[value="${value}"] + label span`)
+        document.getElementById('total-size').innerText = size.innerText
+      }
+
+      obj[prop] = value
+      updatePreview(document.getElementById('preview-image'), config)
+      return true;
+    }
+  })
+
+  return config
+}
+
+export const renderPreview = async (config) => {
+  const id = config.objectID
+
+  if (!id) 
+
+  const item = await getObject(id, cache);
+
+  if (!item) 
+
+  if (!cache.getById(id)) {
+      cache.add([item])
+  }
+
+  const label = document.getElementById('image-label')
+  label.innerHTML = `
+    <span class="artist">${item.artistDisplayName}</span>
+    <span class="title">${item.title}</span>,
+    <span class="date">${item.objectDate}</span>
+  `
+
+  const img = document.getElementById('preview-image')
+  img.alt = item.title
+  img.onload = () => {
+    const sizes = getPrintSizes(img)
+    Object.entries(sizes).forEach(([name, sizes]) => {
+      document.querySelector(`input[value="${name}"] + label span`).innerHTML = `${sizes[0]} × ${sizes[1]} cm`
+    });
+
+    document.querySelector('input[name="printSize"]:checked').dispatchEvent(new Event('change'))
+
+    updatePreview(img, config)
+  }
+  img.src = item.primaryImageSmall
+}
+
+export const updatePreview = (img, config) => {
+  render(
+    img,
+    document.getElementById('preview-container'),
+    config.printSize,
+    config.frameStyle,
+    config.frameWidth,
+    config.matColor,
+    config.matWidth
+  );
+
+  let subtotal = calculatePrice(
+    config.printSize,
+    config.frameStyle,
+    config.frameWidth,
+    config.matWidth
+  );
+
+  document.getElementById("price").innerHTML = '€ ' + subtotal.toFixed(2);
+}
+
+export const roundWidth = (value) => {
+  value = parseFloat(parseFloat(value).toFixed(1))
+  return Number.isInteger(value) ? parseInt(value) : value
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.00;
+
+    frameWidth = (frameWidth / 10);
+    matWidth = (matWidth / 10);
+
+    if(frameStyle === 'classic') else if(frameStyle === 'natural'){
+        price += frameWidth * 0.80;
+    }
+
+    if (matWidth !== null){
+        price += matWidth * 0.05;
+    }
+
+    if (printSize === 'M'){
+        price = price * 2;
+    }
+
+    return Math.round(price * 100) / 100
+}
+export const MET_API = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+
+export const fetchObject = async id => {
+  console.log(`Fetch object with id ${id} from API`)
+  const request = await fetch(`${MET_API}objects/${id}`)
+  const response = await request.json()
+
+  if (response.message)  else {
+    return response
+  }}
+
+export const getObject = async (id, cache) => {
+  return cache.getById(id) || await fetchObject(id)
+}
+
+export const getSearchResults = 
+
+class Cache {
+  constructor() {
+    this.objects = JSON.parse(localStorage.getItem('cache') || '[]')
+  }
+
+  getById(id) {
+    return this.objects.find()
+  }
+
+  add(items) {
+    this.objects = Array.from(new Set([...this.objects, ...items]))
+    localStorage.setItem('cache', JSON.stringify(this.objects))
+  }
+}
+
+export const cache = new Cache()

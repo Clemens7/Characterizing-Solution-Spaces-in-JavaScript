@@ -1,0 +1,140 @@
+import * as SHIPPING_API from './shipping-api.js';
+import * as SHIPPING_CACHE from './shipping-cache.js';
+import {calculatePrice} from './frame.js';
+import * as DOM from './dom-helpers.js';
+
+const cart = JSON.parse(localStorage.getItem('cart')) ;
+const countrySelector = document.getElementById('country');
+const totalPrice = document.getElementById('price-total');
+const subtotalPrice = document.getElementById('price-subtotal');
+const shippingPrice = document.getElementById('price-shipping');
+
+countrySelector.addEventListener('input', );
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!cart || cart.length < 1) 
+    const fetchCountry = fetchCountryData();
+    setSubtotalPrice();
+    await fetchCountry;
+    setShippingPrice();
+    setTotalPrice();
+});
+
+const setTotalPrice = () => {
+    const payButton = document.getElementById('pay-button');
+    const sub = Number.parseFloat(subtotalPrice.innerHTML);
+    const ship = Number.parseFloat(shippingPrice.innerHTML);
+    totalPrice.innerHTML = isNaN(sub) || isNaN(ship)  :
+        (Math.round((sub + ship) * 100) / 100).toFixed(2);
+    payButton.disabled = isNaN(Number.parseFloat(totalPrice.innerHTML));
+};
+
+const setSubtotalPrice = () => {
+    let price = 0;
+    for (const item of cart) {
+        price += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    subtotalPrice.innerHTML = (Math.round(price * 100) / 100).toFixed(2);
+};
+
+const setShippingPrice = () => {
+    const destinations = SHIPPING_CACHE.fetchDestinations();
+    let shippingCost = destinations[countrySelector.value].cost ;
+    shippingPrice.innerHTML = !shippingCost  :
+        (Math.round((shippingCost / 100) * 100) / 100).toFixed(2);
+};
+
+const fetchCountryData = async () => {
+    await SHIPPING_API.fetchShippingData();
+    const destinations = SHIPPING_CACHE.fetchDestinations();
+    if (!destinations) 
+    for (let c in destinations) {
+        countrySelector.appendChild(
+            DOM.setAttributes(DOM.textElement('option', destinations[c].displayName), {value: c}));
+    }
+};
+
+export 
+
+export function setAttributes(element, attributes) {
+  for(let key in attributes) {
+      if(key === 'class')
+      
+
+      if(typeof(attributes[key]) === 'object')  else {
+          element[key] = attributes[key];
+      }
+  }
+  return element;
+}
+
+export 
+
+export function textElement(tag, text) {
+  const element = document.createElement(tag);
+  element.innerText = text;
+  return element;
+}
+
+export 
+
+export 
+
+export export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let sizeFactor;
+    switch (printSize) {
+        
+        
+        case 'L':
+            sizeFactor = 3.5;
+            break;
+    }
+    let woodFactor;
+    switch (frameStyle) {
+        
+        
+        case 'shabby':
+            woodFactor = 0.9;
+            break;
+        
+    }
+    let price = sizeFactor * (30 + woodFactor * (frameWidth/10) + (matWidth/10) * 0.05);
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import * as SHIPPING_CACHE from './shipping-cache.js';
+
+const URL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+
+export class Destinations {
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}
+
+export const fetchShippingData = async () => {
+    try {
+        let destinations = {};
+        const response = await fetch(URL);
+        console.log(`received response ${response.ok}`);
+        const data = await response.json();
+        if (!data) 
+        for (let dest of data.destinations) {
+            destinations[dest.country] = new Destinations(dest.country, dest.displayName, dest.cost);
+        }
+        SHIPPING_CACHE.storeDestinations(destinations);
+    } 
+}export const storeDestinations = (destinations) => {
+    console.log(`Storing destinations in local storage.`);
+    localStorage.setItem('destinations', JSON.stringify(destinations));
+};
+
+export const fetchDestinations = () => {
+    console.log(`Fetching destinations from local storage.`);
+    return JSON.parse(localStorage.getItem('destinations'));
+};

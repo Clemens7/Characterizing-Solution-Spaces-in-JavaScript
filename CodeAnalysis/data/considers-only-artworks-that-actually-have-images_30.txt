@@ -1,0 +1,85 @@
+export function retrieve(searchName) {
+    const key = searchName;
+    if(key in localStorage) 
+}
+
+export 
+
+import * as DOM from './dom-helpers.js';
+
+export class ArtDocumentContainer {
+    constructor(containerID='gallery') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+}import {Art} from './search.js';
+import * as ArtCache from './art-cache.js';
+import {ArtDocumentContainer} from './art-dom.js'
+
+var highlights;
+const artContainer = new ArtDocumentContainer();
+
+export async function retrieve(searchTerm){
+    let arts = ArtCache.retrieve(searchTerm);
+    if(arts)
+   
+    const url = api_url(searchTerm);
+    try{
+        if(searchTerm === '')else{
+            
+            const response = await fetch(url);}
+
+
+
+function api_url(searchTerm){
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${searchTerm}&hasImages=true`;
+    return API_URL;
+}export 
+
+export 
+
+export 
+    import * as ArtCache from './art-cache.js';
+    import {Art} from './search.js';
+    import * as ArtAPI from './art-search-api.js';
+    import {ArtDocumentContainer} from './art-dom.js';
+
+    
+    /*
+    async function artSearch(searchTerm){
+      const artContainer = new ArtDocumentContainer();
+      if(searchTerm !== ''){
+        document.getElementById('search-info').innerHTML = `Searching for “${searchTerm}”...`;
+      }
+      artContainer.clear();
+      const artsLength = await ArtAPI.retrieve(searchTerm);}
+
+     async function retrieveCart(){
+      let cartItems = ArtCache.retrieve('cart');
+      if(cartItems !== undefined 
+    }
+
+    document.addEventListener('DOMContentLoaded', event => {
+      retrieveCart();
+      const params = (new URL(document.location)).searchParams;
+      const searchQuery = params.get('q');
+      
+      if(!searchQuery)else{
+        document.getElementById('search').value = searchQuery;
+        artSearch(searchQuery);
+      }
+      
+    })
+
+    const form = document.querySelector('.search-form');
+    form.addEventListener('submit', );
+
+  export class Art {
+    
+}

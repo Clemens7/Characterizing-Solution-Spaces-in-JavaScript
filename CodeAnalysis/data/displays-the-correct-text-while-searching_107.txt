@@ -1,0 +1,149 @@
+export async function retriveImagesFromAPI(IDs, arrayLen) {
+    let urls = [];
+    for (let i = 0; i < arrayLen; i++) {
+      urls[i] = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${IDs[i]}`;
+    }
+    try {
+      var data = await Promise.all(
+        urls.map(
+          url =>
+            fetch(url).then(
+              (response) => response.json()
+            ).then(
+            )));
+
+      return (data)
+
+    }}
+
+  export async function retrieveIDsFromAPI(queryElems) {
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${queryElems.join(' ')}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return [data.objectIDs.slice(0, 100), data.total];
+
+    }export function store(queryElems, ImagesandTotal) {
+    const key = queryElems.join(' ');
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(ImagesandTotal);
+}
+
+
+export function retrieveFromStorage(queryElems) {
+    const key = queryElems.join(' ');
+    if (key in localStorage) 
+}import { retrieveFromStorage } from './art-cache.js';
+
+
+export async function countCartItems(){
+    let cartItems = retrieveFromStorage(['cart']);
+    let cartCount = 0;
+    if(cartItems)
+    
+    
+}export class artDocumentContainer {
+  constructor(containerID = 'gallery') {
+      this.container = document.getElementById(containerID);
+      if (!this.container) 
+  }
+  clear() {
+      this.container.innerHTML = '';
+  }
+
+
+
+
+
+  addArtToDocument(artElem) {
+      this.container.innerHTML +=
+          `<div class="thumb">
+    <a href="config.html?objectID=${artElem.objectID}&printSize=M&frameStyle=natural&frameWidth=40&matColor=mint&matWidth=55">
+      <img src="${artElem.primaryImageSmall}" alt="${artElem.title}">
+      <div class="museum-label">
+        <span class="artist">${artElem.artistDisplayName}</span>
+        <span class="title">${artElem.title}</span>,
+        <span class="date">${artElem.objectDate}</span>
+      </div>
+    </a>
+  </div>`
+  }
+  
+
+
+  
+
+  
+}
+
+
+export function addStuffToHtml(addTheseImages, nameOfElem = 'gallery') {
+  const artContainer = new artDocumentContainer(nameOfElem);
+  artContainer.clear();
+  for (let oneImage of addTheseImages) {
+      artContainer.addArtToDocument(oneImage);
+  }
+}import { store, retrieveFromStorage } from './art-cache.js';
+import { retrieveIDsFromAPI, retriveImagesFromAPI } from './art-api.js';
+import { artDocumentContainer, addStuffToHtml } from './html-document-container.js';
+
+export async function searchForSomeArt(queryElems) {
+    const storeImageAndTotal = retrieveFromStorage(queryElems);
+    if (storeImageAndTotal)  else {
+
+      const first100IDsandTotalNumber = await retrieveIDsFromAPI(queryElems);
+      const first100IDs = first100IDsandTotalNumber[0];
+      const totalNumber = first100IDsandTotalNumber[1];
+      const first100Images = await retriveImagesFromAPI(first100IDs, first100IDs.length);
+      
+
+      store(queryElems, [first100Images, totalNumber]);
+      for(let i = 0; i < first100Images.length; i++){
+        localStorage.setItem(first100Images[i].objectID, JSON.stringify(first100Images[i]));
+      }
+      addStuffToHtml(first100Images);
+
+      let headerDoc = document.getElementById('search-info');
+      if (totalNumber == 1)  else if (totalNumber > 1) {
+        headerDoc.innerText = `Found ${totalNumber} artworks for “${queryElems.join(' ')}”`;
+      }
+    }
+  }
+  
+  export 
+
+   
+
+   import { searchForSomeArt, displayhighlights } from './search-and-display.js';
+   import { store, retrieveFromStorage } from './art-cache.js';
+   import { countCartItems } from './display-cart-number.js';
+    
+    document.addEventListener('DOMContentLoaded', event => {
+  
+      const params = (new URL(document.location)).searchParams;
+      const searchQuery = params.get('q');
+     
+      if (!searchQuery) 
+     
+      let headerDoc = document.getElementById('search-info');
+      headerDoc.innerText = `Searching for “${searchQuery}”...`;
+      const searchQ = searchQuery.split(' ');
+      searchForSomeArt(searchQ);
+      countCartItems();
+    });
+
+    
+
+
+
+    countCartItems();
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('click', );
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', );
+
+    
+
+  

@@ -1,0 +1,211 @@
+import * as DOM from './dom_helper.js';
+import * as Frame from "./frame.js";
+import * as API from './metropolitan_api.js';
+
+export class Cart {
+    static key = 'cart';
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static 
+
+    static numberOfItems() {
+        let cartString = localStorage[this.key];
+        if (cartString)  else {
+            return 0;
+        }
+    }
+}
+
+export class CartItem {
+    
+}
+
+export class CartContainer {
+    
+
+    
+
+    
+
+    
+
+    
+
+}
+
+export function textElement(tag, text, className = null) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    if (className) {
+        element.className = className;
+    }
+    return element;
+}
+
+export 
+
+export function imageElement(src, alt) {
+    const element = document.createElement("img");
+    element.src = src;
+    element.alt = alt;
+    return element;
+}
+
+export 
+
+export function container(elements, tag = 'div', className = null, attributes = null, href = null) {
+    const container = document.createElement(tag);
+    for (let element of elements) {
+        container.appendChild(element);
+    }
+    if (className) {
+        container.className = className;
+    }
+    if (attributes) 
+    if (tag == 'a' && href) {
+        container.href = href;
+    }
+    return container;
+}
+
+export 
+
+export 
+
+export 
+
+
+
+import {Painting} from "./painting.js";
+
+export async function get_object_by_id(id) {
+    let painting = Painting.retrieve(id);
+    if(painting) 
+    const url = object_by_id_url(id);
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        let object = new Painting(data.objectID, data.title, data.artistDisplayName, data.objectDate, data.primaryImageSmall);
+        Painting.store(object);
+        return object;
+    }}
+
+export async function get_objects_by_ids(ids) {
+    let paintings = [];
+
+    for(let e of ids) {
+        let painting = get_object_by_id(e);
+        paintings.push(painting);
+    }
+
+    return new Promise((resolve) => {
+        Promise.all(paintings).then(results => {resolve(results)});
+    });
+}
+
+export 
+
+
+
+function object_by_id_url(id) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+    return API_URL;
+}
+
+
+export class Painting {
+    constructor(id, name, artistDisplayName, objectDate, primaryImageSmall) {
+        this.id = id;
+        this.name = name;
+        this.artist = artistDisplayName;
+        this.date = objectDate;
+        this.image = primaryImageSmall;
+    }
+
+    static retrieve(id) {
+        const key = id;
+        if(key in localStorage) 
+    }
+
+    static store(painting) {
+        const key = painting.id;
+        localStorage[key] = JSON.stringify(painting);
+    }
+}
+
+        import * as API from './metropolitan_api.js';
+        import {ArtworkDocumentContainer} from "./search.js";
+        import {Cart} from "./cart.js";
+
+        async function displayHighlightArtworks() {
+            const searchInfo = document.getElementById("search-info");
+            searchInfo.innerText = `Search our collection of more than 400,000 artworks.`;
+            let h = await fetch('./highlights.json')
+                .then(response => response.json());
+            const artworks = await API.get_objects_by_ids(h.highlights);
+            const artworkContainer = new ArtworkDocumentContainer('gallery');
+            artworkContainer.clear();
+            for (let artwork of artworks) {
+                artworkContainer.addArtworkToGallery(artwork);
+            }
+        }
+
+        /*
+        
+
+        document.addEventListener('DOMContentLoaded', event => {
+            const params = (new URL(document.location)).searchParams;
+            const artworkQuery = params.get('q');
+            if (!artworkQuery) {
+                displayHighlightArtworks();
+                return;
+            }});
+
+        const form = document.getElementsByClassName("search-form").item(0);
+        form.addEventListener('submit', );
+
+        document.getElementById("cart-link").innerText = `Cart ${Cart.numberOfItems() > 0
+            
+            : ""}`;
+
+    import {Painting} from "./painting.js";
+import * as DOM from './dom_helper.js';
+
+export class ArtworkDocumentContainer {
+
+    constructor(containerID = 'gallery') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addArtworkToGallery(artwork) {
+        this.container.appendChild(createArtworkElements(artwork));
+
+        function createArtworkElements(artwork) {
+            return DOM.container([
+                DOM.container([
+                    DOM.imageElement(artwork.image, artwork.title),
+                    DOM.container([
+                        DOM.textElement("span", artwork.artist, "artist"),
+                        DOM.textElement("span", `${artwork.name}, `, "title"),
+                        DOM.textElement("span", artwork.date, "date")
+                    ], "div", "museum-label")
+                ], "a",null,null,`config.html?objectID=${artwork.id}`)
+            ], "div", "thumb");
+        }
+    }
+}
+

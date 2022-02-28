@@ -1,0 +1,321 @@
+
+import { Keywords } from './objectsArtwork.js';
+
+export function retrieve(keywords) {
+    const key = getStorageKey(keywords);
+    if(key in localStorage) {
+        console.log(`Retrieving ${key} from local storage`);
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+export 
+
+function getStorageKey(keywords) {
+    return Keywords.serialize(keywords);
+} 
+import { calculatePrice } from './frame.js';
+import { writeNumberOfCartItems } from './global.js';
+
+writeNumberOfCartItems(document.getElementById('cart-link'));
+
+let data = window.localStorage["cart"];
+if (data == undefined)  else {
+	let cart = JSON.parse(data);
+	if (cart == undefined || cart.length == 0) {
+		noItemInCart();
+	}
+}
+
+const checkoutBtn = document.getElementById("checkout-button");
+checkoutBtn.addEventListener("click", )
+
+function noItemInCart() {
+	document.getElementById("info").innerHTML = "There are no items in your shopping cart.";
+	document.getElementById("checkout-button").disabled = true;
+}
+
+
+
+
+
+
+
+
+
+import { render,getPrintSizes } from './frame.js';
+import { writeNumberOfCartItems } from './global.js';
+
+writeNumberOfCartItems(document.getElementById('cart-link'));
+
+const urlParams = new URLSearchParams(window.location.search);
+
+let artworkID;
+if (urlParams.has("objectID")) {
+    artworkID = urlParams.get("objectID");
+}
+const previewImage = document.getElementById("preview-image");
+const imageLabel = document.getElementById("image-label");
+const previewContainer = document.getElementById("preview-container");
+const artwork = getArtwork();
+let printSize;
+let frameWidth;
+let frameStyle;
+let matWidth;
+let matColor;
+initialize();
+
+async function initPrintSize() {
+    let printSize;
+    if (urlParams.has("printSize"))  else {
+        let printSizes = document.getElementsByName("printSize");
+        for (let i = 0; i < printSizes.length; i++) {
+            if (printSizes[i].checked === true) {
+                printSize = printSizes[i].value;
+                return printSize;
+            }
+        }}
+
+async function initFrameWidth() {
+    let frameWidth;
+    if (urlParams.has("frameWidth"))  else {
+        frameWidth = document.getElementsByName('frameWidth')[0].value;
+        return frameWidth;
+    }}
+
+async function initFrameStyle() {
+    let frameStyle;
+    if (urlParams.has("frameStyle"))  else {
+        let framestyles = document.getElementsByName("frameStyle");
+        for (let i = 0; i < framestyles.length; i++) {
+            if (framestyles[i].checked === true) {
+                frameStyle = framestyles[i].value;
+                return frameStyle;
+            }
+        }}
+
+async function initMatWidth() {
+    let matWidth;
+    if (urlParams.has("matWidth"))  else {
+        matWidth = document.getElementsByName('matWidth')[0].value;
+        return matWidth;
+    }}
+
+async function initMatColor() {
+    let matColor;
+    if (urlParams.has("matColor"))  else {
+        let matColors = document.getElementsByName("matColor");
+        for (let i = 0; i < matColors.length; i++) {
+            if (matColors[i].checked === true) {
+                matColor = matColors[i].value;
+                return matColor;
+            }
+        }}
+
+
+artwork.then(artwork => {
+    previewImage.src = artwork.primaryImageSmall;
+    let t = document.createTextNode(artwork.title);
+    imageLabel.appendChild(t);
+    t = document.createTextNode(artwork.artistDisplayName);
+    imageLabel.appendChild(t);
+    t = document.createTextNode(artwork.objectDate);
+    imageLabel.appendChild(t);
+});
+
+async function initialize() {
+    let printSizeC = await initPrintSize();
+    let frameWidthC = await initFrameWidth();
+    let frameStyleC = await initFrameStyle();
+    let matWidthC = await initMatWidth();
+    let matColorC = await initMatColor();
+    console.log(previewImage);
+    render(previewImage, previewContainer, printSizeC, frameStyleC, frameWidthC, matColorC, matWidthC);
+    getPrintSizeLabels();
+    printSize = printSizeC;
+    frameWidth = frameWidthC;
+    frameStyle = frameStyleC;
+    matWidth = matWidthC;
+    matColor = matColorC;
+}
+
+async function getPrintSizeLabels() {
+    let printSizes = getPrintSizes(previewImage);
+    let sLabel = document.getElementById("print-size-s-label");
+    let mLabel = document.getElementById("print-size-m-label");
+    let lLabel = document.getElementById("print-size-l-label");
+    sLabel.innerHTML = "Small<br>" + printSizes.S[0] + " \u00d7 " + printSizes.S[1] + " cm";
+    mLabel.innerHTML = "Medium<br>" + printSizes.M[0] + " \u00d7 " + printSizes.M[1] + " cm";
+    lLabel.innerHTML = "Large<br>" + printSizes.L[0] + " \u00d7 " + printSizes.L[1] + " cm";
+}
+
+async function getArtwork() {
+    let artwork = window.localStorage.getItem(artworkID);
+    if (artwork) {
+        return JSON.parse(artwork);
+    }}
+
+
+const printSizes = document.getElementsByName("printSize");
+for (var i = 0; i < printSizes.length; i++) {
+    printSizes[i].addEventListener('click', );
+}
+
+
+const frameWidthSlider = document.getElementsByName('frameWidthR');
+frameWidthSlider[0].addEventListener('input', );
+
+frameWidthSlider[0].addEventListener('change', );
+
+const frameWidthLabel = document.getElementsByName('frameWidth');
+frameWidthLabel[0].addEventListener('change', );
+
+
+const frameStyles = document.getElementsByName("frameStyle");
+for (var i = 0; i < frameStyles.length; i++) {
+    frameStyles[i].addEventListener('click', );
+}
+
+
+const matWidthSlider = document.getElementsByName('matWidthR');
+matWidthSlider[0].addEventListener('input', );
+
+matWidthSlider[0].addEventListener('change', );
+
+const matWidthLabel = document.getElementsByName('matWidth');
+matWidthLabel[0].addEventListener('change', );
+
+
+const matColors = document.getElementsByName("matColor");
+for (var i = 0; i < matColors.length; i++) {
+    matColors[i].addEventListener('click', );
+}
+
+
+const form = document.getElementById("config-form");
+form.addEventListener("submit", );
+export 
+
+export 
+
+export 
+export function writeNumberOfCartItems(obj) {
+    let cart = window.localStorage["cart"];
+	if (cart == undefined)  else {
+		let x = JSON.parse(cart).length;
+		if (x == undefined || x == NaN || x <= 0){
+			obj.innerHTML = 'Cart'
+		}
+	}
+	return obj;
+}/*export class Artwork {
+    constructor(title, primaryImage, artistDisplayName, objectDate) {
+        this.title = title;
+        this.primaryImage = primaryImage;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}*/
+
+export var Keywords = {
+    serialize: function (words) {
+        return words.join(',');
+    },
+    parse: 
+}
+
+import { Keywords } from './objectsArtwork.js';
+import * as ArtworkCache from './artwork-cache.js';
+import { writeNumberOfCartItems } from './global.js';
+
+let searchKeywords = "";
+let defaultPage = true;
+
+var urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('q') & urlParams.get('q') != "")  else {
+    let var2 = fetch("highlights.json")
+        .then(res => res.json())
+        .then(data => {
+            gallery.innerHTML = '';
+            loadIds(data.highlights);
+        }).catch();
+}
+
+writeNumberOfCartItems(document.getElementById('cart-link'));
+
+
+
+
+async function loadIds(data) {
+    if (data == null)  else {
+        let promises = [];
+        let numResults = data.length > 100  : data.length;
+        for (let i = 0; i < numResults; i++) {
+            promises.push(loadArtworkById(data[i], i));
+        }
+        return Promise.all(promises).then(() => {
+            console.log("done!!");
+            if (!defaultPage) 
+        });
+    }}
+
+async function loadArtworkById(id, index) {
+    const urlartwork = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+	
+    let a = [];
+    a.push("" + id);
+    let rdata = ArtworkCache.retrieve(a);
+    if (rdata) {
+        addElement(rdata, index, id);
+    }
+
+}
+
+function addElement(objectData, index, id) {
+    var nodeDiv = document.createElement("DIV");
+    nodeDiv.classList.add("thumb");
+    var nodeA = document.createElement("A");
+    var nodeImg = document.createElement("IMG");
+    var nodeLabel = document.createElement("DIV");
+    nodeLabel.classList.add("museum-label");
+    var nodeArtist = document.createElement("SPAN");
+    nodeArtist.classList.add("artist");
+    var nodeTitle = document.createElement("SPAN");
+    nodeTitle.classList.add("title");
+    var nodeDate = document.createElement("SPAN");
+    nodeDate.classList.add("date");
+
+    nodeLabel.appendChild(nodeArtist);
+    nodeLabel.appendChild(nodeTitle);
+    var commaNode = document.createTextNode(", ");
+    nodeLabel.appendChild(commaNode);
+    nodeLabel.appendChild(nodeDate);
+    nodeA.appendChild(nodeImg);
+    nodeA.appendChild(nodeLabel);
+    nodeDiv.appendChild(nodeA);
+
+    nodeImg.setAttribute("src", "" + objectData.primaryImageSmall); //SLOW
+    nodeA.setAttribute("id", "object-" + index);
+    nodeImg.setAttribute("id", "object-image-" + index);
+    nodeImg.setAttribute("alt", objectData.title);
+
+
+    nodeA.setAttribute("href", "./config.html?objectID=" + id); //TODO
+
+    var textnodeArtist = document.createTextNode(objectData.artistDisplayName);
+    nodeArtist.appendChild(textnodeArtist);
+    var textnodeTitle = document.createTextNode(objectData.title);
+    nodeTitle.appendChild(textnodeTitle);
+    var textnodeDate = document.createTextNode(objectData.objectDate);
+    nodeDate.appendChild(textnodeDate);
+
+    gallery.appendChild(nodeDiv);
+}
+
+
+
+
+
+
+  
+  

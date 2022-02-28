@@ -1,0 +1,48 @@
+export 
+
+export 
+
+import * as frame from './frame.js'
+import * as dom from './cart-dom.js'
+var cartItems;
+
+document.addEventListener('DOMContentLoaded', event => {
+        if(retrieveFromLocal("cart")){
+            addCart(retrieveFromLocal("cart").length)
+        }
+
+}
+)
+
+
+
+
+
+
+
+
+
+
+
+function retrieveFromLocal(){
+    const key = "cart"
+    if(key in localStorage){
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+/*function addCart(num){
+    document.getElementById("cart-link").innerHTML="Cart ("+num+")";*/
+
+function addCart(num){
+    document.getElementById("cart-link").innerHTML="Cart ("+num+")";
+
+}
+
+
+
+export 
+
+export 
+
+export 

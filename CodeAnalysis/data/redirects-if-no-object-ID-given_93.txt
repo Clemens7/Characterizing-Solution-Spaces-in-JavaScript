@@ -1,0 +1,130 @@
+export class SearchResultObject {
+    constructor(total, objectIDs) {
+        this.total = total;
+        this.objectIDs = objectIDs;
+    }
+}
+
+export class MuseumObject {
+    constructor(objectID, primaryImageSmall, title, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.primaryImageSmall = primaryImageSmall;
+        this.title = title;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}
+
+export class ShippingObject {
+    
+}
+export function get(key) {
+    if(key in localStorage) {
+        console.log(`Retrieving ${key} from local storage`);
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+export function save(key, value) {
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(value);
+}
+
+
+export import * as LocalStorage from './cache.js';
+
+
+export class CartItemsElement {
+    constructor(elementId = 'cart-link') {
+        this.element = document.getElementById(elementId);
+        if (!this.element) 
+    }
+
+    update() {
+        const cart = LocalStorage.get("cart");
+        const noOfItems = cart && cart.length != 0  : ''
+        this.element.innerText = `Cart${noOfItems}`;
+    }
+}
+
+export class SearchDocumentContainer {
+    constructor(containerId = 'gallery') {
+        this.container = document.getElementById(containerId);
+        if (!this.container) 
+    }
+
+    
+
+    
+}
+
+export class CartDocumentContainer {
+    
+
+    
+
+    
+}
+import {SearchResultObject} from "./api-responses.js";
+import {MuseumObject} from "./api-responses.js";
+import * as LocalStorage from './cache.js';
+
+const baseUrl = 'https://collectionapi.metmuseum.org/public/collection'; /* base url for all endpoint calls */
+const apiVersion = 'v1'; /* version of the api to be used */
+
+export 
+
+export async function getObject(objectID) {
+    const cachedResult = LocalStorage.get(objectID);
+    if(cachedResult) 
+
+    try {
+        const response = await fetch(getApiUri('objects/' + objectID));
+        const responseObject = await response.json();
+
+
+        const museumObject = new MuseumObject(responseObject.objectID, responseObject.primaryImageSmall, responseObject.title, responseObject.artistDisplayName, responseObject.objectDate);
+
+        LocalStorage.save(objectID,museumObject);
+
+        return museumObject;
+    }}
+
+function getApiUri(resource, queryParam=undefined) {
+    return baseUrl + '/' + apiVersion + '/' + resource + (queryParam  : '');
+}
+
+    import * as MMCollectionAPI from './metmuseum-collection-api.js';
+    import {SearchDocumentContainer, CartItemsElement} from "./dom-utils.js";
+    import {SearchResultObject} from "./api-responses.js";
+
+    const maxResults = 100; // maximum amount of results/objects to be displayed
+    const searchDocumentContainer = new SearchDocumentContainer('gallery');
+    const cartItemsElement = new CartItemsElement('cart-link');
+
+    document.addEventListener('DOMContentLoaded', _ => {
+      const params = (new URL(document.location)).searchParams;
+      const q = params.get('q');
+
+      if(q) 
+
+      cartItemsElement.update(); // update number of cart items in navbar
+
+      searchCollection(q);
+    });
+
+    async function searchCollection(queryParam) {
+      let searchResultObject; // search results (total number of objects, array of object ids)
+      let museumObjects; // array of objects of the search result
+
+      if(!queryParam) { // if no search term is given, fetch object ids from highlights
+        try {
+          const response = await fetch("highlights.json");
+          const responseJson = await response.json();
+          searchResultObject = new SearchResultObject(responseJson.highlights.length, responseJson.highlights);
+        } 
+      }
+
+      museumObjects = await Promise.all(searchResultObject.objectIDs.slice(0,maxResults).map(id => MMCollectionAPI.getObject(id)));}
+
+  

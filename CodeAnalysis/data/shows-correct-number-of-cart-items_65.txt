@@ -1,0 +1,278 @@
+import * as ArtworkCache from './artwork-cache.js'
+import { Artwork, SearchValues } from "./Artwork.js";
+
+export 
+
+export 
+
+
+
+
+
+export 
+
+import { Artwork, SearchValues } from "./Artwork.js";
+
+export 
+
+export import { Artwork } from './Artwork.js';
+import * as DOM from './dom-helpers.js';
+import {setAttributes} from "./dom-helpers.js";
+import {setAttributeClass} from "./dom-helpers.js";
+import {cartItemDescription} from "./cart.js";
+import {calculatePrice, render} from "./frame.js";
+
+export class ArtworkDocumentContainer {
+    
+
+    
+
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+export class SearchTextContainer {
+    
+
+    
+    
+
+    
+
+    
+}
+
+export class CartItemContainer {
+    
+
+    
+
+    
+}export class Artwork {
+    
+}
+
+export var SearchValues = {
+    serialize : ,
+    parse : 
+}
+    import * as ArtworkAPI from "./artwork-api.js";
+    import { CartItemContainer } from "./artwork-dom.js";
+    import * as Cart from "./cart.js";
+    import { render, calculatePrice } from './frame.js'
+    import {Artwork} from "./Artwork.js";
+
+    let cartItemCount = 0;
+    let sumPrice = 0;
+    let sumPriceElement = document.querySelector('#price-total');
+    let cartItems;
+    let navCart = document.getElementById('cart-link')
+
+    document.addEventListener('DOMContentLoaded', async event => {
+
+      document.querySelector('#checkout-button').addEventListener('click', )
+
+      cartItems = Cart.getAll();
+      if(cartItems.length === 0) {
+        let container = document.getElementById('cart');
+        console.log(container);
+        container.appendChild(document.createTextNode("There are no items in your shopping cart."));
+        sumPriceElement.innerHTML = '0';
+        document.getElementById('checkout-button').disabled = true;
+      }
+      cartItemCount = cartItems.length;
+      navCart.innerText = 'Cart (' + cartItemCount + ')';
+      await createCartItemsContainer(cartItems);
+    });
+
+    async function createCartItemsContainer(cartItems) {
+      for (let cartItem of cartItems) 
+    }
+
+    
+
+    
+
+
+  export class CartItem {
+    
+}import { CartItem } from "./CartItem.js";
+
+export 
+
+export 
+
+export 
+
+export function getAll() {
+    return JSON.parse(localStorage.getItem("cart")) }
+
+export 
+
+export 
+
+export import { render, getPrintSizes, calculatePrice } from './frame.js'
+import { addToCart, diplayCartItems } from './cart.js'
+import { getObjectCached } from './artwork-api.js'
+import { appendDescription, createArtworkImage } from './artwork-dom.js'
+
+let printSizes, selectedPrintSize, frameStyle, frameWidth, matColor, matWidth, objectId
+
+window.addEventListener('load', async () => {
+    diplayCartItems()    
+
+    const [url, params] = window.location.href.split('?')
+    const urlParams = new URLSearchParams(params);
+    objectId = urlParams.get('objectID');
+    selectedPrintSize = urlParams.get('printSize')
+    frameStyle = urlParams.get('frameStyle')
+    frameWidth = urlParams.get('frameWidth')
+    matColor = urlParams.get('matColor')
+    matWidth = urlParams.get('matWidth')
+
+    updateInputs()
+
+    console.log(objectId)
+
+    if(objectId == null) 
+    await loadImage(objectId);
+	
+	const frameSlider = document.querySelector("#frameSlider")
+	const frameInput = document.querySelector("#frameInput")
+	
+	frameSlider.addEventListener("change",  )
+	
+	frameInput.addEventListener("change",  )
+	
+	const matSlider = document.querySelector("#matSlider")
+	const matInput = document.querySelector("#matInput")
+	
+	matSlider.addEventListener("change",  )
+	
+	matInput.addEventListener("change",  )
+	
+	document.querySelector('#config-form').addEventListener("change",  )
+
+    document.querySelector('#config-form').addEventListener("submit", onAddToCart, false)
+	
+	
+})
+
+
+function updatePreview(){
+	
+	const printSize = document.querySelector('#config-form').printSize.value 
+	const frameWidth = document.querySelector('#config-form').frameWidth.value 
+	const frameStyle = document.querySelector('#config-form').frameStyle.value 
+	const matColor = document.querySelector('#config-form').matColor.value  
+	const matWidth = document.querySelector('#config-form').matWidth.value 
+	const img = document.querySelector('#preview-image')
+	const container = document.querySelector('#preview-container')
+
+    const price = document.querySelector('#price')
+	
+	render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth)
+	
+	const total = document.querySelector('#total-size')
+	
+	const totalWidth = printSizes[printSize][0]+frameWidth*2+matWidth*2
+	const totalHeight = printSizes[printSize][1]+frameWidth*2+matWidth*2
+	
+	total.textContent = `${Math.round(totalWidth)} x ${Math.round(totalHeight)} cm`
+
+    price.innerHTML = '€ ' + calculatePrice(printSize, frameStyle, frameWidth, matWidth).toLocaleString(undefined, {minimumFractionDigits: 2})
+}
+
+
+
+function updateInputs() {
+    if(selectedPrintSize != null) 
+    if(frameWidth != null) 
+
+    if(matColor != null) 
+
+    if(matWidth != null) 
+	
+	if(frameStyle != null) 
+    
+}
+
+async function loadImage(objectId) {
+    let responseBody
+    try {
+        responseBody = await getObjectCached(objectId)
+    } 
+    const image = createArtworkImage(responseBody)
+
+    const previewImageEl = document.querySelector('#preview-image')
+    const previewLabelEl = document.querySelector('#image-label')
+
+    previewImageEl.src = responseBody.primaryImageSmall
+    previewImageEl.alt = responseBody.title
+
+    appendDescription(previewLabelEl, responseBody.artistDisplayName, responseBody.title, responseBody.objectDate)
+
+    image.addEventListener('load', () => {
+        printSizes = getPrintSizes(image)
+
+        const slabelEL = document.querySelector('#print-size-s-label')
+        slabelEL.lastChild.textContent = printSizeToString(printSizes.S)
+        const mlabelEl = document.querySelector('#print-size-m-label')
+        mlabelEl.lastChild.textContent = printSizeToString(printSizes.M)
+        const llabelEl = document.querySelector('#print-size-l-label')
+        llabelEl.lastChild.textContent = printSizeToString(printSizes.L)
+		
+		updatePreview()
+    })
+}
+
+function printSizeToString(printSize) {
+    return `${printSize[0]} x ${printSize[1]} cm`
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export export 
+
+export 
+
+export 
+
+      import { Artwork } from "./Artwork.js";
+      import { ArtworkDocumentContainer, SearchTextContainer, createArtworkElement } from "./artwork-dom.js";
+      import * as ArtworkAPI from "./artwork-api.js";
+      import { diplayCartItems } from "./cart.js";
+
+      const form = document.querySelector('.search-form');
+
+
+      document.addEventListener('DOMContentLoaded', async (event) => {
+          diplayCartItems()
+          const params = (new URL(document.location)).searchParams;
+          const searchInputQuery = params.get('q');
+          if(!searchInputQuery) {
+            const artworkPromises = await ArtworkAPI.highlights()
+            const artworkContainer = new ArtworkDocumentContainer();
+            artworkContainer.clear();
+            const artworks = await Promise.all(artworkPromises)
+            document.querySelector('#gallery').append(...artworks.map(createArtworkElement))
+            return
+          }});
+
+      
+
+  

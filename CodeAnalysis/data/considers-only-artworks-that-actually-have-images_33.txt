@@ -1,0 +1,82 @@
+export function updateCartSize() {
+    let cart  = JSON.parse(localStorage.getItem('cart'));
+
+    if (cart )  else {
+        document.getElementById("cart-link").innerHTML = "Cart";
+    }
+}import {Image} from "./image.js";
+import {store, retrieve} from "./image-cache.js";
+import {addImageToGallery,clearGallery} from "./image-dom.js";
+
+export async function retrieveIDs(query) {
+    const url = api_search_url(query);
+    try {
+        return await fetch(url).then().then();
+    }}
+
+export 
+
+export 
+
+
+function api_search_url(query) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}`;
+}
+
+
+export 
+
+export export 
+
+export 
+
+
+
+
+
+
+
+
+/*
+Template:
+
+<div class="thumb">
+    <a href="" id="object--1">
+     <img src="" alt="" id="object-image--1">
+        <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+        </div>
+    </a>
+</div>
+export class Image {
+    
+}
+        import {retrieveIDs, retrieveArtworks} from "./image-api.js";
+
+        import * as cart from './cart.js';
+
+        const updateHeader = (text) => document.getElementById("search-info").innerText = text;
+
+        function searchImages(search) {
+            document.getElementById("search").value = search;
+            updateHeader(`Searching for “${search}”...`)
+            retrieveIDs(search).then()
+        }
+
+        document.addEventListener('DOMContentLoaded', event => {
+            const search = new URLSearchParams(location.search).get('q')
+            if (search && search !== '') {
+                searchImages(search);
+            }
+
+            cart.updateCartSize();
+        });
+
+        document.querySelector(".search-form").addEventListener('submit', );
+
+        
+
+        document.getElementById("search").addEventListener('keyup', )
+    

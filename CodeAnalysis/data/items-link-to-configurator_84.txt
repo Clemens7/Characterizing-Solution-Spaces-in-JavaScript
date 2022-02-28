@@ -1,0 +1,131 @@
+
+ 
+const baseUrl =  "https://collectionapi.metmuseum.org/public/collection/v1"
+const countryUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2"
+const searchParams = "hasImages=true"
+
+class APIRequests {
+
+    
+
+
+    
+
+    
+
+    
+
+    
+}
+
+const req = new APIRequests()
+export default reqimport API from './APIRequests.js'
+import * as Frame from './frame.js';
+import ShoppingCart from './ShoppingCart.js'
+
+class Loader {
+    constructor () {
+        this.cart = new ShoppingCart()
+        this.cart.updateHeader()
+        
+        const ids = this.cart.getIDs()
+        if (ids && ids.length) {
+            console.log(ids.length)
+            this.processObjectIDs(ids)
+        }
+
+    }
+
+    
+
+    
+
+    processObjectIDs(objectIDs) {
+        for (var i = 0; i < objectIDs.length && i < 100; i++) {
+            this.update(new CartItem(objectIDs[i]))
+        }}
+
+    
+
+    
+
+}
+
+
+class CartItem {
+
+    constructor(objectInfoJSON) {
+        console.log(objectInfoJSON)
+        this.objectID = objectInfoJSON.objectID
+        this.artistDisplayName = objectInfoJSON.artistDisplayName
+        this.title = objectInfoJSON.title
+        this.objectDate = objectInfoJSON.objectDate
+        this.price =  this.getPrice()
+        this.description = this.getDescription()
+        this.image = objectInfoJSON.primaryImageSmall; //sollte render sein
+    }
+
+    
+
+    getPrice() {
+        let data = new ShoppingCart().getItem(this.objectID)
+        console.log(JSON.stringify(data))
+        let result = Frame.calculatePrice(data['printSize'],data['frameStyle'],data['frameWidth'],data['matWidth'])
+
+        if (localStorage.getItem('price') === 0 ) }
+
+    
+    
+}
+new Loader();export 
+
+export 
+
+export 
+import API from './APIRequests.js'
+import * as Frame from './frame.js';
+
+
+export default class ShoppingCart {
+
+   constructor() {
+   }
+
+    
+
+
+    itemCount() {
+        return this.getIDs().length
+
+    }
+    
+    
+
+    getIDs() {
+        if(localStorage.getItem('cart')) {
+            let arr = JSON.parse(localStorage.getItem('cart'))
+            let result = []
+            for (let i = 0; i < arr.length; i++) {
+                result[i] = arr[i]['objectID']
+            }
+            return result
+        }}
+
+    getItem(id) {
+        let arr = JSON.parse(localStorage.getItem('cart'))
+        let r = "" + id 
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i]['objectID'] === r)
+                
+        }
+        return null
+    }
+
+   
+    updateHeader() {
+        if (localStorage.getItem('cart')) 
+            document.getElementById('cart-link').innerHTML = `Cart (${this.itemCount()})`
+    }
+
+}
+

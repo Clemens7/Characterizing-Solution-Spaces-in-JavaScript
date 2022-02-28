@@ -1,0 +1,158 @@
+import * as Frame from './frame.js'
+import {getArtworkById} from "./metArtwork.js";
+import * as DOM from "./domElementHelper.js"
+
+export 
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export function getCart() {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    if (!cart){
+        cart = [];
+    }
+    return cart;
+}
+
+export export 
+
+export 
+
+
+
+
+
+export 
+
+
+export 
+
+
+export 
+
+export 
+
+export 
+import {getCart} from "./cart.js";
+
+updateCartCount();
+
+function updateCartCount() {
+    let count = getCart().length;
+    const CART_LINK = document.getElementById("cart-link");
+    CART_LINK.innerText = count === 0 ? "Cart" 
+}
+const MET_API_ROOT = "https://collectionapi.metmuseum.org/public/collection/v1";
+const MET_API_OBJECT_LOCATION = `${MET_API_ROOT}/objects`;
+const MET_API_SEARCH_LOCATION = `${MET_API_ROOT}/search`;
+
+
+export class MetArtwork {
+    constructor(id, image, artist, title, date) {
+        this.id = id;
+        this.image = image;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+    }
+}
+
+export async function getArtworkById(id) {
+    let cache = localStorage.getItem(`artmartMetObjCache-${id}`);
+    if (cache) 
+    let response = await fetch(`${MET_API_OBJECT_LOCATION}/${id}`);
+    if (response.status >= 400) 
+    let data = await response.json();
+    let artwork = new MetArtwork(id, data.primaryImageSmall, data.artistDisplayName, data.title, data.objectDate);
+    localStorage.setItem(`artmartMetObjCache-${id}`, JSON.stringify(artwork));
+    return artwork;
+}
+
+export async function search(term) {
+    const params = new URLSearchParams();
+    params.set("q", term);
+    params.set("hasImages", "true");
+    let response = await fetch(`${MET_API_SEARCH_LOCATION}?${params.toString()}`);
+    return await response.json();
+}
+
+import {getArtworkById, search} from "./metArtwork.js";
+import * as DOM from "./domElementHelper.js"
+
+const HIGHLIGHTS_LOCATION = "highlights.json";
+const CONFIG_LOCATION = "config.html";
+
+const query = window.location.search;
+const params = new URLSearchParams(query);
+let searchTerm = params.get("q");
+if (!searchTerm)  else {
+    searchTerm = searchTerm.replace("+", " ");
+    document.getElementById("search").value = searchTerm;
+    document.getElementById("search-info").innerText = `Searching for “${searchTerm}”...`;
+    search(searchTerm).then(results => {
+        clearGallery();
+        let count = results["total"];
+        let artworks = results["objectIDs"];
+        if (artworks) load(artworks);
+        document.getElementById("search-info")
+            .innerText = `Found ${count} ${count === 1  : "artworks"} for “${searchTerm}”`;
+    });
+}
+
+function load(ids) {
+    ids = ids.slice(0, 100);
+    let promises = ids.map(id => getArtworkById(id).then(artwork => {
+        return artwork;
+    }));
+    Promise.all(promises).then();
+}
+
+
+
+
+
+
+
+
+
+function clearGallery() {
+    document.getElementById("gallery").innerHTML = "";
+}
+
+

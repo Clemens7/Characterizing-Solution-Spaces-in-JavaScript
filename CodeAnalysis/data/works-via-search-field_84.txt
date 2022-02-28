@@ -1,0 +1,183 @@
+
+ 
+const baseUrl =  "https://collectionapi.metmuseum.org/public/collection/v1"
+const countryUrl = "https://web-engineering.big.tuwien.ac.at/s20/a2"
+const searchParams = "hasImages=true"
+
+class APIRequests {
+
+    async cachedFetch(query) {
+        try {
+            const cached = localStorage[query]
+            if (cached) 
+                
+            const data = await fetch(query)
+            if (data.status == 404)
+                
+            const json = await data.json()
+            localStorage[query] = JSON.stringify(json)
+            return json
+        }}
+
+
+    async getObject(id) {
+        return this.cachedFetch(baseUrl + "/objects/" + id)
+    }
+
+    async search(query) {
+        return this.cachedFetch(baseUrl + "/search?" + searchParams + "&q=" + query)
+    }
+
+    
+
+    
+}
+
+const req = new APIRequests()
+export default reqexport 
+
+export 
+
+export 
+import API from "./APIRequests.js"
+import Cart from "./ShoppingCart.js"
+
+
+class Search {
+
+    constructor() {
+        this.cart = new Cart()
+        this.cart.updateHeader()
+        var urlParams = new URLSearchParams(window.location.search)
+        var queryVal = urlParams.get("q")
+        if (queryVal != null && queryVal != "") {
+            this.updateSearchText("Searching for &ldquo;" + queryVal + "&rdquo;...")
+
+            this.handleObjectSearch(queryVal)
+        }
+    }
+
+    async handleObjectSearch(searchQuery) {
+        const resJSON = await API.search(searchQuery)
+        
+        this.processObjectIDs(resJSON.objectIDs)
+        this.updateSearchText("Found " + resJSON.total + " " + (resJSON.total == 1  : "artworks") + " for &ldquo;" + searchQuery+"&rdquo;")
+    }
+
+    
+
+    async processObjectIDs(objectIDs) {
+        for (var i = 0; i < objectIDs.length && i < 100; i++) {
+            this.updateGallery(await this.getObjectInfo(objectIDs[i]))
+        }
+    }
+    async getObjectInfo(objectID) {
+        const objectInfoJSON = await API.getObject(objectID)
+        return new SearchObject(objectInfoJSON)
+    }
+
+    updateGallery(searchObject) {
+        document.getElementById("gallery").appendChild(searchObject.toHTMLNode())
+    }
+
+    updateSearchText(text) {
+        document.getElementById("search-info").innerHTML = text;
+    }
+}
+
+class SearchObject {
+    objectID
+    primaryImageSmall
+    artistDisplayName
+    title
+    objectDate
+
+    constructor(objectInfoJSON) {
+        this.objectID = objectInfoJSON.objectID
+        this.primaryImageSmall = objectInfoJSON.primaryImageSmall
+        this.artistDisplayName = objectInfoJSON.artistDisplayName
+        this.title = objectInfoJSON.title
+        this.objectDate = objectInfoJSON.objectDate
+    }
+
+        <a href="" id="object-0">
+          <img src="" alt="" id="object-image-0">
+          <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+          </div>
+        </a>
+      </div>
+
+    toHTMLNode() {
+
+        var thumbDiv = document.createElement('div')
+        thumbDiv.setAttribute("class", "thumb")
+
+        var configLink = document.createElement("a")
+        configLink.setAttribute("href", window.location.origin+"/config.html?objectID="+this.objectID)
+        configLink.setAttribute("id", "object-"+this.objectID)
+
+        var objectImage = document.createElement("img")
+        objectImage.setAttribute("src", this.primaryImageSmall)
+        objectImage.setAttribute("alt", this.artistDisplayName)
+        objectImage.setAttribute("id", "object-image-"+this.objectID)
+
+        var museumLabelDiv = document.createElement("div")
+        museumLabelDiv.setAttribute("class", "museum-label")
+
+        var artistSpan = document.createElement("span")
+        artistSpan.setAttribute("class", "artist")
+        artistSpan.innerHTML = this.artistDisplayName
+
+        var titleSpan = document.createElement("span")
+        titleSpan.setAttribute("class", "title")
+        titleSpan.innerHTML = this.title + ", "
+
+        var dateSpan = document.createElement("span")
+        dateSpan.setAttribute("class", "date")
+        dateSpan.innerHTML = this.objectDate
+
+
+        museumLabelDiv.appendChild(artistSpan)
+        museumLabelDiv.appendChild(titleSpan)
+        museumLabelDiv.appendChild(dateSpan)
+
+        configLink.appendChild(objectImage)
+        configLink.appendChild(museumLabelDiv)
+
+        thumbDiv.appendChild(configLink)
+
+        return thumbDiv
+    }
+}
+
+new Search();import API from './APIRequests.js'
+import * as Frame from './frame.js';
+
+
+export default class ShoppingCart {
+
+   constructor() {
+   }
+
+    
+
+
+    
+    
+    
+
+    
+
+    
+
+   
+    updateHeader() {
+        if (localStorage.getItem('cart')) 
+            
+    }
+
+}
+

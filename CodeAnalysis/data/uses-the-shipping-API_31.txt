@@ -1,0 +1,118 @@
+
+const STORAGE_KEY = 'cart';
+
+export class CartEntry {
+    
+}
+
+export 
+
+export function getAllEntries() {
+    if (STORAGE_KEY in localStorage) {
+        const entries = localStorage.getItem(STORAGE_KEY);
+        return JSON.parse(entries);
+    }
+}
+
+export 
+
+export import {calculatePrice} from './frame.js';
+import {addCartEntry, CartEntry, numberOfEntries, getAllEntries} from './cart-storage.js'; 
+
+
+export class Country {
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}
+
+let countriesData;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const cartItems = getAllEntries();
+   if(!cartItems || cartItems.length == 0)  
+
+    const price = calculateSubtotal(cartItems);
+
+    const subtotal = document.getElementById('price-subtotal');
+    subtotal.innerText = price;
+    subtotal.value = price;
+
+    createOptions();
+
+} 
+);
+
+const selectedCountry = document.getElementById('country');
+
+selectedCountry.addEventListener('change', 
+);
+
+export async function retrieveCountries() {
+
+    const response = fetch(`https://web-engineering.big.tuwien.ac.at/s20/a2/shipping`);
+    return response.then(a => a.json())
+    .then(a => a.destinations)
+    .then(a => createCountryArray(a))
+}
+
+async function createCountryArray(results) {
+    console.log(results);
+    const countries = [];
+    if (results == null) 
+    for (let i of results) {
+        let current = new Country(i.country, i.displayName, i.cost);
+        countries.push(current);  
+    }
+    return countries;
+}
+
+export function calculateSubtotal(cartItems) {
+    let price = 0;
+    for (const item of cartItems) {
+        price += parseFloat(calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth));
+    }
+    return price.toFixed(2);
+
+}
+
+function createOptions() {
+    retrieveCountries().then(countries => {
+        const options = document.getElementById('country');
+        for (let country of countries) {
+            let option = document.createElement('option');
+            option.innerText = country.displayName;
+            option.value = country.country;
+            options.appendChild(option);
+        }
+        countriesData = countries;
+    });
+}
+
+
+
+export 
+
+export 
+
+
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const woodCost = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85
+    };
+    const scalar = {
+        S: 1,
+        M: 2,
+        L: 3.5
+    };
+
+    price = (30 + woodCost[frameStyle] * (frameWidth/10) + (matWidth/10) * 0.05) * scalar[printSize]
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

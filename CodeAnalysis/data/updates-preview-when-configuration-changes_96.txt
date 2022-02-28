@@ -1,0 +1,309 @@
+import { getPrintSizes, render, calculatePrice } from '../../frame.js';
+import { getQueryVariables, addCartItem, getCartItems, getArtworkMetadata } from '../util.js';
+
+const queryParameters = getQueryVariables();
+
+const previewImage = document.getElementById("preview-image");
+const INPUT_LIST = {
+    sizeList: document.getElementsByName('printSize'),
+    submitButton: document.getElementById("submitButton"),
+    frame: {
+        input: document.getElementById("frameWidth"),
+        range: document.getElementById("frameWidthR"),
+        list: document.getElementsByName('frameStyle')
+    },
+    material: {
+        input: document.getElementById("matWidth"),
+        range: document.getElementById("matWidthR"),
+        list: document.getElementsByName('matColor')
+    }
+};
+
+var config = {
+    objectID: 123,
+    image: {},
+    size: "S",
+    frame: {
+        width: 0.0,
+        style: "natural"
+    },
+    material: {
+        width: 0.0,
+        color: "wine"
+    }
+}
+
+initConfig();
+initEventListener();
+
+function initConfig() {
+    initValues();
+    setPreview(queryParameters.objectID);
+    updatePrice();
+}
+
+function initValues() {
+    if (queryParameters.printSize) 
+
+    if (queryParameters.frameStyle) 
+
+    if (queryParameters.matColor) 
+
+    if (queryParameters.frameWidth) 
+
+    if (queryParameters.matWidth) 
+
+    config = {
+        objectID: queryParameters.objectID,
+        image: document.getElementById("preview-image"),
+        size: document.querySelector('input[name="printSize"]:checked').value,
+        frame: {
+            width: document.getElementById("frameWidth").value,
+            style: document.querySelector('input[name="frameStyle"]:checked').value
+        },
+        material: {
+            width: document.getElementById("matWidth").value,
+            color: document.querySelector('input[name="matColor"]:checked').value
+        }
+    }
+
+    document.getElementById("cart-link").innerHTML = "Cart (" + getCartItems().length + ")";
+}
+
+function setPreview(id) {
+    getArtworkMetadata(id).then(function (data) {
+        setLabel(data);
+        config.image.onload = function () {
+            paintImage();
+            setPrintSizes();
+        };
+        config.image.src = data.primaryImageSmall;
+    }, );
+}
+
+function paintImage() {
+    render(config.image, document.getElementById("preview-container"), config.size, config.frame.style, config.frame.width, config.material.color, config.material.width);
+}
+
+function setLabel(data) {
+    document.getElementById("previewArtist").innerHTML = data.artistDisplayName;
+    document.getElementById("previewTitle").innerHTML = data.title;
+    document.getElementById("previewYear").innerHTML = data.objectDate;
+}
+
+function setPrintSizes() {
+    var sizes = getPrintSizes(config.image);
+    document.getElementById("print-size-s-label").innerHTML = "Small <br>" + sizes.S[0] + " × " + sizes.S[1] + " cm"
+    document.getElementById("print-size-m-label").innerHTML = "Medium <br>" + sizes.M[0] + " × " + sizes.M[1] + " cm"
+    document.getElementById("print-size-l-label").innerHTML = "Large <br>" + sizes.L[0] + " × " + sizes.L[1] + " cm"
+}
+
+function updatePrice() {
+    document.getElementById("price").innerHTML = "€ " + calculatePrice(config.size, config.frame.style, config.frame.width, config.material.width).toFixed(2);;
+}
+
+function initEventListener() {
+    INPUT_LIST.frame.input.addEventListener("change", function () {
+        if (this.value < 2)  else if (this.value > 5) 
+        this.value = Math.round(this.value * 10) / 10;
+        INPUT_LIST.frame.range.value = this.value;
+        config.frame.width = this.value;
+    });
+    INPUT_LIST.frame.range.addEventListener("change", );
+
+    INPUT_LIST.material.input.addEventListener("change", function () {
+        if (this.value < 0)  else if (this.value > 10) 
+        this.value = Math.round(this.value * 10) / 10;
+        INPUT_LIST.material.range.value = this.value;
+        config.material.width = this.value;
+    });
+    INPUT_LIST.material.range.addEventListener("change", );
+
+    INPUT_LIST.sizeList.forEach(element => {
+        element.addEventListener("change", function () {
+            if (this.checked) {
+                config.size = this.value;
+            }
+        });
+    });
+
+    INPUT_LIST.frame.list.forEach(element => {
+        element.addEventListener("change", function () {
+            if (this.checked) {
+                config.frame.style = this.value;
+            }
+        });
+    });
+
+    INPUT_LIST.material.list.forEach(element => {
+        element.addEventListener("change", function () {
+            if (this.checked) {
+                config.material.color = this.value;
+            }
+        });
+    });
+
+    document.querySelectorAll('input').forEach(element => {
+        element.addEventListener("change", function () {
+            paintImage();
+            updatePrice();
+            console.log(config);
+        });
+    });
+
+    INPUT_LIST.submitButton.addEventListener("click", );
+}
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+
+    const pricePerCm = {
+        classic: 1,
+        natural: 0.8,
+        shabby: 0.9,
+        elegant: 0.85
+    }
+
+    price += frameWidth * pricePerCm[frameStyle];
+    price += matWidth * 0.05;
+    if (printSize == "M") {
+        price *= 2;
+    } else if (printSize == "L") {
+        price *= 3.5;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+
+export 
+const API_URL = "https://collectionapi.metmuseum.org/public/collection/v1";//http://localhost:4445/ https://collectionapi.metmuseum.org/public/collection/v1
+/*
+for localhost test:
+
+ 1)
+run two nodejs processes in folder test with params:  "mock-server/server.js 4445" and
+"node_modules/static-server/bin/static-server.js -p 4444 ../wwwnode node_m"
+
+2)
+in browser set the localstorage item(for cart test)
+localStorage.setItem('cart',"[{\"objectID\":1,\"printSize\":\"M\",\"frameStyle\":\"shabby\",\"frameWidth\":24,\"matColor\":\"coal\",\"matWidth\":23},{\"objectID\":2,\"printSize\":\"M\",\"frameStyle\":\"natural\",\"frameWidth\":46,\"matColor\":\"indigo\",\"matWidth\":17},{\"objectID\":3,\"printSize\":\"S\",\"frameStyle\":\"elegant\",\"frameWidth\":20,\"matColor\":\"wine\",\"matWidth\":9}]");
+localStorage.setItem('cart',"[{\"objectID\":207059,\"printSize\":\"S\",\"frameStyle\":\"shabby\",\"frameWidth\":20,\"matColor\":\"coal\",\"matWidth\":23},{\"objectID\":2,\"printSize\":\"M\",\"frameStyle\":\"natural\",\"frameWidth\":46,\"matColor\":\"indigo\",\"matWidth\":17},{\"objectID\":3,\"printSize\":\"S\",\"frameStyle\":\"elegant\",\"frameWidth\":20,\"matColor\":\"wine\",\"matWidth\":9}]");
+
+[{"objectID":1,"printSize":"M","frameStyle":"shabby","frameWidth":24,"matColor":"coal","matWidth":23},{"objectID":2,"printSize":"M","frameStyle":"natural","frameWidth":46,"matColor":"indigo","matWidth":17},{"objectID":3,"printSize":"S","frameStyle":"elegant","frameWidth":20,"matColor":"wine","matWidth":9}]
+
+
+
+export function getQueryVariables() {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+
+    var parameters = {};
+    vars.forEach(element => {
+        parameters[element.split("=")[0]] = element.split("=")[1];
+    });
+    return parameters;
+}
+
+export 
+
+/* Can not be used bc of the fixed tests whichs sets the localStorage Items
+function getNextItemID() {
+    let currItemID = localStorage.getItem("currentItemID");
+    if(currItemID === undefined || currItemID == null){
+        localStorage.setItem("currentItemID","1");
+        return 1;
+    }else{
+        currItemID = parseInt(currItemID)+1;
+        localStorage.setItem("currentItemID",currItemID);
+        return currItemID;
+    }
+}*/
+
+export 
+
+export 
+
+
+
+export function getCartItems() {
+    if (localStorage.getItem("cart") === null) {
+        return [];
+    }}
+
+export function getArtworkMetadata(objectID) {
+    return new Promise((resolve, reject) => {
+        if (objectID == undefined) 
+
+        if (localStorage.getItem("Cache_" + objectID) === null) {
+            const Http = new XMLHttpRequest();
+            const url = API_URL + "/objects/" + objectID;
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        localStorage.setItem("Cache_" + objectID, Http.responseText);
+                        resolve(JSON.parse(Http.responseText));
+                    }
+                }
+            }
+        }
+    });
+}
+
+export 
+
+export 

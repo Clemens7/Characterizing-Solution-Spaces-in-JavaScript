@@ -1,0 +1,118 @@
+let cartObjects = null;
+export function get() {
+    if (cartObjects != null) 
+    try {
+        cartObjects = JSON.parse(localStorage.getItem('cart')) || [];
+    } 
+    return cartObjects;
+}
+
+export 
+
+export function displayNumItems() {
+    let cartSize = get().length;
+    if (cartSize === 0) {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}
+
+export 
+
+export 
+export 
+
+export 
+
+export async function requestObjectInfo(objectID) {
+    try {
+        const data = JSON.parse(
+            localStorage.getItem(`cache-object-${objectID}`)
+        );
+        if (data.objectID) 
+    }catch (e) {
+        return new Promise((res, rej) => {
+            request(
+                `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`
+            )
+                .then((data) => {
+                    localStorage.setItem(
+                        `cache-object-${objectID}`,
+                        JSON.stringify(data)
+                    );
+                    res(data);
+                })
+                .catch();
+        });
+    }}
+
+export function getObjectsInfo(objects, total) {
+    const result = {
+        total: total,
+        objects: [],
+    };
+    const workLoad = objects.map(requestObjectInfo);
+
+    return new Promise((res, rej) => {
+        Promise.all(workLoad).then();
+    });
+}
+
+export function request(url) {
+    return new Promise((res, rej) => {
+        fetch(url, {
+            method: 'GET',
+        })
+            .then((response) => {
+                if (!response.ok) 
+                res(response.json());
+            })
+            .catch(rej);
+    });
+}
+import {
+    searchRequest,
+    getObjectsInfo,
+    request,
+    requestObjectInfo,
+} from './request.js';
+import { displayNumItems } from './cartStore.js';
+
+window.onload = function () {
+    displayNumItems();
+
+    document.getElementById('search-button').addEventListener('click', );
+
+    let query = new URLSearchParams(window.location.search).get('q');
+
+    if (query !== null)  else {
+        showHighlights();
+    }
+};
+
+
+
+function updateSearchInfo(content) {
+    window.document.getElementById('search-info').textContent = content;
+}
+
+function showHighlights() {
+    updateSearchInfo('Search our collection of more than 400,000 artworks.');
+    resetGallery();
+    request('highlights.json')
+        .then((data) => {
+            getObjectsInfo(data.highlights, data.highlights.length)
+                .then()
+                .catch();
+        })
+        .catch();
+}
+
+
+
+
+
+function resetGallery() {
+    window.document.getElementById('gallery').innerHTML = '';
+}
+
+

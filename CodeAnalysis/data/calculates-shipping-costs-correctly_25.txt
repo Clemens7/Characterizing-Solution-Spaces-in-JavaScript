@@ -1,0 +1,99 @@
+export class CartItem {
+    constructor(objectID, printSize, frameWidth, frameStyle, matWidth, matColor) {
+        this.objectID = objectID;
+        this.printSize = printSize;
+        this.frameWidth = frameWidth;
+        this.frameStyle = frameStyle;
+        this.matWidth = matWidth;
+        this.matColor = matColor;
+    }
+
+    
+
+    
+}
+import {CartItem} from "./cartItem.js";
+import {calculatePrice} from "./frame.js";
+
+async function fetchCountries() {
+    return new Promise( (resolve, reject) => {fetch("https://web-engineering.big.tuwien.ac.at/s20/a2/shipping")
+        .then(response => {
+            if (response.ok) {
+                response.json().then(
+                    json => {
+                        /*const selectElement = document.getElementById("country");
+                        for (let i = 0; i < json.destinations.length; i++) {
+                            selectElement.add(new Option(json.destinations[i].displayName));
+                        }*/
+                        resolve(json.destinations);
+                    }
+                )
+            }
+        })
+        .catch();} );
+}
+
+function insertCountriesIntoField(destinations){
+    const selectElement = document.getElementById("country");
+    for (let i = 0; i < destinations.length; i++) {
+        selectElement.add(new Option(destinations[i].displayName, destinations[i].country));
+    }
+    selectShippingPrice(destinations);
+    selectElement.addEventListener('change' , function (){selectShippingPrice(destinations)}, false);
+}
+
+function selectShippingPrice(destinations) {
+    const countrySelect = document.getElementById("country");
+    var country = countrySelect.options[countrySelect.selectedIndex].text;
+    console.log(country);
+    var cost = destinations.find(x => x.displayName === country).cost;
+    const shippingPrice = document.getElementById("price-shipping");
+    shippingPrice.innerText = parseFloat(cost.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ".")).toFixed(2);
+    const totalPrice = document.getElementById("price-total");
+    totalPrice.innerText = (parseFloat(sum) + parseFloat(cost.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ".").valueOf())).toFixed(2);
+}
+
+function getSum() {
+    let sum = 0;
+    items.forEach(item => sum += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth));
+    return sum;
+}
+
+
+
+let items = [];
+
+if (localStorage.getItem("cart") !== undefined && localStorage.getItem("cart") !== null) {
+    items = JSON.parse(localStorage.getItem("cart"))
+        .map(item => new CartItem(item.objectID, item.printSize, item.frameWidth, item.frameStyle, item.matWidth, item.matColor));
+}
+if (items.length === 0) 
+
+var sum = getSum();
+console.log(sum);
+
+document.getElementById("price-subtotal").innerText = sum;
+
+fetchCountries().then(response => insertCountriesIntoField(response));export 
+
+export 
+
+const frameSizeCosts = {
+    S: 1,
+    M: 2,
+    L: 3.5
+};
+const frameStyleCosts = {
+    classic: 1,
+    natural: 0.8,
+    shabby: 0.9,
+    elegant: 0.85
+};
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const matPrice = 0.05; //5c
+    if (!["S", "M", "L"].includes(printSize) || !["classic", "natural", "shabby", "elegant"].includes(frameStyle)
+    || frameWidth < 20 || frameWidth > 50 || matWidth < 0 || matWidth > 100) 
+    price = (30 + (frameWidth/10.0) * frameStyleCosts[frameStyle] + (matWidth/10.0) * matPrice) * frameSizeCosts[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

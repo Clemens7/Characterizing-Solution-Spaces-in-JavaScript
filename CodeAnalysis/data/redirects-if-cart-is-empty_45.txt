@@ -1,0 +1,61 @@
+
+    import * as Frame from './frame.js';
+
+    let total = 0;
+
+    
+
+
+    
+
+    function showArtWorks(container){
+      const key = 'cart';
+      if (key in localStorage)  else {
+        const emptyCart = document.createElement('h2');
+        emptyCart.innerText = "There are no items in your shopping cart.";
+        container.appendChild(emptyCart);
+        document.getElementById("checkout-button").disabled = true;
+        document.querySelector('#cart-link').innerHTML = "Cart";
+        document.getElementsByClassName('price')[0].innerHTML = '';
+        let cartTotal = container.children[0];
+        container.removeChild(cartTotal);
+        container.appendChild(cartTotal);
+      }
+
+    }
+
+    class ArtWorksContainer {
+      constructor(containerID = 'cart') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+
+        /*var jtext =  '[' +
+                '{ "objectID": 726968 , "printSize":"S",' +
+                '"frameStyle":"classic" , "frameWidth": 40,' +
+                '"matColor":"ivory" , "matWidth": 50 },' +
+                '{ "objectID": 742769 , "printSize":"S",' +
+                '"frameStyle":"classic" , "frameWidth": 40,' +
+                '"matColor":"ivory" , "matWidth": 50 } ,' +
+                '{ "objectID":  823328, "printSize":"S",' +
+                '"frameStyle":"classic" , "frameWidth": 40,' +
+                '"matColor":"ivory" , "matWidth": 50 }]';
+        var key = "cart";
+        localStorage[key] = jtext;
+
+
+        showArtWorks(this.container);
+      }
+    }
+
+    new ArtWorksContainer();
+
+
+    
+
+    document.getElementById('checkout-button').addEventListener('click', );
+
+  export 
+
+export 
+
+export 

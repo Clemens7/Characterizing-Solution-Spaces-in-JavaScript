@@ -1,0 +1,355 @@
+import * as metObjCache from './metObjCache.js';
+import {HTTP} from "./http.js";
+export class API {
+
+    
+
+    
+
+    async getById(id) {
+        let metObj = metObjCache.retrieve(id);
+        if(metObj) 
+        const response = await this.sendGetRequest(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+        if (response.status !== HTTP.OK) 
+        metObjCache.store(id, response.body);
+        return response.body;
+    }
+
+    sendGetRequest(url) {
+        return new Promise(function (resolve) {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.onload = () => resolve({
+                status: xhr.status,
+                body: JSON.parse(xhr.response)
+            });
+            xhr.send();
+        });
+    }
+}
+import {CartObj} from './cartObj.js';
+
+const KEY = 'cart';
+let cart = [];
+
+export function retrieve() {
+    if(KEY in localStorage)  else {
+        return [];
+    }
+}
+
+/*
+export function addObjToCart(cartObj) {
+    if (cartObj===undefined || !cartObj){
+        return;
+    }
+    cart.push(cartObj);
+    store();
+}*/
+
+export 
+
+export 
+
+
+
+
+/*
+
+import * as Cart from './cartCache.js';
+
+
+Example for adding cartObj to cart:
+Cart.addToCart(123456, 'm', 'woody', 500, 'green', 500);
+Cart.addToCart(5654561, 'l', 'allen', 200, 'blue', 500);
+
+/*
+Example how to use items from Cart
+let currentCart = Cart.retrieve();
+console.log(`length of currentcart: ${currentCart.length}`);
+console.log(`response from reading cart: ${currentCart[0].objectID}`);
+console.log(`response from reading cart: ${currentCart[1].objectID}`);
+export class CartObj{
+    
+}
+import {API} from "./api.js";
+import {calculatePrice, getPrintSizes, render} from "./frame.js";
+import * as Cart from './cartCache.js'
+
+const api = new API();
+
+let imgContainerDOMElement;
+let imgDOMElement;
+let frameWidthDOMElement;
+let frameWidthSliderDOMElement;
+let matWidthDOMElement;
+let matWidthSliderDOMElement;
+
+const PRINT_SIZES = [
+    "s",
+    "m",
+    "l",
+];
+const FRAME_STYLES = [
+    "classic",
+    "natural",
+    "shabby",
+    "elegant"
+];
+const COLORS = [
+    "ivory",
+    "mint",
+    "wine",
+    "indigo",
+    "coal"
+];
+
+function nearest(value, min, max, step) {
+    return parseFloat(Math.max(
+        min,
+        Math.min(
+            Math.round(value / step) * step,
+            max)
+    ).toFixed(1));
+}
+
+function getPrintSize() {
+    for (const size of PRINT_SIZES) {
+        if (document.getElementById("print-size-" + size).checked) {
+            return size.toUpperCase()
+        }
+    }}
+
+
+
+function getFrameStyle() {
+    for (const style of FRAME_STYLES) {
+        if (document.getElementById("frame-style-" + style).checked) {
+            return style
+        }
+    }}
+
+
+
+function getFrameWidth() {
+    return frameWidthDOMElement.value
+}
+
+function updateFrameWidth(value) {
+    const min = 2;
+    const max = 5;
+    const step = 0.1;
+    frameWidthDOMElement.value = nearest(value, min, max, step);
+    frameWidthSliderDOMElement.value = frameWidthDOMElement.value;
+}
+
+function getMatColor() {
+    for (const color of COLORS) {
+        if (document.getElementById("mat-color-" + color).checked) {
+            return color
+        }
+    }}
+
+
+
+function getMatWidth() {
+    return matWidthDOMElement.value
+}
+
+function updateMatWidth(value) {
+    const min = 0;
+    const max = 10;
+    const step = 0.1;
+    matWidthDOMElement.value = nearest(value, min, max, step);
+    matWidthSliderDOMElement.value = matWidthDOMElement.value;
+}
+
+function update() {
+    const printSize = getPrintSize();
+    const frameStyle = getFrameStyle();
+    const frameWidth = getFrameWidth();
+    const matWidth = getMatWidth();
+    render(imgDOMElement, imgContainerDOMElement, printSize, frameStyle, frameWidth, getMatColor(), matWidth);
+    const printSizes = getPrintSizes(imgDOMElement);
+    for (const size of PRINT_SIZES) {
+        const mmSize = printSizes[size.toUpperCase()];
+        let html;
+        switch (size) {
+            case "s":
+                html = "Small";
+                break;
+            case "m":
+                html = "Medium";
+                break;
+            case "l":
+                html = "Large";
+                break;
+        }
+        html += `<br>${mmSize[0] / 10} x ${mmSize[0] / 10} cm`;
+        document.getElementById(`print-size-${size}-label`).innerHTML = html;
+    }
+    document.getElementById("price").innerHTML = `€ ${calculatePrice(printSize, frameStyle, frameWidth, matWidth).toFixed(2)}`
+}
+
+const params = new URLSearchParams(window.location.search);
+
+async function loadObject() {
+    if (!params.has("objectID")) 
+    const id = params.get("objectID");
+    let response;
+    try {
+        response = await api.getById(id);
+    } 
+    if (!response) 
+    document.getElementById("object-id").value = id;
+
+    imgDOMElement.onload = update;
+    imgDOMElement.src = response.primaryImage || response.primaryImageSmall;
+
+    const imageLabelDOMElement = document.getElementById("image-label");
+    imageLabelDOMElement.innerHTML = `
+        <span class="artist">${response.artistDisplayName}</span>
+        <span class="title">${response.title}</span>,
+        <span class="date">${response.objectDate}</span>
+    `;
+}
+
+window.addEventListener('DOMContentLoaded', async function () {
+    imgContainerDOMElement = document.getElementById("preview-container");
+    imgDOMElement = document.getElementById("preview-image");
+    frameWidthDOMElement = document.getElementsByName("frameWidth")[0];
+    matWidthDOMElement = document.getElementsByName("matWidth")[0];
+
+    const radioInputs = document.querySelectorAll("input[type=radio]");
+    for (const input of radioInputs) {
+        input.addEventListener("change", update);
+    }
+
+    frameWidthSliderDOMElement = document.getElementsByName("frameWidthR")[0];
+    frameWidthSliderDOMElement.addEventListener("change", );
+    frameWidthDOMElement.addEventListener("change", () => {
+        updateFrameWidth(frameWidthDOMElement.value);
+        update();
+    });
+    matWidthSliderDOMElement = document.getElementsByName("matWidthR")[0];
+    matWidthSliderDOMElement.addEventListener("change", );
+    matWidthDOMElement.addEventListener("change", () => {
+        updateMatWidth(matWidthDOMElement.value);
+        update();
+    });
+
+    if (params.has("printSize")) 
+    if (params.has("frameStyle")) 
+    if (params.has("frameWidth")) 
+    if (params.has("matColor")) 
+    if (params.has("matWidth")) 
+
+    document.getElementById('config-form').addEventListener("submit", );
+
+    await loadObject();
+});
+
+showCartItemNumber(Cart.retrieve());
+
+function showCartItemNumber(cartObjects) {
+  const cartHeader = document.getElementById("cart-link");
+  if (cartObjects.length !== 0)  else {
+    cartHeader.innerText = 'Cart';
+  }
+}
+import {API} from "./api.js";
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    switch (frameStyle) {
+        case "classic":
+            price += 1 * frameWidth;
+            break;
+        case "natural":
+            price += 0.80 * frameWidth;
+            break;
+        case "shabby":
+            price += 0.90 * frameWidth;
+            break;
+        case "elegant":
+            price += 0.85 * frameWidth;
+            break;
+    }
+    price += 0.05 * matWidth;
+    switch (printSize) {
+        case "M":
+            price *= 2;
+            break;
+        case "L":
+            price *= 3.5;
+            break;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+export const HTTP = Object.freeze({
+    OK: 200,
+});
+
+
+export function retrieve(id) {
+    const key = id;
+    if(key in localStorage) 
+}
+
+export function store(id, metObj) {
+    const key = id;
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(metObj);
+}

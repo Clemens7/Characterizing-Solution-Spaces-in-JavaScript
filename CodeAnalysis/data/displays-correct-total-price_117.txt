@@ -1,0 +1,173 @@
+
+        import * as Cart from './cart.js';
+        import * as MetMuseum from './met_museum.js';
+        import * as Frame from './frame.js';
+
+        Cart.countProducts();
+
+        const elementCart = document.getElementById("cart");
+
+        if(Cart.isEmpty())else{
+            document.getElementById('checkout-button').disabled = false;
+        }
+
+        (async() =>{
+            let totalPrice = 0;
+            const cartItems = Cart.getCartItems();
+            for(let index = 0; index < cartItems.length; index++){
+                const product = cartItems[index];
+                const obj = await MetMuseum.getObject(product.objectID);
+
+                const newItem = document.createElement("div");
+                newItem.classList.add("cart-item");
+                const toPrintSize = {'S':'Small', 'M':'Medium', 'L':'Large'};
+                const printText = toPrintSize[product.printSize] + ' print';
+                const frameText = 'in a ' + product.frameWidth/10 + ' cm ' + product.frameStyle + ' frame';
+                var matText = '';
+                if(product.matWidth>0){
+                    matText=' with a ' + product.matWidth/10 + ' cm ' + product.matColor + ' mat.';
+                }
+                newItem.innerHTML=`
+                    <div class="cart-preview" id="preview-container-${index}">
+                        <a href="config.html?${new URLSearchParams(product)}">
+                            <img class="cart-thumb" src="${obj.primaryImageSmall}" id="preview-${index}" alt="${obj.title}">
+                        </a>
+                    </div>
+                    <div class="museum-label">
+                        <div>
+                            <span class="artist">${obj.artistDisplayName}</span>
+                            <span class="title">${obj.title}</span>,
+                            <span class="date">${obj.objectDate}</span>
+                            <br><br>
+                            <span class="frame-description">${printText} ${frameText}${matText}</span>
+                        </div>
+                        <div class="cart-price">€ <span id="price-${index}">0</span></div>
+                        <button class="cart-remove" onclick="removeItem(${index});"></button>
+                    </div>`;
+                    elementCart.insertBefore(newItem, elementCart.firstChild);
+
+                    const imagePreview = document.getElementById("preview-" + index);
+                    const containerPreview = document.getElementById("preview-container-" + index);
+                    Frame.render(imagePreview, containerPreview,product.printSize, product.frameStyle, product.frameWidth, product.matColor, product.matWidth);
+                    const price = Frame.calculatePrice(product.printSize, product.frameStyle, product.frameWidth,product.matWidth);
+
+                    totalPrice = totalPrice + price;
+                    document.getElementById("price-" + index).innerHTML = price.toFixed(2);
+            }
+            document.getElementById("price-total").innerHTML = totalPrice.toFixed(2);
+        })();
+
+        window.removeItem = 
+    export 
+
+export function getCartItems(){
+    var cart = JSON.parse(localStorage.getItem('cart'));
+    if(!cart)
+    return cart;
+}
+
+export function isEmpty(){
+    let tempItems = getCartItems();
+    if(tempItems.length<1)
+    else{
+        return false;
+    }
+}
+
+export function countProducts(){
+    const cartLink = document.getElementById("cart-link");
+    const countProd = getCartItems().length;
+    if(countProd<=0)else{
+        cartLink.innerHTML = 'Cart (' + countProd + ")";
+    }
+}
+
+export 
+
+export 
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+
+    let price1 = 0;
+
+  var size = {
+        'S' : 1,
+        'M' : 2,
+        'L' : 3.5
+    };
+
+    var frame_costs = {
+        'classic' : 1,
+        'natural' : 0.8,
+        'shabby' : 0.9,
+        'elegant' : 0.85
+    };
+
+    const price = (30 + frame_costs[frameStyle] * (frameWidth / 10) + 0.05 * (matWidth / 10)) * size[printSize];
+
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}const met_url = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export async function getObject(objectID){
+    let object = JSON.parse(localStorage.getItem(objectID));
+    if(!object){
+        const newUrl = met_url + 'objects/' + objectID;
+        object = await fetch(newUrl).then(data => data.json());
+        if(!object || object.objectID == null)
+        localStorage.setItem(object.objectID, JSON.stringify(object));
+    }
+    return object;
+}
+

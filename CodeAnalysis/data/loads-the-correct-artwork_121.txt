@@ -1,0 +1,562 @@
+import { frameConfigStore } from '../shared/frame-config-store.js';
+export class AbstractRadioComponent extends HTMLDivElement {
+    constructor(name, idPrefix) {
+        super();
+        this.name = name;
+        this.idPrefix = idPrefix;
+        this.innerHTML = '';
+        const radios = {};
+        const labels = {};
+        this.getAllValues().forEach((value) => {
+            radios[value] = this.createRadio(value);
+            labels[value] = this.createLabel(value, radios[value]);
+            this.appendOption(radios[value], labels[value]);
+        });
+        this.radios = radios;
+        this.labels = labels;
+        frameConfigStore.getAndWatch(this.update.bind(this));
+    }
+    update(config) {
+        this.getAllValues().forEach((size) => this.updateSize(size, config));
+    }
+    createRadio(value) {
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = this.name;
+        radio.id = `${this.idPrefix}-${value.toLowerCase()}`;
+        radio.value = value;
+        radio.addEventListener('input', , { passive: true });
+        return radio;
+    }
+    createLabel(value, radio) {
+        const label = document.createElement('label');
+        label.htmlFor = radio.id;
+        label.id = `${this.idPrefix}-${value.toLowerCase()}-label`;
+        return label;
+    }
+    updateSize(value, config) {
+        const label = this.labels[value];
+        const radio = this.radios[value];
+        radio.checked = this.renderLabel(value, label, config);
+    }
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+class ArtworkApi {
+    getById(id) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            return (_a = this.getFromCacheById(id)) !== null  : this.fetchById(id);
+        });
+    }
+    getCacheKey(id) {
+        return `cached-artwork-${id}`;
+    }
+    getFromCacheById(id) {
+        var _a;
+        const cachedString = (_a = localStorage.getItem(this.getCacheKey(id))) !== null  : 'null';
+        return JSON.parse(cachedString);
+    }
+    fetchById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
+                if (response.status !== 200) 
+                const artwork = yield response.json();
+                if (artwork) {
+                    localStorage.setItem(this.getCacheKey(id), JSON.stringify(artwork));
+                }
+                return artwork;
+            }
+        });
+    }
+}
+export const artworkApi = new ArtworkApi();
+export function calcPrintSizes(img) {
+    const small = [297, 297];
+    const medium = [420, 420];
+    const large = [594, 594];
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    if (h > w) 
+    else {
+        small[1] = Math.floor(h * small[0] / w);
+        medium[1] = Math.floor(h * medium[0] / w);
+        large[1] = Math.floor(h * large[0] / w);
+    }
+    return { S: small, M: medium, L: large };
+}
+import { cartStore } from '../shared/cart-store.js';
+export class CartDisplayController extends HTMLAnchorElement {
+    constructor() {
+        super();
+        cartStore.getAndWatch(this.update.bind(this));
+    }
+    update(values) {
+        this.innerText = `Cart (${values.length})`;
+    }
+}
+import { calculatePrice } from '../frame.js';
+export class CartStore {
+    constructor() {
+        this.state = [];
+        this.listeners = [];
+        this.state = this.readState();
+    }
+    
+    
+    getAndWatch(listener) {
+        this.listeners.push(listener);
+        listener(this.state);
+    }
+    
+    
+    readState() {
+        var _a;
+        const cachedCart = (_a = localStorage.getItem('cart')) !== null  : '[]';
+        return JSON.parse(cachedCart);
+    }
+    
+}
+export const cartStore = new CartStore();
+import { allMatColors } from '../shared/model.js';
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { getMaterialColorDescription } from '../shared/model-utils.js';
+import { AbstractRadioComponent } from './abstract-radio-component.js';
+export class ColorSelectorComponent extends AbstractRadioComponent {
+    constructor() {
+        super('matColor', 'mat-color');
+    }
+    getAllValues() {
+        return allMatColors;
+    }
+    appendOption(radio, label) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add(`${this.idPrefix}-item`);
+        wrapper.appendChild(radio);
+        wrapper.appendChild(label);
+        this.appendChild(wrapper);
+    }
+    renderLabel(value, label, config) {
+        label.innerText = getMaterialColorDescription(value);
+        return (config === null || config === void 0  : config.matColor) === value;
+    }
+    
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var _a;
+import { artworkApi } from './shared/artwork-api.js';
+import { frameConfigStore } from './shared/frame-config-store.js';
+import { cartStore } from './shared/cart-store.js';
+import { calculatePrice, render } from './frame.js';
+import { renderArtworkLabel } from './shared/model-utils.js';
+import './components/index.js';
+class ConfigClient {
+    constructor() {
+        this.previewImage = document.getElementById('preview-image');
+        this.previewContainer = document.getElementById('preview-container');
+        this.labelContainer = document.getElementById('image-label');
+        this.price = document.getElementById('price');
+        this.artwork = null;
+        frameConfigStore.getAndWatch((state) => this.update(state));
+    }
+    renderArtwork(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.artwork = yield artworkApi.getById(id);
+            if (this.artwork) {
+                this.previewImage.addEventListener('load', () => frameConfigStore.bindImage(this.previewImage));
+                this.previewImage.src = this.artwork.primaryImageSmall;
+            }
+        });
+    }
+    
+    update(state) {
+        if (this.artwork) {
+            render(this.previewImage, this.previewContainer, state.printSize, state.frameStyle, state.frameWidth, state.matColor, state.matWidth);
+        }
+        this.labelContainer.innerHTML = renderArtworkLabel(state, this.artwork);
+        this.price.innerHTML = `€ ${calculatePrice(frameConfigStore.printSize, frameConfigStore.frameStyle, frameConfigStore.frameWidth, frameConfigStore.matWidth).toFixed(2)}`;
+    }
+    
+}
+const params = new URLSearchParams(document.location.search);
+const configClient = new ConfigClient();
+if (params.has('objectID')) {
+    const id = Number.parseInt((_a = params.get('objectID')) !== null && _a !== void 0 ? _a , 10);
+    configClient.renderArtwork(id).then();
+}
+const addToCartButton = document.getElementById('buy');
+addToCartButton.addEventListener('click', configClient.addToCart);
+import { calcPrintSizes } from './calc-print-sizes.js';
+import { parseFrameStyle, parseMaterialColor, parseNumberWithDefault, parsePrintSize } from './model-utils.js';
+export class FrameConfigStore {
+    constructor() {
+        this.watchers = [];
+        const urlSearchParams = new URLSearchParams(location.href);
+        const printSize = urlSearchParams.get('printSize');
+        const frameWidth = urlSearchParams.get('frameWidth');
+        const matWidth = urlSearchParams.get('matWidth');
+        const frameStyle = urlSearchParams.get('frameStyle');
+        const matColor = urlSearchParams.get('matColor');
+        this.frameConfig = {
+            printSize: parsePrintSize(printSize),
+            frameWidth: parseNumberWithDefault(frameWidth, 20, 50, 2),
+            matWidth: parseNumberWithDefault(matWidth, 0, 100, 0),
+            frameStyle: parseFrameStyle(frameStyle),
+            matColor: parseMaterialColor(matColor),
+        };
+    }
+    getAndWatch(fn) {
+        this.watchers.push(fn);
+        fn(this.frameConfig);
+    }
+    notifyWatchers() {
+        this.watchers.forEach(watcher => watcher(this.frameConfig));
+    }
+    get frameWidth() {
+        return this.frameConfig.frameWidth;
+    }
+    
+    
+    get matWidth() {
+        return this.frameConfig.matWidth;
+    }
+    
+    get printSize() {
+        return this.frameConfig.printSize;
+    }
+    get printSizes() {
+        return this.image ? calcPrintSizes(this.image) : null;
+    }
+    
+    
+    bindImage(image) {
+        this.image = image;
+        this.notifyWatchers();
+    }
+    
+    get frameStyle() {
+        return this.frameConfig.frameStyle;
+    }
+}
+export const frameConfigStore = new FrameConfigStore();
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { cmToMm, mmToCm } from '../shared/model-utils.js';
+export class FrameSliderSelectorComponent extends HTMLDivElement {
+    constructor() {
+        super();
+        const frameWrapper = document.createElement('div');
+        frameWrapper.innerHTML += '<label>Frame</label>';
+        const frameWrapper2 = document.createElement('div');
+        frameWrapper2.appendChild(this.createNumberInput());
+        frameWrapper2.appendChild(this.createPostfix());
+        frameWrapper.appendChild(frameWrapper2);
+        frameWrapper.className = 'config-row';
+        this.appendChild(frameWrapper);
+        this.appendChild(this.createRange());
+        frameConfigStore.getAndWatch(this.update.bind(this));
+    }
+    
+    createPostfix() {
+        const postfix = document.createElement('span');
+        postfix.innerText = 'cm';
+        return postfix;
+    }
+    createNumberInput() {
+        const numberInput = document.createElement('input');
+        numberInput.type = 'number';
+        numberInput.name = 'frameWidth';
+        numberInput.id = 'frameWidth';
+        numberInput.min = '2';
+        numberInput.max = '5';
+        numberInput.step = '0.1';
+        numberInput.value = this.displayFrameWidthFrom(frameConfigStore);
+        numberInput.addEventListener('change', );
+        return numberInput;
+    }
+    createRange() {
+        const range = document.createElement('input');
+        range.type = 'range';
+        range.name = 'frameWidthR';
+        range.id = 'frameWidthR';
+        range.min = '2';
+        range.max = '5';
+        range.step = '0.1';
+        range.value = this.displayFrameWidthFrom(frameConfigStore);
+        range.addEventListener('change', );
+        return range;
+    }
+    displayFrameWidthFrom(config) {
+        return mmToCm(config.frameWidth).toString();
+    }
+    update(config) {
+        const frameWidthInput = document.getElementById('frameWidth');
+        frameWidthInput.value = this.displayFrameWidthFrom(config);
+        const frameWidthSlider = document.getElementById('frameWidthR');
+        frameWidthSlider.value = this.displayFrameWidthFrom(config);
+    }
+}
+import { calcPrintSizes } from './shared/calc-print-sizes.js';
+import { mmToCm } from './shared/model-utils.js';
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = calcPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107,
+    };
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle] + '';
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+    let frameStyleMultiplier = 1.0;
+    switch (frameStyle) {
+        
+        case 'natural':
+            frameStyleMultiplier = 0.8;
+            break;
+        
+        
+    }
+    price += mmToCm(frameWidth) * frameStyleMultiplier + mmToCm(matWidth) * 0.05;
+    if (printSize === 'M') {
+        price *= 2.0;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+import { CartDisplayController } from './cart-display-component.js';
+import { SizeSelectorComponent } from './size-selector-component.js';
+import { StyleSelectorComponent } from './style-selector-component.js';
+import { ColorSelectorComponent } from './color-selector-component.js';
+import { FrameSliderSelectorComponent } from './frame-slider-selector-component.js';
+import { MatWidthSliderSelectorComponent } from './mat-width-slider-selector-component.js';
+export * from './cart-display-component.js';
+customElements.define('shopping-cart-display', CartDisplayController, { extends: 'a' });
+customElements.define('size-selector', SizeSelectorComponent, { extends: 'div' });
+customElements.define('style-selector', StyleSelectorComponent, { extends: 'div' });
+customElements.define('color-selector', ColorSelectorComponent, { extends: 'div' });
+customElements.define('frame-slider-selector', FrameSliderSelectorComponent, { extends: 'div' });
+customElements.define('mat-width-slider-selector', MatWidthSliderSelectorComponent, { extends: 'div' });
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { cmToMm, mmToCm } from '../shared/model-utils.js';
+export class MatWidthSliderSelectorComponent extends HTMLDivElement {
+    constructor() {
+        super();
+        const matWrapper = document.createElement('div');
+        matWrapper.innerHTML += '<label>Mat</label>';
+        const matWrapper2 = document.createElement('div');
+        matWrapper2.appendChild(this.createNumberInput());
+        matWrapper2.appendChild(this.createPostfix());
+        matWrapper.appendChild(matWrapper2);
+        matWrapper.className = 'config-row';
+        this.appendChild(matWrapper);
+        this.appendChild(this.createRange());
+        frameConfigStore.getAndWatch(this.update.bind(this));
+    }
+    createPostfix() {
+        const postfix = document.createElement('span');
+        postfix.innerText = 'cm';
+        return postfix;
+    }
+    
+    update(config) {
+        const matWidthInput = document.getElementById('matWidth');
+        matWidthInput.value = this.displayMatWidthFrom(config);
+        const matWidthSlider = document.getElementById('matWidthR');
+        matWidthSlider.value = this.displayMatWidthFrom(config);
+    }
+    createNumberInput() {
+        const numberInput = document.createElement('input');
+        numberInput.type = 'number';
+        numberInput.name = 'matWidth';
+        numberInput.id = 'matWidth';
+        numberInput.min = '0';
+        numberInput.max = '10';
+        numberInput.step = '0.1';
+        numberInput.value = this.displayMatWidthFrom(frameConfigStore);
+        numberInput.addEventListener('change', );
+        return numberInput;
+    }
+    displayMatWidthFrom(config) {
+        return mmToCm(config.matWidth).toString();
+    }
+    createRange() {
+        const range = document.createElement('input');
+        range.type = 'range';
+        range.name = 'matWidthR';
+        range.id = 'matWidthR';
+        range.min = '0';
+        range.max = '10';
+        range.step = '0.1';
+        range.value = this.displayMatWidthFrom(frameConfigStore);
+        range.addEventListener('change', );
+        return range;
+    }
+}
+import { allFrameStyles, allMatColors, allPrintSizes, } from './model.js';
+export function getPrintSizeDescription(printSize) {
+    switch (printSize) {
+        case 'S':
+            return 'Small';
+        case 'M':
+            return 'Medium';
+        case 'L':
+            return 'Large';
+    }
+}
+export function getFrameStyleDescription(frameStyle) {
+    switch (frameStyle) {
+        case 'classic':
+            return 'Classic';
+        case 'elegant':
+            return 'Elegant';
+        case 'natural':
+            return 'Natural';
+        case 'shabby':
+            return 'Shabby';
+    }
+}
+export function getMaterialColorDescription(materialColor) {
+    switch (materialColor) {
+        case 'coal':
+            return 'Coal';
+        case 'indigo':
+            return 'Indigo';
+        case 'ivory':
+            return 'Ivory';
+        case 'mint':
+            return 'Mint';
+        case 'wine':
+            return 'Wine';
+    }
+}
+export function renderArtworkLabel(config, artwork) {
+    return `
+        <div>
+          <span class="artist">${artwork === null || artwork === void 0 ? void 0 : artwork.artistDisplayName}</span>
+          <span class="title">${artwork === null || artwork === void 0 ? void 0 : artwork.title}</span>,
+          <span class="date">${artwork === null || artwork === void 0 ? void 0 : artwork.objectDate}</span>
+          <br><br>
+          <span class="frame-description">${buildConfigDescription(config)}</span>
+        </div>`;
+}
+export function buildConfigDescription(config) {
+    const size = getPrintSizeDescription(config.printSize);
+    let frameDescription = `${size} print in a ${mmToCm(config.frameWidth)} cm ${config.frameStyle} frame`;
+    if (config.matWidth !== 0) 
+    return frameDescription + '.';
+}
+function verifyType(value, allValues) {
+    if (value == null) {
+        return false;
+    }}
+export function parsePrintSize(value) {
+    return verifyType(value, allPrintSizes)  : 'M';
+}
+export function parseFrameStyle(value) {
+    return verifyType(value, allFrameStyles)  : 'natural';
+}
+export function parseMaterialColor(value) {
+    return verifyType(value, allMatColors)  : 'mint';
+}
+export function parseNumberWithDefault(value, min, max, def) {
+    if (value == null) {
+        return def;
+    }) }
+export function mmToCm(mm) {
+    return parseFloat((mm / 10).toFixed(1));
+}
+export 
+export const allPrintSizes = ['S', 'M', 'L'];
+export const allFrameStyles = ['classic', 'natural', 'shabby', 'elegant'];
+export const allMatColors = ['ivory', 'mint', 'wine', 'indigo', 'coal'];
+import { allPrintSizes } from '../shared/model.js';
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { getPrintSizeDescription } from '../shared/model-utils.js';
+import { AbstractRadioComponent } from './abstract-radio-component.js';
+export class SizeSelectorComponent extends AbstractRadioComponent {
+    constructor() {
+        super('printSize', 'print-size');
+    }
+    getAllValues() {
+        return allPrintSizes;
+    }
+    appendOption(radio, label) {
+        this.appendChild(radio);
+        this.appendChild(label);
+    }
+    renderLabel(value, label, config) {
+        var _a, _b;
+        const sizeName = getPrintSizeDescription(value);
+        const [width, height] = (_b = (_a = frameConfigStore.printSizes) === null || _a === void 0 ? void 0 : _a[value]) !== null && _b !== void 0 ? _b : [0, 0];
+        label.innerHTML = `${sizeName}<br>${width} &times; ${height} cm`;
+        return (config === null || config === void 0  : config.printSize) === value;
+    }
+    
+}
+import { allFrameStyles } from '../shared/model.js';
+import { frameConfigStore } from '../shared/frame-config-store.js';
+import { getFrameStyleDescription } from '../shared/model-utils.js';
+import { AbstractRadioComponent } from './abstract-radio-component.js';
+export class StyleSelectorComponent extends AbstractRadioComponent {
+    constructor() {
+        super('frameStyle', 'frame-style');
+    }
+    getAllValues() {
+        return allFrameStyles;
+    }
+    appendOption(radio, label) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add(`${this.idPrefix}-item`);
+        wrapper.appendChild(radio);
+        wrapper.appendChild(label);
+        this.appendChild(wrapper);
+    }
+    renderLabel(value, label, config) {
+        if (!label.hasChildNodes()) {
+            const image = document.createElement('img');
+            image.src = `${this.idPrefix}s/${value}-thumb.png`;
+            const description = getFrameStyleDescription(value);
+            label.appendChild(image);
+            label.append(description);
+        }
+        return (config === null || config === void 0  : config.frameStyle) === value;
+    }
+    
+}

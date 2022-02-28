@@ -1,0 +1,112 @@
+
+import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+const collectionapi = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+export 
+
+export 
+
+export 
+
+
+
+
+
+
+
+export 
+
+export export class Artwork {
+	
+}const cartKey = "cart";
+
+export class CartItem {
+    
+} 
+
+export function getCartItems() {
+    ensureCartInitialized();
+    return getLocalStorageItem(cartKey);
+}
+
+export function showNumCartItems(){
+    let cart = document.getElementById("cart-link");
+    let cart_items = getCartItems().length;
+    if (cart_items > 0) else {
+        cart.innerHTML = "Cart";
+    }
+}
+
+export 
+
+export 
+
+export function cartIsEmpty() {
+    ensureCartInitialized();
+    return getCartItems().length === 0;
+}
+
+export 
+
+function ensureCartInitialized() {
+    const item = localStorage.getItem(cartKey);
+    if (item === null) 
+    const parsed = JSON.parse(item);
+    if (!Array.isArray(parsed)) 
+}
+
+
+
+function getLocalStorageItem(key) {
+    const value = localStorage[key];
+    return JSON.parse(value);
+}import * as Cart from "./cart-api.js";
+
+import * as Api from "./art-api.js";
+import * as FrameUtil from "./frame.js";
+
+let total = 0;
+
+document.addEventListener("DOMContentLoaded", event => {
+
+    Cart.showNumCartItems();
+    clearCartRender();
+
+    total = 0;
+    let checkout = document.getElementById("checkout-button");
+
+    if (Cart.cartIsEmpty()) {
+        const container = document.getElementById("cart");
+
+        const message = document.createElement("p");
+        message.innerText = "There are no items in your shopping cart.";
+        container.prepend(message);
+
+        checkout.disabled = true;
+    }
+});
+
+
+
+function clearCartRender() {
+    const container = document.getElementById("cart");
+    const items = container.getElementsByClassName("cart-item");
+
+    while (items[0]) 
+}
+
+
+
+
+
+
+
+
+
+export 
+
+export 
+
+export 

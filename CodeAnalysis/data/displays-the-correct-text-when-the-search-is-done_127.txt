@@ -1,0 +1,117 @@
+import * as metObjCache from './metObjCache.js';
+import {HTTP} from "./http.js";
+export class API {
+
+    
+
+    async searchByValue(value) {
+        return this.sendGetRequest(`https://collectionapi.metmuseum.org/public/collection/v1/search${value}&hasImages=true`)
+    }
+
+    
+
+    sendGetRequest(url) {
+        return new Promise(function (resolve) {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.onload = () => resolve({
+                status: xhr.status,
+                body: JSON.parse(xhr.response)
+            });
+            xhr.send();
+        });
+    }
+}
+import {CartObj} from './cartObj.js';
+
+const KEY = 'cart';
+let cart = [];
+
+export function retrieve() {
+    if(KEY in localStorage)  else {
+        return [];
+    }
+}
+
+/*
+export function addObjToCart(cartObj) {
+    if (cartObj===undefined || !cartObj){
+        return;
+    }
+    cart.push(cartObj);
+    store();
+}*/
+
+export 
+
+export 
+
+
+
+
+/*
+
+import * as Cart from './cartCache.js';
+
+
+Example for adding cartObj to cart:
+Cart.addToCart(123456, 'm', 'woody', 500, 'green', 500);
+Cart.addToCart(5654561, 'l', 'allen', 200, 'blue', 500);
+
+/*
+Example how to use items from Cart
+let currentCart = Cart.retrieve();
+console.log(`length of currentcart: ${currentCart.length}`);
+console.log(`response from reading cart: ${currentCart[0].objectID}`);
+console.log(`response from reading cart: ${currentCart[1].objectID}`);
+export class CartObj{
+    
+}
+export const HTTP = Object.freeze({
+    OK: 200,
+});
+
+
+export 
+
+export 
+import {API} from "./api.js";
+import * as Cart from './cartCache.js';
+
+const api = new API();
+
+function searchMetropolian() {
+    if (!location.search.startsWith('?q=') || location.search.length <= 3) 
+    updateSearchInfo(`Searching for “${location.search.substr(3).replace('+', ' ')}”...`);
+    api.searchByValue(location.search)
+        .then(function(response) {
+            if (response.body === undefined ||  response.body.objectIDs == undefined) {
+                updateSearchInfo(`Found 0 artworks for “${location.search.substr(3).replace('+', ' ')}”.`);
+                return;
+            }} for “${location.search.substr(3).replace('+', ' ')}”.`);
+        });
+}
+
+
+
+
+
+
+
+function updateSearchInfo(text) {
+    document.getElementById('search-info').innerHTML = text;
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+    searchMetropolian();
+    document.getElementById('search-button').addEventListener('click',);
+});
+
+showCartItemNumber(Cart.retrieve());
+
+function showCartItemNumber(cartObjects) {
+  const cartHeader = document.getElementById("cart-link");
+  if (cartObjects.length !== 0)  else {
+    cartHeader.innerText = 'Cart';
+  }
+}

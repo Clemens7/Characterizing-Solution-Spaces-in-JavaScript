@@ -1,0 +1,168 @@
+export async function searchIds(query) {
+
+    let response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${query}&hasImages=true`); 
+    let result = await response.json();   
+
+    let ids = result.objectIDs;
+    if (ids != null) return ids;}
+
+let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+let storage = window.localStorage;
+
+export async function searchObjects(query) {
+    let ids = await searchIds(query);
+    ids = ids.slice(0, 100);
+
+    return getObjects(ids);
+}
+
+export async function getObjects(ids) {
+    let array = new Array;
+    var fetches = [];
+    for (let i = 0; i < ids.length; i++) {
+
+        let id = ids[i];
+        fetches.push(
+            getObject(id)
+                .then(res => array.push(res))
+        );
+    }
+
+    console.log(`waiting for ${fetches.length} objects`);
+    await Promise.all(fetches);
+
+    return array;
+} 
+
+export async function getObject(id) {
+    let url = baseUrl + id;
+
+    var cached = storage.getItem("objects/" + id);
+    if (cached != null) 
+
+    return fetch(url)
+        .then(res => { return res.json(); })
+        .then(res => { return store("objects/" + id, res); });
+}
+
+function store(key, value) {
+    storage.setItem(key, JSON.stringify(value));
+    return value;
+}
+export class Cart {
+    constructor(items) {
+        this.items = items;
+    }
+
+    
+
+    
+}
+
+export class Item {
+    
+}
+
+export class Destination {
+    
+}
+
+/* Only store the array to comply with tests */
+export function retrieveCart(){
+    const cachedItems = window.localStorage.getItem('cart');
+    if (cachedItems != null) {
+        return new Cart(JSON.parse(cachedItems));
+    }
+
+}
+
+export 
+import * as api from './metmuseumAPI.js';
+import * as util from './util.js';
+
+const urlParams = new URLSearchParams(window.location.search);
+const queryParam = urlParams.get('q');
+
+var gallery = document.getElementById("gallery");
+var template = createTemplate(gallery, ".thumb");
+var searchInfo = document.getElementById("search-info");
+
+util.showCartNumber();
+
+if (queryParam) {
+    doSearch(queryParam);
+}
+
+function doSearch(query) {
+    searchInfo.textContent = `Searching for “${query}”...`;
+
+    api.searchObjects(query)
+        .then(response => {
+            addSearchItems(gallery, template, response);
+            return response;
+        })
+        .then(response => searchInfo.textContent = `Found ${response.length} ${pluralize("artwork", response.length)} for “${query}”`);
+}
+
+
+
+function pluralize(text, count) {
+    if (count == 1) 
+
+    return text + "s";
+}
+
+function createTemplate(parent, query) {
+    var template = parent.querySelector(query);
+    template.remove();
+
+    return template;
+}
+
+
+
+function addSearchItems(parent, template, dataObjects) {
+    console.log(dataObjects);
+    dataObjects.forEach(dataObject => {
+        addSearchItem(parent, template, dataObject); 
+    });
+}
+
+function addSearchItem(parent, template, dataObject) {
+    let clone = template.cloneNode(true);
+    clone.querySelector('.artist').textContent = dataObject["artistDisplayName"];
+    clone.querySelector('.title').textContent = dataObject["title"];
+    clone.querySelector('.date').textContent = dataObject["objectDate"];
+    
+    let image = clone.querySelector("img");
+    image.src = dataObject["primaryImageSmall"];
+
+    let anchor = clone.querySelector("a");
+    anchor.href = "./config.html?objectID=" + dataObject["objectID"];
+
+    gallery.appendChild(clone);
+}
+import * as Model from './models.js';
+
+export 
+
+export 
+
+export 
+
+export 
+
+export function showCartNumber() {
+    const cart = Model.retrieveCart();
+    const cartNum = cart.items.length;
+    const cartLink = document.getElementById("cart-link");
+    if(cartNum <= 0) {
+        cartLink.innerText = "Cart";
+    }
+    console.log(cart.items.length);
+
+    
+}
+
+
+export 

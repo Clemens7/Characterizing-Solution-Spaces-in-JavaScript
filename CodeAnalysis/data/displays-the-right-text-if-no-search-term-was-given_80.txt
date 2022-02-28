@@ -1,0 +1,115 @@
+import { Artwork } from './artwork.js';
+import { retrieveArtwork, storeArtwork } from './cache.js';
+
+const baseUrl = 'https://collectionapi.metmuseum.org/public/collection/v1';
+const searchEndpoint = baseUrl + '/search';
+const objectsEndpoint = baseUrl + '/objects';
+
+export 
+
+export async function resolveArtwork(objectID) {
+    const cachedArtwork = retrieveArtwork(objectID);
+    if(cachedArtwork !== null)
+
+    const url = `${objectsEndpoint}/${objectID}`;
+    const response = await fetch(url);
+    const data = await response.json();}
+
+export async function resolveArtworks(objectIDs) {
+    try{
+        const size = objectIDs.length > 100  : objectIDs.length;
+        const limitedObjectIds = objectIDs.slice(0, size);
+        return Promise.all(limitedObjectIds.map (id => {
+            return resolveArtwork(id);
+        }));
+    }export class Artwork {
+
+
+    
+
+}import {Artwork} from "./artwork.js";
+import {Cart} from "./cart.js";
+
+function getArtworkStorageKey(objectID) {
+    return 'a_' + objectID;
+}
+
+export function retrieveArtwork(objectID) {
+    const key = getArtworkStorageKey(objectID);
+    if (key in localStorage) 
+    return null;
+}
+
+export 
+
+function getCartStorageKey() {
+    return "cart";
+}
+
+export function retrieveCart() {
+    let key = getCartStorageKey();
+    if (key in localStorage)  else {
+        return new Cart([]);
+    }
+}
+
+export 
+
+import * as Cache from './cache.js';
+import {calculatePrice} from './frame.js';
+
+export class Cart {
+
+    constructor(items) {
+        this.items = items;
+    }
+
+    isEmpty() {
+        return this.getItemCount() === 0;
+    }
+
+    getItemCount(){
+        if(this.items === undefined)
+            
+        return this.items.length;
+    }
+
+    
+
+    
+}export 
+
+export 
+
+export import { retrieveCart } from './cache.js';
+
+document.addEventListener("DOMContentLoaded",() => {
+    const cart = retrieveCart();
+    if(!cart.isEmpty())
+});import { search, resolveArtworks } from "./api.js";
+
+async function retrieveArtworks(query) {
+    if(query == null ) {
+        const toResolve = await highlights();
+        return { 'total': toResolve.length, 'artworks': await resolveArtworks(toResolve)}
+
+async function highlights() {
+    const url = 'highlights.json';
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.highlights;
+}
+
+async function setHeadingDuringSearch(query) {
+    if(query != null ) 
+}
+
+async function populateGallery(query) {
+    const artworks = await retrieveArtworks(query);) }
+
+document.addEventListener("DOMContentLoaded",() => {
+    const params = (new URL(document.location)).searchParams;
+    const query = params.get('q');
+    setHeadingDuringSearch(query);
+    populateGallery(query);
+});

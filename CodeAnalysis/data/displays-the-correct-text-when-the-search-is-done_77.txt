@@ -1,0 +1,127 @@
+/*
+store Artworks in Cart
+
+export const CART = {
+    KEY: 'cart',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(CART.KEY);
+        if (_contents) 
+    },
+    ,
+    ,
+    ,
+    isEmpty() {
+        if (CART.contents.length == 0) {
+            return true;
+        }
+    },
+    
+};
+
+/*
+Cache responses from the Met API's Object endpoint
+export const localPictures = {
+    KEY: 'pictures',
+    contents: [],
+    init() {
+        let _contents = localStorage.getItem(localPictures.KEY);
+        if (_contents) {
+            localPictures.contents = JSON.parse(_contents);
+        }
+    },
+    ,
+    ,
+
+    ,
+
+    ,
+};
+import { CART } from './artmart-cache.js';
+
+CART.init();
+
+export function setCartCount() {
+    if (CART.isEmpty()) {
+        document.getElementById('cart-link').innerText = 'Cart';
+    }
+}export class Picture {
+    
+}
+
+export class Artwork {
+    
+}
+export 
+
+export 
+
+export 
+import { Picture } from './datastructures.js';
+
+export 
+
+
+
+export function api_url_search(parameter) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${parameter}`;
+    return API_URL;
+}
+import { Picture } from './datastructures.js';
+import * as DOM from './dom-helper.js';
+
+export class ResultDocumentContainer {
+    constructor(containerID = 'gallery') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+}
+    import { Picture } from './datastructures.js';
+    import { ResultDocumentContainer } from './search-result-dom.js';
+    import * as SearchAPI from './search-api.js';
+    import { localPictures } from './artmart-cache.js ';
+    import { setCartCount } from './cart-number.js';
+
+    localPictures.init();
+
+    async function pictureSearch(parameter) {
+        const resultContainer = new ResultDocumentContainer();
+        const searchTitle = document.getElementById('search-info');
+        resultContainer.clear();
+
+        searchTitle.innerHTML = `Searching for “${parameter}”...`;
+
+        const url = SearchAPI.api_url_search(parameter);
+        let pictures = [];
+        try {
+            const response = await fetch(url);
+            const rawData = await response.json();
+            const responsePicturesIDs = await rawData.objectIDs;
+
+            if (!responsePicturesIDs) {
+                searchTitle.innerHTML = `Found 0 artworks for “${parameter}”`;
+                return;
+            }; i++) }
+
+    
+
+
+    document.addEventListener('DOMContentLoaded', event => {
+        const param = (new URL(document.location)).searchParams;
+        const searchQuery = param.get('q');
+
+        setCartCount();
+
+        if (!searchQuery) 
+        document.getElementById('search').value = searchQuery;
+        pictureSearch(searchQuery);
+    })
+
+    const form = document.querySelector('.search-form');
+    form.addEventListener('submit', 

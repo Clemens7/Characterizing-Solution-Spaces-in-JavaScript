@@ -1,0 +1,1 @@
+recalculateShipping(this.value)

@@ -1,0 +1,195 @@
+
+    import * as CheckoutUtil from './checkout.js'; 
+    import * as Models from './models.js';
+    
+    
+
+    document.addEventListener('DOMContentLoaded', event => {
+      let currentDestinationIndex = 0;
+      let cart = Models.retrieveCart();
+      console.log(cart);
+      let subtotal = CheckoutUtil.getSubtotal(cart.items);
+      CheckoutUtil.setSubtotal(subtotal);
+
+      if (CheckoutUtil.isCartEmpty())
+    
+      const selection = document.querySelector('#country');
+      selection.addEventListener('change', event => {
+          currentDestinationIndex = selection.selectedIndex;
+          displayCheckout(currentDestinationIndex)
+      });
+
+      CheckoutUtil.addSelectionDestinations();
+
+      displayCheckout(currentDestinationIndex);
+
+      async function displayCheckout(currentDestinationIndex){
+        const destinations = await CheckoutUtil.retrieveDestinations(); 
+        let currentDestination = destinations[currentDestinationIndex];
+        let shippingCosts = 0;
+        let total = 0;
+
+        shippingCosts = currentDestination.cost / 100;
+        total = shippingCosts + subtotal;
+        shippingCosts = shippingCosts.toFixed(2);
+        total = total.toFixed(2);
+
+        CheckoutUtil.setFinalPrices(shippingCosts, total);
+        console.log(document.getElementById('price-shipping'));  
+      }
+      });
+  import * as Model from './models.js'
+import * as FrameUtil from './frame.js'
+
+export async function setSubtotal(subtotal) {
+    const subtotalContainer = new SpanDocumentContainer('price-subtotal');
+    subtotalContainer.addPrice(subtotal);
+}
+
+export function setFinalPrices(shippingCosts, total) {
+    const shippingContainer = new SpanDocumentContainer('price-shipping');
+    shippingContainer.addPrice(shippingCosts);
+
+    const totalContainer = new SpanDocumentContainer('price-total');
+    totalContainer.addPrice(total);
+}
+
+export function getSubtotal(items){
+    let subtotal= 0;
+    for (let item of items){
+        subtotal += FrameUtil.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    return subtotal;
+}
+
+export async function addSelectionDestinations() {
+    const destinations = await retrieveDestinations();
+    
+    const countryContainer = new SelectionDocumentContainer('country');
+    countryContainer.addDestinations(destinations);
+}
+
+class SelectionDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    addDestinations(destinations) {
+        for (let destination of destinations) {
+            this.container.innerHTML +=
+                `<option value="${destination.country}">${destination.displayName}</option> `;
+            }
+    }
+}
+
+class SpanDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+    
+    addPrice(price) {
+        console.log(price);
+        this.container.innerText = price;
+    }
+
+    
+}
+
+export async function retrieveDestinations() {
+    const url = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const responseDestinations = await rawData.destinations;
+        console.log(responseDestinations);
+        const destinations =  responseDestinations.map(
+            destination => new Model.Destination(destination.country,
+                                        destination.displayName,
+                                        destination.cost)
+        );
+        return destinations;
+    }}
+
+export function isCartEmpty() {
+    const cart = Model.retrieveCart();
+    if (cart.items.length === 0)
+}
+
+export export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0;
+    /*
+
+    Implement a function in frame.js to calculate the price of a particular frame configuration. 
+    For small prints, each frame has a base cost of 30€, 
+        plus the wood cost per centimeter of width: 1€ per centimeter for a classic frame, 
+        80¢ for a natural frame, 
+        90¢ for a shabby frame and 
+        85¢ for an elegant frame. 
+        One centimeter of mat costs 5¢. 
+        Medium prints are twice the price of small prints and large prints are three-and-a-half times the price.
+    frameWidth /= 10;
+    matWidth /= 10;
+
+    switch (frameStyle) {
+        case 'classic':
+            price += frameWidth * 1.0
+            break;
+        case 'natural':
+            price += frameWidth * 0.8;
+            break;
+        
+        
+    }
+
+    price += matWidth * 0.05;
+
+
+    switch (printSize) {
+        
+        case 'M':
+            price *= 2;
+            break;
+        case 'L':
+            price *= 3.5;
+            break;
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+export class Cart {
+    constructor(items) {
+        this.items = items;
+    }
+
+    
+
+    
+}
+
+export class Item {
+    
+}
+
+export class Destination {
+    constructor(country, displayName, cost) {
+        this.country = country;
+        this.displayName = displayName;
+        this.cost = cost;
+    }
+}
+
+/* Only store the array to comply with tests */
+export function retrieveCart(){
+    const cachedItems = window.localStorage.getItem('cart');
+    if (cachedItems != null) {
+        return new Cart(JSON.parse(cachedItems));
+    }
+
+}
+
+export 

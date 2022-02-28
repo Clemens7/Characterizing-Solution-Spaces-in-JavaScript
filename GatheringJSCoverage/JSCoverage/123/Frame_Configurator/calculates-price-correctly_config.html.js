@@ -1,0 +1,1 @@
+minMaxMatWidth(this.value, 0, 10)

@@ -1,0 +1,146 @@
+export function read(objectID) {
+    const key = objectID;
+    if(key in localStorage) 
+}
+
+export function write(objectID, artwork) {
+    const key = objectID;
+    console.log(`Writing ${key} to local storage`);
+    localStorage[key] = JSON.stringify(artwork);
+}export class Artwork {
+    constructor(objectID, artistDisplayName, title, objectDate, primaryImageSmall) {
+        this.objectID = objectID;
+        this.artistDisplayName = artistDisplayName;
+        this.title = title;
+        this.objectDate = objectDate;
+        this.primaryImageSmall = primaryImageSmall;
+    }
+}import { Artwork } from './artwork.js';
+import * as ArtworkCache from './artwork-cache.js';
+
+export async function getArtwork(objectID) {
+    let artwork = ArtworkCache.read(objectID);
+    if(artwork) 
+
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+    try {
+        const response = await fetch(url);
+        if(response.status !== 200) 
+
+        const object = await response.json();
+
+        let artwork = new Artwork(
+            object.objectID,
+            object.artistDisplayName,
+            object.title,
+            object.objectDate,
+            object.primaryImageSmall);
+
+        ArtworkCache.write(objectID, artwork);
+        return artwork;
+    }
+    let storage = localStorage.getItem("cart");
+    if(storage == null){
+  
+    }
+  
+  import { getArtwork } from './met-api.js';
+const baseURI = 'https://collectionapi.metmuseum.org';
+const form = document.querySelector('.search-form');
+
+let urlParams = new URLSearchParams(window.location.search);
+let q = urlParams.get('q');
+
+window.onload= () => {
+    cartSize();
+
+    if(q != null) {
+        getSearchData(q).then( data => {
+            processSearchData(data);
+            getObjectsData(data);
+        })
+    }
+
+
+    
+}
+
+
+
+form.addEventListener('submit', )
+
+function processSearchData(data) {
+    if(data.total == 1)  else {
+        document.getElementById('search-info').innerHTML = "Found " + data.total + " artworks for “" + q +  "”";
+    }
+}
+
+async function getSearchData(params) {
+    document.getElementById('search-info').innerHTML = "Searching for “" + params + "”..."
+    let response = await fetch(baseURI + '/public/collection/v1/search?hasImages=true&q=' + params);
+    return await response.json();
+}
+
+function getObjectsData(data) {
+    let objectIds = data.objectIDs.slice(0,100);
+    let promises = objectIds.map(x => getArtwork(x));
+    Promise.all(promises).then(x => displayResults(x))
+}
+
+function displayResults(data) {
+    let container = document.getElementById('gallery');
+    container.innerHTML = "";
+    data.map(element => {
+        container.appendChild(createResultElement(element));
+    });
+}
+
+function createResultElement(element) {
+
+    console.log(element)
+
+    let thumb = document.createElement('div');
+    thumb.className = "thumb";
+
+    let a = document.createElement('a');
+    
+    console.log(element.objectID);
+    a.id = "object-" + element.objectID;
+
+    let img = document.createElement('img');
+    
+    img.id = "object-image-" +  element.objectID;
+    img.src = element.primaryImageSmall;
+    img.alt = "";
+
+    let label = document.createElement('div');
+    label.className = "museum-label";
+
+    let artist = document.createElement('span');
+    artist.className = "artist";
+    artist.innerHTML = element.artistDisplayName;
+
+    let title = document.createElement('span');
+    title.className = "title";
+    title.innerHTML = element.title;
+
+    let date = document.createElement('span');
+    date.className = date;
+    date.innerHTML = ", " + element.objectDate;
+
+    a.appendChild(img);
+
+    label.appendChild(artist);
+    label.appendChild(title);
+    label.appendChild(date);
+
+    a.appendChild(label);
+    a.href = "http://localhost:3333/config.html?objectID=" + element.objectID;
+    thumb.appendChild(a);
+    return thumb;
+}
+
+function cartSize(){
+    let storage = localStorage.getItem("cart");
+    if(storage != null)
+}

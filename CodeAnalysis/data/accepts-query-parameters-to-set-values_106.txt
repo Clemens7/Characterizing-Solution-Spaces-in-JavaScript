@@ -1,0 +1,326 @@
+import {calculatePrice, render} from './frame.js';
+
+window.onload = ;
+
+export function addNumberToNav() {
+    const shoppingCart = getShoppingCartFromLocalStorage();
+    if (shoppingCart.length) 
+}
+
+export 
+
+export function getShoppingCartFromLocalStorage() {
+    const cartInLocalStorage = localStorage.getItem('cart');
+    if (cartInLocalStorage) 
+    return [];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export async function fetchObjectFromAPI(objectId) {
+    const requestURL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectId}`;
+    const response =  await fetch(requestURL);
+    return await response.json();
+}
+import { fetchObjectFromAPI } from './cart.js';
+import { calculatePrice, render, getPrintSizes } from './frame.js';
+import { addNumberToNav, addToShoppingCart } from './cart.js';
+
+document.addEventListener('DOMContentLoaded', initValues);
+
+window.onload = async function () {
+  await validatePageLoad();
+  updatePrice();
+  addNumberToNav();
+
+  this.document
+    .getElementsByName('printSize')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('printSize')[1]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('printSize')[2]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[1]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[2]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameStyle')[3]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameWidth')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('frameWidthR')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('matWidthR')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('matWidth')[0]
+    .addEventListener('change', );
+
+  this.document
+    .getElementsByName('submitButton')[0]
+    .addEventListener('click', );
+};
+
+async function validatePageLoad() {
+  var urlParams = new URLSearchParams(window.location.search);
+  const objectID = urlParams.get('objectID');
+
+  if (!objectID) 
+
+  const painting = await fetchObjectFromAPI(objectID);
+  if (painting.message) 
+  const imgElement = document.getElementById('preview-image');
+  imgElement.src = painting.primaryImageSmall;
+  const labelElement = document.getElementById('image-label');
+
+  var artist = document.createElement('span');
+  var artistStyleClass = document.createAttribute('class');
+  artistStyleClass.value = 'artist';
+  artist.setAttributeNode(artistStyleClass);
+  artist.innerText = painting.artistDisplayName;
+
+  var title = document.createElement('span');
+  var titleStyleClass = document.createAttribute('class');
+  titleStyleClass.value = 'title';
+  title.setAttributeNode(titleStyleClass);
+  title.innerText = painting.title;
+
+  var date = document.createElement('span');
+  var dateStyleClass = document.createAttribute('class');
+  dateStyleClass.value = 'date';
+  date.setAttributeNode(dateStyleClass);
+  date.innerText = painting.objectDate;
+
+  labelElement.appendChild(artist);
+  labelElement.appendChild(title);
+  labelElement.appendChild(document.createTextNode(', '));
+  labelElement.appendChild(date);
+
+  imgElement.onload = function () {
+    const sizeS = document.getElementById('print-size-s-value');
+    const sizeM = document.getElementById('print-size-m-value');
+    const sizeL = document.getElementById('print-size-l-value');
+    var sizes = getPrintSizes(imgElement);
+    sizeS.innerText = `${sizes.S[0] / 10} x ${sizes.S[1] / 10}`;
+    sizeM.innerText = `${sizes.M[0] / 10} x ${sizes.M[1] / 10}`;
+    sizeL.innerText = `${sizes.L[0] / 10} x ${sizes.L[1] / 10}`;
+    renderImg();
+  };
+}
+
+function initValues() {
+  var urlParams = new URLSearchParams(window.location.search);
+
+  let printSize = urlParams.get('printSize');
+  let frameStyle = urlParams.get('frameStyle');
+  let frameWidth = urlParams.get('frameWidth');
+  let matColor = urlParams.get('matColor');
+  let matWidth = urlParams.get('matWidth');
+
+  frameWidth = frameWidth / 10;
+  matWidth = matWidth / 10;
+
+  switch (printSize) {
+    
+
+    
+
+    default:
+      document.getElementById('print-size-m').checked = true;
+      break;
+  }
+
+  switch (frameStyle) {
+    
+
+    case 'shabby':
+      document.getElementById('frame-style-shabby').checked = true;
+      break;
+
+    
+
+    
+  }
+
+  if (!frameWidth) 
+  document.getElementsByName('frameWidth')[0].value = frameWidth;
+  document.getElementsByName('frameWidthR')[0].value = frameWidth;
+
+  switch (matColor) {
+    
+
+    
+
+    
+
+    
+
+    default:
+      document.getElementById('mat-color-mint').checked = true;
+      break;
+  }
+
+  if (!matWidth) 
+  document.getElementsByName('matWidth')[0].value = matWidth;
+  document.getElementsByName('matWidthR')[0].value = matWidth;
+}
+
+export function updatePrice() {
+  let printSize = 'S';
+
+  if (document.getElementsByName('printSize')[1].checked) printSize = 'M';
+  if (document.getElementsByName('printSize')[2].checked) 
+
+  let frameStyle = 'natural';
+
+  if (document.getElementsByName('frameStyle')[0].checked)
+    
+  if (document.getElementsByName('frameStyle')[2].checked)
+    frameStyle = 'shabby';
+  if (document.getElementsByName('frameStyle')[3].checked)
+    
+
+  const frameWidth = document.getElementsByName('frameWidth')[0].value;
+  const matWidth = document.getElementsByName('matWidth')[0].value;
+
+  let price = calculatePrice(printSize, frameStyle, frameWidth, matWidth);
+  document.getElementById('price').innerHTML = '€ ' + price.toFixed(2);
+  renderImg();
+}
+
+function renderImg() {
+  const imgElement = document.getElementById('preview-image');
+  const containerElement = document.getElementById('preview-container');
+  const printSize = document.getElementsByName('printSize')[0].value;
+  const frameStyle = document.getElementsByName('frameStyle')[0].value;
+  const frameWidth = document.getElementsByName('frameWidth')[0].value;
+  const matColor = document.getElementsByName('matColor')[0].value;
+  const matWidth = document.getElementsByName('matWidth')[0].value;
+  render(
+    imgElement,
+    containerElement,
+    printSize,
+    frameStyle,
+    frameWidth,
+    matColor,
+    matWidth
+  );
+}
+export function getPrintSizes(img) {
+  let S = [297, 297]; // A4
+  let M = [420, 420]; // A3
+  let L = [594, 594]; // A2
+
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+
+  if (h > w)  else {
+    S[1] = Math.floor((h * S[0]) / w);
+    M[1] = Math.floor((h * M[0]) / w);
+    L[1] = Math.floor((h * L[0]) / w);
+  }
+
+  return { S: S, M: M, L: L };
+}
+
+export function render(
+  img,
+  container,
+  printSize,
+  frameStyle,
+  frameWidth,
+  matColor,
+  matWidth
+) {
+  const printSizes = getPrintSizes(img);
+  const w = printSizes[printSize][0];
+  const h = printSizes[printSize][1];
+
+  let x;
+  if (w > h) {
+    x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+  } else {
+    x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+  }
+
+  const frameImageSlices = {
+    classic: 115,
+    natural: 75,
+    shabby: 120,
+    elegant: 107,
+  };
+
+  const matColors = {
+    ivory: '#fffff0',
+    mint: '#e0e6d4',
+    wine: '#50222d',
+    indigo: '#29434c',
+    coal: '#333a3d',
+  };
+
+  img.style.boxSizing = 'border-box';
+  img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+  img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+  img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+  img.style.borderImageSlice = frameImageSlices[frameStyle];
+  img.style.borderWidth = `${frameWidth * x}px`;
+  img.style.backgroundColor = matColors[matColor];
+  img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+  let price = 30.0;
+
+  switch (frameStyle) {
+    
+    
+    case 'shabby':
+      price += Number(frameWidth) * 0.9;
+      break;
+    
+  }
+
+  price += 0.05 * Number(matWidth);
+
+  switch (printSize) {
+    
+    case 'M':
+      price += price;
+      break;
+    
+  }
+
+  return Math.round(price * 100) / 100;
+}

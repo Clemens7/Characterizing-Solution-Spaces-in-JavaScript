@@ -1,0 +1,138 @@
+export 
+
+export 
+
+export 
+
+export 
+
+export function retrieveCart(){
+    if("cart" in localStorage){
+        return JSON.parse(localStorage["cart"]);
+    }
+}import { retrieveObject, storeObject } from "./artmart-cache.js";
+
+class ArtmartAPI {
+    constructor(){
+        this.metMuseumEndpoint = "https://collectionapi.metmuseum.org/public/collection/v1";
+        this.artmartEndpoint = "https://web-engineering.big.tuwien.ac.at/s20/a2";
+    }
+    
+    
+
+    
+
+    
+
+    async getShipping(){
+        try{
+            const response = await this._basicRequest(`${this.artmartEndpoint}/shipping`);
+            return response;
+        }}
+
+    async _basicRequest(url){
+            let response = await fetch(url);
+            response = await response.json();
+            return response;
+    }
+
+    
+
+}
+
+const artmartAPI = new ArtmartAPI();
+window.artmartAPI = artmartAPI;
+export default artmartAPI;
+    import {retrieveCart} from "./artmart-cache.js";
+    import artmartAPI from "./artmartAPI.js";
+    import {calculatePrice} from "./frame.js";
+  
+    var cart;
+    var shippingCost;
+    var destinations;
+    
+    document.addEventListener('DOMContentLoaded', async (event) => {
+        cart = retrieveCart();
+        if(cart===undefined || cart.length == 0 ) 
+
+        document.getElementById('pay-button').disabled = true;
+  
+        var country = document.getElementById("country");
+        country.addEventListener('change', );
+  
+        calculateTotalPrice();
+  
+        populateDestinations();
+    });
+  
+    async function populateDestinations() {
+      destinations = await artmartAPI.getShipping();
+      if(destinations===undefined || destinations.destinations.length == 0)
+      
+
+      destinations = destinations.destinations;
+      shippingCost = destinations[0].cost;
+      var country = document.getElementById("country");
+      for(var i = 0; i < destinations.length; ++i)
+      {
+        var option = document.createElement("option");
+        option.value = destinations[i].country;
+        option.text = destinations[i].displayName;
+        country.add(option);
+      }
+  
+      calculateTotalPrice();
+    }
+  
+    function calculateTotalPrice(){
+      var subtotal = 0;
+  
+      for(var i = 0; i < cart.length; ++i) {
+        const artObject = cart[i];
+        subtotal += calculatePrice(artObject.printSize, artObject.frameStyle, artObject.frameWidth, artObject.matWidth);
+      }
+  
+      document.getElementById('price-subtotal').innerText = subtotal.toFixed(2);
+      if(shippingCost === undefined || isNaN(shippingCost))
+      {
+        document.getElementById('price-shipping').innerText = '—';
+        document.getElementById('price-total').innerText = '—';
+        document.getElementById('pay-button').disabled = true;
+      } else {
+        document.getElementById('price-shipping').innerHTML = (shippingCost / 100).toFixed(2);
+        document.getElementById('price-total').innerText = (Number(subtotal) + (Number(shippingCost)/100)).toFixed(2);
+        document.getElementById('pay-button').disabled = false;
+      }
+    }
+  
+  export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30;
+
+    const framePrice = (() => {
+        switch (frameStyle){
+            case 'classic': return 0.1;
+            
+            case 'shabby': return 0.09;
+            case 'elegant': return 0.085;
+            
+        }
+    })();
+
+    price = price + frameWidth * framePrice;
+    price = price + matWidth * 0.005;
+
+    price *= (() => {
+        switch(printSize){
+            case 'S': return 1.0;
+            case 'M': return 2.0;
+            case 'L': return 3.5;
+            
+        }
+    })();
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

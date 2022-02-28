@@ -1,0 +1,156 @@
+import { ConfiguredFrameRepository } from "./repository/ConfiguredFrameRepository.js";
+const ID_CARTLINK = 'cart-link';
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCounter();
+});
+export function updateCartCounter() {
+    const configuredFrameRepository = new ConfiguredFrameRepository();
+    const cartLink = document.getElementById(ID_CARTLINK);
+    if (cartLink !== null) 
+}
+import { ConfiguredFrameRepository } from "./repository/ConfiguredFrameRepository.js";
+import { calculatePrice } from "./frame.js";
+const ARTMART_SHIPPING_API = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+const checkoutForm = document.getElementById("checkout-form");
+const contactEmail = document.getElementById("email");
+const shippingName = document.getElementById("name");
+const shippingAddress = document.getElementById("address");
+const shippingCity = document.getElementById("city");
+const shippingCountry = document.getElementById("country");
+const shippingPostalCode = document.getElementById("postalcode");
+const shippingPhone = document.getElementById("phone");
+const cardHolder = document.getElementById("cardholder");
+const cardNumber = document.getElementById("cardnumber");
+const cardExpiry = document.getElementById("cardexpiry");
+const cardCVC = document.getElementById("cardcvc");
+const priceSubtotal = document.getElementById("price-subtotal");
+const priceShipping = document.getElementById("price-shipping");
+const priceTotal = document.getElementById("price-total");
+const payButton = document.getElementById("pay-button");
+document.addEventListener('DOMContentLoaded', () => { returnToCart(); });
+document.addEventListener('DOMContentLoaded', () => { getCartSubtotal(); });
+document.addEventListener('DOMContentLoaded', () => { getShippingInformation(ARTMART_SHIPPING_API); });
+shippingCountry.addEventListener('change', event => { getShippingPrice(); });
+shippingCountry.addEventListener('change', event => { getTotalPrice(); });
+payButton.addEventListener('click', );
+export function returnToCart() {
+    let cfp = new ConfiguredFrameRepository();
+    if (cfp.getAllFrames().length === 0) 
+}
+export function getCartSubtotal() {
+    const cart = JSON.parse(window.localStorage.getItem("cart"));
+    let subtotal = 0.0;
+    for (const item of cart) {
+        subtotal += calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+    }
+    priceSubtotal.innerText = String(subtotal);
+    return subtotal;
+}
+export function getShippingInformation(API_URL) {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+        for (let i = 0; i < data.destinations.length; i++) {
+            shippingCountry.innerHTML += `<option value="${data.destinations[i]["country"]}">${data.destinations[i]["displayName"]}</option>`;
+        }
+        return data;
+    })
+        .then(data => {
+        localStorage.setItem("destinations", JSON.stringify(data));
+        return data;
+    })
+        .then(data => {
+        getShippingPrice();
+        return data;
+    })
+        .then(data => {
+        getTotalPrice();
+        return data;
+    })
+        .catch();
+}
+export function getShippingPrice() {
+    let shipping = 0.0;
+    let destinations = JSON.parse(localStorage.getItem("destinations")).destinations;
+    if (destinations !== undefined && destinations[0].hasOwnProperty("country")) {
+        for (let i = 0; i < destinations.length; i++) {
+            if (destinations[i].country === shippingCountry.value) {
+                let shipping = (destinations[i].cost / 100).toFixed(2);
+                priceShipping.innerText = String(shipping);
+                return shipping;
+            }
+        }
+}
+export function getTotalPrice() {
+    let total = 0.0;
+    total = Number(getCartSubtotal()) + Number(getShippingPrice());
+    priceTotal.innerText = String(total);
+    return total;
+}
+export 
+
+import { LocalStorageUtil } from "../util/LocalStorageUtil.js";
+import { ConfiguredFrame } from "../model/ConfiguredFrame.js";
+export class ConfiguredFrameRepository {
+    getAllFrames() {
+        let allFrames = [];
+        let allFramesFromStorage = LocalStorageUtil.retrieve(ConfiguredFrameRepository.LOCALSTORAGE_KEY);
+        if (allFramesFromStorage !== null) {
+            allFramesFromStorage = allFramesFromStorage;
+            for (const storedFrame of allFramesFromStorage) {
+                let frame = ConfiguredFrame.createFromPlainObject(storedFrame);
+                allFrames.push(frame);
+            }
+        }
+        return allFrames;
+    }
+    
+    
+    
+    
+}
+ConfiguredFrameRepository.LOCALSTORAGE_KEY = 'cart';
+export class ConfiguredFrame {
+    constructor(id, objectID, printSize, frameStyle, frameWidth, matColor, matWidth) {
+        this._id = id;
+        this._objectID = objectID;
+        this._printSize = printSize;
+        this._frameStyle = frameStyle;
+        this._frameWidth = frameWidth;
+        this._matColor = matColor;
+        this._matWidth = matWidth;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    static createFromPlainObject(frame) {
+        return new ConfiguredFrame(frame.id, frame.objectID, frame.printSize, frame.frameStyle, frame.frameWidth, frame.matColor, frame.matWidth);
+    }
+    
+    
+    
+    
+}
+export 
+export 
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 3000; // base price for small prints
+    const framePricePerCentimeter = { classic: 100, natural: 80, shabby: 90, elegant: 85 };
+    const pricePerSize = { S: 1, M: 2, L: 3.5 };
+    return (Math.round(pricePerSize[printSize] * (price + (framePricePerCentimeter[frameStyle] * (frameWidth / 10)) + (5 * (matWidth / 10)))) / 100);
+}
+export class LocalStorageUtil {
+    static retrieve(localStorageKey) {
+        if (!(localStorageKey in localStorage)) 
+        else {
+            let value = localStorage[localStorageKey];
+            return JSON.parse(value);
+        }
+    }
+    static 
+}

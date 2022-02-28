@@ -1,0 +1,243 @@
+
+  import * as Frame from './frame.js';
+
+  function updateFrame(){
+    Frame.render( img, img_container, printSize, frameStyle, frameWidth*10, matColor, matWidth*10 );
+
+    const price = document.getElementById('price');
+    const price_value =  Frame.calculatePrice(printSize, frameStyle, frameWidth*10, matWidth*10);
+    price.innerHTML = "€ " + price_value.toFixed(2);
+
+    const totalSize = document.getElementById('total-size');
+    let x = Frame.getPrintSizes(img);
+    totalSize.innerHTML = (x[printSize][0] + frameWidth*10 + matWidth*10)/10 + " x " + (x[printSize][1] + frameWidth*10 + matWidth*10)/10 + " cm";
+  }
+
+  function readDefault( key, def ) {
+    let urlParams = new URLSearchParams(window.location.search);
+    let res = urlParams.get(key);
+    if( res ) return res;
+    else      return def;
+  }
+
+  var objectID   = readDefault('objectID', 0);
+  var printSize  = readDefault('printSize','M');
+  var frameStyle = readDefault('frameStyle','natural');
+  var frameWidth = readDefault('frameWidth',40)/10;
+  var matColor   = readDefault('matColor','mint');
+  var matWidth   = readDefault('matWidth',55)/10;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    let width;
+
+    if( frameWidth )
+    {
+      width = document.querySelector('#frameWidthR');
+      width.value = minMaxRound(2,5,frameWidth);
+      width = document.querySelector('#frameWidthN');
+      width.value = minMaxRound(2,5,frameWidth);
+    }
+
+    if( matWidth )
+    {
+      width = document.querySelector('#matWidthR');
+      width.value = minMaxRound(0,10,matWidth);
+      width = document.querySelector('#matWidthN');
+      width.value = minMaxRound(0,10,matWidth);
+    }
+
+    for( let sizes of document.getElementsByName("printSize") ) {
+      if( sizes.value === printSize ) {
+        sizes.checked = true;
+      }
+    }
+
+    for( let frames of document.getElementsByName("frameStyle") ) {
+      if( frames.value === frameStyle ) {
+        frames.checked = true;
+      }
+    }
+    for( let mats of document.getElementsByName("matColor") ) {
+      if( mats.value === matColor ) {
+        mats.checked = true;
+      }
+    }
+
+    let cart_items = JSON.parse(localStorage.getItem("cart"));
+    if( cart_items ) 
+  });
+
+  var img = document.getElementById('preview-image');
+  var img_container = document.getElementById("preview-container");
+  img.onload = function() {
+    writeCorrectSize( Frame.getPrintSizes(img) );
+    updateFrame();
+  };
+
+  async function retrievePainting(objectID) {
+    if( !localStorage.getItem('ObjectID')  ) {
+      const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+      const tmp_rawData = await response.json();
+      let rawStr =
+              "{\"objectID\":\"" + tmp_rawData.objectID + "\"" +
+              ", \"primaryImageSmall\":\"" + tmp_rawData.primaryImageSmall + "\"" +
+              ", \"message\":\"" + tmp_rawData.message + "\"" +
+              ", \"artistDisplayName\":\"" + tmp_rawData.artistDisplayName + "\"" +
+              ", \"title\":\"" + tmp_rawData.title + "\"" +
+              ", \"objectDate\":\"" + tmp_rawData.objectDate + "\"}";
+
+      localStorage.setItem('rawData', rawStr);
+      localStorage.setItem('ObjectID', tmp_rawData.objectID );
+    }
+
+    console.log(JSON.parse(localStorage.getItem('rawData')));
+    return JSON.parse(localStorage.getItem('rawData'));
+  }
+
+  function writePaintingLable( painting ) {
+    let img_label = document.getElementById('image-label');
+    img_label.innerHTML = "<b>" + painting.artistDisplayName + "</b><br>" + painting.title + " " + painting.objectDate;
+  }
+
+  async function loadPainting() {
+    if( !objectID ) 
+    const painting = await retrievePainting(objectID);
+    if( painting.message === "ObjectID not found" ) 
+
+    img.src = painting.primaryImageSmall;
+    writePaintingLable( painting );
+  }
+
+  loadPainting();
+
+  function writeCorrectSize( correctSize ) {
+    var sizeElementS = document.getElementById("print-size-s-label");
+    sizeElementS.innerHTML = "Small<br>" + correctSize.S[0]/10 + " x " + correctSize.S[1]/10 + " cm";
+    var sizeElementM = document.getElementById("print-size-m-label");
+    sizeElementM.innerHTML = "Medium<br>" + correctSize.M[0]/10 + " x " + correctSize.M[1]/10 + " cm";
+    var sizeElementL = document.getElementById("print-size-l-label");
+    sizeElementL.innerHTML = "Large<br>" + correctSize.L[0]/10 + " x " + correctSize.L[1]/10 + " cm";
+  }
+
+  function minMaxRound(min,max,val){
+    if( val < min ) else if ( val > max ) else if ( (val*100)%10 ){
+      val = Math.round(val*10)/10;
+    }
+    return val;
+  }
+
+  const frameWidthR = document.querySelector('#frameWidthR');
+  const frameWidthN = document.querySelector('#frameWidthN');
+  frameWidthR.addEventListener("change",);
+  frameWidthN.addEventListener("change",);
+
+  const matWidthR = document.querySelector('#matWidthR');
+  const matWidthN = document.querySelector('#matWidthN');
+  matWidthR.addEventListener("change",);
+  matWidthN.addEventListener("change",function(){
+    matWidth = minMaxRound(0,10,matWidthN.value);
+    matWidthN.value = matWidth;
+    matWidthR.value = matWidth;
+    updateFrame();
+  });
+
+  const allPrintSizes = document.getElementsByName("printSize");
+  allPrintSizes[0].addEventListener('change', );
+  allPrintSizes[1].addEventListener('change', );
+  allPrintSizes[2].addEventListener('change', );
+
+  const allFrameStyles = document.getElementsByName("frameStyle");
+  allFrameStyles[0].addEventListener('change', );
+  allFrameStyles[1].addEventListener('change', );
+  allFrameStyles[2].addEventListener('change', );
+  allFrameStyles[3].addEventListener('change', );
+
+  const allMatColors = document.getElementsByName("matColor");
+  allMatColors[0].addEventListener('change', );
+  allMatColors[1].addEventListener('change', );
+  allMatColors[2].addEventListener('change', );
+  allMatColors[3].addEventListener('change', );
+  allMatColors[4].addEventListener('change', );
+
+  
+
+  document.getElementById("buy").addEventListener("click", );
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.0; //small printSize
+
+    switch( frameStyle ) {
+        
+        case "natural":
+            price += ( 0.8 * (frameWidth/10) );
+            break;
+        
+        
+        
+    }
+
+    price += ( 0.05 * (matWidth/10) );
+
+    switch( printSize ) {
+        case "M":
+            price *= 2;
+            break;
+        
+        
+    }
+
+    console.log(parseFloat((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2)));
+    return parseFloat((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}

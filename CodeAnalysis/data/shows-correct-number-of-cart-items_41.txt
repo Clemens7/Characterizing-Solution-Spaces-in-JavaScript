@@ -1,0 +1,375 @@
+export function loadJSON(callback) {
+    console.log("try loading highlights.json")
+    let xhr = new XMLHttpRequest();
+    xhr.overrideMimeType("application/json");
+    xhr.open("GET", "./highlights.json", true);
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        callback(xhr.responseText);
+      }
+    };
+    xhr.send(null);
+  }
+    import * as CartCache from './cartCache.js';
+    import { ItemDocumentContainer } from './met-dom.js';
+    import * as MetAPI from './metAPI.js';
+    import * as Frame from './frame.js';
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+    let itemContainer = new ItemDocumentContainer("cart");
+
+    
+
+    async function retrieveCart() {
+      const items = await CartCache.retrieveAll();
+      if (!items || items.length < 1) {
+        itemContainer.clear();
+        itemContainer.addNoItemText();
+        itemContainer.addCartCheckout(0);
+        document.getElementById("checkout-button").disabled = true;
+        return;
+      }}
+
+    document.addEventListener('DOMContentLoaded', event => {
+      retrieveCart();
+    });
+
+		cartLinkHelper.updateCartLink();
+  /*
+export function retrieveAll() {
+    console.log(`Retrieving all cart objects from local storage`);
+    const key = "cart";
+
+    if(key in localStorage) {
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+/*
+export 
+
+
+export 
+
+import * as CartCache from './cartCache.js';
+export async function updateCartLink() {
+    const items = await CartCache.retrieveAll();
+    if (!items || items.length < 1) {
+        document.getElementById("cart-link").innerText = `Cart`;
+    }
+}export class Cart {
+    
+}
+
+    import * as MetAPI from './metAPI.js';
+    import * as Frame from './frame.js';
+    import * as CartCache from './cartCache.js';
+    import { Cart } from './cart.js'
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+    async function retrieveObj(objectID){
+      let obj = await MetAPI.retrieveObj(objectID);
+      if(!obj.primaryImage) 
+      let img = document.getElementById("preview-image");
+      img.src = obj.primaryImage;
+      img.onload = () => {
+        displayPrintSizes();
+        displayPrice();
+        renderImg();
+        let form = document.getElementById("config-form");
+        form.addEventListener('change', );
+        form.addEventListener('change', );
+        form.addEventListener('change', );
+      };
+
+      document.getElementById("image-label").innerHTML =
+        `<strong>${obj.artistDisplayName}<strong><br>` +
+        `<i>${obj.title}<i>, ${obj.objectDate}`;
+    }
+
+    
+
+    document.addEventListener('DOMContentLoaded', event => {
+        const params = (new URL(document.location)).searchParams;
+        const objectID = params.get('objectID');
+        const printSize = params.get('printSize');
+        const frameStyle = params.get('frameStyle');
+        const frameWidth = params.get('frameWidth');
+        const matColor = params.get('matColor');
+        const matWidth = params.get('matWidth');
+
+        if (!objectID) 
+        retrieveObj(objectID);
+        document.getElementById("object-id").value = objectID;
+
+        let frameTxt = document.getElementById("frameWidthTxt");
+        let frameSlider = document.getElementById("frameWidthSlider");
+        frameTxt.addEventListener('change',
+          );
+        frameSlider.addEventListener('change',
+          );
+
+        let matTxt = document.getElementById("matWidthTxt");
+        let matSlider = document.getElementById("matWidthSlider");
+        matTxt.addEventListener('change',
+          );
+        matSlider.addEventListener('change',
+          );
+
+        if (printSize) 
+        if (frameStyle) 
+        if (frameWidth) 
+        if (matColor) 
+        if (matWidth) 
+
+        let form = document.getElementById("config-form");
+        form.addEventListener("submit", );
+
+        form.addEventListener('submit', );
+    });
+
+    
+
+    function displayPrice() {
+      let price = Frame.calculatePrice(
+        document.querySelector('input[name="printSize"]:checked').value,
+        document.querySelector('input[name="frameStyle"]:checked').value,
+        document.getElementById("frameWidthSlider").value,
+        document.getElementById("matWidthSlider").value);
+      document.getElementById("price").innerHTML = `€ ${price.toFixed(2)}`;
+    }
+
+    function renderImg(){
+      let img = document.getElementById("preview-image");
+      if (img == null) 
+      Frame.render(img,
+        document.getElementById("preview-container"),
+        document.querySelector('input[name="printSize"]:checked').value,
+        document.querySelector('input[name="frameStyle"]:checked').value,
+        document.getElementById("frameWidthSlider").value,
+        document.querySelector('input[name="matColor"]:checked').value,
+        document.getElementById("matWidthSlider").value);
+    }
+
+    function displayPrintSizes() {
+      let img = document.getElementById("preview-image");
+      let sizes = Frame.getPrintSizes(img);
+      let sizeLabelS = document.getElementById("print-size-s-label");
+      let sizeLabelM = document.getElementById("print-size-m-label");
+      let sizeLabelL = document.getElementById("print-size-l-label");
+      sizeLabelS.innerHTML = `Small<br>${sizes.S[0]} × ${sizes.S[1]} cm`;
+      sizeLabelM.innerHTML = `Medium<br>${sizes.M[0]} × ${sizes.M[1]} cm`;
+      sizeLabelL.innerHTML = `Large<br>${sizes.L[0]} × ${sizes.L[1]} cm`;
+
+      let printSize = document.querySelector('input[name="printSize"]:checked').value;
+      let matWidth = document.getElementById("matWidthSlider").value;
+      let frameWidth = document.getElementById("frameWidthSlider").value;
+      let width = sizes[printSize][0] + (2 * matWidth) + (2 * frameWidth);
+      let height = sizes[printSize][1] + (2 * matWidth) + (2* frameWidth);
+      document.getElementById("total-size").innerHTML = `${width} × ${height} cm`;
+    }
+
+    
+
+    
+
+    
+
+		cartLinkHelper.updateCartLink();
+  /*
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+/*
+export 
+
+/*
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+
+/*
+export function containerWithAttributes(elements, attributes, tag='div') {
+    return setAttributes(container(elements, tag), attributes);
+}
+export 
+
+export 
+
+export 
+
+import * as DOM from './dom-helpers.js';
+import * as Frame from './frame.js';
+import { retrieveObj } from './metCache.js';
+
+export class ItemDocumentContainer {
+    constructor(containerID) {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+
+    addNoItemText() {
+        this.container.appendChild(createCartItem());
+
+        function createCartItem() {
+            let container = DOM.containerWithAttributes([], {id: "noItem"}, "div");
+            container.innerText = "There are no items in your shopping cart.";
+            return container;
+        }
+    }
+
+/*
+      <div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€
+            <span id="price-0">0</span>
+          </div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>
+    
+
+    /*
+      <div class="cart-total">
+        <div class="price">Total: €
+            <span id="price-total">0</span>
+        </div>
+        <button type="button" id="checkout-button">Checkout</button>
+      </div>
+    addCartCheckout(totalPrice) {
+        this.container.appendChild(createCheckout());
+
+        function createCheckout() {
+            return DOM.containerWithAttributes([
+                createPriceElem(),
+                createButtonElem(),
+            ], {className: "cart-total"}, "div");
+        }
+
+            function createButtonElem() {
+                let container = DOM.containerWithAttributes([], {type: "button", id: "checkout-button"}, "button");
+                container.innerText = "Checkout";
+                return container;
+            }
+
+            function createPriceElem() {
+            /*
+                let container = DOM.containerWithAttributes([
+                    createPrice(totalPrice)
+                ], {className: "price"}, "div");
+                container.innerText = "Total: \u20AC";
+                return container;
+
+                function createPrice(innerText) {
+                    let container = DOM.containerWithAttributes([], {id: "price-total"}, "span");
+                    container.innerText = innerText;
+                    return container;
+                }
+                let p = document.createElement("div");
+                p.setAttribute("class", "price");
+                p.innerHTML = "Total: \u20AC ";
+
+                let t = document.createElement("span");
+                t.setAttribute("id", "price-total");
+                t.innerHTML = totalPrice.toFixed(2);
+                p.appendChild(t);
+
+                return p;
+            }
+    }
+
+
+}
+
+import { MetObject } from './met.js';
+import * as MetCache from './metCache.js';
+
+const API_OBJ_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search?q=";
+
+export 
+
+export 
+
+import { MetObject } from './met.js';
+
+export 
+
+export export class MetObject {
+    
+}
+
+		import * as MetAPI from './metAPI.js';
+		import { ItemDocumentContainer } from './met-dom.js';
+		import * as jsonHelper from './jsonHelper.js';
+		import * as cartLinkHelper from './cartLinkHelper.js';
+
+		let container = new ItemDocumentContainer("gallery");
+
+		async function loadHighlights() {
+			jsonHelper.loadJSON(data => {
+				loadObjects(JSON.parse(data).highlights);
+			});
+		}
+
+		async function loadObjects(ids) {
+			container.clear();
+			if (ids !== null) {
+				let i = 0;
+				while (i < ids.length && i < 100) {
+					addMetObjToDom(await MetAPI.retrieveObj(ids[i]));
+					i++;
+				}
+				return ids.length;
+			}}
+
+		
+
+		
+
+		async function addMetObjToDom(obj) {
+			container.addSearchitem(obj);
+		}
+
+		document.addEventListener('DOMContentLoaded', event => {
+			const params = (new URL(document.location)).searchParams;
+			const searchquery = params.get('q');
+			if (!searchquery) {
+				loadHighlights();
+			}
+		});
+
+
+		const form = document.querySelector('.search-form');
+		form.addEventListener('submit', );
+
+		cartLinkHelper.updateCartLink();
+	

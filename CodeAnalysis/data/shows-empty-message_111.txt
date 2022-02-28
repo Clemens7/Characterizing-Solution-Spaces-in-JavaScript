@@ -1,0 +1,178 @@
+export function retrieveJson(key) {
+    if (key in localStorage) 
+}
+export async function retrieveJsonAsync(key) {
+    return Promise.resolve().then(function() {
+        if (key in localStorage)  else {
+            return null;
+        }
+    })
+}
+export import * as DOM from "./dom-helpers.js"
+import * as Frame from "../frame.js"
+import * as CacheAPI from "./cache-api.js"
+import * as CONSTANTS from "./constants.js"
+import * as Cart from "./cart.js"
+import * as CartService from "./cart-service.js";
+
+export class CartItemContainer {
+    constructor(containerID = 'cart') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    addEmptyMessageToDocument() {
+        this.container.appendChild(DOM.addCSSClass(DOM.textElement("span", "There are no items in your shopping cart."), ["cart-item"]));
+        this.container.appendChild(createCheckoutDisabled())
+
+        function createCheckoutDisabled() {
+            let b = document.createElement('button');
+            b.innerHTML = "Checkout";
+            b.type = "button";
+
+            let div = DOM.container([
+                DOM.setAttributes(b, { id: "checkout-button", disabled: "true" })
+            ], 'div');
+
+            return DOM.addCSSClass(div, ["cart-total"]);
+        }
+    }
+
+    
+
+    
+}
+
+class PreviewImageDocumentElement {
+
+    
+
+    
+
+}import * as CacheApi from "./cache-api.js";
+import * as CONSTANTS from "./constants.js";
+
+export function loadCartLink() {
+    const cartLinkElement = document.getElementById('cart-link');
+    const cartData = CacheApi.retrieveJson(CONSTANTS.CACHE_CART);
+    if (cartData )  else {
+        cartLinkElement.innerText = 'Cart';
+    }
+}
+
+export import * as CacheAPI from "./cache-api.js"
+import * as CONSTANTS from "./constants.js"
+import * as Cart from "./cart-dom.js";
+import * as SearchAPI from "./search/search-api.js"
+import { loadCartLink } from "./cart-service.js";
+
+export class CartItem {
+    
+}
+
+
+async function updateCart() {
+    CacheAPI.retrieveJsonAsync(CONSTANTS.CACHE_CART).then(items => {
+        if (items)  else {
+            return { thumbs: null, items: items };
+        }
+    }).then(tmp => {
+        displayCartItem(tmp.items, tmp.thumbs);
+    })
+}
+
+export async function displayCartItem(items, thumbs) {
+    const cartItemContainer = new Cart.CartItemContainer();
+    cartItemContainer.clear();
+    if (!items ) {
+        cartItemContainer.addEmptyMessageToDocument();
+        return;
+    }}
+
+window.addEventListener("DOMContentLoaded", () => {
+    loadCartLink();
+    updateCart();
+});
+
+export const ARTWORK_OBJECT_ID = 'objectID';
+export const ARTWORK_PRINT_SIZE = 'printSize';
+export const ARTWORK_FRAME_STYLE = 'frameStyle';
+export const ARTWORK_FRAME_WIDTH = 'frameWidth';
+export const ARTWORK_MAT_COLOR = 'matColor';
+export const ARTWORK_MAT_WIDTH = 'matWidth';
+
+export const CACHE_CART = 'cart';
+export function setAttributes(element, attributes) {
+    for (let key in attributes) {
+        if (typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+export function addCSSClass(element, classes) {
+    for (let cls of classes) {
+        element.classList.add(cls);
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag = 'div') {
+    const container = document.createElement(tag);
+    for (let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}export 
+
+export 
+
+export 
+
+export 
+
+export 
+import * as MuseumCache from "../cache-api.js";
+import * as CONSTANTS from "./museum-constants.js";
+import {Thumb} from "../thumb.js";
+
+export 
+
+export 
+
+
+
+
+
+
+export const METMUESUM_API = {
+    V1: "https://collectionapi.metmuseum.org/public/collection/v1/",
+    HAS_IMAGE: "&hasImages=true"
+}
+METMUESUM_API.OBJECTS = METMUESUM_API.V1 + "objects/";
+METMUESUM_API.SEARCH = METMUESUM_API.V1 + "search";
+
+export const MAX_RESULTS = 100;
+import * as MUSEUM_API from "../museum/museum-api.js"
+
+export 
+import * as CONSTANTS from "../constants.js";
+
+export const FRAME_CONFIG_URL = "/config.html?" + CONSTANTS.ARTWORK_OBJECT_ID + "=";
+import * as CONSTANTS from "./search/search-constants.js"
+
+export class Thumb {
+    
+
+    
+}

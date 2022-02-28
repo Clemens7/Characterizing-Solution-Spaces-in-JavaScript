@@ -1,0 +1,96 @@
+
+import { Keywords } from './objectsArtwork.js';
+
+export function retrieve(keywords) {
+    const key = getStorageKey(keywords);
+    if(key in localStorage) 
+}
+
+export function store(keywords, data) {
+    const key = getStorageKey(keywords);
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(data);
+}
+
+function getStorageKey(keywords) {
+    return Keywords.serialize(keywords);
+} 
+export function writeNumberOfCartItems(obj) {
+    let cart = window.localStorage["cart"];
+	if (cart == undefined) {
+		obj.innerHTML = 'Cart'
+	}
+	return obj;
+}/*export class Artwork {
+    constructor(title, primaryImage, artistDisplayName, objectDate) {
+        this.title = title;
+        this.primaryImage = primaryImage;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}*/
+
+export var Keywords = {
+    serialize: function (words) {
+        return words.join(',');
+    },
+    parse: 
+}
+
+import { Keywords } from './objectsArtwork.js';
+import * as ArtworkCache from './artwork-cache.js';
+import { writeNumberOfCartItems } from './global.js';
+
+let searchKeywords = "";
+let defaultPage = true;
+
+var urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('q') & urlParams.get('q') != "") {
+    defaultPage = false;
+    const searchInput = urlParams.get('q');
+    searchKeywords = searchInput.split(',');
+    console.log(searchKeywords);
+    document.getElementById("search-info").innerHTML = "Searching for “" + searchKeywords + "”...";
+    searchArtwork(searchKeywords);
+}
+
+writeNumberOfCartItems(document.getElementById('cart-link'));
+
+async function searchArtwork(searchKeywords) {
+    console.log("Searched stuff are: " + searchKeywords);
+    const searchResults = await retrieve(searchKeywords); //get results (all ids)
+    const responseArtworkIDs = await searchResults.objectIDs;
+    gallery.innerHTML = '';
+    loadIds(responseArtworkIDs);
+}
+
+
+async function loadIds(data) {
+    if (data == null) {
+        document.getElementById("search-info").innerHTML = "Found 0 artworks for “" + searchKeywords + "”";
+    }
+}
+
+
+
+
+
+
+
+
+
+async function retrieve(searchKeywords) {
+    let artworks = ArtworkCache.retrieve(searchKeywords);
+    if (artworks) 
+    const url = api_url(searchKeywords);
+    try {
+      const response = await fetch(url);
+      const rawData = await response.json();
+      ArtworkCache.store(searchKeywords, rawData);
+      return rawData;
+    }}
+  
+  function api_url(searchKeywords) {
+    const urlwithkeys = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${Keywords.serialize(searchKeywords)}`
+    return urlwithkeys;
+  }

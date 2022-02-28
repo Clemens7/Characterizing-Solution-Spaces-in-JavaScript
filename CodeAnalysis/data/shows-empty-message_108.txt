@@ -1,0 +1,127 @@
+
+
+
+        import {Cart, CartItem, CartContainer} from './cart.js';
+
+        /*
+            const mockData = [
+              new CartItem(39799, 'M', 'natural', 33, 'mint', 17),
+              new CartItem(459055, 'S', 'classic', 50, '', 0)
+            ];
+
+            Cart.clear();
+            for(let data of mockData){
+              Cart.save(data);
+            }
+
+        function generateCartElements() {
+            const cartContainer = new CartContainer('cart');
+            cartContainer.clear();
+            let items = Cart.getItems();
+            for (let i = 0; i < items.length; i++) 
+        }
+
+        document.addEventListener('DOMContentLoaded', event => {
+            generateCartElements();
+            Cart.updateCartItemCounter();
+        });
+
+    import * as DOM from './dom_helper.js';
+import * as Frame from "./frame.js";
+import * as API from './metropolitan_api.js';
+
+export class Cart {
+    static key = 'cart';
+
+    static 
+
+    static updateCartItemCounter() {
+        document.getElementById("cart-link").innerText = `Cart ${Cart.numberOfItems() > 0
+            
+            : ""}`;
+    }
+
+    static 
+
+    static 
+
+    static 
+
+    static getItems() {
+        if (localStorage[this.key])  else {
+            return [];
+        }
+    }
+
+    static numberOfItems() {
+        let cartString = localStorage[this.key];
+        if (cartString)  else {
+            return 0;
+        }
+    }
+}
+
+export class CartItem {
+    
+}
+
+export class CartContainer {
+    constructor(containerID = 'cart') {
+        this.container = document.getElementById(containerID);
+        if (!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '<span id="cart-empty">There are no items in your shopping cart.</span>' +
+            '<div class="cart-total">\n' +
+            '        <div class="price">Total: € <span id="price-total">0</span></div>\n' +
+            '        <button disabled type="button" id="checkout-button">Checkout</button>\n' +
+            '      </div>';
+    }
+
+    
+
+    
+
+    
+
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+
+
+import {Painting} from "./painting.js";
+
+export 
+
+export 
+
+export 
+
+
+
+
+
+
+export class Painting {
+    
+
+    static 
+
+    static 
+}

@@ -1,0 +1,279 @@
+import { calculatePrice, render } from './frame.js'
+
+function pageLoad() {
+    storeConfiguration();
+    setCartNumber();
+    addItemsFromCart();
+    const prices = calculateItemPrices(getCartStorage());
+    setTotalCartPrice(prices);
+    addOnclickEventHandlerToCheckout();
+}
+
+function storeConfiguration() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const objectID = urlParams.get('object-id');
+    const matWidth = urlParams.get('matWidth');
+    const frameWidth = urlParams.get('frameWidth');
+    const frameStyle = urlParams.get('frameStyle');
+    const matColor = urlParams.get('matColor');
+    const printSize = urlParams.get('printSize');
+
+    window.history.replaceState(
+        {},
+        '',
+        `${window.location.pathname}${window.location.hash}`,
+    );
+    
+    if (!objectID ) return;
+}
+
+function addItemsFromCart() {
+    let cartStorage = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    let cart = JSON.parse(cartStorage);
+
+    if (cart == null || cart.length === 0) {
+        insertEmptyCartMessage();
+        disableCheckoutButton();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function insertEmptyCartMessage() {
+    let cartSection = document.getElementById('cart');
+    let cartItems = document.getElementsByClassName('cart-item');
+
+    if (cartItems.length === 1)  else {
+        for (let i = 0; i < cartItems.length; i++) 
+    }
+    cartSection.insertBefore(createEmptyCartMessageNode(), document.getElementById('cart-total'));
+}
+
+function createEmptyCartMessageNode() {
+    let cartMessage = document.createElement('div');
+    cartMessage.setAttribute('class', 'cart-item');
+
+    let messageNode = document.createElement('span');
+    messageNode.setAttribute('class', 'title');
+    messageNode.innerText = 'There are no items in your shopping cart.';
+
+    cartMessage.appendChild(messageNode);
+    return cartMessage;
+}
+
+function disableCheckoutButton() {
+    let checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.disabled = true;
+}
+
+
+
+
+
+function calculateItemPrices(cart) {
+    if (cart == null) return null;}
+
+function setTotalCartPrice(prices) {
+    let totalPrice = 0;
+    for (let id in prices) }
+
+function getCartStorage() {
+    const cartStorage = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (cartStorage == null) 
+    const cart = JSON.parse(cartStorage);
+    if (cart.length == 0) return null;}
+
+
+
+function addOnclickEventHandlerToCheckout() {
+    const checkoutButton = document.getElementById('checkout-button');
+
+    checkoutButton.addEventListener('click', );
+}
+
+
+pageLoad();import { render, getPrintSizes, calculatePrice } from './frame.js';
+
+const PRINT_SIZE_LITERAL = 'printSize';
+const FRAME_STYLE_LITERAL = 'frameStyle';
+const MAT_COLOR_LITERAL = 'matColor';
+const MAT_WIDTH_LITERAL = 'matWidth';
+const FRAME_WIDTH_LITERAL = 'frameWidth';
+
+
+
+let printSizeItems = document.getElementsByName(PRINT_SIZE_LITERAL);
+printSizeItems.forEach(e => e.addEventListener('change', ));
+let frameStyleItems = document.getElementsByName(FRAME_STYLE_LITERAL);
+frameStyleItems.forEach(e => e.addEventListener('change', ));
+let matColorItems = document.getElementsByName(MAT_COLOR_LITERAL);
+matColorItems.forEach(e => e.addEventListener('change', ));
+document.getElementById(MAT_WIDTH_LITERAL).addEventListener('change', );
+document.getElementById(`${MAT_WIDTH_LITERAL}R`).addEventListener('change', );
+document.getElementById(FRAME_WIDTH_LITERAL).addEventListener('change', );
+document.getElementById(`${FRAME_WIDTH_LITERAL}R`).addEventListener('change', );
+
+document.getElementById('preview-image').addEventListener('load', );
+const MIN_FRAME_WIDTH = 2;
+const MAX_FRAME_WIDTH = 5;
+const MIN_MAT_WIDTH = 0;
+const MAX_MAT_WIDTH = 10;
+
+async function loadArtwork() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const objectID = urlParams.get('objectID');
+    if (objectID == null) 
+
+    document.getElementById('object-id').value = objectID;
+
+    let imageContainer = document.getElementById('preview-container');
+
+    let image = document.createElement('img');
+    let imageLabel = document.createElement('div');
+    imageLabel.id = 'image-label';
+    imageLabel.classList = 'museum-label';
+    image.id = 'preview-image';
+    imageContainer.appendChild(image);
+    imageContainer.appendChild(imageLabel);
+    
+
+    const request = ;
+
+    let responseCallback = function (json) {
+        if (json['primaryImage'] === '')  else {
+            image.src = json['primaryImageSmall'];
+        }
+        imageLabel.innerHTML = `<b>${json['artistDisplayName']}</b><br><i>${json['title']},</i> ${json['objectDate']}`;
+    }
+
+    const cachedJson = localStorage.getItem(`object-${objectID}`);
+    if (cachedJson != null) {
+        let json = JSON.parse(cachedJson);
+        responseCallback(json);
+    }
+
+}
+
+function preSetConfiguratorParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const printSizeIds = {'S': 'print-size-s', 'M': 'print-size-m', 'L': 'print-size-l'};
+    const frameStyleIds = {'natural': 'frame-style-natural', 'classic': 'frame-style-classic', 'shabby': 'frame-style-shabby', 'elegant': 'frame-style-elegant'};
+    const matColorIds = {'ivory': 'mat-color-ivory', 'coal': 'mat-color-coal', 'mint': 'mat-color-mint', 'indigo': 'mat-color-indigo', 'wine': 'mat-color-wine'}
+    const printSize = urlParams.get('printSize');
+    const frameStyle = urlParams.get('frameStyle');
+    const matColor = urlParams.get('matColor');
+    let matWidth = urlParams.get('matWidth');
+    let frameWidth = urlParams.get('frameWidth');
+
+    if (printSize != null) 
+
+    if (frameStyle != null) 
+
+    if (matColor != null) 
+
+    if (frameWidth != null) 
+
+    if (matWidth != null) 
+}
+
+
+
+
+function setInputEventListeners() {
+    const frameWidth = document.getElementById('frameWidth');
+    frameWidth.addEventListener('change', );
+    frameWidth.addEventListener('input', );
+    document.getElementById('frameWidthR').addEventListener('input', );
+
+    const matWidth = document.getElementById('matWidth');
+    matWidth.addEventListener('change', );
+    matWidth.addEventListener('input', );
+    document.getElementById('matWidthR').addEventListener('input', );
+}
+
+loadArtwork();
+setInputEventListeners();
+preSetConfiguratorParameters();
+setCartNumber();
+export 
+
+export 
+
+export 
+const LOCAL_STORAGE_KEY = 'cart';
+
+function setCartNumber() {
+    let cartLink = document.getElementById('cart-link');
+    let cartStorage = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+
+    if (cartStorage != null) {
+        let cart = JSON.parse(cartStorage);
+        if (cart.length != 0)  else {
+            cartLink.innerText = `Cart`;
+        }
+    }
+}const metApiBaseURL = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+function createGalleryItem(metapiObject) {
+    let element = document.getElementById('gallery');
+    element.innerHTML += `
+        <div class="thumb">
+            <a href="config.html?objectID=${metapiObject.objectID}" id="object-${metapiObject.objectID}">
+                <img src="${metapiObject.primaryImageSmall}" alt="" id="object-image-${metapiObject.objectID}">
+                <div class="museum-label">
+                    <span class="artist">${metapiObject.artistDisplayName}</span>
+                    <span class="title">${metapiObject.title}</span>,
+                    <span class="date">${metapiObject.objectDate}</span>
+                </div>
+            </a>
+        </div>
+        `;
+}
+
+function metApiSearchForObjectID(objectID) {
+    let localStorageQuery = localStorage.getItem(`object-${objectID}`);
+
+    if (localStorageQuery == null)  else {
+        createGalleryItem(JSON.parse(localStorageQuery));
+    }
+}
+
+
+
+
+async function metApiSearchForTerm(q) {
+    let objectIDs;
+    if (searchTerm != null)  else {
+        objectIDs = fetch('./highlights.json')
+            .then(response => response.json())
+            .then(json => json.highlights);
+    }
+
+    objectIDs
+        .then(objectIDs => objectIDs.slice(0, 100))
+        .then(objectIDs => {
+            objectIDs.map(id => {
+                metApiSearchForObjectID(id);
+            })
+        })
+        .catch();
+}
+
+setCartNumber();
+let urlParams = new URLSearchParams(window.location.search);
+let searchTerm = urlParams.get('q');
+
+metApiSearchForTerm(searchTerm);

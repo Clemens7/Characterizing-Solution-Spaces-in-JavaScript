@@ -1,0 +1,160 @@
+export 
+
+export 
+
+import * as frame from './frame.js'
+import * as dom from './cart-dom.js'
+var cartItems;
+
+document.addEventListener('DOMContentLoaded', event => {
+        if(retrieveFromLocal("cart")){
+            addCart(retrieveFromLocal("cart").length)
+        }
+
+}
+)
+
+
+
+
+
+
+
+
+
+
+
+function retrieveFromLocal(){
+    const key = "cart"
+    if(key in localStorage){
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+/*function addCart(num){
+    document.getElementById("cart-link").innerHTML="Cart ("+num+")";*/
+
+function addCart(num){
+    document.getElementById("cart-link").innerHTML="Cart ("+num+")";
+
+}
+
+
+
+export 
+
+export 
+
+export 
+function createAndAppendResult(result) {
+    var container = document.getElementById('gallery');
+    console.log(container)
+    if (!container) 
+    var divNode = document.createElement("div")
+    divNode.setAttribute('class', 'thumb')
+    container.appendChild(divNode)
+    divNode.setAttribute('class', 'thumb')
+    var aNode = document.createElement("a");
+    aNode.setAttribute('id', 'object-' + result.objectID);
+    divNode.appendChild(aNode);
+    var imgNode = document.createElement("img");
+    imgNode.setAttribute('src', result.primaryImageSmall);
+    imgNode.setAttribute('id', 'object-img-' + result.objectID);
+    var linkNode = document.createElement("a");
+    linkNode.setAttribute("href", 'config.html?object-id=' + result.objectID);
+    linkNode.appendChild(imgNode);
+    aNode.appendChild(linkNode);
+    var innerDivNode = document.createElement("div");
+    innerDivNode.setAttribute('class', 'museum-label');
+    aNode.appendChild(innerDivNode);
+    var span_1 = document.createElement("span");
+    span_1.className = "artist";
+    span_1.innerHTML = result.artistDisplayName;
+    innerDivNode.appendChild(span_1)
+    var span_2 = document.createElement("span");
+    span_2.className = "title";
+    span_2.innerHTML = result.title + ', ';
+    innerDivNode.appendChild(span_2)
+    var span_3 = document.createElement("span");
+    span_3.className = "date";
+    span_3.innerHTML = result.objectDate;
+    innerDivNode.appendChild(span_3)
+
+
+}
+
+
+
+
+
+function addCart(num){
+    document.getElementById("cart-link").innerHTML="Cart ("+num+")";
+
+}
+document.addEventListener('DOMContentLoaded', event => {
+    if(retrieveFromLocal("cart")){
+        addCart(retrieveFromLocal("cart").length)
+    }
+    const params = (new URL(document.location)).searchParams;
+    const termQuery = params.get('q');
+    if (!termQuery) {
+      retrieveHighlights();
+        return;
+    }});
+
+const form = document.querySelector('form');
+console.log(form)
+form.addEventListener('submit', );
+
+async function retrieveHighlights(){
+    var req=new XMLHttpRequest();
+    req.open("GET",'/highlights.json',true);
+    req.send();
+    req.onload=function(){
+        json=JSON.parse(req.responseText);
+    retrieveDetails(null,json.highlights)
+    }
+      
+}
+
+
+
+function retrieveDetails(term,ids){
+    var objects = [];
+    const promises = ids.map(word => new Promise(resolve => {
+        var url_obj = api_url_object(word);
+        fetch(url_obj).then(response => response.json())
+            .then(result => {
+                createAndAppendResult(result)
+                resolve(result)})
+
+
+    }));
+
+    Promise.all(promises).then(results => {
+        objects = results
+        console.log(objects)
+        if(term) 
+            if(term)
+
+
+    })
+}
+
+
+
+function api_url_object(term) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${term}`;
+    return (API_URL);
+}
+
+
+
+function retrieveFromLocal(key){
+    if(key in localStorage){
+        return JSON.parse(localStorage[key]);
+    }
+}
+
+
+

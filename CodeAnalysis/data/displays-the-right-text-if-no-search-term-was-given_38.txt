@@ -1,0 +1,47 @@
+
+export async function requestById(id){
+    let artObject;
+    await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+        .then(response => response.json())
+        .then()
+        .catch();}
+
+
+export 
+    document.getElementById("cart-link").innerHTML = "Cart (" + JSON.parse(localStorage.getItem('cart')).length  +")";
+  import { requestById } from './museumAPI.js';
+import { search } from './museumAPI.js';
+
+document.addEventListener('DOMContentLoaded', async event => {
+    let params = (new URL(document.location)).searchParams;
+    let query = params.get("q");
+    var searchInfo = document.getElementById("search-info");
+
+    if (query != null) 
+    else {
+        let response = await fetch('./highlights.json');
+
+        if (response.ok) {
+            let json = await response.json();
+            displayImages(json.highlights);
+        }
+    }
+});
+
+function displayImages(images) {
+    images.forEach(id => {
+        var cached = cacheLoad(id);
+        if (cached) 
+        else {
+            requestById(id).then(())
+        }
+    });
+}
+
+
+
+
+
+function cacheLoad(key) {
+    if (key in localStorage) 
+}

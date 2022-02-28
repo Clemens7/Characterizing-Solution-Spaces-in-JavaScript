@@ -1,0 +1,69 @@
+export class CartItem {
+    
+
+    
+
+    
+}
+import {calculatePrice} from "./frame.js";
+import {render} from "./frame.js";
+import {CartItem} from "./cartItem.js";
+let items = [];
+if (localStorage.getItem("cart") !== undefined && localStorage.getItem("cart") !== null) 
+if (items.length === 0) {
+    document.getElementById("cart-link").innerHTML = "Cart";
+}
+checkEmpty();
+buildCart();
+let elements = document.getElementsByClassName("cart-remove");
+Array.prototype.forEach.call(elements, )
+let images = document.getElementsByClassName("cart-thumb");
+Array.prototype.forEach.call(images, )
+
+
+
+function setSum() {
+    let sum = 0;
+    items.forEach();
+    document.getElementById('price-total').innerHTML = sum.toFixed(2);
+}
+
+function buildCart() {
+    let template = "";
+    items.forEach();
+    setSum();
+    document.getElementById('cart').insertAdjacentHTML('afterbegin', template);
+    loadInfo(template);
+}
+
+function loadInfo(template) {
+    items.forEach();
+}
+
+
+function checkEmpty() {
+    if (items.length === 0) {
+        let button = document.getElementById("checkout-button");
+        button.disabled = true;
+        document.getElementsByTagName('main')[0].insertAdjacentHTML('afterbegin', "<p>There are no items in your shopping cart.</p>");
+
+    }
+}
+
+
+export 
+
+export 
+
+const frameSizeCosts = {
+    S: 1,
+    M: 2,
+    L: 3.5
+};
+const frameStyleCosts = {
+    classic: 1,
+    natural: 0.8,
+    shabby: 0.9,
+    elegant: 0.85
+};
+export 

@@ -1,0 +1,555 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    
+    
+    
+    
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    
+    
+    
+    
+    
+    
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null  ? "[]" ;
+        var cart = JSON.parse(json);
+        for (let item of cart) 
+    }
+}
+import { FrameStyle, MatColor, PrintSize, getPrintSizes, calculatePrice, render } from "./frame.js";
+import { CartItem } from "./cart-service.js";
+var QueryParamTypes;
+(function (QueryParamTypes) {
+    QueryParamTypes[QueryParamTypes["objectID"] = 0] = "objectID";
+    QueryParamTypes[QueryParamTypes["printSize"] = 1] = "printSize";
+    QueryParamTypes[QueryParamTypes["frameStyle"] = 2] = "frameStyle";
+    QueryParamTypes[QueryParamTypes["frameWidth"] = 3] = "frameWidth";
+    QueryParamTypes[QueryParamTypes["matColor"] = 4] = "matColor";
+    QueryParamTypes[QueryParamTypes["matWidth"] = 5] = "matWidth";
+})(QueryParamTypes || (QueryParamTypes = {}));
+export var Site;
+(function (Site) {
+    Site["cart"] = "cart.html";
+    Site["search"] = "search.html";
+    Site["config"] = "config.html";
+    Site["checkout"] = "checkout.html";
+})(Site || (Site = {}));
+class RangeTextRadioConfig {
+    constructor(rangeSlider, numberInput, radioInputs) {
+        this._rangeSlider = null;
+        this._numberInput = null;
+        this._radioInputs = null;
+        this._rangeSlider = rangeSlider;
+        this._numberInput = numberInput;
+        this._radioInputs = radioInputs;
+        this.addEventHandler();
+    }
+    
+    
+    get width() {
+        return this._numberInput.value;
+    }
+    set width(value) {
+        if (isNaN(Number(value)))
+            
+        this.setValueWithinElementBoundaries(this._rangeSlider, value);
+        this.setValueWithinElementBoundaries(this._numberInput, value);
+    }
+    set radioInputs(value) {
+        for (let radioInput of this._radioInputs) {
+            if (radioInput.id.includes(value)) {
+                radioInput.setAttribute("checked", "checked");
+            }
+            else {
+                radioInput.removeAttribute("checked");
+            }
+        }
+    }
+    get selectedRadioInput() {
+        let selectedRadioInput = null;
+        for (let radioInput of this._radioInputs) {
+            if (radioInput.checked) {
+                selectedRadioInput = radioInput;
+            }
+        }
+        return selectedRadioInput;
+    }
+    setValueWithinElementBoundaries(element, value) {
+        let min = Number(element.min);
+        let max = Number(element.max);
+        let changedValue = Number(value) / 10;
+        if (min <= changedValue && changedValue <= max) {
+            element.value = changedValue.toString();
+        }
+    }
+    addEventHandler() {
+        this._rangeSlider.oninput = ;
+        this._numberInput.onchange = ;
+        for (let radioInput of this._radioInputs) {
+            radioInput.onchange = ;
+        }
+    }
+    
+}
+export class FrameConfig extends RangeTextRadioConfig {
+    constructor() {
+        let rangeSlider = document.querySelector("#config-form > fieldset:nth-child(3) > input[type=range]");
+        let numberInput = document.querySelector("#config-form > fieldset:nth-child(3) > div > div > input[type=number]");
+        let frameStyleDiv = document.getElementsByClassName("frame-style-row")[0];
+        let frameStyleInputs = frameStyleDiv.getElementsByTagName("input");
+        super(rangeSlider, numberInput, frameStyleInputs);
+    }
+    set style(style) {
+        if (!(style in FrameStyle))
+            
+        super.radioInputs = style;
+    }
+    get selectedStyle() {
+        let selectedInput = super.selectedRadioInput;
+        if (selectedInput == null) 
+        else {
+            return FrameStyle[selectedInput.value];
+        }
+    }
+}
+export class MatConfig extends RangeTextRadioConfig {
+    constructor() {
+        let rangeSlider = document.querySelector("#config-form > fieldset:nth-child(5) > input[type=range]");
+        let numberInput = document.querySelector("#config-form > fieldset:nth-child(5) > div > div > input[type=number]");
+        let matColorDiv = document.getElementsByClassName("mat-color-row")[0];
+        let matColorInputs = matColorDiv.getElementsByTagName("input");
+        super(rangeSlider, numberInput, matColorInputs);
+    }
+    set color(color) {
+        if (!(color in MatColor))
+            
+        super.radioInputs = color;
+    }
+    get selectedColor() {
+        let selectedInput = super.selectedRadioInput;
+        if (selectedInput == null) 
+        else {
+            return MatColor[selectedInput.value];
+        }
+    }
+}
+export class PrintSizeConfig {
+    constructor() {
+        this._printSizeInputs = null;
+        let printSizeDiv = document.getElementsByClassName("segmented")[0];
+        this._printSizeInputs = printSizeDiv.getElementsByTagName("input");
+        this.addEventListeners();
+    }
+    
+    get selectedPrintSizeInput() {
+        let selectedPrintSizeInput = null;
+        for (let printSizeInput of this._printSizeInputs) {
+            if (printSizeInput.checked)
+                selectedPrintSizeInput = printSizeInput;
+        }
+        return selectedPrintSizeInput;
+    }
+    get selectedPrintSize() {
+        let selectedPrintSizeInput = this.selectedPrintSizeInput;
+        if (selectedPrintSizeInput == null) 
+        else {
+            return PrintSize[selectedPrintSizeInput.value];
+        }
+    }
+    set printSize(printSize) {
+        if (!(printSize.toUpperCase() in PrintSize))
+            
+        for (let printSizeInput of this._printSizeInputs) {
+            let idToBeSet = "print-size-" + printSize.toLocaleLowerCase();
+            if (printSizeInput.id == idToBeSet) {
+                printSizeInput.setAttribute("checked", "checked");
+            }
+            else {
+                printSizeInput.removeAttribute("checked");
+            }
+        }
+    }
+    static setLabelById(id, text, printsize) {
+        let printLabel = document.getElementById(id);
+        let width = printsize[0] / 10;
+        let height = printsize[1] / 10;
+        printLabel.innerHTML = `${text}<br>${width} x ${height} cm`;
+    }
+    addEventListeners() {
+        for (let printSizeInput of this._printSizeInputs) {
+            printSizeInput.onchange = ;
+        }
+    }
+}
+export class PreviewImage {
+    constructor() {
+        this._image = null;
+        this._container = null;
+        this._image = document.getElementById("preview-image");
+        this._image.addEventListener("load", this.imageLoadedHandler);
+        this._container = document.getElementById("preview-container");
+    }
+    get image() {
+        return this._image;
+    }
+    get container() {
+        return this._container;
+    }
+    set src(src) {
+        this._image.src = src;
+    }
+    set alt(alt) {
+        this._image.alt = alt;
+    }
+    imageLoadedHandler() {
+        if (this.src == "" || this.src == "null" || this.src == null)
+            
+        let printsizes = getPrintSizes(this);
+        PrintSizeConfig.setLabelById("print-size-s-label", "Small", printsizes.S);
+        PrintSizeConfig.setLabelById("print-size-m-label", "Medium", printsizes.M);
+        PrintSizeConfig.setLabelById("print-size-l-label", "Large", printsizes.L);
+        Updater.update();
+    }
+    setMuseumLabel(title, artist, date) {
+        let imageLabel = document.getElementById("image-label");
+        let artistSpan = document.createElement("span");
+        artistSpan.innerHTML = artist.bold();
+        artistSpan.appendChild(document.createElement("br"));
+        let titleSpan = document.createElement("span");
+        titleSpan.innerHTML = title.italics();
+        titleSpan.innerHTML += ", ca. " + date;
+        imageLabel.appendChild(artistSpan);
+        imageLabel.appendChild(titleSpan);
+    }
+}
+export class QueryParams {
+    constructor() {
+        this._urlSearchParams = new URLSearchParams(window.location.search);
+        this._queryParams = {};
+        this.setParams();
+    }
+    setParams() {
+        for (let key in QueryParamTypes) {
+            if (this._urlSearchParams.has(key)) {
+                this._queryParams[key] = this._urlSearchParams.get(key);
+            }
+        }
+    }
+    getQueryParam(key) {
+        if (key in this._queryParams) {
+            return this._queryParams[key];
+        }
+    }
+    setHTMLElements(frameConfig, matConfig, printSizeConfig, addToCartButton) {
+        for (let key in this._queryParams) {
+            let value = this._queryParams[key];
+            switch (key) {
+                case "frameStyle":
+                    frameConfig.style = value;
+                    break;
+                case "matColor":
+                    matConfig.color = value;
+                    break;
+                case "printSize":
+                    printSizeConfig.printSize = value;
+                    break;
+                case "frameWidth":
+                    frameConfig.width = value;
+                    break;
+                case "matWidth":
+                    matConfig.width = value;
+                    break;
+                case "objectID":
+                    addToCartButton.objectID = value;
+                    break;
+                
+            }
+        }
+    }
+}
+export class AddToCartButton {
+    constructor() {
+        this._button = null;
+        this._button = document.querySelector("#config-form > fieldset:nth-child(7) > button");
+        this._button.addEventListener("click", this.buttonClickHandler);
+    }
+    
+    
+    set objectID(objectID) {
+        this._button.dataset["objectID"] = objectID;
+    }
+}
+export class Updater {
+    constructor(matConfig, frameConfig, printSizeConfig, previewImage, cart) {
+        Updater._matConfig = matConfig;
+        Updater._frameConfig = frameConfig;
+        Updater._printSizeConfig = printSizeConfig;
+        Updater._previewImage = previewImage;
+        Updater._priceSpan = document.getElementById("price");
+        Updater._totalSizeSpan = document.getElementById("total-size");
+        Updater._cart = cart;
+    }
+    static update() {
+        let data = this.calculateData();
+        this.updatePrice(data.price);
+        this.updateTotalSize(data.totalSize);
+        let image = Updater._previewImage.image;
+        let container = Updater._previewImage.container;
+        render(image, container, data.printSize, data.frameStyle, data.frameWidth, data.matColor, data.matWidth);
+    }
+    static calculateData() {
+        let _printSize = Updater._printSizeConfig.selectedPrintSize;
+        let _frameWidth = Number(Updater._frameConfig.width) * 10;
+        let _frameStyle = Updater._frameConfig.selectedStyle;
+        let _matWidth = Number(Updater._matConfig.width) * 10;
+        let _matColor = Updater._matConfig.selectedColor;
+        let _price = calculatePrice(_printSize, _frameStyle, _frameWidth, _matWidth).toFixed(2);
+        let printSizes = getPrintSizes(Updater._previewImage.image);
+        let selectedPrintSize = printSizes[Updater._printSizeConfig.selectedPrintSize];
+        let matAndFrameWidth = Number(Updater._matConfig.width) + Number(Updater._frameConfig.width);
+        let totalWidth = (selectedPrintSize[0] / 10 + matAndFrameWidth).toFixed(1);
+        let totalHeight = (selectedPrintSize[1] / 10 + matAndFrameWidth).toFixed(1);
+        let _totalSize = [totalWidth, totalHeight];
+        let data = {
+            printSize: _printSize,
+            frameWidth: _frameWidth,
+            frameStyle: _frameStyle,
+            matWidth: _matWidth,
+            matColor: _matColor,
+            price: _price,
+            totalSize: _totalSize
+        };
+        return data;
+    }
+    static 
+    static updatePrice(value) {
+        Updater._priceSpan.innerHTML = "€ " + value;
+    }
+    static updateTotalSize(totalSize) {
+        Updater._totalSizeSpan.innerHTML = `${totalSize[0]} x ${totalSize[1]} cm`;
+    }
+}
+Updater._matConfig = null;
+Updater._frameConfig = null;
+Updater._printSizeConfig = null;
+Updater._previewImage = null;
+Updater._priceSpan = null;
+Updater._totalSizeSpan = null;
+Updater._cart = null;
+import { QueryParams, Site, FrameConfig, MatConfig, PrintSizeConfig, PreviewImage, Updater, AddToCartButton } from "./config-service.js";
+import { getObject } from "./metropolitan-api.js";
+import { Cart } from "./cart-service.js";
+let cart = new Cart();
+let matConfig = new MatConfig();
+let frameConfig = new FrameConfig();
+let printSizeConfig = new PrintSizeConfig();
+let previewImage = new PreviewImage();
+let addToCartButton = new AddToCartButton();
+new Updater(matConfig, frameConfig, printSizeConfig, previewImage, cart);
+let queryParams = new QueryParams();
+queryParams.setHTMLElements(frameConfig, matConfig, printSizeConfig, addToCartButton);
+let objectIdQueryParam = queryParams.getQueryParam("objectID");
+if (objectIdQueryParam !== undefined) {
+    getObject(Number(objectIdQueryParam))
+        .then(object => {
+        if (object.message !== null) 
+        previewImage.src = object.image;
+        previewImage.alt = object.title;
+        previewImage.setMuseumLabel(object.title, object.artist, object.date);
+    });
+}
+
+export class Serializable {
+    fillFromJSON(jsonObj) {
+        for (var propName in jsonObj) {
+            if (this.hasOwnProperty("_" + propName)) {
+                this["_" + propName] = jsonObj[propName];
+            }
+        }
+    }
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    if (h > w) 
+    else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+    return { S: S, M: M, L: L };
+}
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle].toString();
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    frameWidth /= 10;
+    matWidth /= 10;
+    let price = 30.0;
+    switch (frameStyle) {
+        
+        
+        case FrameStyle.shabby:
+            price += frameWidth * 0.9;
+            break;
+        
+    }
+    price += matWidth * 0.05;
+    if (printSize === PrintSize.S) 
+    else if (printSize === PrintSize.M) {
+        return (Math.round((price * 2) * 100) / 100);
+    }}
+import { Cart } from "./cart-service.js";
+export function updateCartCount(cart) {
+    if (cart.size == 0) {
+        document.getElementById("cart-link").innerText = "Cart";
+    }
+}
+updateCartCount(new Cart());
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value ; }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); }  }
+        
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export function getObject(objectID) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let object = checkObject(objectID);
+        if (object) 
+        else {
+            let metropolitanResponse = yield fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+            let responseJson = yield metropolitanResponse.json();
+            var metropolitanObject = new MetropolitanObject();
+            metropolitanObject.fillFromJSON(responseJson);
+            let storage = localStorage.getItem('objects');
+            var json = storage == null || storage.length == 0  : storage;
+            var objects = JSON.parse(json);
+            objects.push(metropolitanObject);
+            localStorage.setItem('objects', (JSON.stringify(objects).split(",\"_").join(",\"")).split("{\"_").join("{\""));
+            return yield Promise.resolve(metropolitanObject);
+        }
+    });
+}
+function checkObject(objectID) {
+    let storage = localStorage.getItem('objects');
+    var json = storage == null || storage.length == 0  : storage;
+    var objects = JSON.parse(json);
+    let index = objects.findIndex(object => object.objectID == objectID);
+    if (index == -1) {
+        return undefined;
+    }
+}
+export 
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    constructor() {
+        super(...arguments);
+        this._objectID = null;
+        this._title = null;
+        this._artistDisplayName = null;
+        this._objectDate = null;
+        this._primaryImageSmall = null;
+        this._message = null;
+    }
+    
+    get title() {
+        return this._title;
+    }
+    get artist() {
+        return this._artistDisplayName;
+    }
+    get date() {
+        return this._objectDate;
+    }
+    get image() {
+        return this._primaryImageSmall;
+    }
+    get message() {
+        return this._message;
+    }
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    
+    
+    
+}

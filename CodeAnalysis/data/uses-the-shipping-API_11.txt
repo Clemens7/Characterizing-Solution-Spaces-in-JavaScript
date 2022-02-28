@@ -1,0 +1,98 @@
+import {calculatePrice} from "./frame.js";
+
+const apiURL = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+
+var tmpItem =
+    [{
+        'objectID': 742094,
+        'printSize': 'L',
+        'frameStyle': 'classic',
+        'frameWidth': 27,
+        'matColor': 'indigo',
+        'matWidth': 31
+    }, {
+        'objectID': 459055,
+        'printSize': 'L',
+        'frameStyle': 'classic',
+        'frameWidth': 27,
+        'matColor': 'indigo',
+        'matWidth': 31
+    }];
+
+if (!localStorage.getItem('cart') || localStorage.getItem('cart') == null) 
+
+const shoppingCart = JSON.parse(localStorage.getItem('cart'));
+
+let globalSubTotal = 0;
+let globalShipping = 0;
+
+calculateSubTotal();
+
+async function fetchCountries(url) {
+    try {
+        document.getElementById("pay-button").disabled = true;
+        document.getElementById('price-shipping').innerHTML = '\u2014';
+        document.getElementById('price-total').innerHTML = '\u2014';
+        let result = await fetch(url);
+        let data = await (result.json());
+        return data;
+    }}
+
+async function fillCountries() {
+    let countries = await fetchCountries(apiURL);
+    countries = countries.destinations;
+
+    let selectOptions = document.getElementById('country');
+    for (let i = 0; i < countries.length; i++) {
+        let option = document.createElement("OPTION"), txt = document.createTextNode(countries[i].displayName);
+        option.appendChild(txt);
+        option.setAttribute("value", countries[i].country);
+        option.setAttribute("id", countries[i]);
+        option.setAttribute("cost", countries[i].cost);
+        selectOptions.insertBefore(option, selectOptions.lastChild);
+    }
+
+    let shipping = document.getElementById('country').addEventListener('change', );
+}
+
+fillCountries();
+
+async function calculateSubTotal() {
+    let subtotal = 0;
+    for (let i = 0; i < shoppingCart.length; i++) {
+        subtotal += parseFloat(calculatePrice(shoppingCart[i].printSize, shoppingCart[i].frameStyle, shoppingCart[i].frameWidth, shoppingCart[i].matWidth));
+    }
+    globalSubTotal = subtotal;
+    document.getElementById('price-subtotal').innerHTML = `${subtotal.toFixed(2)}`;
+}
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+
+    price += 30;
+
+    switch (frameStyle) {
+        
+        
+        case 'shabby':
+            price += frameWidth * 0.9;
+            break;
+        
+    }
+
+    price += matWidth * 0.05;
+
+    switch (printSize) {
+        
+        
+        case 'L':
+            price *= 3.5;
+            break;
+    }
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

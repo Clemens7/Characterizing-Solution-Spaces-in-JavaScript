@@ -1,0 +1,480 @@
+import { FrameConfiguration, Serializable } from "./frame.js";
+import { getObject } from "./metropolitan-api.js";
+export class CartItem extends Serializable {
+    
+    
+    
+    
+    
+}
+export class Cart {
+    constructor() {
+        this._items = [];
+        this.loadSession();
+    }
+    get size() {
+        return this._items.length;
+    }
+    get isEmpty() {
+        return this._items.length == 0;
+    }
+    
+    
+    
+    
+    get getTotalPrice() {
+        let total = 0;
+        this._items.forEach();
+        return total;
+    }
+    loadSession() {
+        let storage = localStorage.getItem('cart');
+        var json = storage == null || storage.length == 0  : storage;
+        var cart = JSON.parse(json);
+        for (let item of cart) 
+    }
+}
+import { Cart } from "./cart-service.js";
+import { updateCartCount } from "./header.js";
+var cart = new Cart;
+initCart();
+function initCart() {
+    let cartNode = document.getElementById("cart");
+    for (var i = 0; i < cart.size; i++) 
+    document.getElementById("price-total").innerText = `${Number(cart.getTotalPrice).toFixed(2)}`;
+    updateCheckoutButton();
+}
+/*
+display the usual artwork information (title, artist, date) and a textual description of the configuration.
+
+
+function updateCheckoutButton() {
+    var checkoutbutton = document.getElementById("checkout-button");
+    if (cart.isEmpty) {
+        checkoutbutton.disabled = true;
+        generateEmptyCartText();
+    }
+}
+
+
+function generateEmptyCartText() {
+    document.getElementsByClassName("price")[0].remove();
+    let cartNode = document.getElementById("cart");
+    if (document.getElementById("empty") == undefined)
+        
+}
+import { FrameStyle, MatColor, PrintSize, getPrintSizes, calculatePrice, render } from "./frame.js";
+import { CartItem } from "./cart-service.js";
+var QueryParamTypes;
+(function (QueryParamTypes) {
+    QueryParamTypes[QueryParamTypes["objectID"] = 0] = "objectID";
+    QueryParamTypes[QueryParamTypes["printSize"] = 1] = "printSize";
+    QueryParamTypes[QueryParamTypes["frameStyle"] = 2] = "frameStyle";
+    QueryParamTypes[QueryParamTypes["frameWidth"] = 3] = "frameWidth";
+    QueryParamTypes[QueryParamTypes["matColor"] = 4] = "matColor";
+    QueryParamTypes[QueryParamTypes["matWidth"] = 5] = "matWidth";
+})(QueryParamTypes || (QueryParamTypes = {}));
+export var Site;
+(function (Site) {
+    Site["cart"] = "cart.html";
+    Site["search"] = "search.html";
+    Site["config"] = "config.html";
+    Site["checkout"] = "checkout.html";
+})(Site || (Site = {}));
+class RangeTextRadioConfig {
+    constructor(rangeSlider, numberInput, radioInputs) {
+        this._rangeSlider = null;
+        this._numberInput = null;
+        this._radioInputs = null;
+        this._rangeSlider = rangeSlider;
+        this._numberInput = numberInput;
+        this._radioInputs = radioInputs;
+        this.addEventHandler();
+    }
+    
+    
+    get width() {
+        return this._numberInput.value;
+    }
+    
+    
+    get selectedRadioInput() {
+        let selectedRadioInput = null;
+        for (let radioInput of this._radioInputs) {
+            if (radioInput.checked) {
+                selectedRadioInput = radioInput;
+            }
+        }
+        return selectedRadioInput;
+    }
+    
+    addEventHandler() {
+        this._rangeSlider.oninput = ;
+        this._numberInput.onchange = ;
+        for (let radioInput of this._radioInputs) {
+            radioInput.onchange = ;
+        }
+    }
+    
+}
+export class FrameConfig extends RangeTextRadioConfig {
+    constructor() {
+        let rangeSlider = document.querySelector("#config-form > fieldset:nth-child(3) > input[type=range]");
+        let numberInput = document.querySelector("#config-form > fieldset:nth-child(3) > div > div > input[type=number]");
+        let frameStyleDiv = document.getElementsByClassName("frame-style-row")[0];
+        let frameStyleInputs = frameStyleDiv.getElementsByTagName("input");
+        super(rangeSlider, numberInput, frameStyleInputs);
+    }
+    
+    get selectedStyle() {
+        let selectedInput = super.selectedRadioInput;
+        if (selectedInput == null) 
+        else {
+            return FrameStyle[selectedInput.value];
+        }
+    }
+}
+export class MatConfig extends RangeTextRadioConfig {
+    constructor() {
+        let rangeSlider = document.querySelector("#config-form > fieldset:nth-child(5) > input[type=range]");
+        let numberInput = document.querySelector("#config-form > fieldset:nth-child(5) > div > div > input[type=number]");
+        let matColorDiv = document.getElementsByClassName("mat-color-row")[0];
+        let matColorInputs = matColorDiv.getElementsByTagName("input");
+        super(rangeSlider, numberInput, matColorInputs);
+    }
+    
+    get selectedColor() {
+        let selectedInput = super.selectedRadioInput;
+        if (selectedInput == null) 
+        else {
+            return MatColor[selectedInput.value];
+        }
+    }
+}
+export class PrintSizeConfig {
+    constructor() {
+        this._printSizeInputs = null;
+        let printSizeDiv = document.getElementsByClassName("segmented")[0];
+        this._printSizeInputs = printSizeDiv.getElementsByTagName("input");
+        this.addEventListeners();
+    }
+    
+    get selectedPrintSizeInput() {
+        let selectedPrintSizeInput = null;
+        for (let printSizeInput of this._printSizeInputs) {
+            if (printSizeInput.checked)
+                selectedPrintSizeInput = printSizeInput;
+        }
+        return selectedPrintSizeInput;
+    }
+    get selectedPrintSize() {
+        let selectedPrintSizeInput = this.selectedPrintSizeInput;
+        if (selectedPrintSizeInput == null) 
+        else {
+            return PrintSize[selectedPrintSizeInput.value];
+        }
+    }
+    
+    static setLabelById(id, text, printsize) {
+        let printLabel = document.getElementById(id);
+        let width = printsize[0] / 10;
+        let height = printsize[1] / 10;
+        printLabel.innerHTML = `${text}<br>${width} x ${height} cm`;
+    }
+    addEventListeners() {
+        for (let printSizeInput of this._printSizeInputs) {
+            printSizeInput.onchange = ;
+        }
+    }
+}
+export class PreviewImage {
+    constructor() {
+        this._image = null;
+        this._container = null;
+        this._image = document.getElementById("preview-image");
+        this._image.addEventListener("load", this.imageLoadedHandler);
+        this._container = document.getElementById("preview-container");
+    }
+    get image() {
+        return this._image;
+    }
+    get container() {
+        return this._container;
+    }
+    set src(src) {
+        this._image.src = src;
+    }
+    set alt(alt) {
+        this._image.alt = alt;
+    }
+    imageLoadedHandler() {
+        if (this.src == "" || this.src == "null" || this.src == null)
+            
+        let printsizes = getPrintSizes(this);
+        PrintSizeConfig.setLabelById("print-size-s-label", "Small", printsizes.S);
+        PrintSizeConfig.setLabelById("print-size-m-label", "Medium", printsizes.M);
+        PrintSizeConfig.setLabelById("print-size-l-label", "Large", printsizes.L);
+        Updater.update();
+    }
+    setMuseumLabel(title, artist, date) {
+        let imageLabel = document.getElementById("image-label");
+        let artistSpan = document.createElement("span");
+        artistSpan.innerHTML = artist.bold();
+        artistSpan.appendChild(document.createElement("br"));
+        let titleSpan = document.createElement("span");
+        titleSpan.innerHTML = title.italics();
+        titleSpan.innerHTML += ", ca. " + date;
+        imageLabel.appendChild(artistSpan);
+        imageLabel.appendChild(titleSpan);
+    }
+}
+export class QueryParams {
+    constructor() {
+        this._urlSearchParams = new URLSearchParams(window.location.search);
+        this._queryParams = {};
+        this.setParams();
+    }
+    setParams() {
+        for (let key in QueryParamTypes) {
+            if (this._urlSearchParams.has(key)) {
+                this._queryParams[key] = this._urlSearchParams.get(key);
+            }
+        }
+    }
+    getQueryParam(key) {
+        if (key in this._queryParams) {
+            return this._queryParams[key];
+        }
+    }
+    setHTMLElements(frameConfig, matConfig, printSizeConfig, addToCartButton) {
+        for (let key in this._queryParams) {
+            let value = this._queryParams[key];
+            switch (key) {
+                
+                
+                
+                
+                
+                case "objectID":
+                    addToCartButton.objectID = value;
+                    break;
+                
+            }
+        }
+    }
+}
+export class AddToCartButton {
+    constructor() {
+        this._button = null;
+        this._button = document.querySelector("#config-form > fieldset:nth-child(7) > button");
+        this._button.addEventListener("click", this.buttonClickHandler);
+    }
+    
+    
+    set objectID(objectID) {
+        this._button.dataset["objectID"] = objectID;
+    }
+}
+export class Updater {
+    constructor(matConfig, frameConfig, printSizeConfig, previewImage, cart) {
+        Updater._matConfig = matConfig;
+        Updater._frameConfig = frameConfig;
+        Updater._printSizeConfig = printSizeConfig;
+        Updater._previewImage = previewImage;
+        Updater._priceSpan = document.getElementById("price");
+        Updater._totalSizeSpan = document.getElementById("total-size");
+        Updater._cart = cart;
+    }
+    static update() {
+        let data = this.calculateData();
+        this.updatePrice(data.price);
+        this.updateTotalSize(data.totalSize);
+        let image = Updater._previewImage.image;
+        let container = Updater._previewImage.container;
+        render(image, container, data.printSize, data.frameStyle, data.frameWidth, data.matColor, data.matWidth);
+    }
+    static calculateData() {
+        let _printSize = Updater._printSizeConfig.selectedPrintSize;
+        let _frameWidth = Number(Updater._frameConfig.width) * 10;
+        let _frameStyle = Updater._frameConfig.selectedStyle;
+        let _matWidth = Number(Updater._matConfig.width) * 10;
+        let _matColor = Updater._matConfig.selectedColor;
+        let _price = calculatePrice(_printSize, _frameStyle, _frameWidth, _matWidth).toFixed(2);
+        let printSizes = getPrintSizes(Updater._previewImage.image);
+        let selectedPrintSize = printSizes[Updater._printSizeConfig.selectedPrintSize];
+        let matAndFrameWidth = Number(Updater._matConfig.width) + Number(Updater._frameConfig.width);
+        let totalWidth = (selectedPrintSize[0] / 10 + matAndFrameWidth).toFixed(1);
+        let totalHeight = (selectedPrintSize[1] / 10 + matAndFrameWidth).toFixed(1);
+        let _totalSize = [totalWidth, totalHeight];
+        let data = {
+            printSize: _printSize,
+            frameWidth: _frameWidth,
+            frameStyle: _frameStyle,
+            matWidth: _matWidth,
+            matColor: _matColor,
+            price: _price,
+            totalSize: _totalSize
+        };
+        return data;
+    }
+    static 
+    static updatePrice(value) {
+        Updater._priceSpan.innerHTML = "€ " + value;
+    }
+    static updateTotalSize(totalSize) {
+        Updater._totalSizeSpan.innerHTML = `${totalSize[0]} x ${totalSize[1]} cm`;
+    }
+}
+Updater._matConfig = null;
+Updater._frameConfig = null;
+Updater._printSizeConfig = null;
+Updater._previewImage = null;
+Updater._priceSpan = null;
+Updater._totalSizeSpan = null;
+Updater._cart = null;
+import { QueryParams, Site, FrameConfig, MatConfig, PrintSizeConfig, PreviewImage, Updater, AddToCartButton } from "./config-service.js";
+import { getObject } from "./metropolitan-api.js";
+import { Cart } from "./cart-service.js";
+let cart = new Cart();
+let matConfig = new MatConfig();
+let frameConfig = new FrameConfig();
+let printSizeConfig = new PrintSizeConfig();
+let previewImage = new PreviewImage();
+let addToCartButton = new AddToCartButton();
+new Updater(matConfig, frameConfig, printSizeConfig, previewImage, cart);
+let queryParams = new QueryParams();
+queryParams.setHTMLElements(frameConfig, matConfig, printSizeConfig, addToCartButton);
+let objectIdQueryParam = queryParams.getQueryParam("objectID");
+if (objectIdQueryParam !== undefined) {
+    getObject(Number(objectIdQueryParam))
+        .then(object => {
+        if (object.message !== null) 
+        previewImage.src = object.image;
+        previewImage.alt = object.title;
+        previewImage.setMuseumLabel(object.title, object.artist, object.date);
+    });
+}
+
+export class Serializable {
+    
+}
+export var PrintSize;
+(function (PrintSize) {
+    PrintSize["S"] = "S";
+    PrintSize["M"] = "M";
+    PrintSize["L"] = "L";
+})(PrintSize || (PrintSize = {}));
+export var FrameStyle;
+(function (FrameStyle) {
+    FrameStyle["classic"] = "classic";
+    FrameStyle["natural"] = "natural";
+    FrameStyle["shabby"] = "shabby";
+    FrameStyle["elegant"] = "elegant";
+})(FrameStyle || (FrameStyle = {}));
+export var MatColor;
+(function (MatColor) {
+    MatColor["ivory"] = "ivory";
+    MatColor["mint"] = "mint";
+    MatColor["wine"] = "wine";
+    MatColor["indigo"] = "ingigo";
+    MatColor["coal"] = "coal";
+})(MatColor || (MatColor = {}));
+[];
+[];
+export class FrameConfiguration extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+export 
+export 
+export 
+import { Cart } from "./cart-service.js";
+export function updateCartCount(cart) {
+    if (cart.size == 0) {
+        document.getElementById("cart-link").innerText = "Cart";
+    }
+}
+updateCartCount(new Cart());
+var __awaiter = (this ) || ;
+import { MetropolitanObject, MetropolitanSearchResponseObject } from "./metropolitan_entities.js";
+export 
+
+export 
+import { Serializable } from "./frame.js";
+export class MetropolitanObject extends Serializable {
+    
+    
+    
+    
+    
+    
+    
+}
+export class MetropolitanSearchResponseObject extends Serializable {
+    
+    
+    
+}
+import { searchMET, getObject } from "./metropolitan-api.js";
+initSearch();
+function initSearch() {
+    let gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+    let urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("q") ) 
+    else {
+        fetch('highlights.json')
+            .then(res => res.json())
+            .then((data) => {
+            var promises = [];
+            data.highlights.forEach(id => {
+                promises.push(getObject(id));
+            });
+            Promise.all(promises).then(foundObjects => {
+                addImages(foundObjects);
+            });
+        })
+            .catch();
+    }
+}
+
+
+function addImages(objects) {
+    let gallery = document.getElementById("gallery");
+    for (let i = 0; i < objects.length; i++) {
+        let divElement = createHTMLElement("div", "thumb");
+        let linkElement = createHTMLElement("a", undefined, undefined, `object-${i}`);
+        linkElement.href = `/config.html?objectID=${objects[i].objectID}`;
+        let imgElement = createHTMLElement("img", undefined, undefined, `object-image-${i}`);
+        imgElement.src = objects[i].image;
+        imgElement.alt = objects[i].title;
+        let labelDiv = createHTMLElement("div", "museum-label");
+        let artist = createHTMLElement("span", "artist", objects[i].artist);
+        let title = createHTMLElement("span", "title", objects[i].title + ", ");
+        let date = createHTMLElement("span", "date", objects[i].date);
+        labelDiv.appendChild(artist);
+        labelDiv.appendChild(title);
+        labelDiv.appendChild(date);
+        linkElement.appendChild(imgElement);
+        linkElement.appendChild(labelDiv);
+        divElement.appendChild(linkElement);
+        gallery.appendChild(divElement);
+    }
+}
+function createHTMLElement(elementName, className, inputText, id) {
+    let element = document.createElement(elementName);
+    if (className)
+        element.className = className;
+    if (id)
+        element.id = id;
+    if (inputText && inputText != null)
+        element.innerText = inputText;
+    return element;
+}

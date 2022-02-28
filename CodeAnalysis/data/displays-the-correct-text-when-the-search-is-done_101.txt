@@ -1,0 +1,99 @@
+export 
+
+export 
+
+export 
+
+export 
+
+
+export import * as DomBuilder from './dom-builder.js';
+export class GalleryContainer {
+  
+  
+
+  
+}export class Artwork {
+  
+}
+
+export var NumberOfItems = {
+  store: ,
+  getNumber: 
+}export 
+
+export 
+
+export import * as ArtworkCache from './artwork-cache.js';
+import {
+  Artwork,
+  NumberOfItems
+} from './artwork.js';
+
+const API_SEARCH_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+const API_OBJECT_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+const HIGHLIGHTS_URL = './highlights.json';
+const SEARCH_CONDITION = 'hasImages=true';
+
+export 
+
+export 
+
+
+
+
+
+
+
+export 
+
+
+
+import {
+    Artwork,
+    NumberOfItems
+} from './helper/artwork.js';
+import * as ArtworkAPI from './helper/met-museum-api.js';
+import {
+    GalleryContainer
+} from './helper/artwork-dom.js';
+import * as ArtworkCache from './helper/artwork-cache.js';
+import * as Storage from './helper/storage.js'
+
+const form = document.querySelector('.search-form');
+form.addEventListener('submit', );
+
+document.addEventListener('DOMContentLoaded', event => {
+    const params = (new URL(document.location)).searchParams;
+    let qQuery = params.get('q');
+    document.getElementById('search').value = qQuery;
+    const searchInfo = document.getElementById('search-info');
+    if (qQuery) {
+        searchInfo.innerHTML = `Searching for “${qQuery}”...`;
+    }
+    (async function() {
+        let artworks = await artworkSearch(qQuery);
+        if (qQuery && qQuery !== 'null' )  else if (qQuery === 'null') {
+            searchInfo.innerHTML = `Found 0 artworks for “${qQuery}”`;
+        }
+    }());
+
+    updateCartItems(Storage.getCartItemCount());
+});
+
+
+
+
+async function artworkSearch(searchTerm) {
+    console.log(`Searching for ${searchTerm}`);
+    if (searchTerm === 'null') {
+        return;
+    }export 
+
+export 
+
+export 
+
+export function getCartItemCount() {    
+    return JSON.parse(window.localStorage.getItem('cart')).length;
+}

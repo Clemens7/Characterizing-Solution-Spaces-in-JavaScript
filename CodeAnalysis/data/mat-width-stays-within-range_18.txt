@@ -1,0 +1,405 @@
+export function setLabel(fetchedPicture) {
+    const imageLabel = document.getElementById('image-label');
+    const artistLabel = document.getElementById('artist-label');
+    const titleLabel = document.getElementById('title-label');
+    const dateLabel = document.getElementById('date-label');
+
+    imageLabel.appendChild(artistLabel);
+    imageLabel.appendChild(titleLabel);
+    imageLabel.appendChild(dateLabel);
+
+    artistLabel.innerText = `${fetchedPicture.artistDisplayName}`;
+    titleLabel.innerText = `${fetchedPicture.title}, `;
+    dateLabel.innerText = fetchedPicture.objectDate;
+}
+
+        import * as SearchAPI from './search.js';
+        import * as FrameAPI from './frame.js';
+        import * as ConfigAPI from './config.js';
+        import * as ConfigDomAPI from './config-dom.js';
+        import { setCartItemsInHeader } from './header-cart.js';
+
+        document.addEventListener('DOMContentLoaded', event => {
+
+            const params = (new URL(document.location)).searchParams;
+
+            setCartItemsInHeader();
+
+            try{
+                ConfigAPI.constructConfig(params);
+            } 
+
+
+            const formElement = document.getElementById('config-form');
+
+            formElement.addEventListener('submit', );
+
+        });
+
+
+
+
+
+    import * as SearchAPI from './search.js';
+import * as FrameAPI from './frame.js';
+import {retrieve, store} from './search-cache.js';
+import * as ConfigDomAPI from './config-dom.js';
+
+export async function constructConfig(params) {
+    var objectID = parseInt(params.get('objectID'));
+    var printSize = params.get('printSize');
+    var frameStyle = params.get('frameStyle');
+    var frameWidth = parseFloat(params.get('frameWidth'));
+    var matColor = params.get('matColor');
+    var matWidth = parseFloat(params.get('matWidth'));
+
+    if (!Number.isFinite(objectID)) 
+
+    const priceElement = document.getElementById('price');
+
+    const frameSliderElement = document.getElementById('frame-slider');
+    const frameTextboxElement = document.getElementById('frame-text-box');
+
+    const matSliderElement = document.getElementById('mat-slider');
+    const matTextboxElement = document.getElementById('mat-text-box');
+
+    matWidth = normalizeMatWidth(matWidth, true);
+    frameWidth = normalizeFrameWidth(frameWidth, true);
+
+    initialSetParameter(printSize, frameStyle, frameWidth, matColor, matWidth);
+
+    const previewContainerElement = document.getElementById('preview-container');
+    const previewImageElement = document.getElementById('preview-image');
+
+    const totalSizeWithFrameElement = document.getElementById('total-size');
+
+
+    if ((printSize != 'S') && (printSize != 'M') && (printSize != 'L')) {
+        printSize = 'M';
+    }
+
+    if ((frameStyle != 'classic') && (frameStyle != 'shabby') && (frameStyle != 'elegant') && (frameStyle != 'natural')) {
+        frameStyle = 'natural'
+    }
+
+    if ((matColor != 'ivory') && (matColor != 'wine') && (matColor != 'indigo') && (matColor != 'coal') && (matColor != 'mint')) {
+        matColor = 'mint';
+    }
+
+
+    const cacheObject = retrieve(objectID);
+    var fetchedPicture = [];
+    if (cacheObject == null ) {
+        fetchedPicture = await ObjectIDFetch(objectID);
+        store(objectID, fetchedPicture);
+    }
+
+
+    var imageSize = {};
+
+    previewImageElement.src = fetchedPicture.primaryImageSmall;
+
+    previewImageElement.onload = function () {
+        imageSize = FrameAPI.getPrintSizes(previewImageElement);
+        FrameAPI.render(previewImageElement, previewContainerElement, printSize, frameStyle, frameWidth, matColor, matWidth);
+        setPrintSizesDOM(imageSize, previewImageElement);
+        updateTotalSize(imageSize, totalSizeWithFrameElement, matWidth, frameWidth);
+    };
+
+    ConfigDomAPI.setLabel(fetchedPicture);
+
+    frameSliderElement.addEventListener('input', , false);
+
+    frameTextboxElement.addEventListener('change', , false);
+
+    matSliderElement.addEventListener('input', , false);
+
+    matTextboxElement.addEventListener('change', function () {
+        matWidth = matTextboxElement.value;
+        matWidth = normalizeMatWidth(matWidth);
+
+        matSliderElement.value = matWidth;
+        matTextboxElement.value = matWidth;
+
+        FrameAPI.render(previewImageElement, previewContainerElement, printSize, frameStyle, frameWidth, matColor, matWidth);
+        updatePrice(priceElement, printSize, frameStyle, frameWidth, matWidth);
+        updateTotalSize(imageSize, totalSizeWithFrameElement, matWidth, frameWidth);
+    }, false);
+
+    const frameStyleElements = document.getElementsByName('frameStyle');
+    for (let tmp of frameStyleElements) {
+        tmp.addEventListener('input', , false);
+    }
+
+    const matColorElements = document.getElementsByName('matColor');
+    for (let matColorElement of matColorElements) {
+        matColorElement.addEventListener('input', , false);
+    }
+
+    const printSizeElements = document.getElementsByName('printSize');
+    for (let printSizeElement of printSizeElements) {
+        printSizeElement.addEventListener('input', , false);
+    }
+
+    updatePrice(priceElement, printSize, frameStyle, frameWidth, matWidth);
+}
+
+
+function initialSetParameter(printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizeSElement = document.getElementById('print-size-s');
+    const printSizeMElement = document.getElementById('print-size-m');
+    const printSizeLElement = document.getElementById('print-size-l');
+
+    const frameSliderElement = document.getElementById('frame-slider');
+    const frameTextboxElement = document.getElementById('frame-text-box');
+
+    const frameStyleClassicElement = document.getElementById('frame-style-classic');
+    const frameStyleNaturalElement = document.getElementById('frame-style-natural');
+    const frameStyleShabbyElement = document.getElementById('frame-style-shabby');
+    const frameStyleElegantElement = document.getElementById('frame-style-elegant');
+
+    const matSliderElement = document.getElementById('mat-slider');
+    const matTextboxElement = document.getElementById('mat-text-box');
+
+    const matColorIvoryElement = document.getElementById('mat-color-ivory');
+    const matColorMintElement = document.getElementById('mat-color-mint');
+    const matColorWineElement = document.getElementById('mat-color-wine');
+    const matColorIndigoElement = document.getElementById('mat-color-indigo');
+    const matColorCoalElement = document.getElementById('mat-color-coal');
+
+    const finishedObject = [];
+    if (printSize == 'S')  else if (printSize == 'L')  else {
+        printSizeMElement.checked = true;
+    }
+
+
+    frameSliderElement.value = frameWidth;
+    frameTextboxElement.value = frameWidth;
+
+    if (frameStyle == 'classic')  else if (frameStyle == 'shabby')  else if (frameStyle == 'elegant')  else {
+        frameStyleNaturalElement.checked = true;
+    }
+
+    matSliderElement.value = matWidth;
+    matTextboxElement.value = matWidth;
+
+    if (matColor == 'ivory')  else if (matColor == 'wine')  else if (matColor == 'indigo')  else if (matColor == 'coal')  else {
+        matColorMintElement.checked = true;
+    }
+
+};
+
+
+async function ObjectIDFetch(ObjectIDQuery) {
+    let pictureFetched = await SearchAPI.getObjectsFromSearch([ObjectIDQuery]);
+
+    if (!pictureFetched[0].primaryImageSmall)  else {
+        return pictureFetched[0];
+    }}
+
+
+function normalizeMatWidth(matWidthOriginal, comesFromURL = false) {
+    let matWidth = parseFloat(matWidthOriginal);
+
+    if (!Number.isFinite(matWidth)) {
+        return 5.5;
+    } else if (comesFromURL) 
+
+    if (matWidth < 0) {
+        return 0;
+    } else if (matWidth > 10) {
+        return 10;
+    }
+
+    matWidth = parseFloat((Math.round(matWidth * 10) / 10).toFixed(1));
+
+    if (Number.isInteger(matWidth)) 
+       return matWidth;
+};
+
+
+function normalizeFrameWidth(frameWidthOriginal, comesFromURL = false) {
+    let frameWidth = parseFloat(frameWidthOriginal);
+
+    if (!Number.isFinite(frameWidth)) {
+        return 4;
+    }};
+
+
+function setPrintSizesDOM(imageSize, previewImageElement) {
+    const printSizeSElement = document.getElementById('print-size-s-num');
+    const printSizeMElement = document.getElementById('print-size-m-num');
+    const printSizeLElement = document.getElementById('print-size-l-num');
+
+    printSizeSElement.innerText = `${parseFloat(imageSize.S[0]) / 10} × ${parseFloat(imageSize.S[1]) / 10}`;
+    printSizeMElement.innerText = `${parseFloat(imageSize.M[0]) / 10} × ${parseFloat(imageSize.M[1]) / 10}`;
+    printSizeLElement.innerText = `${parseFloat(imageSize.L[0]) / 10} × ${parseFloat(imageSize.L[1]) / 10}`;
+}
+
+
+function updatePrice(priceElement, printSize, frameStyle, frameWidth, matWidth) {
+    let currentPrice = FrameAPI.calculatePrice(printSize, frameStyle, frameWidth * 10, matWidth * 10);
+    priceElement.innerText = `€ ${(Math.round(currentPrice * 100) / 100).toFixed(2)}`;
+}
+
+
+function updateTotalSize(imageSize, totalSizeWithFrameElement, matWidth, frameWidth) {
+    const checkedSize = document.querySelector('input[name="printSize"]:checked').value;
+    const totalWidthAdd = (parseInt(matWidth) * 10 + parseInt(frameWidth) * 10) * 2;
+    var totalWidth = (imageSize[checkedSize][0] + totalWidthAdd) / 10;
+    var totalHeight = (imageSize[checkedSize][1] + totalWidthAdd) / 10;
+    totalSizeWithFrameElement.innerText = `${totalWidth} × ${totalHeight} cm`;
+}
+
+
+export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+
+    var frameCMWidth = frameWidth/10;
+    var matCMWidth = matWidth/10;
+
+    let baseS = 30.00;
+
+    let small = 30.00;
+    let medium = 2;
+    let large = 3.5;
+
+    let woodPerCentimeterClassic = 1.00;
+    let woodPerCentimeterNatural = 0.80;
+    let woodPerCentimeterShabby = 0.90;
+    let woodPerCentimeterElegant= 0.85;
+
+    let matPerCentimeter = 0.05;
+
+
+    price = small+(matCMWidth*matPerCentimeter);
+        if(frameStyle === "classic")
+        else if(frameStyle === "natural"){
+            price += (frameCMWidth*woodPerCentimeterNatural);
+        }
+    
+        if(printSize === "M"){
+            price *= medium;
+        }
+    
+    const result =  (Math.round((price + Number.EPSILON) * 100) / 100);
+    return result;
+}
+
+export function setCartItemsInHeader() {
+  const cartInHeaderElement = document.getElementById('cart-link');
+  const cart = JSON.parse(localStorage.getItem('cart'));
+  if (cart )  else {
+    cartInHeaderElement.innerText = 'Cart';
+  }
+}
+export class Painting {
+  constructor(
+    objectID,
+    artistDisplayName,
+    title,
+    objectDate,
+    primaryImage,
+    primaryImageSmall
+  ) {
+    this.objectID = objectID;
+    this.artistDisplayName = artistDisplayName;
+    this.title = title;
+    this.objectDate = objectDate;
+    this.primaryImage = primaryImage;
+    this.primaryImageSmall = primaryImageSmall;
+  }
+}
+
+export class PaintingithFrameConfig extends Painting {
+  
+}
+export function retrieve(pictureQuery) {
+    if (pictureQuery in localStorage) 
+}
+
+export function store(pictureQuery, cachePictureObject) {
+    console.log(`Storing ${pictureQuery} in local storage`);
+    localStorage[pictureQuery] = JSON.stringify(cachePictureObject);
+}
+/*
+import {
+    Painting
+} from './picture.js';
+
+export 
+
+
+export async function getObjectsFromSearch(ObjectIDs) {
+
+    try {
+        let listOfImages = [];
+
+        for (let id of ObjectIDs.slice(0, 100)) {
+            const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+            const temp = await fetch(API_URL);
+            const tempJson = await temp.json();
+            const tempObject = new Painting(tempJson.objectID, tempJson.artistDisplayName, tempJson.title, tempJson.objectDate, tempJson.primaryImage, tempJson.primaryImageSmall);
+            listOfImages.push(tempObject);
+        }
+
+        return listOfImages;
+    }}
+
+
+export 
+
+
+export 

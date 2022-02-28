@@ -1,0 +1,171 @@
+import * as Frame from './frame.js'
+import {getArtworkById} from "./metArtwork.js";
+import * as DOM from "./domElementHelper.js"
+
+export 
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+function getPriceOfItem(storageItem) {
+    const printSize = storageItem.printSize;
+    const frameStyle = storageItem.frameStyle;
+    const frameWidth = storageItem.frameWidth;
+    const matWidth = storageItem.matWidth;
+    return parseFloat(Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth));
+}
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export function getCart() {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    if (!cart)
+    return cart;
+}
+
+export function calcSum() {
+    let cart = getCart();
+    let sum = 0;
+    cart.forEach(item => {
+       sum += getPriceOfItem(item);
+    });
+    return sum.toFixed(2);
+}
+    import * as Checkout from "./checkout.js";
+    Checkout.init();
+  import * as Cart from './cart.js';
+
+let countryOptions = "";
+let destinations;
+let currentShippingCost, subtotal, total;
+
+export function init() {
+
+    if(!Cart.getCart().length>0)
+
+    document.getElementById("pay-button").disabled = true;
+    subtotal = Cart.calcSum();
+    document.getElementById("price-subtotal").innerHTML = `${subtotal}`;
+
+    document.getElementById("country").addEventListener("change",changeCountry);
+
+    getShipping().then(data => {
+        destinations = data.destinations;
+        destinations.forEach(destination =>{
+            let countryCode, countryName, cost;
+            countryCode = destination.country;
+            countryName = destination["displayName"];
+            cost = destination["cost"];
+            countryOptions += `<option value=${countryCode}>${countryName}</option>\n`;
+        });
+        document.getElementById("country").innerHTML = countryOptions;
+        changeCountry();
+        document.getElementById("pay-button").disabled = false;
+    });
+}
+
+async function getShipping() {
+    const url = 'https://web-engineering.big.tuwien.ac.at/s20/a2/shipping';
+    let response = await fetch(url);
+    return await response.json();
+}
+
+function changeCountry() {
+    let e = document.getElementById("country");
+    let newCountry = e.options[e.selectedIndex].value;
+    let currentCountryCode;
+    destinations.forEach(destination =>{
+        let countryCode, cost;
+        countryCode = destination.country;
+        cost = destination["cost"];
+        cost = (parseFloat(cost)/100).toFixed(2);
+        if(countryCode === newCountry){
+            currentShippingCost = cost;
+            document.getElementById("price-shipping").innerHTML = `${currentShippingCost}`;
+            setTotalSum();
+        }
+    })
+}
+
+function setTotalSum(){
+    total = (parseFloat(subtotal) + parseFloat(currentShippingCost)).toFixed(2);
+    document.getElementById("price-total").innerHTML = `${total}`;
+}
+export 
+
+export 
+
+
+
+
+
+export 
+
+
+export 
+
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const frame = {
+        'classic': 1.0,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85
+    };
+
+    const sizeMultiplier = {
+        'S': 1,
+        'M': 2,
+        'L': 3.5
+    };
+    const price = (30 + frame[frameStyle] * (frameWidth / 10) + 0.05 * (matWidth / 10)) * sizeMultiplier[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+const MET_API_ROOT = "https://collectionapi.metmuseum.org/public/collection/v1";
+const MET_API_OBJECT_LOCATION = `${MET_API_ROOT}/objects`;
+const MET_API_SEARCH_LOCATION = `${MET_API_ROOT}/search`;
+
+
+export class MetArtwork {
+    
+}
+
+export 
+
+export 
+

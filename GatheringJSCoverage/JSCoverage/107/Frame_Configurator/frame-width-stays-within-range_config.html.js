@@ -1,0 +1,1 @@
+frameValueR.value=this.value

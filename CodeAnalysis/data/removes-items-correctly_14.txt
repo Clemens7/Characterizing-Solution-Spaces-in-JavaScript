@@ -1,0 +1,100 @@
+removeProductFromCart(369856)export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 30.00;
+
+    if (frameStyle === "classic")
+    if (frameStyle === "natural")
+    if (frameStyle === "shabby")
+    if (frameStyle === "elegant"){
+        price += 0.85*frameWidth + matWidth*0.05;
+    }
+    console.log("Price: " + price);
+
+    if (printSize === "M")
+        price = price*2;
+
+    if (printSize === "L")
+        price = price*3.5;
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}
+function getCartData() {
+  let storageData = localStorage.getItem('cart');
+  if (!storageData) 
+  return JSON.parse(storageData);
+}
+
+function updateNavigationText(cartData) {
+  if (cartData.length == 0)  else {
+    document.getElementById('cart-link').innerText = 'Cart (' + cartData.length + ')';
+
+  }
+}
+
+async function fetchProductData(objectID) {
+  let response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+  let data = await response.json();
+  return data;
+}
+
+
+async function getObject(objectID){
+  let object;
+  if(!localStorage.getItem(objectID)){
+    object = await fetchProductData(objectID);
+    localStorage.setItem(objectID, JSON.stringify(object));
+    return object;
+  } else {
+    return JSON.parse(localStorage.getItem(objectID));
+  }

@@ -1,0 +1,184 @@
+import {SearchItem} from "./search-item.js";
+
+export async function retrieve(objectID) {
+    const key = objectID;
+    if(key in localStorage)  else {
+        try {
+            const url = api_object(objectID);
+            const response = await fetch(url);
+            const result = await response.json();
+            const resultObject = new SearchItem(objectID, result.primaryImageSmall, result.artistDisplayName, result.title, result.objectDate);
+            store(objectID, resultObject);
+            return resultObject;
+        }
+    }}
+
+function store(objectID, artworks) {
+    const key = objectID;
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(artworks);
+}
+
+function api_object(objectID) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+}
+import {cart} from "./cart_objects.js";
+
+function displayCartCount() {
+    const count = cart.count();
+    let text = "Cart";
+    if (count > 0) 
+    document.getElementById("cart-link").innerText = text;
+    console.log("refreshed Cart Count");
+}
+
+displayCartCount();
+cart.addOnChangeEvent(displayCartCount);export class Frame {
+    
+}
+
+class Cart {
+
+    constructor() {
+        this._onChangeEvents = [];
+        this._load();
+        window.addEventListener('storage', );
+    }
+
+    addOnChangeEvent(event) {
+        this._onChangeEvents.push(event);
+    }
+
+    
+
+    _load() {
+        let cart = window.localStorage.getItem("cart");
+        if (cart !== null) 
+        if (!Array.isArray(this._frames)) {
+            this._frames = [];
+        }
+    }
+
+    
+
+    
+
+    
+
+    count() {
+        return this._frames.length;
+    }
+
+    
+}
+
+export const cart = new Cart();export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}
+export class SearchItem {
+    constructor(id, image, artist, title, date){
+        this.id = id;
+        this.image = image;
+        this.artist = artist;
+        this.title = title;
+        this.date = date;
+    }
+}
+
+export var SearchParser = {
+    serialize : ,
+    parse : function(query) {
+        return query.replace('+', ' ');
+    }
+};
+import * as DOM from './dom-helpers.js';
+import * as Cache from './cache.js';
+import {SearchParser} from './search-item.js';
+
+const searchInfo = document.getElementById("search-info");
+const artworkLimit = 100;
+readGETParameter();
+
+function readGETParameter(){
+    const url = new URL(window.location.href);
+    const query = url.searchParams.get('q');
+    loadArtworks(query);
+}
+
+async function retrieveArtworks(query) {
+    console.log(`Searching for "${query}"`);
+    try {
+        const url = api_search(query);
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const result = await rawData.objectIDs;
+        return result ? result ;
+    }}
+
+async function loadArtworks(query){
+    const gallery = document.querySelector(".gallery");
+    gallery.innerHTML = '';
+
+    if (query) {
+        searchInfo.innerText = `Searching for “${SearchParser.parse(query)}”...`;
+    }
+    let objectIDs = await getObjectIDsFromQuery(query);
+    if (query) {
+        let artworkText = objectIDs.length === 1  : 'artworks';
+        searchInfo.innerText = `Found ${objectIDs.length} ${artworkText} for “${SearchParser.parse(query)}”`;
+    }
+
+    for (let objectID of objectIDs.slice(0,artworkLimit)) {
+        let artwork = await Cache.retrieve(objectID);
+        gallery.appendChild(createEntry(artwork));
+    }
+}
+
+async function getObjectIDsFromQuery(query){
+    if (!query)  else {
+        searchInfo.innerText = `Searching for “${query}”...`;
+        const result = await retrieveArtworks(query);
+        searchInfo.innerText = `Found ${result.length} artworks for “${query}”`;
+        return result;
+    }}
+
+function createEntry(searchItem){
+    return DOM.setAttributes(DOM.container([createAContainer(searchItem)]), {className: 'thumb'});
+}
+
+function createAContainer(searchItem){
+    return DOM.setAttributes(DOM.container([
+        DOM.setAttributes(document.createElement('img'), {src: searchItem.image, alt: searchItem.title, id: 'object-image-' + searchItem.id}),
+        DOM.setAttributes(DOM.container([
+            DOM.setAttributes(DOM.textElement('span', searchItem.artist), {className: 'artist'}),
+            DOM.setAttributes(DOM.textElement('span', searchItem.title), {className: 'title'}),
+            DOM.setAttributes(DOM.textElement('span', ', ')),
+            DOM.setAttributes(DOM.textElement('span', searchItem.date), {className: 'date'})]
+        ), {className: 'museum-label'})
+    ], 'a'), {href: './config.html?objectID=' + searchItem.id, id: 'object-' + searchItem.id});
+}
+
+function api_search(query) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}`;
+}

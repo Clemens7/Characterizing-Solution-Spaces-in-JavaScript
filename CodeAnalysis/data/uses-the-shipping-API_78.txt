@@ -1,0 +1,111 @@
+
+import * as cart from "./helper.js";
+import * as item from "./frame.js";
+
+  if(cart.isEmpty() === true)
+
+  function calculateSubtotal(){
+    let subtotal = 0;
+    for (let i of cart.getCartItems()){
+      subtotal += item.calculatePrice(i.printSize, i.frameStyle, i.frameWidth, i.matWidth);
+    }
+
+    if(subtotal <= 0) else {
+      document.getElementById("price-subtotal").innerHTML = parseFloat(subtotal.toFixed(2));
+    }
+    return subtotal;
+  }
+  
+  calculateSubtotal();
+
+  fetch("https://web-engineering.big.tuwien.ac.at/s20/a2/shipping").then(receive => receive.json()).then(
+          message => {
+            let land = document.getElementById("country");
+            for(let i of message.destinations){
+              let dest = document.createElement("option");
+              dest.value = i.country;
+              dest.innerHTML = i.displayName;
+              dest.setAttribute("cost", i.cost);
+              land.appendChild(dest);
+            }
+            calculateTotal();
+
+            land.addEventListener('change', );
+          }
+  );
+
+  function getShippingCost(){
+    let land = document.getElementById("country");
+    let cost = land.options[land.selectedIndex].getAttribute("cost");
+    let shipping = parseInt(cost)/100;
+
+    if(shipping <= 0) else {
+      document.getElementById("price-shipping").innerHTML = shipping.toFixed(2);
+    }
+    return shipping;
+  }
+
+  function calculateTotal(){
+    let total = calculateSubtotal() + getShippingCost();
+
+    if(total <= 0) else {
+      document.getElementById("price-total").innerHTML = total;
+    }
+  }
+
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const sizeFactor = {
+        'S': 1,
+        'M': 2,
+        'L': 3.5
+    };
+    const baseCost = {
+        'classic': 1,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85,
+    };
+    
+    return Math.round((((baseCost[frameStyle] * (frameWidth / 10) + 0.05 * (matWidth / 10) + 30) * sizeFactor[printSize]) ) * 100) / 100;
+}
+import * as Frame from './frame.js';
+
+export 
+
+export function getCartItems() {  
+  return JSON.parse(localStorage.getItem('cart')) ;
+}
+
+export function isEmpty() {
+  return getCartItems().length < 1;
+}
+
+export 
+
+export 
+
+/*<!-- TODO: dynamically add cart items using template below -->
+      <!--<div class="cart-item">
+        <div class="cart-preview" id="preview-container-0">
+          <a href="">
+            <img class="cart-thumb" src="" id="preview-0" alt="">
+          </a>
+        </div>
+        <div class="museum-label">
+          <div>
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+            <br><br>
+            <span class="frame-description"></span>
+          </div>
+          <div class="cart-price">€ <span id="price-0">0</span></div>
+          <button class="cart-remove"></button>
+        </div>
+      </div>-->*/
+
+export 

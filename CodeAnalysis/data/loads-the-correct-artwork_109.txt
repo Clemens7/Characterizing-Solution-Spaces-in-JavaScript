@@ -1,0 +1,210 @@
+export function retrieve(objectID) {
+    if(localStorage.artworks)         
+    else
+        return null;
+}
+
+export function store(artwork) {
+    let artworks;
+    if(localStorage.artworks) 
+    else {
+        artworks = new Map();
+    }
+    artworks.set(artwork.objectID, artwork);
+    localStorage.artworks = JSON.stringify(Array.from(artworks));
+}export class Artwork {
+    constructor(objectID, title, primaryImageSmall, artistDisplayName, objectDate) {
+        this.objectID = objectID;
+        this.title = title;
+        this.primaryImageSmall = primaryImageSmall;
+        this.artistDisplayName = artistDisplayName;
+        this.objectDate = objectDate;
+    }
+}import { calculatePrice } from  './frame.js';
+export function getCartItemNumber(){
+    let text;
+    let counter = 0;
+    if (!localStorage.getItem('cart')){
+    text = "Cart";
+    }
+
+    document.getElementById("cart-link").innerHTML = text;
+}
+
+export 
+
+export 
+    import * as Frame from './frame.js';
+    import * as Cache from './artwork-cache.js';
+    import { Artwork } from './artwork.js';
+    import * as CartHelper from './cartHelper.js';
+
+    var objectID;
+    var imageObject = document.getElementById("preview-image");  
+    var printSize;
+    var frameStyle;
+    var frameWidth;
+    var matColor;
+    var matWidth;
+
+    CartHelper.getCartItemNumber();
+
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    };
+  
+    function round(value) {
+      return Math.round(value * 10) / 10;
+    }
+  
+    function renderFrame() {
+      Frame.render(imageObject, document.getElementById("preview-container"), printSize, frameStyle, frameWidth, matColor, matWidth);
+  
+      document.getElementById('print-size-s-label').innerHTML = "Small<br>"+Frame.getPrintSizes(imageObject)['S'][0]/10 + " x " + Frame.getPrintSizes(imageObject)['S'][1]/10 + " cm";
+      document.getElementById('print-size-m-label').innerHTML = "Medium<br>"+Frame.getPrintSizes(imageObject)['M'][0]/10 + " x " + Frame.getPrintSizes(imageObject)['M'][1]/10 + " cm";
+      document.getElementById('print-size-l-label').innerHTML = "Large<br>"+Frame.getPrintSizes(imageObject)['L'][0]/10 + " x " + Frame.getPrintSizes(imageObject)['L'][1]/10 + " cm";
+  
+      let totalWidth = (Frame.getPrintSizes(imageObject)[printSize][0] + 2*matWidth + 2*frameWidth)/10;
+      let totalHeight = (Frame.getPrintSizes(imageObject)[printSize][1] + 2*matWidth + 2*frameWidth)/10;
+      document.getElementById('total-size').innerHTML = totalWidth + " x " + totalHeight + " cm";
+  
+      document.getElementById('price').innerHTML = "€ " + Frame.calculatePrice(printSize, frameStyle, frameWidth, matWidth).toFixed(2);
+    }
+  
+    document.addEventListener('DOMContentLoaded', event => {
+      const params = (new URL(document.location)).searchParams;
+      objectID = params.get('objectID');
+
+      if(objectID == null) 
+
+      printSize = params.has('printSize')  : 'M';
+      frameStyle = params.has('frameStyle')  : 'natural';
+      frameWidth = params.has('frameWidth')  : 40;
+      matColor = params.has('matColor')  : 'mint';
+      matWidth = params.has('matWidth')  : 55;
+  
+      document.getElementById('print-size-'+printSize.toLowerCase()).checked = true;
+      document.getElementById('frame-style-'+frameStyle).checked = true;
+      document.getElementById('mat-color-'+matColor).checked = true;
+      document.getElementsByName('frameWidth')[0].value = round(clamp(frameWidth, 20, 50))/10;
+      document.getElementsByName('frameWidthR')[0].value = round(clamp(frameWidth, 20, 50))/10;
+      document.getElementsByName('matWidth')[0].value = round(clamp(matWidth, 0, 100))/10;
+      document.getElementsByName('matWidth')[0].value = round(clamp(matWidth, 0, 100))/10;
+  
+      getArtwork(objectID);
+      
+      imageObject.onload = function() {
+        renderFrame();
+      }
+    });
+  
+    async function getArtwork(objectID) {
+      var artwork = Cache.retrieve(objectID);
+
+      if(!artwork) {
+        const response = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/'+objectID);
+
+        if(response.status == 404) 
+
+        const data = await response.json();
+        artwork = new Artwork(objectID, data.title, data.primaryImageSmall, data.artistDisplayName, data.objectDate);
+        Cache.store(artwork);
+      }
+
+      document.getElementById("preview-image").src = artwork.primaryImageSmall;
+      document.getElementById("image-label").getElementsByClassName("artist")[0].innerHTML = artwork.artistDisplayName;
+      document.getElementById("image-label").getElementsByClassName("title")[0].innerHTML = artwork.title;
+      document.getElementById("image-label").getElementsByClassName("date")[0].innerHTML = artwork.objectDate;
+    }
+  
+    var printSizeRadios = document.querySelectorAll('input[type=radio][name="printSize"]');
+    printSizeRadios.forEach(radio => radio.addEventListener('click', ));
+  
+    var frameWidthSlider = document.getElementsByName('frameWidthR')[0];
+    var frameWidthInput  = document.getElementsByName('frameWidth')[0];
+    frameWidthSlider.addEventListener('change', );
+    frameWidthInput.addEventListener('change', );
+  
+    var frameStyleRadios = document.querySelectorAll('input[type=radio][name="frameStyle"]');
+    frameStyleRadios.forEach(radio => radio.addEventListener('click', ));
+  
+    var matWidthSlider = document.getElementsByName('matWidthR')[0];
+    var matWidthInput  = document.getElementsByName('matWidth')[0];
+    matWidthSlider.addEventListener('change', );
+    matWidthInput.addEventListener('change', );
+  
+    var matColorRadios = document.querySelectorAll('input[type=radio][name="matColor"]');
+    matColorRadios.forEach(radio => radio.addEventListener('click', ));
+
+    var submitButton = document.getElementsByClassName("buy")[0];
+    submitButton.addEventListener('click', );
+  export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    let frameBaseCosts = 30.0;
+    let matCostsCM = 0.05;
+    let sizeMultiplier = (printSize == 'S')  : (printSize == 'M') ? 2 ;
+    let frameCostsCM = 0.0;
+    switch(frameStyle) {
+        
+        case 'natural':
+            frameCostsCM = 0.8;
+            break;
+        
+        
+    }
+    price = (frameBaseCosts + (frameWidth/10 * frameCostsCM) + (matWidth/10 * matCostsCM)) * sizeMultiplier;
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

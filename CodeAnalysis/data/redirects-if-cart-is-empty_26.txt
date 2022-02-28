@@ -1,0 +1,67 @@
+export 
+
+export 
+
+export 
+
+export class Artwork {
+    
+}
+      import * as frame from "./frame.js";
+      import * as cart from "./cart.js";
+      import { retrieveArtworkInformation } from "./artwork.js"
+
+      document.querySelector('#checkout-button').onclick = 
+      
+      const parent = document.querySelector('.cart');
+      let shoppingCart;
+
+
+
+      if (cart.cartExistsAndNotEmpty())  else {
+        cartIsEmpty();
+      }
+
+      function cartIsEmpty(){
+        document.querySelector('#checkout-button').disabled = true;
+        document.querySelector('.cart-empty').style.display = 'flex';
+      }
+
+      
+
+      
+
+      
+
+      
+
+      
+    /*
+run on import
+if (!location.href.split('\/').includes("checkout.html")) {
+    updateCartCount();
+}
+
+export 
+
+export function cartExistsAndNotEmpty() {
+    return window.localStorage.getItem('cart') ;
+}
+
+export 
+
+export function getCart() {
+    return JSON.parse(localStorage.getItem('cart'))
+}
+
+export function updateCartCount() {
+    if (getCart() != null) 
+}
+
+export 
+
+export 
+
+export 
+
+export 

@@ -1,0 +1,79 @@
+
+
+function getLocalStorage(key) {
+    var items = JSON.parse(localStorage.getItem(key) || "[]");
+    return items;
+}
+
+
+
+
+
+
+
+
+
+
+    import * as searchAPI from './search.js';
+
+    async function artSearch(q) {
+
+      let searchinfo = document.getElementById('search-info');
+
+     searchinfo.innerText = "Searching for “" + q + "”...";
+
+      const artworks = await searchAPI.retrieve(q);}
+
+
+    document.addEventListener('DOMContentLoaded', event => { // reacts to url with search query in it
+
+     var items = getLocalStorage("cart");
+      document.getElementById("cart-count").innerText = " (" + items.length + ")";
+
+      const params = (new URL(document.location)).searchParams;
+
+
+      const stringQuery = params.get('q');
+      if(!stringQuery) 
+
+      document.getElementById('search').value = stringQuery;
+
+      artSearch(stringQuery);
+    });
+
+
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('click', );
+
+    const form = document.querySelector('.search-form');
+
+    form.addEventListener('submit', );
+
+
+  
+export class Artwork {
+    
+}
+
+
+export async function retrieve(q) {
+
+    if (q in localStorage) 
+    let artworks = [];
+    let objectCount = 100;
+
+
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${q}`;
+
+
+    try {
+        const response = await fetch(url);}
+
+
+
+
+export 
+
+
+
+export 

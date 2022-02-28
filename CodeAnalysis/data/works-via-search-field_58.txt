@@ -1,0 +1,194 @@
+
+import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+const collectionapi = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+export async function search(searchTerm){
+	try {
+		const response = await fetch(search_api(searchTerm));
+		const raw = await response.json();
+		const objectIDs = await raw.objectIDs.slice(0, 100);
+		return objectIDs;
+	}}
+
+export async function get_objects(objectIDs){
+	let cache_result = Cache.retrieve(objectIDs);
+
+	let promises = cache_result.misses.map(id => fetch(objects_api(id))
+		.then(response => response.json()));
+	
+	let results = await Promise.all(promises);
+
+	let new_objects = results.map(
+            art => new Artwork(art.objectID, art.artistDisplayName, art.title,art.objectDate,art.primaryImageSmall));
+
+	Cache.store(new_objects);
+
+	return cache_result.hits.concat(new_objects);
+}
+
+export 
+
+function objects_api(id){
+	return `${collectionapi}/objects/${id}`;
+}
+
+function search_api(searchTerm){
+    return `${collectionapi}/search?q=${searchTerm}&hasImages=true`;
+}
+
+
+
+export function retrieve(keys){
+
+	var hits = new Array();
+	var misses = new Array();
+	for (var i = 0; i < keys.length; i++){
+		if(keys[i] in localStorage) else {
+			misses.push(keys[i]);
+		}
+	}
+	return {hits, misses};
+}
+
+export function store(items){
+	for (var i = 0; i < items.length; i++){
+		localStorage.setItem(items[i].objectID, JSON.stringify(items[i]));
+	}
+}import { Artwork } from './art-object.js';
+import * as Cache from './art-cache.js';
+
+export class ArtworkContainer{
+	constructor(){
+		this.container = document.getElementById("gallery");
+	}
+
+	addArtworks(artworks) {
+		for(let artwork of artworks){
+			this.container.appendChild(this.createArtworkItem(artwork));
+		}
+	}
+
+	createArtworkItem(artwork){
+		var div = document.createElement("div");
+		div.className = "thumb";
+
+		var link = document.createElement("a");
+		link.id = `object-${artwork.objectID}`;
+		link.href = `./config.html?objectID=${artwork.objectID}` // TODO change
+
+		var img = document.createElement("img");
+		img.id = `object-image-${artwork.objectID}`;
+		img.src = artwork.imageUrl;
+		img.alt = "";
+
+		var label = document.createElement("div");
+		label.className = "museum-label";
+
+		var artist = document.createElement("span");
+		artist.className = "artist";
+		artist.appendChild(document.createTextNode(artwork.artist));
+		label.appendChild(artist);
+
+		var title = document.createElement("span");
+		title.className = "title";
+		title.appendChild(document.createTextNode(artwork.title));
+		label.appendChild(title);
+
+		label.appendChild(document.createTextNode(", "));
+	
+		var date = document.createElement("span");
+		date.className = "date";
+		date.appendChild(document.createTextNode(artwork.date));
+		label.appendChild(date);
+
+		link.appendChild(img);	
+		link.appendChild(label);	
+		div.appendChild(link);
+		return div;
+	}
+}export class Artwork {
+	constructor(objectID, artist, title, date, url){
+		this.objectID = objectID;
+		this.title = title;
+		this.artist = artist;
+		this.date = date;
+		this.imageUrl = url;
+	}
+}const cartKey = "cart";
+
+export class CartItem {
+    
+} 
+
+export function getCartItems() {
+    ensureCartInitialized();
+    return getLocalStorageItem(cartKey);
+}
+
+export function showNumCartItems(){
+    let cart = document.getElementById("cart-link");
+    let cart_items = getCartItems().length;
+    if (cart_items > 0) else {
+        cart.innerHTML = "Cart";
+    }
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+function ensureCartInitialized() {
+    const item = localStorage.getItem(cartKey);
+    if (item === null) 
+    const parsed = JSON.parse(item);
+    if (!Array.isArray(parsed)) 
+}
+
+
+
+function getLocalStorageItem(key) {
+    const value = localStorage[key];
+    return JSON.parse(value);
+}import * as API from './art-api.js';
+import {ArtworkContainer} from './art-dom.js';
+import * as Cart from './cart-api.js';
+
+const form = document.querySelector(".search-form");
+const searchInput = document.getElementById("search");
+let artworkContainer = new ArtworkContainer();
+
+async function search(term){
+  const info = document.getElementById("search-info");
+  info.innerHTML = `Searching for “${term}”...`;
+
+  const IDs = await API.search(term);
+  if(!IDs) 
+
+  const data = await API.get_objects(IDs);
+  if (term == "none" || term == "null") else if (IDs.length > 1){
+    info.innerHTML = `Found ${IDs.length} artworks for “${term}”`;
+  }
+  artworkContainer.addArtworks(data);
+}
+
+
+
+form.addEventListener('submit', );
+
+document.addEventListener('DOMContentLoaded', event => {
+  const params = (new URL(document.location)).searchParams;
+  var searchInfo = document.getElementById("search-info");
+
+  Cart.showNumCartItems();
+
+  var searchTerm = params.get('q');
+  if(searchTerm){
+    search(searchTerm);
+  }
+});

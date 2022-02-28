@@ -1,0 +1,128 @@
+export async function retriveImagesFromAPI(IDs, arrayLen) {
+    let urls = [];
+    for (let i = 0; i < arrayLen; i++) {
+      urls[i] = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${IDs[i]}`;
+    }
+    try {
+      var data = await Promise.all(
+        urls.map(
+          url =>
+            fetch(url).then(
+              (response) => response.json()
+            ).then(
+            )));
+
+      return (data)
+
+    }}
+
+  export export function store(queryElems, ImagesandTotal) {
+    const key = queryElems.join(' ');
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(ImagesandTotal);
+}
+
+
+export function retrieveFromStorage(queryElems) {
+    const key = queryElems.join(' ');
+    if (key in localStorage) 
+}import { retrieveFromStorage } from './art-cache.js';
+
+
+export async function countCartItems(){
+    let cartItems = retrieveFromStorage(['cart']);
+    let cartCount = 0;
+    if(cartItems)
+    
+    
+}export class artDocumentContainer {
+  constructor(containerID = 'gallery') {
+      this.container = document.getElementById(containerID);
+      if (!this.container) 
+  }
+  clear() {
+      this.container.innerHTML = '';
+  }
+
+
+
+
+
+  addArtToDocument(artElem) {
+      this.container.innerHTML +=
+          `<div class="thumb">
+    <a href="config.html?objectID=${artElem.objectID}&printSize=M&frameStyle=natural&frameWidth=40&matColor=mint&matWidth=55">
+      <img src="${artElem.primaryImageSmall}" alt="${artElem.title}">
+      <div class="museum-label">
+        <span class="artist">${artElem.artistDisplayName}</span>
+        <span class="title">${artElem.title}</span>,
+        <span class="date">${artElem.objectDate}</span>
+      </div>
+    </a>
+  </div>`
+  }
+  
+
+
+  
+
+  
+}
+
+
+export function addStuffToHtml(addTheseImages, nameOfElem = 'gallery') {
+  const artContainer = new artDocumentContainer(nameOfElem);
+  artContainer.clear();
+  for (let oneImage of addTheseImages) {
+      artContainer.addArtToDocument(oneImage);
+  }
+}import { store, retrieveFromStorage } from './art-cache.js';
+import { retrieveIDsFromAPI, retriveImagesFromAPI } from './art-api.js';
+import { artDocumentContainer, addStuffToHtml } from './html-document-container.js';
+
+export 
+  
+  export async function displayhighlights() {
+    const storeImageAndTotal = retrieveFromStorage(["“This key is reserved for highlights”"]);
+    if (storeImageAndTotal)  else {
+      const highlights = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+      let highlightImages = await retriveImagesFromAPI(highlights, highlights.length);
+      store(["“This key is reserved for highlights”"], [highlightImages, highlights.length]);
+      console.log(highlightImages);
+      for(let i = 0; i < highlightImages.length; i++){
+        localStorage.setItem(highlightImages[i].objectID, JSON.stringify(highlightImages[i]));
+      }
+      addStuffToHtml(highlightImages);
+    }
+  }
+
+   
+
+   import { searchForSomeArt, displayhighlights } from './search-and-display.js';
+   import { store, retrieveFromStorage } from './art-cache.js';
+   import { countCartItems } from './display-cart-number.js';
+    
+    document.addEventListener('DOMContentLoaded', event => {
+  
+      const params = (new URL(document.location)).searchParams;
+      const searchQuery = params.get('q');
+     
+      if (!searchQuery) {
+        displayhighlights();
+        return;
+      }});
+
+    
+
+
+
+    countCartItems();
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('click', );
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', );
+
+    
+
+  

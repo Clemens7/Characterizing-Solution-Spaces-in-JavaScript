@@ -1,0 +1,95 @@
+
+        import * as frame from './frame.js';
+        import {updateCartSize} from "./cart.js";
+        import {getImage} from "./image-api.js"
+
+        async function show() {
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            let totalPrice = 0;
+
+            updateCartSize();
+            document.getElementById("cart").innerHTML = "";
+
+            if (cart )  else {
+                document.getElementById("cart").insertAdjacentHTML("afterbegin", "<h1 style='margin-right: 1rem'>There are no items in your shopping cart.</h1><br>");
+                document.getElementById("cart").appendChild(createTotal(0))
+                document.getElementById("checkout-button").disabled = true;
+            }
+        }
+
+        function createTotal(price) {
+            let total = document.createElement('div');
+            total.setAttribute("class", "cart-total");
+
+            total.innerHTML = "<div class=\"price\">Total: € <span id=\"price-total\">" + price + "</span></div>\n" +
+                "<button type=\"button\" id=\"checkout-button\">Checkout</button>\n"
+
+            total.addEventListener('click', )
+
+            return total;
+        }
+
+        
+
+        
+
+        
+
+        (function () {
+            show();
+        })();
+    export function updateCartSize() {
+    let cart  = JSON.parse(localStorage.getItem('cart'));
+
+    if (cart )  else {
+        document.getElementById("cart-link").innerHTML = "Cart";
+    }
+}export 
+
+export 
+
+
+export 
+import {Image} from "./image.js";
+import {store, retrieve} from "./image-cache.js";
+import {addImageToGallery,clearGallery} from "./image-dom.js";
+
+export 
+
+export 
+
+export 
+
+
+
+
+
+export 
+
+export export 
+
+export 
+
+
+
+
+
+
+
+
+/*
+Template:
+
+<div class="thumb">
+    <a href="" id="object--1">
+     <img src="" alt="" id="object-image--1">
+        <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+        </div>
+    </a>
+</div>
+export class Image {
+    
+}

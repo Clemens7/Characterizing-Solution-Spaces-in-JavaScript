@@ -1,0 +1,92 @@
+import {calculatePrice} from './frame.js';
+
+export default class CartItem {
+
+    
+
+    
+}export 
+
+export 
+
+export 
+
+    import {getShoppingCart} from "./Util.js";
+
+    let shoppingCart = getShoppingCart();
+    if((localStorage.getItem('cart') != null )) 
+    /*
+    const form = document.querySelector('form');
+    form.addEventListener('submit', );
+
+    document.addEventListener('DOMContentLoaded', event => {
+      const params = (new URL(document.location)).searchParams;
+      const actualQuery = params.get('q');
+      if(!actualQuery)
+      getObjectsIDs(actualQuery);
+    });
+  
+class Artwork {
+  
+}
+
+var SearchTerms = {
+  serialize : ,
+  parse : function(searchTermString){
+    return searchTermString.split(",");
+  }
+}
+
+
+
+
+
+async function getObjectsIDs(searchValue){
+  let url = "https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=";
+  const arraySearchValues = SearchTerms.parse(searchValue);
+  let arrayWithFoundObjectIds = [];
+
+  document.getElementById("search-info").innerHTML = "Searching for &ldquo;"+searchValue+"&rdquo;"+"...";
+
+  let i = 0;
+  for(tmpValue of arraySearchValues){
+    arrayWithFoundObjectIds.push((await fetchObject(url, tmpValue)}
+
+
+
+async function fetchObject(url, query){
+  const response = await fetch(url+query);}
+
+
+import CartItem from "./CartItem.js";
+
+export default class ShoppingCart {
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+}import CartItem from './CartItem.js';
+import ShoppingCart from './ShoppingCart.js';
+
+
+export function getShoppingCart() {
+    let objStr = localStorage.getItem("cart");
+    if (!objStr) {
+        return null;
+    }}
+
+export 
+
+
+export 
+
+

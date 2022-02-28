@@ -1,0 +1,118 @@
+
+  import * as Cart from './cart.js';
+
+  window.onload = () => { Cart.startPage(); };
+import * as Frame from './frame.js'
+import {getArtworkById} from "./metArtwork.js";
+import * as DOM from "./domElementHelper.js"
+
+export function startPage() {
+    let cart = getCart();
+
+    if (cart.length === 0) {
+        emptyCart();
+    }
+}
+
+function emptyCart() {
+    const cart = getCart();
+    const cartElement = document.getElementById("cart");
+    const infoText = document.createElement("h2");
+    infoText.innerText = "There are no items in your shopping cart.";
+
+
+    if (!cart)  else if (cart.length === 0) {
+        cartElement.insertBefore(infoText, cartElement.firstChild);
+        document.getElementById("checkout-button").disabled = true;
+    }
+
+    document.getElementById("price-total").innerText = calcSum();
+    document.getElementById("cart-link").innerText = getCartText();
+}
+
+
+
+export 
+
+
+
+
+
+
+
+
+
+export function getCartText() {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+
+    if (!cart) {
+        return "Cart";
+    }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export 
+
+export function getCart() {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    if (!cart){
+        cart = [];
+    }
+    return cart;
+}
+
+export function calcSum() {
+    let cart = getCart();
+    let sum = 0;
+    cart.forEach();
+    return sum.toFixed(2);
+}export 
+
+export 
+
+
+
+
+
+export 
+
+
+export 
+
+
+export 
+
+export 
+
+export 
+const MET_API_ROOT = "https://collectionapi.metmuseum.org/public/collection/v1";
+const MET_API_OBJECT_LOCATION = `${MET_API_ROOT}/objects`;
+const MET_API_SEARCH_LOCATION = `${MET_API_ROOT}/search`;
+
+
+export class MetArtwork {
+    
+}
+
+export 
+
+export 
+

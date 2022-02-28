@@ -1,0 +1,115 @@
+import { readArtworkFromCache, writeArtworkToCache } from './cache.js';
+import { Artwork } from './classes.js';
+import { createThumb } from './dom-helper.js';
+
+export async function retrieveArtworksList(query){
+
+  const res = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${query}`);
+  const js = await res.json();
+
+  let resultList = js.objectIDs;
+  if( js.total > 100 ) 
+
+  return { total: js.total, result: resultList };
+
+}
+
+export 
+
+function memoize(f) {
+  const cache = new Map();
+  return ;
+}
+
+export const retrieveArtworkById = memoize();
+
+export 
+
+import { Artwork, Configuration } from './classes.js';
+
+export 
+
+export 
+
+export 
+
+export function readCartSizeFromCache() {
+    if ('cart' in localStorage)  else {
+        return 0;
+    }
+}
+
+export 
+export class Artwork {
+    
+}
+
+export class Configuration {
+    
+}
+import { readCartSizeFromCache } from './cache.js';
+import { Artwork, Configuration } from './classes.js';
+import { calculatePrice, render } from './frame.js';
+
+
+
+const h = createHtmlNode;
+
+export 
+
+const printSizeLabels = {
+  'S': 'Small',
+  'M': 'Medium',
+  'L': 'Large',
+};
+
+
+
+export 
+
+export function updateCartLink() {
+  const element = document.getElementById('cart-link');
+  if (element) {
+    const numCartItems = readCartSizeFromCache();
+    element.innerText = numCartItems > 0  : 'Cart';
+  }
+}
+export 
+
+export 
+
+export 
+
+export 
+
+    import { retrieveArtworksList, retrieveArtworks } from './artworks.js';
+    import { updateCartLink } from './dom-helper.js';
+
+    updateCartLink();
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const query = urlParams.get('q');
+    handleRequest(query);
+
+    
+
+    
+
+    async function handleRequest(query){
+
+      if( query === null || query.length === 0 ) 
+
+      const searchInfo = document.getElementById('search-info');
+      searchInfo.innerText = `Searching for “${query}”...`;
+
+      const { total, result } = await retrieveArtworksList(query);
+
+      if (total > 0) 
+
+      const plural = total === 1  : "s";
+      searchInfo.innerText = `Found ${total} artwork${plural} for “${query}”`;
+
+    }
+
+  

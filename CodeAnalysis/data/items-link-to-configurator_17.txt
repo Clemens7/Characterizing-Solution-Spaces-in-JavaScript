@@ -1,0 +1,207 @@
+import {updateCartNavigationItemCount} from "./common.js";
+
+export 
+
+export 
+
+export function readCart() {
+    let cart = localStorage.getItem('cart');
+    if (!cart) 
+    return JSON.parse(cart);
+}
+
+export 
+
+export class CartObject {
+    
+}
+    import {updateCartNavigationItemCount} from "./common.js";
+    import {addCartObjectToCartView} from "./cart.js";
+
+    updateCartNavigationItemCount();
+    addCartObjectToCartView();
+  import {calculatePrice, render} from "./frame.js";
+import {getObject} from "./common.js";
+import {readCart, removeFromCart} from "./cart-model.js";
+
+export 
+
+function checkAndSetNoItemsText() {
+    let list = readCart();
+    if (list.length === 0) 
+}
+
+export async function addCartObjectToCartView() {
+    let list = readCart();
+    let f = 0;
+
+    checkAndSetNoItemsText();
+
+    for (let i of list) {
+        let item = await getObject(i.objectID);
+        if (!item) 
+        let cart = document.getElementById("cart");
+
+        let clone = document.getElementById("cart-item-template").content.cloneNode(true);
+        clone.querySelectorAll("div[class='cart-preview']")[0].id = "preview-container-" + f;
+        clone.querySelectorAll("img[class='cart-thumb']")[0].id = "preview-" + f;
+        clone.querySelectorAll("button[class='cart-remove']")[0].addEventListener("click", removeItemFromCartEventListener);
+        clone.querySelectorAll("button[class='cart-remove']")[0].id = "" + f;
+        clone.querySelectorAll("div[class='cart-item']")[0].id = "item_" + f;
+        clone.querySelectorAll("span[class='artist']")[0].innerText = item.artistDisplayName;
+        clone.querySelectorAll("span[class='title']")[0].innerText = item.title;
+        clone.querySelectorAll("span[class='date']")[0].innerText = item.objectDate;
+
+        let descriptionString = "";
+        switch (i.printSize) {
+            case "M":
+                descriptionString += "Medium ";
+                break;
+            case "S":
+                descriptionString += "Small ";
+                break;
+            case "L":
+                descriptionString += "Large ";
+                break;
+        }
+        descriptionString += "print in a " + Math.round(Math.max(Math.min(i.frameWidth / 10, 10), 0) * 10) / 10 + " cm " + i.frameStyle + " frame";
+        if (i.matWidth > 0) {
+            descriptionString += " with a " + Math.round(Math.max(Math.min(i.matWidth / 10, 10), 0) * 10) / 10 + " cm " + i.matColor + " mat"
+        }
+        descriptionString += ".";
+
+        clone.querySelectorAll("span[class='frame-description']")[0].innerText = descriptionString;
+        clone.querySelectorAll("span[id='price-0']")[0].innerText = calculatePrice(i.printSize, i.frameStyle, i.frameWidth, i.matWidth);
+
+        let renderImage = clone.querySelector("#preview-" + f);
+        renderImage.src = item.primaryImageSmall;
+        let clonePreviewContainer = clone.querySelector("#preview-container-" + f);
+        cart.insertBefore(clone, cart.firstChild);
+        let queryString = "?objectID=" + i.objectID;
+        queryString += "&printSize=" + i.printSize;
+        queryString += "&frameStyle=" + i.frameStyle;
+        queryString += "&frameWidth=" + i.frameWidth;
+        queryString += "&matColor=" + i.matColor;
+        queryString += "&matWidth=" + i.matWidth;
+        document.getElementById("preview-container-" + f).getElementsByTagName("a")[0].href = "config.html" + queryString;
+        render(renderImage, clonePreviewContainer, i.printSize, i.frameStyle, i.frameWidth, i.matColor, i.matWidth);
+        f += 1;
+    }
+
+    calculateTotal();
+}
+
+function calculateTotal() {
+    let amount = 0;
+    for (let item of document.getElementsByClassName("cart-price")) {
+        amount += +item.lastChild.innerText;
+    }
+    let totalPrice = document.getElementById("price-total");
+    if (totalPrice) {
+        totalPrice.innerText = "" + amount.toFixed(2);
+    }
+}
+
+import {readCart} from "./cart-model.js";
+
+const BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1/";
+
+export async function getObject(objectID) {
+    let object = JSON.parse(localStorage.getItem(objectID));
+
+    if (!object) {
+        let response = await fetch(BASE_URL + "objects/" + encodeURIComponent(objectID));
+        object = await response.json();
+
+        if (response.status != 200 || !object || !object.objectID) 
+
+        localStorage.setItem(object.objectID, JSON.stringify(object));
+    }
+    return object;
+}
+
+export 
+
+export function updateCartNavigationItemCount(items = null) {
+    let elem = document.getElementById("cart-link");
+    if (elem) {
+        let count = getCartItemCount(items);
+        let str = "Cart";
+        if (count > 0) {
+            str += ` (${count})`;
+        }
+        elem.innerText = str;
+    }
+}
+
+function getCartItemCount(items = null) {
+    if (items) 
+    return readCart().length
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w)  else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h)  else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    const frameCosts = {
+        "classic": 1,
+        "shabby": 0.9,
+        "elegant": 0.85,
+        "natural": 0.8,
+    };
+    const sizeMult = {
+        "S": 1,
+        "M": 2,
+        "L": 3.5,
+    }
+
+    const price = (30 + frameWidth / 10 * frameCosts[frameStyle] + 0.05 * matWidth / 10) * sizeMult[printSize];
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

@@ -1,0 +1,122 @@
+const cartKey = "cart";
+
+export class CartItem {
+    
+} 
+
+export function getCartItems() {
+    ensureCartInitialized();
+    return getLocalStorageItem(cartKey);
+}
+
+export 
+
+export 
+
+export 
+
+export 
+
+export 
+
+function ensureCartInitialized() {
+    const item = localStorage.getItem(cartKey);
+    if (item === null) 
+    const parsed = JSON.parse(item);
+    if (!Array.isArray(parsed)) 
+}
+
+
+
+function getLocalStorageItem(key) {
+    const value = localStorage[key];
+    return JSON.parse(value);
+}import * as Cart from './cart-api.js';
+import * as Frame from './frame.js';
+
+let subtotal = document.getElementById("price-subtotal");
+let shipping = document.getElementById("price-shipping");
+let total = document.getElementById("price-total");
+let select = document.getElementById('country');
+let pay = document.getElementById("pay-button");
+select.addEventListener("change", );
+
+var countries = new Map();
+
+async function get_info(){
+
+	shipping.innerHTML 	= " —";
+	total.innerHTML 	= " —";
+	subtotal.innerHTML 	= " —";
+	pay.disabled = true;
+
+	fetch("https://web-engineering.big.tuwien.ac.at/s20/a2/shipping")
+	.then(response => response.json())
+	.then(shipping_info => {
+		var destinations = shipping_info.destinations;
+		for (let dest of destinations){
+			var option = document.createElement('option');
+			option.appendChild( document.createTextNode(dest.displayName) );
+			option.value = dest.country; 
+			select.appendChild(option); 
+			countries.set(dest.country, dest.cost);
+		}	
+		pay.disabled = false;
+		calculate();
+	})
+	.catch();
+}
+
+
+function calculate(){
+	var shipping_cost = Number(countries.get(select.value));
+	shipping_cost = (shipping_cost/100);
+	shipping.innerHTML = shipping_cost.toFixed(2);
+
+	var subtotal_cost = 0; 
+	for (let item of Cart.getCartItems()){
+		console.log(item);
+		var cost = Frame.calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+		console.log(cost);
+		subtotal_cost += cost;
+	}
+	console.log(typeof(shipping_cost));
+	subtotal.innerHTML = subtotal_cost.toFixed(2);
+	total.innerHTML = (Number(shipping_cost) + subtotal_cost).toFixed(2);
+}
+
+document.addEventListener('DOMContentLoaded', event => {
+	if (Cart.getCartItems().length == 0)
+	get_info();
+});
+export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+  let price = 30.0; //base cost
+
+  frameWidth /= 10;
+  matWidth /= 10;
+
+  const frameCost = {
+    classic: 1.0,
+    natural: 0.8,
+    shabby: 0.9,
+    elegant: 0.85
+  };
+
+  const sizeCost = {
+    S: 1.0,
+    M: 2.0,
+    L: 3.5
+  };
+
+  let framePrice = frameCost[frameStyle] * frameWidth;
+  let matPrice = 0.05 * matWidth;
+
+  price += framePrice + matPrice;
+  price *= sizeCost[printSize];
+
+  return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

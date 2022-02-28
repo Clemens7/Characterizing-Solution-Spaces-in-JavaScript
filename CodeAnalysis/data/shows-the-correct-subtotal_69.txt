@@ -1,0 +1,120 @@
+const STORAGE_KEY = 'cart';
+
+class CartService {
+
+    _cart;
+    _callbacks = {};
+    _lastCallbackId = 0;
+
+    constructor() {
+        const cart = this.fetchCart();
+        if (cart === null)  else {
+            this._cart = cart;
+        }
+    }
+
+    get cart() {
+        return JSON.parse(JSON.stringify(this._cart)); // since we already read it this way from local storage, we can use this to deep copy cart objects to avoid side effects
+    }
+
+    
+
+    get isEmpty() {
+        return this._cart.length === 0;
+    }
+
+    contains = ;
+
+    add = ;
+
+    remove = ;
+
+    addCallback = ;
+
+    removeCallback = ;
+
+    fetchCart = () => {
+        return JSON.parse(window.localStorage.getItem(STORAGE_KEY));
+    };
+
+    writeCart = ;
+
+    indexOf = ;
+}
+
+export default new CartService();
+
+export class CartItem {
+    
+}
+
+      import cartService from './services/cart_service.js';
+      import * as Frame from './frame.js';
+
+      if (cartService.isEmpty) 
+
+      fetch('https://web-engineering.big.tuwien.ac.at/s20/a2/shipping')
+          .then(response => response.json())
+          .then(data => {
+              const select = document.getElementById('country');
+
+              data.destinations.map(destination => {
+                  const option = document.createElement('option');
+                  option.value = destination.country;
+                  option.innerText = destination.displayName;
+                  option.setAttribute('data-price', destination.cost);
+                  return option;
+              }).forEach( option => {
+                  select.appendChild(option);
+              });
+              calculateTotal();
+          });
+
+      function calculateTotal() {
+          let priceSubtotal = 0;
+          cartService.cart.map(cartItem => {
+              priceSubtotal += Frame.calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth);
+          });
+          document.getElementById("price-subtotal").innerText = `${priceSubtotal.toFixed(2)}`;
+
+          const select = document.getElementById('country');
+          if(select.selectedIndex !== -1) {
+              const shipping = select.options[select.selectedIndex].getAttribute('data-price')/100;
+              document.getElementById("price-shipping").innerText = `${shipping.toFixed(2)}`;
+              document.getElementById("price-total").innerText = `${parseFloat(priceSubtotal + shipping).toFixed(2)}`;
+          } else {
+              document.getElementById("price-shipping").innerHTML = '&mdash;';
+              document.getElementById("price-total").innerHTML = '&mdash;';
+              document.getElementById('pay-button').disabled = true;
+          }
+      };
+
+      document.getElementById('country').addEventListener("change", calculateTotal);
+
+      calculateTotal();
+  export 
+
+export 
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    const baseCost = 30;
+    const matPerCm = 0.05;
+
+    const sizeMultiplier = {
+        'S': 1,
+        'M': 2,
+        'L': 3.5
+    };
+
+    const framePerCm = {
+        'classic': 1,
+        'natural': 0.8,
+        'shabby': 0.9,
+        'elegant': 0.85
+    };
+
+    price = (baseCost + matPerCm * (matWidth/10) + framePerCm[frameStyle] * (frameWidth/10)) * sizeMultiplier[printSize];
+
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

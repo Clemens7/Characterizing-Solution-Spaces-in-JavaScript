@@ -1,0 +1,348 @@
+import * as ArtworkCache from './artwork-cache.js'
+import { Artwork, SearchValues } from "./Artwork.js";
+
+export 
+
+export 
+
+
+
+
+
+export async function getObjectCached(id) {
+    return ArtworkCache.retrieve('object-' + id) ?? await getObject(id)
+}
+
+async function getObject(id) {
+    const objectUrl = "https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+    const response = await fetch(objectUrl+id)
+    if(response.status != 200) 
+    const object = await response.json()
+    ArtworkCache.store('object-' + id, object)
+    return object
+}import { Artwork, SearchValues } from "./Artwork.js";
+
+export function retrieve(key) {
+    if(key in localStorage) 
+}
+
+export function store(key, artworks) {
+    console.log(`Storing ${key} in local storage`);
+    localStorage[key] = JSON.stringify(artworks);
+}import { Artwork } from './Artwork.js';
+import * as DOM from './dom-helpers.js';
+import {setAttributes} from "./dom-helpers.js";
+import {setAttributeClass} from "./dom-helpers.js";
+import {cartItemDescription} from "./cart.js";
+import {calculatePrice, render} from "./frame.js";
+
+export class ArtworkDocumentContainer {
+    
+
+    
+
+}
+
+export 
+
+export function createArtworkImage(artwork) {
+    const img = new Image()
+    img.src = artwork.primaryImageSmall
+    img.alt = artwork.title
+    return img
+}
+
+export 
+
+export 
+
+export class SearchTextContainer {
+    
+
+    
+    
+
+    
+
+    
+}
+
+export class CartItemContainer {
+    constructor(containerID='cart') {
+        this.container = document.getElementById(containerID);
+        if(!this.container) 
+    }
+
+    
+
+    addItemToCart(artwork, cartItem, index) {
+        console.log(cartItem);
+        this.container.prepend(setAttributeClass(CreateCartItem(artwork, cartItem, index), "cart-item"));
+
+
+        function CreateCartItem(artwork, cartItem, index) {
+            const el = document.createElement('div')
+            const cartPreviewContainer = document.createElement('div')
+            cartPreviewContainer.classList.add('cart-preview')
+            cartPreviewContainer.append(CreateCartItemImageContainer(artwork, cartItem, cartPreviewContainer))
+                el.classList.add('cart-item')
+                el.append(
+                    cartPreviewContainer,
+                    DOM.setAttributeClass(createMuseumLabel(artwork, cartItem, index), 'museum-label')
+                )
+            return el     
+        }
+
+        function CreateCartItemImageContainer(artwork, cartItem, container) {
+            console.log(artwork)
+            const img = createArtworkImage(artwork, cartItem)
+            img.classList.add('cart-thumb')
+            const aEl = document.createElement('a')
+            aEl.href = "/config.html?objectID=" + cartItem.objectID + "&printSize=" + cartItem.printSize
+                        + "&frameStyle=" + cartItem.frameStyle + "&frameWidth=" + cartItem.frameWidth + "&matColor=" + cartItem.matColor + "&matWidth=" + cartItem.matWidth
+            img.addEventListener('load', () => { render(img, container, cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth / 10, cartItem.matColor, cartItem.matWidth / 10)
+                aEl.append(img)
+            })
+            return aEl
+        }
+
+
+
+        function createMuseumLabel(artwork, cartItem, index) {
+            return DOM.container( [
+                createCartItemDescription(artwork.artistDisplayName, artwork.title, artwork.objectDate, cartItem),
+                DOM.textElementRandom(DOM.setAttributeClass(createCartItemPrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth), 'cart-price'), '€'),
+                DOM.setAttributeClass(createCartItemButton(index))
+            ])
+        }
+
+        function createCartItemDescription(artist, title, date, cartItem) {
+            return DOM.container([
+                DOM.setAttributeClass(DOM.textElement('span', artist),"artist"),
+                DOM.setAttributeClass(DOM.textElement('span', title + ", "), "title"),
+                DOM.setAttributeClass(DOM.textElement('span', date), "date"),
+                DOM.textElement('br'),
+                DOM.textElement('br'),
+                DOM.setAttributeClass(DOM.textElement('span', cartItemDescription(cartItem)), "frame-description")
+            ])
+        }
+
+        function createCartItemPrice(printSize, frameStyle, frameWidth, matWidth) {
+            return DOM.container( [
+                DOM.setAttributes(DOM.textElement('span', calculatePrice(printSize, frameStyle, frameWidth, matWidth)), {id: 'price-0'})
+            ])
+        }
+
+        function createCartItemButton(index) {
+            return DOM.setAttributes(DOM.setAttributeClass(document.createElement('button'), 'cart-remove'), { id: index});
+        }
+    }
+}export class Artwork {
+    
+}
+
+export var SearchValues = {
+    serialize : ,
+    parse : 
+}
+    import * as ArtworkAPI from "./artwork-api.js";
+    import { CartItemContainer } from "./artwork-dom.js";
+    import * as Cart from "./cart.js";
+    import { render, calculatePrice } from './frame.js'
+    import {Artwork} from "./Artwork.js";
+
+    let cartItemCount = 0;
+    let sumPrice = 0;
+    let sumPriceElement = document.querySelector('#price-total');
+    let cartItems;
+    let navCart = document.getElementById('cart-link')
+
+    document.addEventListener('DOMContentLoaded', async event => {
+
+      document.querySelector('#checkout-button').addEventListener('click', )
+
+      cartItems = Cart.getAll();
+      if(cartItems.length === 0) 
+      cartItemCount = cartItems.length;
+      navCart.innerText = 'Cart (' + cartItemCount + ')';
+      await createCartItemsContainer(cartItems);
+    });
+
+    async function createCartItemsContainer(cartItems) {
+      for (let cartItem of cartItems) {
+        await fetchArtworkInformation(cartItem);
+        showCartItem(cartItem);
+        sumPrice += calculatePrice(cartItem.printSize, cartItem.frameStyle, cartItem.frameWidth, cartItem.matWidth);
+        sumPriceElement.innerHTML = '' + Math.round((sumPrice + Number.EPSILON) * 100) / 100;
+        const shoppingCartDelete = document.querySelector('.cart-remove');
+        shoppingCartDelete.addEventListener('click', )
+      }
+    }
+
+    async function fetchArtworkInformation(cartItem) {
+      let objectID = cartItem.objectID;
+      const rawData = await ArtworkAPI.getObjectCached(objectID);
+      const cartItemContainer = new CartItemContainer();
+      cartItemContainer.addItemToCart(rawData, cartItem, cartItems.indexOf(cartItem));
+    }
+
+    function showCartItem(cartItem) {
+      const img = document.querySelector('#preview-0');
+      const container = document.querySelector('#preview-container-0');
+    }
+
+
+  export class CartItem {
+    
+}import { CartItem } from "./CartItem.js";
+
+export 
+
+export 
+
+export 
+
+export function getAll() {
+    return JSON.parse(localStorage.getItem("cart")) }
+
+export 
+
+export function cartItemDescription(cartItem) {
+    let description = "";
+    switch (cartItem.printSize) {
+        case 'S':
+            description += "Small";
+            break;
+        case 'M':
+            description += "Medium";
+            break;
+        
+        
+    }
+    if(cartItem.matWidth > 0) description += " print in a " + (cartItem.frameWidth / 10 ) + " cm " + cartItem.frameStyle + " frame with a " + (cartItem.matWidth / 10) + " cm " + cartItem.matColor + " mat.";
+
+    return description;
+}
+
+export export 
+
+export function setAttributes(element, attributes) {
+    for(let key in attributes) {
+        if(typeof(attributes[key]) === 'object')  else {
+            element[key] = attributes[key];
+        }
+    }
+    return element;
+}
+
+export function setAttributeClass(element, className) {
+    element.classList.add(className);
+    return element;
+}
+
+export function textElementRandom(element, text) {
+    var myText = document.createTextNode(text);
+    element.appendChild(myText);
+    return element;
+}
+
+export function textElement(tag, text) {
+    const element = document.createElement(tag);
+    element.innerText = text;
+    return element;
+}
+
+export function container(elements, tag='div') {
+    const container = document.createElement(tag);
+    for(let element of elements) {
+        container.appendChild(element);
+    }
+    return container;
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+        console.log(x);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = 0.0;
+    let smallPrice = 30.0;
+    switch(frameStyle) {
+        
+        case 'natural':
+            smallPrice += frameWidth*0.8;
+            break;
+        case 'shabby':
+            smallPrice += frameWidth*0.9;
+            break;
+        case 'elegant':
+            smallPrice += frameWidth*0.85;
+            break;
+        
+    }
+    smallPrice += matWidth*0.05;
+    switch(printSize) {
+        case 'S':
+            price = smallPrice;
+            break;
+        case 'M':
+            price = 2*smallPrice;
+            break;
+        
+        
+    }
+    return (Math.round((price + Number.EPSILON) * 100) / 100);
+}

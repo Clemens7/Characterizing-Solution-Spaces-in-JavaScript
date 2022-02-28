@@ -1,0 +1,70 @@
+
+        class Artwork {
+            
+        }
+
+        const gallery = document.getElementById('gallery');
+        const heading = document.getElementById('search-info');
+        if (searchValue()) {
+            console.log('header gets resetted');
+            heading.innerText = '';
+        }
+
+
+        document.addEventListener('DOMContentLoaded', event => {
+            console.log('Dom content fully loaded');
+            const q = searchValue();
+            gallery.innerHTML = '';
+            let cart = getCart();
+            if(cart) 
+            if (!q)  else {
+                const heading = document.getElementById('search-info');
+                heading.innerText = `Searching for “${q}”...`;
+            }
+            console.log(q);
+            searchByParam(q);
+        });
+
+        const form = document.getElementById('search-form');
+        form.addEventListener('submit', );
+
+        async function searchByParam(q) {
+            gallery.innerHTML = '';
+            const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${q}`;
+            try {
+                const response = await fetch(url);
+                const rawData = await response.json();
+                console.log(rawData);
+                const heading = document.getElementById('search-info');
+                if (rawData.objectIDs == null) {
+                    heading.innerText = `Found 0 artworks for “${q}”`;
+                    return;
+                }}
+
+        function searchValue() {
+            const params = (new URL(document.location)).searchParams;
+            console.log('q' + params.get('q'));
+            return params.get('q');
+        }
+
+
+        
+
+        
+
+        
+
+        
+
+        function getCart() {
+            console.log('Load artworks in card');
+            return JSON.parse(localStorage.getItem('cart'));
+        }
+
+
+        
+
+        
+
+
+    

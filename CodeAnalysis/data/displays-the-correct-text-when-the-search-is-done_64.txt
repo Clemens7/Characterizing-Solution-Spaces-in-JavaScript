@@ -1,0 +1,59 @@
+export 
+
+export import {calculatePrice} from "../frame.js";
+
+export function displayCartContent() {
+    let cart;
+    try {
+        const cartString = localStorage.cart || '[]';
+        cart = JSON.parse(cartString);
+    } 
+    let cartLink = document.getElementById('cart-link');
+    cartLink.innerText = 'Cart'
+    if (cart.length !== 0) 
+}
+
+export export 
+
+export 
+
+export 
+import * as ArtworkCache from './artwork-cache.js';
+import {displayCartContent} from "./cart-common.js";
+
+const onLoaded = () => {
+    const query = (new URL(document.location)).searchParams.get('q');
+    displayCartContent();
+    if (query) {
+        document.querySelector('#search').value = query;
+        submitSearch(query);
+    }
+};
+
+document.addEventListener('DOMContentLoaded', onLoaded);
+
+async function submitSearch(query) {
+    const searchInfo = document.querySelector('#search-info');
+    searchInfo.innerText = `Searching for “${query}”...`;
+    let results = await queryArtworks(query);
+    searchInfo.innerText = `Found ${results.length} artwork${results.length !== 1 ? 's' } for “${query}”`;
+    insertResultsIntoDOM(results);
+}
+
+
+
+function insertResultsIntoDOM(results) {
+    const resultsContainer = document.querySelector('#gallery');
+    resultsContainer.innerHtml = '';
+    results.map().forEach();
+}
+
+async function queryArtworks(query) {
+    const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${query}&hasImages=true`);
+    const responseJson = await response.json();
+    if (responseJson.total > 0) 
+    return [];
+}
+
+
+

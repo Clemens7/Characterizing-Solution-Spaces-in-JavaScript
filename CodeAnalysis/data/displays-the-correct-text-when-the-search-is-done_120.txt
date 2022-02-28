@@ -1,0 +1,89 @@
+import * as Storage from './picture-storage.js'
+
+/*
+export function getCartString() {
+    let cart = Storage.get("cart");
+    if (!cart ) {
+        return "Cart";
+    }}
+export 
+
+export 
+
+export 
+
+export import { Picture } from './picture.js';
+import * as PictureCache from './picture-storage.js';
+
+const SEARCH_RESULT_SIZE = 100;
+
+export 
+
+export async function search_pictures(searchTerm) {
+    let url = 'highlights.json';
+    if (searchTerm) {
+        url = search_url(searchTerm);
+    }
+    
+    try {
+        const response = await fetch(url);
+        const rawData = await response.json();
+        const objectIDs = await (searchTerm ? rawData.objectIDs );
+
+        return {
+            total: objectIDs  : 0,
+            objectIDs: (objectIDs  : objectIDs),
+        }
+    }}
+
+export 
+
+
+
+function search_url(searchTerm) {
+    const API_URL = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchTerm}`;
+    return API_URL;
+}
+
+import { Picture } from './picture.js';
+import * as DOM from './dom-helpers.js';
+
+export 
+
+export export function get(key) {
+    if (key in window.localStorage) 
+}
+
+export export class Picture {
+    
+}
+    import { Picture } from './picture.js';
+    import * as PictureAPI from './picture-api.js';
+    import * as PictureDOM from './picture-dom.js';
+    import * as CartHelper from './cart.js';
+
+    document.getElementById("cart-link").innerText = CartHelper.getCartString();
+
+    let searchParam = (new URLSearchParams(window.location.search)).get('q');
+    let searchInfoText = document.getElementById('search-info');
+
+    if (searchParam) {
+      searchInfoText.innerText = `Searching for “${searchParam}”...`;
+    }
+
+    let pictureSearch = PictureAPI.search_pictures(searchParam).then((response) => {
+      if (response['total'] <= 0) return 0;});
+
+    if (searchParam) {
+      pictureSearch.then((total) => {
+          searchInfoText.innerText = `Found ${total} ${pluralize("artwork", total)} for “${searchParam}”`;
+        }
+      );
+    }
+
+    function pluralize(word, amount) {
+      if (amount === 1) 
+
+      return word + "s";
+    }
+  

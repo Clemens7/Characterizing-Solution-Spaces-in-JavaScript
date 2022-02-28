@@ -1,0 +1,79 @@
+const SPAN_CLASS = {
+    ARTIST : 'artist',
+    TITLE : 'title',
+    DATE : 'date'
+};
+const DIV_CLASS = {
+    MUSEUM_LABEL : 'museum-label',
+    THUMB : 'thumb'
+};
+const ATTRIBUTE = {
+    CLASS: 'class',
+    ID: 'id',
+    ALT: 'alt',
+    SRC: 'src',
+    HREF: 'href'
+};
+const TAG = {
+    DIV : 'div',
+    SPAN : 'span',
+    IMG : 'img',
+    A : 'a'
+};
+
+const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/';
+const OBJECT_EP = 'objects/';
+const SEARCH_EP = 'search';
+
+const GALLERY_ID = 'gallery';
+const OBJ_IMG_ID = 'object-image-';
+const LNK_ID = 'object-';
+const CONF_LNK = './config.html';
+const SEARCH_PARAM = '?q=';
+const SEARCH_INFO = 'search-info';
+
+
+
+
+
+function create_search_url(query){
+    let api_base = MET_API_BASE_URL + SEARCH_EP;
+    let params = "?q=" + query + "&hasImages=true";
+    return api_base + params;
+}
+
+function search(search_query){
+    let search_info = document.getElementById(SEARCH_INFO);
+    search_info.textContent = 'Searching for “' + search_query + '”...';
+    let gallery = document.getElementById(GALLERY_ID);
+    const url = create_search_url(search_query);
+
+    fetch(url).then((response) => {
+            return response.json();
+        }).then((data) => {
+            let results = Math.min(data.total, 100);
+            if (results === 1)  else {
+                search_info.textContent = 'Found ' + results + ' artworks for “' + search_query + '”';
+            }
+
+
+            let item_nr = 0;
+            const ids = data.objectIDs;
+            for (const id of ids.splice(0, 100)) });
+}
+
+async function init(){
+    let itemsInCart = JSON.parse(localStorage.getItem('cart'));
+    if (localStorage.getItem('cart') !== null ) 
+    const href = unescape(window.location.href).replace('+', ' ');
+    const query = href.split(SEARCH_PARAM);
+
+    if(query.length === 1)  else if (query.length > 1) {
+        const search_query = query[1];
+        if (search_query.length === 0) else {
+            search(search_query);
+        }
+    }
+}
+
+window.addEventListener("load", init);

@@ -1,0 +1,219 @@
+
+
+  import {getObject, cache} from './met-api.js'
+  import {render} from "./frame.js";
+  import {calculatePrice} from "./frame.js";
+
+  let cart = JSON.parse(localStorage.getItem('cart')) ;
+
+  if (!cart.length){
+    document.getElementById('cart').insertAdjacentHTML('afterbegin', `
+      <div class="cart-item">
+        There are no items in your shopping cart.
+      </div>
+    `)
+    document.getElementById('checkout-button').disabled = true
+  }
+
+  
+
+  
+
+  const getItemPrice = 
+
+  let total = cart.reduce(, 0)
+  document.getElementById("price-total").innerHTML = total.toFixed(2)
+
+  document.getElementById('checkout-button')
+    .addEventListener('click', )
+
+
+  import {initConfig, renderPreview, roundWidth } from './config.js'
+
+  const config = initConfig()
+
+  document.querySelectorAll('input[type="radio"], input[type="range"]')
+    .forEach(input => input.addEventListener('change', event => {
+      config[event.target.name] = event.target.value
+    }))
+
+  document.getElementById("frame-width").addEventListener('change', )
+
+  document.getElementById('mat-width').addEventListener('change', )
+
+  Object.entries(config).forEach(([name, value]) => {
+    const radios = document.querySelectorAll(`input[type="radio"][name="${name}"]`)
+    radios.forEach(input => input.checked = (input.value === value ))
+    const inputs =  document.querySelectorAll(`input:not([type="radio"])[name^="${name}"]`)
+    inputs.forEach(input => input.value = value / 10)
+  })
+
+  renderPreview(config);
+
+  let cart = JSON.parse(localStorage.getItem('cart')) ;
+  if (cart != null && cart.length >= 1) 
+
+  document.querySelector('button[type="submit"]').addEventListener('click', )
+import {render, getPrintSizes, calculatePrice} from "./frame.js";
+import {getObject, cache} from './met-api.js'
+
+export const initConfig = () => {
+  const url = new URL(window.location);
+
+  const params = {
+    objectID: url.searchParams.get('objectID'),
+    printSize: url.searchParams.get('printSize') ||
+      document.querySelector('input[name="printSize"]:checked').value,
+    frameStyle: url.searchParams.get('frameStyle') ||
+      document.querySelector('input[name="frameStyle"]:checked').value,
+    frameWidth: url.searchParams.get('frameWidth') ||
+      document.querySelector('input[name="frameWidth"]').value * 10,
+    matColor: url.searchParams.get('matColor') ||
+      document.querySelector('input[name="matColor"]:checked').value,
+    matWidth: url.searchParams.get('matWidth') ||
+      document.querySelector('input[name="matWidth"]').value * 10,
+  }
+
+  const config = new Proxy(params, {
+    set(obj, prop, value, ) {
+      if (prop === 'frameWidthR' || prop === 'matWidthR') 
+
+      if (prop === 'frameWidth' || prop === 'matWidth') 
+
+      if (prop === 'printSize') {
+        const size = document.querySelector(`input[value="${value}"] + label span`)
+        document.getElementById('total-size').innerText = size.innerText
+      }
+
+      obj[prop] = value
+      updatePreview(document.getElementById('preview-image'), config)
+      return true;
+    }
+  })
+
+  return config
+}
+
+export const renderPreview = async (config) => {
+  const id = config.objectID
+
+  if (!id) 
+
+  const item = await getObject(id, cache);
+
+  if (!item) 
+
+  if (!cache.getById(id)) 
+
+  const label = document.getElementById('image-label')
+  label.innerHTML = `
+    <span class="artist">${item.artistDisplayName}</span>
+    <span class="title">${item.title}</span>,
+    <span class="date">${item.objectDate}</span>
+  `
+
+  const img = document.getElementById('preview-image')
+  img.alt = item.title
+  img.onload = () => {
+    const sizes = getPrintSizes(img)
+    Object.entries(sizes).forEach(([name, sizes]) => {
+      document.querySelector(`input[value="${name}"] + label span`).innerHTML = `${sizes[0]} × ${sizes[1]} cm`
+    });
+
+    document.querySelector('input[name="printSize"]:checked').dispatchEvent(new Event('change'))
+
+    updatePreview(img, config)
+  }
+  img.src = item.primaryImageSmall
+}
+
+export const updatePreview = (img, config) => {
+  render(
+    img,
+    document.getElementById('preview-container'),
+    config.printSize,
+    config.frameStyle,
+    config.frameWidth,
+    config.matColor,
+    config.matWidth
+  );
+
+  let subtotal = calculatePrice(
+    config.printSize,
+    config.frameStyle,
+    config.frameWidth,
+    config.matWidth
+  );
+
+  document.getElementById("price").innerHTML = '€ ' + subtotal.toFixed(2);
+}
+
+export const roundWidth = 
+export 
+
+export 
+
+export 
+export const MET_API = 'https://collectionapi.metmuseum.org/public/collection/v1/'
+
+export const fetchObject = 
+
+export const getObject = 
+
+export const getSearchResults = 
+
+class Cache {
+  constructor() {
+    this.objects = JSON.parse(localStorage.getItem('cache') )
+  }
+
+  
+
+  
+}
+
+export const cache = new Cache()
+
+    import { getSearchResults, getObject, cache } from '/met-api.js'
+
+    const search = 
+
+    const showHighlights = async () => {
+      const request = await fetch(`/highlights.json`)
+      const { highlights: ids } = await request.json()
+      const results = ids.map(async id => getObject(id, cache))
+
+      Promise.all(results).then(objects => {
+        renderArtworks(objects)
+        cache.add(objects)
+      })
+    }
+
+    const renderArtworks = objects => {
+      document.getElementById('gallery').innerHTML = objects.map(item => `
+          <div class="thumb">
+            <a href="/config.html?objectID=${item.objectID}" id="object-0">
+              <img src="${item.primaryImageSmall}" alt="${item.title}" id="object-image-0">
+              <div class="museum-label">
+                <span class="artist">${item.artistDisplayName}</span>
+                <span class="title">${item.title}</span>,
+                <span class="date">${item.objectDate}</span>
+              </div>
+            </a>
+          </div>
+        `).join('')
+    }
+
+    document.querySelector('.search-form').addEventListener('submit', )
+
+    const term = new URL(window.location).searchParams.get('q')
+    if (term)  else {
+      showHighlights()
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart'));
+
+    if(cart != null && cart.length >= 1)
+
+
+  

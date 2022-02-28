@@ -1,0 +1,126 @@
+import { readArtworkFromCache, writeArtworkToCache } from './cache.js';
+import { Artwork } from './classes.js';
+import { createThumb } from './dom-helper.js';
+
+export 
+
+export async function fetchArtworkById(objectID) {
+  const res = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);}
+
+function memoize(f) {
+  const cache = new Map();
+  return arg => {
+    const existing = cache.get(arg);
+    if (existing)  else {
+      const result = f(arg);
+      cache.set(arg, result);
+      return result;
+    }
+  };
+}
+
+export const retrieveArtworkById = memoize(async function retrieveArtworkById(objectID) {
+  const existing = readArtworkFromCache(objectID);
+  if (existing != null)  else {
+    const artwork = await fetchArtworkById(objectID);});
+
+export async function retrieveArtworks(artworkList) {
+  const promises = artworkList.map(loadAndShow);
+  await Promise.all(promises);}
+
+async function loadAndShow(objectID) {
+    const artwork = await retrieveArtworkById(objectID);import { Artwork, Configuration } from './classes.js';
+
+export function readArtworkFromCache(objectID) {
+    if (objectID in localStorage)  else {
+        return undefined;
+    }
+}
+
+export 
+
+export 
+
+export function readCartSizeFromCache() {
+    if ('cart' in localStorage)  else {
+        return 0;
+    }
+}
+
+export 
+export class Artwork {
+    
+}
+
+export class Configuration {
+    
+}
+import { readCartSizeFromCache } from './cache.js';
+import { Artwork, Configuration } from './classes.js';
+import { calculatePrice, render } from './frame.js';
+
+
+
+const h = createHtmlNode;
+
+export 
+
+const printSizeLabels = {
+  'S': 'Small',
+  'M': 'Medium',
+  'L': 'Large',
+};
+
+
+
+export 
+
+export function updateCartLink() {
+  const element = document.getElementById('cart-link');
+  if (element) {
+    const numCartItems = readCartSizeFromCache();
+    element.innerText = numCartItems > 0  : 'Cart';
+  }
+}
+export 
+
+export 
+
+export 
+
+export 
+
+    import { retrieveArtworksList, retrieveArtworks } from './artworks.js';
+    import { updateCartLink } from './dom-helper.js';
+
+    updateCartLink();
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const query = urlParams.get('q');
+    handleRequest(query);
+
+    async function fetchHighlightIds() {
+      const res = await fetch("./highlights.json");
+      if (!res.ok) 
+      const json = await res.json();
+      if (!Array.isArray(json.highlights)) 
+      return json.highlights;
+    }
+
+    async function loadHighlightIds() {
+      const HIGHLIGHTS_FALLBACK = [39799, 459055, 437853, 435809, 436535, 360018, 634108, 459080, 435882, 271890, 459054, 436105];
+      try {
+        return await fetchHighlightIds();
+      }}
+
+    async function handleRequest(query){
+
+      if( query === null  ) {
+        const highlights =  await loadHighlightIds();
+        await retrieveArtworks(highlights);;
+      searchInfo.innerText = `Found ${total} artwork${plural} for “${query}”`;
+
+    }
+
+  

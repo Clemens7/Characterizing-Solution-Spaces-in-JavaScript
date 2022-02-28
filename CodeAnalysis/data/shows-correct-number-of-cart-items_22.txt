@@ -1,0 +1,384 @@
+export class Artwork {
+    
+}
+
+export class ArtworkContainer {
+    constructor(id='gallery') {
+        this.container = document.getElementById(id);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    createArtworkContainer(artwork) {
+        /* <div class="thumb">
+        <a href="" id="object-0">
+          <img src="" alt="" id="object-image-0">
+          <div class="museum-label">
+            <span class="artist"></span>
+            <span class="title"></span>,
+            <span class="date"></span>
+          </div>
+        </a>
+      </div> */
+
+        let thumb = document.createElement('div');
+        thumb.className = 'thumb';
+        let a = document.createElement('a');
+        a.href = `config.html?objectID=${artwork.id}`;
+        a.id = `object-${artwork.id}`;
+        thumb.appendChild(a);
+
+        let img = document.createElement('img');
+        img.src = artwork.image;
+        img.id = `object-image-${artwork.id}`;
+        a.appendChild(img);
+
+        let museumlabel = document.createElement('div');
+        museumlabel.className = 'museum-label';
+
+        let artist = document.createElement('span');
+        artist.className = 'artist';
+        artist.textContent = artwork.artist;
+
+        let title = document.createElement('span');
+        title.className = 'title';
+        title.textContent = artwork.title;
+        title.append(', ');
+
+        let date = document.createElement('span');
+        date.className = 'date';
+        date.textContent = artwork.date;
+
+        museumlabel.appendChild(artist);
+        museumlabel.appendChild(title);
+        museumlabel.appendChild(date);
+
+        a.appendChild(museumlabel);
+
+        this.container.appendChild(thumb);
+
+    }
+
+}import {render} from "./frame.js";
+import {removeItem} from "./cart.js";
+
+export function CartItemContainer(id = 'cart') {
+
+    let container = document.getElementById(id);
+    if (!container) 
+
+    this.clear = ;
+
+    this.createContainer = ;
+
+    let cartPreview = ;
+
+    let museumLabel = ;
+
+    let artDiv = ;
+
+    let itemPrice = ;
+
+    let removeButton = ;
+
+    let br = ;
+
+    let createElement = ;
+
+    let makeFrameDescription = ;
+
+    let printSize = ;
+
+    this.emptyCartMessage = function () {
+        const text = document.createElement('p');
+        text.innerText = 'There are no items in your shopping cart.';
+        container.prepend(text);
+    }
+}import {refreshNumberOfCartItems, getCartItems, removeItemFromCartByIndex} from './shopping_cart.js';
+import {retrieveArtworkInformation} from "./museum-endpoint.js";
+import {CartItemContainer} from "./cart-item.js";
+import {calculatePrice} from "./frame.js";
+
+const cartItemContainer = new CartItemContainer();
+
+async function loadCartItems() {
+    const cartItems = getCartItems();
+
+    let totalPrice = 0;
+
+    if (cartItems.length === 0) {
+        cartItemContainer.emptyCartMessage();
+        document.getElementById('checkout-button').disabled = true;
+    }
+
+    document.getElementById('price-total').textContent = totalPrice.toFixed(2);
+}
+
+function onPageLoaded() {
+    refreshNumberOfCartItems();
+
+    loadCartItems();
+}
+
+export 
+
+document.addEventListener("DOMContentLoaded", () => onPageLoaded());
+document.getElementById('checkout-button') .addEventListener('click', );
+import { getPrintSizes, render, calculatePrice } from "./frame.js";
+import { addItemToCart, refreshNumberOfCartItems } from "./shopping_cart.js"
+
+function setConfigParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('objectID')) {
+        document.getElementById('object-id').value = urlParams.get('objectID');
+    }
+
+    if (urlParams.has('printSize')) 
+
+    if (urlParams.has('frameWidth')) 
+
+    if (urlParams.has('frameStyle')) 
+
+    if (urlParams.has('matColor')) 
+
+    if (urlParams.has('matWidth')) 
+}
+
+
+
+
+
+function getObjectID() {
+    return document.getElementById('object-id').value;
+}
+
+function getPreviewImage() {
+    return document.getElementById('preview-image');
+}
+
+function getPrintSize() {
+    return document.querySelector('input[type=radio][name="printSize"]:checked').value;
+}
+
+function getFrameStyle() {
+    return document.querySelector('input[type=radio][name="frameStyle"]:checked').value;
+}
+
+function getFrameWidthMM() {
+    return document.getElementById('frame-width').value * 10;
+}
+
+function getMatColor() {
+    return document.querySelector('input[type=radio][name="matColor"]:checked').value;
+}
+
+function getMatWidthMM() {
+    return document.getElementById('mat-width').value * 10;
+}
+
+async function retrieveMetObject() {
+    const objectID = getObjectID();
+    const cacheKey = `objectID${objectID}`;
+    if (localStorage[cacheKey]) {
+        return JSON.parse(localStorage[cacheKey]);
+    }}
+
+function createPreviewLabel(metObject) {
+    const imgLabel = document.getElementById('image-label');
+    
+    const artist = document.createElement('span');
+    artist.className = 'artist';
+    artist.textContent = metObject.artistDisplayName;
+    imgLabel.appendChild(artist);
+
+    const title = document.createElement('span');
+    title.className = 'title';
+    title.textContent = `${metObject.title}, `;
+    imgLabel.appendChild(title);
+
+    const date = document.createElement('span');
+    date.textContent = metObject.objectDate;
+    imgLabel.appendChild(date);
+}
+
+function initPreviewImage(imgSrc) {
+    const img = getPreviewImage();
+    img.src = imgSrc;
+    img.onload = function () {
+        const printSizes = getPrintSizes(img);
+        document.getElementById('print-size-s-label').innerHTML = `Small<br>${printSizes.S[0] / 10} × ${printSizes.S[1] / 10} cm`;
+        document.getElementById('print-size-m-label').innerHTML = `Medium<br>${printSizes.M[0] / 10} × ${printSizes.M[1] / 10} cm`;
+        document.getElementById('print-size-l-label').innerHTML = `Large<br>${printSizes.L[0] / 10} × ${printSizes.L[1] / 10} cm`;
+        configurationChanged();
+    };
+}
+
+async function onPageLoaded() {
+    setConfigParams();
+    refreshNumberOfCartItems();
+
+    const metObject = await retrieveMetObject();
+
+    if (metObject) {
+        initPreviewImage(metObject.primaryImageSmall);
+        createPreviewLabel(metObject);
+        configurationChanged();
+    }
+}
+
+function configurationChanged() {
+    renderImage();
+    refreshTotalPrice();
+    refreshTotalSize();
+}
+
+function renderImage() {
+    render(getPreviewImage(),
+        document.getElementById('preview-container'),
+        getPrintSize(),
+        getFrameStyle(),
+        getFrameWidthMM(),
+        getMatColor(),
+        getMatWidthMM());
+}
+
+function refreshTotalPrice() {
+    const price = calculatePrice(
+        getPrintSize(),
+        getFrameStyle(),
+        getFrameWidthMM(),
+        getMatWidthMM());
+    document.getElementById('price').textContent = `€ ${price.toFixed(2)}`;
+}
+
+function refreshTotalSize() {
+    const img = getPreviewImage();
+    const printSize = getPrintSize();
+    const frameWidth = getFrameWidthMM();
+    const matWidth = getMatWidthMM();
+    const printSizes = getPrintSizes(img);
+
+    let totalWidth = printSizes[printSize][0];
+    totalWidth += 2 * frameWidth;
+    totalWidth += 2 * matWidth;
+    totalWidth /= 10;
+
+    let totalHeight = printSizes[printSize][1];
+    totalHeight += 2 * frameWidth;
+    totalHeight += 2 * matWidth;
+    totalHeight /= 10;
+
+    document.getElementById('total-size').innerText = `${totalWidth} × ${totalHeight} cm`;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    onPageLoaded()
+});
+
+document.getElementById('frame-width').addEventListener('change', );
+
+document.getElementById('frameWidthSlider').addEventListener('input', );
+
+document.getElementById('mat-width').addEventListener('change', );
+
+document.getElementById('matWidthSlider').addEventListener('input', );
+
+document.getElementsByName('printSize').forEach(radio => radio.addEventListener('change', ));
+
+document.getElementsByName('frameStyle').forEach(radio => radio.addEventListener('change', ));
+
+document.getElementsByName('matColor').forEach(radio => radio.addEventListener('change', ));
+
+document.getElementById('add-to-cart').addEventListener('click', );
+export 
+
+export 
+
+export 
+export 
+
+import {Artwork, ArtworkContainer} from './artwork.js';
+import { refreshNumberOfCartItems } from './shopping_cart.js';
+import {retrieveArtworkInformation} from "./museum-endpoint.js";
+
+
+
+
+
+
+
+async function showArtworks(objectIDs, maxArtworks = undefined) {
+    const artworkContainer = new ArtworkContainer();
+    artworkContainer.clear();
+    if (maxArtworks === undefined
+        
+        ) {
+        maxArtworks = objectIDs.length;
+    }
+    for (let i = 0; i < maxArtworks; i++) {
+        let artwork = await retrieveArtworkInformation(objectIDs[i]);
+        artworkContainer.createArtworkContainer(artwork);
+    }
+}
+
+async function retrieveHighlights() {
+    try {
+        let highlightIDs = await fetch('highlights.json')
+            .then(response => response.json());
+        await showArtworks(highlightIDs.highlights);
+    } 
+}
+
+
+
+
+window.onload = function () {
+    const form = document.querySelector('#search-form');
+    form.addEventListener('submit', );
+
+    refreshNumberOfCartItems();
+    let param = new URLSearchParams(document.location.search).get("q");
+    if (!param) {
+        retrieveHighlights();
+    }
+};const CART_STORAGE_KEY = 'cart';
+
+export function getCartItems() {
+    if (localStorage[CART_STORAGE_KEY]) {
+        return JSON.parse(localStorage[CART_STORAGE_KEY]);
+    }
+}
+
+export 
+
+export 
+
+export function refreshNumberOfCartItems() {
+    const count = getNumberOfCartItems();
+    const cartText = count > 0  : 'Cart';
+    document.getElementById('cart-link').innerText = cartText;
+}
+
+export 
+
+function getNumberOfCartItems() {
+    return getCartItems().length;
+}

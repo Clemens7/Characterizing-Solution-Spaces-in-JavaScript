@@ -1,0 +1,155 @@
+import { getFromLocalStorage } from "./print-objects-cache.js";
+
+let cartItems = getFromLocalStorage();
+
+export function getCartText() {
+  let cartItems = JSON.parse(localStorage.getItem("cart"));
+
+  if (!cartItems) {
+    document.getElementById('cart-link').innerText = "Cart";
+  }
+}
+
+getCartText();export function getFromLocalStorage() {
+    return JSON.parse(localStorage.getItem('cart'));
+}
+
+export 
+import { GalleryItem } from "./search-objects.js";
+import * as SearchObjectsCache from "./search-objects-cache.js";
+
+export async function getObjectIds(searchString) {
+  const haveImages = "hasImages=true";
+  const response = await fetch(
+    `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${searchString}&${haveImages}`
+  );
+  console.log("getting ");
+  const rawData = await response.json();
+  return rawData.objectIDs;
+}
+
+export 
+
+
+
+export async function getGalleryItemFromObjectId(objectID) {
+  let galleryItem = SearchObjectsCache.retrieve(objectID);
+  if (galleryItem) 
+
+  const response = await fetch(
+    `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`
+  );
+  const rawData = await response.json();
+  galleryItem = new GalleryItem(
+    rawData.objectID,
+    rawData.title,
+    rawData.artistDisplayName,
+    rawData.primaryImageSmall,
+    rawData.objectDate
+  );
+  SearchObjectsCache.store(galleryItem);
+  return galleryItem;
+}
+
+export async function getGalleryItems(retrievedObjects) {
+  let promises = [];
+  for (
+    var i = 0;
+    i < (retrievedObjects.length > 100 ? 100 );
+    i++
+  ) {
+    promises.push(getGalleryItemFromObjectId(retrievedObjects[i]));
+    console.log(promises[i]);
+  }
+  console.log(promises);
+  return Promise.all(promises);
+}
+export function retrieve(objectId) {
+  if (objectId in localStorage) 
+}
+
+export function store(galleryItem) {
+  console.log(`Storing ${galleryItem.objectID} in local storage`);
+  localStorage[galleryItem.objectID] = JSON.stringify(galleryItem);
+}
+export class GalleryItem {
+  constructor(objectID, title, artistDisplayName, primaryImage, date) {
+    this.objectID = objectID;
+    this.title = title;
+    this.artistDisplayName = artistDisplayName;
+    this.primaryImage = primaryImage;
+    this.date = date;
+  }
+}
+import {
+  getObjectIds,
+  getHighlights,
+  getGalleryItems,
+} from "./search-api-calls.js";
+import { getFromLocalStorage } from "./print-objects-cache.js";
+
+/*let cartVar = localStorage.getItem('cartItems');
+console.log(cartVar);
+if (cartVar != "0") {
+    const cartSize = document.getElementById("cart-link");
+    cartSize.innerText = 'Cart (' + cartVar + ')';
+}*/
+
+
+
+
+/*let cartItems = getFromLocalStorage();
+localStorage.setItem('cartItems', JSON.parse(cartItems.length));
+console.log(localStorage.getItem('cartItems'));
+const cartSize = document.getElementById("cart-link");
+cartSize.innerText = `Cart (${cartItems.length})`;
+
+if (cartItems.length === 0 ) {
+  cartSize.innerText = `Cart`;
+}*/
+
+const url = window.location.href;
+if (url.indexOf("q=") !== -1) {
+  let queryString = url.slice(url.indexOf("q=") + 2);
+  queryString = queryString.replace("+", " ");
+  searchGallery(queryString);
+}
+
+const searchForm = document.querySelector("#search-form");
+searchForm.addEventListener("submit", );
+
+
+
+async function searchGallery(searchString) {
+  let searchText = document.getElementById("search-info");
+  searchText.innerText = `Searching for “${searchString}”...`;
+  const retrievedObjectIds = await getObjectIds(searchString);
+  if (retrievedObjectIds == null)  else {
+    let galleryItems = await getGalleryItems(retrievedObjectIds);
+    console.log(galleryItems);
+    let artworkWord = retrievedObjectIds.length == 1  : "artworks";
+    let numberOfItems =
+      retrievedObjectIds == null  : retrievedObjectIds.length;
+    searchText.innerText = `Found ${numberOfItems} ${artworkWord} for “${searchString}”`;
+    renderGalleryItems(galleryItems);
+  }
+}
+
+function renderGalleryItems(galleryItems) {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+  for (let galleryItem of galleryItems) {
+    const thumb = document.createElement("div");
+    thumb.classList.add("thumb");
+    thumb.innerHTML = `
+      <a id="${galleryItem.objectID}" href="config.html?objectID=${galleryItem.objectID}">
+        <img src="${galleryItem.primaryImage}" alt="" id="object-image-${galleryItem.objectID}" />
+        <div class="museum-label">
+          <span class="artist">${galleryItem.artistDisplayName}</span>
+          <span class="title">${galleryItem.title}</span>,
+          <span class="date">${galleryItem.date}</span>
+        </div>
+      </a>`;
+    gallery.appendChild(thumb);
+  }
+}

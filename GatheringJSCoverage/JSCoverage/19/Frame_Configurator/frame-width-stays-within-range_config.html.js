@@ -1,0 +1,1 @@
+if(value <=5&&value>=0){frameWidthR.value = this.value}

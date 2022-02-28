@@ -1,0 +1,184 @@
+import {calculatePriceFromItem, render} from "./frame.js";
+import {retrieve} from "./metrequests.js";
+
+let items = JSON.parse(localStorage.getItem("cart"));
+const sizeNames = {'L': 'Large', 'M': 'Medium', 'S': 'Small'};
+
+window.onload = populateCartHtml();
+
+function populateCartHtml() {
+    if (items === null) 
+    for (let i = 0; i < items.length; i++) {
+        let el = createCartItemElement(i);
+        document.getElementById("cart")
+            .insertBefore(el, document.getElementsByClassName("cart-total")[0]);
+    }
+    update();
+}
+
+
+
+function setTotal() {
+    let total = 0;
+    let cartItems = document.getElementsByClassName("cart-item");
+    for (let i = 0; i < cartItems.length; i++) {
+        total += calculatePriceFromItem(items[i]);
+    }
+    document.getElementById("price-total").innerHTML = "" + total;
+}
+
+function setItemsInCart() {
+    document.getElementById("cart-link").innerHTML = `Cart (${items.length})`
+}
+
+function update() {
+    if (items.length === 0) 
+    setTotal();
+    setItemsInCart();
+}
+
+
+
+function createCartItemElement(id) {
+    let el = document.createElement('div');
+    el.setAttribute("class", "cart-item");
+    let item = items[id];
+    let preview = document.createElement('div');
+    preview.setAttribute("class", "cart-preview");
+    preview.setAttribute("id", "preview-container-" + id);
+    let mlabel = document.createElement('div');
+    mlabel.setAttribute("class", "museum-label");
+    el.append(preview);
+    el.append(mlabel);
+    retrieve(item.objectID)
+        .then((data) => {
+            console.log(data);
+            setLabel(id, data, mlabel);
+            setPreview(id, data, preview);
+        });
+    return el;
+}
+
+function getRmButton(id, el) {
+    let rm = document.createElement("button");
+    rm.setAttribute("class", "cart-remove");
+    let f = ;
+    rm.addEventListener("click", f);
+    return rm;
+}
+
+function setLabel(id, met, mlabel) {
+    let price = calculatePriceFromItem(items[id]);
+    let description = getDescription(items[id]);
+    mlabel.innerHTML = `<div>
+                    <span class="artist">${met.artistDisplayName}</span>
+                    <span class="title">${met.title}</span>,
+                    <span class="date">${met.objectDate}</span>
+                    <br><br>
+                    <span class="frame-description">${description}</span>
+                </div>
+                <div class="cart-price">€ <span id="price-${id}">${price}</span></div>`;
+    mlabel.append(getRmButton(id, mlabel.parentElement));
+}
+
+function setPreview(id, met, preview) {
+    let item = items[id];
+    let link = `./config.html?objectID=${item.objectID}&printSize=${item.printSize}&frameWidth=${item.frameWidth}&frameStyle=${item.frameStyle}&matWidth=${item.matWidth}&matColor=${item.matColor}`;
+    let a = document.createElement("a");
+    a.href = link;
+    preview.append(a);
+    let img = document.createElement("img");
+    img.src = met.primaryImageSmall;
+    img.addEventListener("load", function() {render(img, preview, item.printSize, item.frameStyle, item.frameWidth, item.matColor, item.matWidth)})
+    a.append(img);
+    return preview;
+}
+
+
+
+function getDescription(item) {
+    let size = sizeNames[item.printSize];
+    let mat = item.matWidth === 0  : ` with a ${item.matWidth / 10} cm ${item.matColor} mat`;
+    return `${size} print in a ${item.frameWidth / 10} cm ${item.frameStyle} frame${mat}.`;
+}export function getPrintSizes(img) {
+    let S = [297, 297]; // A4
+    let M = [420, 420]; // A3
+    let L = [594, 594]; // A2
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    if (h > w) {
+        S[0] = Math.floor(w * S[1] / h);
+        M[0] = Math.floor(w * M[1] / h);
+        L[0] = Math.floor(w * L[1] / h);
+    } else {
+        S[1] = Math.floor(h * S[0] / w);
+        M[1] = Math.floor(h * M[0] / w);
+        L[1] = Math.floor(h * L[0] / w);
+    }
+
+    return { S: S, M: M, L: L };
+}
+
+export function render(img, container, printSize, frameStyle, frameWidth, matColor, matWidth) {
+    const printSizes = getPrintSizes(img);
+    const w = printSizes[printSize][0];
+    const h = printSizes[printSize][1];
+
+    let x;
+    if (w > h) {
+        x = container.offsetWidth / (w + 2 * matWidth + 2 * frameWidth);
+    } else {
+        x = container.offsetHeight / (h + 2 * matWidth + 2 * frameWidth);
+    }
+
+    const frameImageSlices = {
+        classic: 115,
+        natural: 75,
+        shabby: 120,
+        elegant: 107
+    };
+
+    const matColors = {
+        ivory: '#fffff0',
+        mint: '#e0e6d4',
+        wine: '#50222d',
+        indigo: '#29434c',
+        coal: '#333a3d',
+    };
+
+    img.style.boxSizing = 'border-box';
+    img.width = (w + 2 * matWidth + 2 * frameWidth) * x;
+    img.height = (h + 2 * matWidth + 2 * frameWidth) * x;
+    img.style.borderImageSource = `url(frame-styles/${frameStyle}.jpg)`;
+    img.style.borderImageSlice = frameImageSlices[frameStyle];
+    img.style.borderWidth = `${frameWidth * x}px`;
+    img.style.backgroundColor = matColors[matColor];
+    img.style.padding = `${matWidth * x}px`;
+}
+
+const size_prices = {'S' : 1, 'M' : 2, 'L' : 3.5};
+const style_prices = {'classic' : 0.1, 'natural': 0.08, 'shabby' : 0.09, 'elegant' : 0.085};
+
+export function calculatePrice(printSize, frameStyle, frameWidth, matWidth) {
+    let price = (30 + frameWidth * style_prices[frameStyle] + matWidth * 0.005) * size_prices[printSize];
+    return +((Math.round((price + Number.EPSILON) * 100) / 100).toFixed(2));
+}
+
+export function calculatePriceFromItem(item) {
+    return calculatePrice(item.printSize, item.frameStyle, item.frameWidth, item.matWidth);
+}
+const MET_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
+
+export function retrieve(id) {
+    console.log("retrieving " + id);
+    let response = JSON.parse(localStorage.getItem("" + id));
+    if (response !== null) 
+    else return fetch(MET_BASE_URL + id)
+        .then((response) => response.json())
+        .then((data) => {
+            localStorage.setItem(id, JSON.stringify(data));
+            return data;
+        });
+}

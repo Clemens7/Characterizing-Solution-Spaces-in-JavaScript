@@ -1,0 +1,86 @@
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    
+    return new (P || (P = Promise))(function (resolve, reject) {
+        
+        
+        function step(result) { result.done ? resolve(result.value) ; }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export function setCurrentCartCount() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let storage = localStorage.getItem("cart");
+        if (storage !== null) 
+    });
+}
+var __awaiter = (this ) || function (thisArg, _arguments, P, generator) {
+    
+    return new (P || (P = Promise))(function (resolve, reject) {
+        
+        
+        function step(result) { result.done ? resolve(result.value) ; }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { calculatePrice, render } from "./frame.js";
+import { getObject } from "./met-api.js";
+import { setCurrentCartCount } from "./cart-count.js";
+function getStoredCart() {
+    let cartString = localStorage.getItem("cart");
+    if (!cartString ) {
+        console.log(`There are no carts in the storage to calculate and set prices.`);
+        return [];
+    }
+}
+function checkForEmptyCartsToDisplayTextAndDisableButton() {
+    let carts = getStoredCart();
+    if (carts.length === 0) {
+        let cartSectionHTML = document.getElementById("cart");
+        if (!cartSectionHTML) 
+        else {
+            const emptyCartDiv = document.createElement('div');
+            const emptyCartSpan = document.createElement('span');
+            emptyCartSpan.textContent = "There are no items in your shopping cart.";
+            emptyCartDiv.appendChild(emptyCartSpan);
+            cartSectionHTML.appendChild(emptyCartDiv);
+            let checkoutButtonHTML = document.getElementById("checkout-button");
+            if (!checkoutButtonHTML) 
+            else {
+                checkoutButtonHTML.disabled = true;
+            }
+        }
+    }
+}
+function calculateAndSetCartPrices() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let carts = getStoredCart();
+        if (carts != null) {
+            let priceTotal = 0;
+            for (let cartObject of carts) 
+            let priceTotalHTML = document.getElementById("price-total");
+            if (!priceTotalHTML) 
+            else {
+                priceTotalHTML.innerHTML = priceTotal.toFixed(2);
+            }
+        }
+    });
+}
+function displayCarts() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let carts = getStoredCart();
+        let checkoutBtn = document.getElementById("checkout-button");
+        checkoutBtn.addEventListener('onclick', );
+        for (let i = 0; i < carts.length; i++) });
+}
+
+checkForEmptyCartsToDisplayTextAndDisableButton();
+displayCarts();
+setCurrentCartCount();
+calculateAndSetCartPrices();
+export 
+export 
+export 
+var __awaiter = (this ) || ;
+export 
+export 
+export 

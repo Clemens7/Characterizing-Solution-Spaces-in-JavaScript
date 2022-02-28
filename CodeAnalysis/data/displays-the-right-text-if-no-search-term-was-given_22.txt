@@ -1,0 +1,89 @@
+export class Artwork {
+    
+}
+
+export class ArtworkContainer {
+    constructor(id='gallery') {
+        this.container = document.getElementById(id);
+        if(!this.container) 
+    }
+
+    clear() {
+        this.container.innerHTML = '';
+    }
+
+    
+
+}export async function retrieveArtworkInformation(objectID) {
+    let storage = window.localStorage;
+    let data = storage["ObjectID"+objectID];
+    if (!data) {
+        const url = apiObjectUrl(objectID);
+        try {
+            const response = await fetch(url);
+    }}
+
+function apiObjectUrl(objectID) {
+    return `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`;
+}import {Artwork, ArtworkContainer} from './artwork.js';
+import { refreshNumberOfCartItems } from './shopping_cart.js';
+import {retrieveArtworkInformation} from "./museum-endpoint.js";
+
+
+
+
+
+
+
+async function showArtworks(objectIDs, maxArtworks = undefined) {
+    const artworkContainer = new ArtworkContainer();
+    artworkContainer.clear();
+    if (maxArtworks === undefined
+        
+        ) {
+        maxArtworks = objectIDs.length;
+    }
+    for (let i = 0; i < maxArtworks; i++) {
+        let artwork = await retrieveArtworkInformation(objectIDs[i]);}
+
+async function retrieveHighlights() {
+    try {
+        let highlightIDs = await fetch('highlights.json')
+            .then(response => response.json());
+        await showArtworks(highlightIDs.highlights);}
+
+
+
+
+window.onload = function () {
+    const form = document.querySelector('#search-form');
+    form.addEventListener('submit', );
+
+    refreshNumberOfCartItems();
+    let param = new URLSearchParams(document.location.search).get("q");
+    if (!param) {
+        retrieveHighlights();
+    }
+};const CART_STORAGE_KEY = 'cart';
+
+export function getCartItems() {
+    if (localStorage[CART_STORAGE_KEY])  else {
+        return [];
+    }
+}
+
+export 
+
+export 
+
+export function refreshNumberOfCartItems() {
+    const count = getNumberOfCartItems();
+    const cartText = count > 0  : 'Cart';
+    document.getElementById('cart-link').innerText = cartText;
+}
+
+export 
+
+function getNumberOfCartItems() {
+    return getCartItems().length;
+}
